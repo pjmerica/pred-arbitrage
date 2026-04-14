@@ -120,8 +120,12 @@ tr.suspicious-row td { opacity: 0.6; }
     </select>
   </div>
   <div class="filter-group">
-    <label>Min raw gap: <span id="gap-val">0pp</span></label>
-    <input type="range" id="f-mingap" min="0" max="40" step="1" value="0" style="min-width:160px;cursor:pointer;accent-color:#60a5fa">
+    <label>Min gap: <span id="gap-min-val">0pp</span></label>
+    <input type="range" id="f-mingap" min="0" max="40" step="1" value="0" style="min-width:140px;cursor:pointer;accent-color:#60a5fa">
+  </div>
+  <div class="filter-group">
+    <label>Max gap: <span id="gap-max-val">100pp</span></label>
+    <input type="range" id="f-maxgap" min="0" max="100" step="1" value="100" style="min-width:140px;cursor:pointer;accent-color:#f87171">
   </div>
   <div class="filter-group">
     <label>Profitable after fees</label>
@@ -183,7 +187,7 @@ tr.suspicious-row td { opacity: 0.6; }
 
 <script>
 // ── state ──────────────────────────────────────────────────────────────────
-let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide';
+let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide';
 let sortCol = 'arb_type', sortDir = -1;
 
 const PLAT_COLORS = { kalshi: '#34d399', polymarket: '#a78bfa', predictit: '#f87171' };
@@ -236,6 +240,7 @@ function filtered() {
     }
     if (fCategory !== 'ALL' && r.category !== fCategory) return false;
     if (fMinGap > 0 && (r.raw_gap_pp == null || r.raw_gap_pp < fMinGap)) return false;
+    if (fMaxGap < 100 && (r.raw_gap_pp == null || r.raw_gap_pp > fMaxGap)) return false;
     if (fProfitable === 'yes' && !r.profitable_onesided && r.arb_type !== 'guaranteed') return false;
     if (fSettle !== 'ALL' && r.settle_date) {
       const d = new Date(r.settle_date);
@@ -355,7 +360,12 @@ document.getElementById('f-category').addEventListener('change', e => { fCategor
 document.getElementById('f-settle').addEventListener('change', e => { fSettle = e.target.value; render(); });
 document.getElementById('f-mingap').addEventListener('input', e => {
   fMinGap = parseFloat(e.target.value);
-  document.getElementById('gap-val').textContent = fMinGap + 'pp';
+  document.getElementById('gap-min-val').textContent = fMinGap + 'pp';
+  render();
+});
+document.getElementById('f-maxgap').addEventListener('input', e => {
+  fMaxGap = parseFloat(e.target.value);
+  document.getElementById('gap-max-val').textContent = fMaxGap === 100 ? '100pp' : fMaxGap + 'pp';
   render();
 });
 document.getElementById('f-profitable').addEventListener('change', e => { fProfitable = e.target.value; render(); });
