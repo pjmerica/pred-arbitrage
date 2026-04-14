@@ -152,8 +152,8 @@ def run():
         arb["action"] = arb["action"].replace("{pa}", pa.title()).replace("{pb}", pb.title())
 
         raw_gap_pp = arb["raw_gap_pp"]
-        # Flag gaps > 50pp as suspicious — likely a data/matching error
-        suspicious = bool(raw_gap_pp is not None and raw_gap_pp > 50)
+        # Flag gaps > 40pp as suspicious — likely a data/matching error
+        suspicious = bool(raw_gap_pp is not None and raw_gap_pp > 40)
 
         rows.append({
             "match_type": r.get("match_type", "fuzzy"),

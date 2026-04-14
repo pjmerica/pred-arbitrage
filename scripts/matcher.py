@@ -22,7 +22,7 @@ ROOT = Path(__file__).parent.parent
 RAW = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
-FUZZY_THRESHOLD = 82   # token_sort_ratio score — tune this
+FUZZY_THRESHOLD = 88   # token_sort_ratio score — raised to reduce candidate-vs-party false positives
 MAX_CANDIDATES = 3     # fuzzy candidates to check per market
 
 # ── race_id inference (US 2026 elections) ────────────────────────────────────
@@ -65,7 +65,8 @@ def infer_race_id(title: str) -> str | None:
         return f"2026-H-{m.group(1)}-{str(int(m.group(2))).zfill(2)}"
 
     state_abbrev = None
-    for name, abbrev in STATE_NAME_TO_ABBREV.items():
+    # Sort by length descending so "west virginia" matches before "virginia"
+    for name, abbrev in sorted(STATE_NAME_TO_ABBREV.items(), key=lambda x: -len(x[0])):
         if name in q:
             state_abbrev = abbrev
             break
@@ -84,6 +85,62 @@ def infer_race_id(title: str) -> str | None:
     if m2:
         return f"2026-H-{state_abbrev}-{str(int(m2.group(1))).zfill(2)}"
     return None
+
+
+# ── contract-type classification for political markets ───────────────────────
+
+def party_side(question: str) -> str | None:
+    """
+    For party_winner contracts, return which party the question is asking about
+    winning ('dem', 'rep', or None if unclear).
+    """
+    q = question.lower()
+    dem_words = ["democrat", "democratic", "dem ", "blue"]
+    rep_words = ["republican", "gop", "rep ", "red"]
+    is_dem = any(w in q for w in dem_words)
+    is_rep = any(w in q for w in rep_words)
+    if is_dem and not is_rep:
+        return "dem"
+    if is_rep and not is_dem:
+        return "rep"
+    return None
+
+
+def political_contract_type(question: str) -> str:
+    """
+    Classify a political market question into a contract type so we only
+    match like-for-like across platforms.
+
+    Returns one of:
+      'party_winner'   — "Which party will win X?" or "Will Democrats/Republicans win X?"
+      'candidate'      — "Will [Name] win/be nominee for X?"
+      'primary'        — "Who will win the Republican/Democratic primary/nomination?"
+      'other'
+    """
+    q = question.lower()
+
+    # Primary / nomination questions
+    if any(k in q for k in ["nomination", "nominee", "primary", "republican nominee",
+                             "democratic nominee", "gop nominee"]):
+        return "primary"
+
+    # Party-winner questions
+    if any(k in q for k in ["which party will win", "which party wins",
+                             "will the republican", "will the democrat",
+                             "will republicans win", "will democrats win",
+                             "republican party", "democratic party"]):
+        return "party_winner"
+
+    # General winner (e.g. "Who will win the 2026 Senate election in X?")
+    if any(k in q for k in ["who will win", "who wins"]):
+        return "candidate"
+
+    # Named candidate (has a proper-noun-ish pattern before "win")
+    # Simple heuristic: question contains "will [Firstname Lastname]"
+    if re.search(r"will [a-z]+ [a-z]+ (win|be elected|become)", q):
+        return "candidate"
+
+    return "other"
 
 
 # ── normalise titles for fuzzy matching ──────────────────────────────────────
@@ -159,17 +216,44 @@ def match_political(dfs: dict) -> pd.DataFrame:
 
             merged = a_best.merge(b_best, on="race_id", suffixes=("_a", "_b"))
             for _, r in merged.iterrows():
+                qa = str(r.get("question_a", ""))
+                qb = str(r.get("question_b", ""))
+                type_a = political_contract_type(qa)
+                type_b = political_contract_type(qb)
+
+                # Only match like-for-like contract types.
+                # Allow party_winner↔party_winner and candidate↔candidate.
+                # Skip primary↔party_winner, candidate↔party_winner, etc.
+                if type_a != type_b:
+                    continue
+                if type_a == "primary" or type_b == "primary":
+                    continue
+
+                prob_a = r.get("implied_prob_a")
+                prob_b = r.get("implied_prob_b")
+
+                # If both are party_winner but asking about opposite parties,
+                # flip one so both probs represent the same party winning.
+                if type_a == "party_winner" and type_b == "party_winner":
+                    side_a = party_side(qa)
+                    side_b = party_side(qb)
+                    if side_a and side_b and side_a != side_b:
+                        # Flip prob_b so it represents the same party as prob_a
+                        if prob_b is not None:
+                            prob_b = round(1.0 - float(prob_b), 4)
+                        qb = f"[flipped] {qb}"
+
                 pairs.append({
                     "match_type": "political",
                     "race_id": r["race_id"],
                     "platform_a": pa,
                     "platform_b": pb,
-                    "question_a": r.get("question_a", ""),
-                    "question_b": r.get("question_b", ""),
+                    "question_a": qa,
+                    "question_b": qb,
                     "market_id_a": r.get("market_id_a", ""),
                     "market_id_b": r.get("market_id_b", ""),
-                    "implied_prob_a": r.get("implied_prob_a"),
-                    "implied_prob_b": r.get("implied_prob_b"),
+                    "implied_prob_a": prob_a,
+                    "implied_prob_b": prob_b,
                     "settle_date": r.get("settle_date_a", "") or r.get("settle_date_b", ""),
                     "category": "Elections",
                     "url_a": r.get("url_a", ""),
@@ -216,6 +300,22 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                     # Skip if same platform somehow
                     if row_a.get("market_id") == row_b.get("market_id"):
                         continue
+
+                    # Drop if the questions contain different deadline years
+                    # e.g. "before 2027" vs "before 2028" should not match
+                    years_a = set(re.findall(r"\b(20\d{2})\b", str(row_a.get("question", ""))))
+                    years_b = set(re.findall(r"\b(20\d{2})\b", str(row_b.get("question", ""))))
+                    if years_a and years_b and not years_a.intersection(years_b):
+                        continue
+
+                    # Drop candidate-vs-party mismatches in fuzzy matches
+                    # e.g. "Will Kamala Harris win 2028?" vs "Which party wins 2028?"
+                    qa_type = political_contract_type(str(row_a.get("question", "")))
+                    qb_type = political_contract_type(str(row_b.get("question", "")))
+                    if qa_type in ("party_winner", "candidate") and qb_type in ("party_winner", "candidate"):
+                        if qa_type != qb_type:
+                            continue
+
                     pairs.append({
                         "match_type": "fuzzy",
                         "race_id": None,
