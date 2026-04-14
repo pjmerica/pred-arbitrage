@@ -1,19 +1,20 @@
 """
-Kalshi full-market scraper — all categories.
+Kalshi full-market scraper — uses the trade-api/v2 endpoint (modern).
 
-Uses two API paths:
-  1. /v1/series/ — iterates all series, filters election-related ones by ticker pattern.
-     This catches HOUSE{ST}{D}, SENATEPARTY{ST}, GOVPARTY{ST} etc. with proper race_ids.
-  2. /v1/events/?status=open — catches all other (non-election) open markets.
+The old v1/events endpoint was capped at ~100 events total. The new
+trade-api/v2/events?with_nested_markets=true returns ~5000 open events
+(~40k markets) across Sports, Elections, Entertainment, Politics,
+Economics, Crypto, and more.
+
+For 2026 election races (House, Senate, Governor), we still infer
+canonical race_ids from the series_ticker.
 
 Output: data/raw/kalshi_markets.csv
-Fields: ticker, event_ticker, series_ticker, title, category, tags,
-        yes_bid, yes_ask, implied_prob, open_interest, volume,
-        close_date, settle_date, race_id, url, fetched_at
 """
 
 import urllib.request
 import urllib.parse
+import urllib.error
 import json
 import time
 import re
@@ -22,7 +23,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 RAW = Path(__file__).parent.parent / "data" / "raw"
-BASE = "https://api.elections.kalshi.com/v1"
+BASE = "https://api.elections.kalshi.com/trade-api/v2"
 HEADERS = {"User-Agent": "Mozilla/5.0 (research/pred-arb)", "Accept": "application/json"}
 PAGE_SIZE = 200
 
@@ -33,32 +34,36 @@ STATE_ABBREVS = {
     "WI","WY",
 }
 
-# Election series ticker patterns
-ELECTION_KEYWORDS = [
-    "senate", "governor", "house", "midterm", "2026",
-    "senateparty", "govparty",
-]
 
-
-def get(path, params=None):
+def get(path, params=None, max_retries=5):
     url = f"{BASE}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=20) as r:
-        return json.loads(r.read())
+    for attempt in range(max_retries):
+        req = urllib.request.Request(url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                wait = 10 * (attempt + 1)
+                print(f"  Rate limited, waiting {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
+    raise RuntimeError(f"Failed after {max_retries} retries: {url}")
 
 
 def infer_race_id_from_ticker(ticker: str) -> str | None:
     """Infer race_id from a Kalshi series ticker like HOUSECA47, SENATEPARTYPA."""
-    t = ticker.upper()
+    t = (ticker or "").upper()
 
     # HOUSE{ST}{D} e.g. HOUSECA47, HOUSENH2
     m = re.match(r"HOUSE([A-Z]{2})(\d+)$", t)
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-H-{m.group(1)}-{m.group(2).zfill(2)}"
 
-    # SENATEPARTY{ST} e.g. SENATEPARTYCA
+    # SENATEPARTY{ST}
     m = re.match(r"SENATEPARTY[-_]?([A-Z]{2})(?:[A-Z0-9]*)?$", t)
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-SEN-{m.group(1)}"
@@ -73,12 +78,12 @@ def infer_race_id_from_ticker(ticker: str) -> str | None:
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-SEN-{m.group(1)}"
 
-    # GOVPARTY{ST} e.g. GOVPARTYCA
+    # GOVPARTY{ST}
     m = re.match(r"GOVPARTY([A-Z]{2})(?:[A-Z0-9]*)?$", t)
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-GOV-{m.group(1)}"
 
-    # KXGOV{ST} e.g. KXGOVOHNOMD
+    # KXGOV{ST}
     m = re.match(r"KXGOV([A-Z]{2})[A-Z0-9]+$", t)
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-GOV-{m.group(1)}"
@@ -86,108 +91,84 @@ def infer_race_id_from_ticker(ticker: str) -> str | None:
     return None
 
 
-def fetch_election_series():
-    """Paginate /v1/series/ and return election-related ones."""
-    all_series = []
-    cursor = None
-    while True:
-        params = {"limit": 100}
-        if cursor:
-            params["cursor"] = cursor
-        try:
-            data = get("/series/", params)
-        except Exception as e:
-            print(f"  Error fetching series: {e}")
-            break
-        batch = data.get("series", [])
-        if not batch:
-            break
-        for s in batch:
-            ticker = s.get("ticker", "").lower()
-            title  = s.get("title",  "").lower()
-            if any(k in ticker or k in title for k in ELECTION_KEYWORDS):
-                all_series.append(s)
-        cursor = data.get("cursor")
-        if not cursor or len(batch) < 100:
-            break
-    return all_series
-
-
-def fetch_events_for_series(series_ticker: str):
-    try:
-        data = get("/events/", {"series_ticker": series_ticker, "limit": 100})
-        return data.get("events", [])
-    except Exception as e:
-        print(f"  Warning: failed {series_ticker}: {e}")
-        return []
-
-
-def fetch_all_open_events():
-    """Paginate all open events (non-election categories)."""
+def fetch_all_events_with_markets():
+    """Paginate all open events with nested markets via trade-api/v2."""
     all_events = []
     cursor = None
     page = 0
     while True:
-        params = {"limit": PAGE_SIZE, "status": "open"}
+        params = {"limit": PAGE_SIZE, "status": "open", "with_nested_markets": "true"}
         if cursor:
             params["cursor"] = cursor
         try:
-            data = get("/events/", params)
+            data = get("/events", params)
         except Exception as e:
-            print(f"  Error fetching open events page {page}: {e}")
+            print(f"  Error at page {page}: {e}")
             break
         events = data.get("events", [])
         all_events.extend(events)
         cursor = data.get("cursor")
         page += 1
         if page % 5 == 0:
-            print(f"  Fetched {len(all_events)} open events so far...")
+            print(f"  Fetched {len(all_events)} events so far...")
         if not cursor or len(events) < PAGE_SIZE:
             break
-        time.sleep(0.1)
+        time.sleep(0.25)  # be polite, avoid rate limits
     return all_events
 
 
-def parse_market(event, market, series_ticker="", series_title="", race_id=None):
-    yes_bid = market.get("yes_bid", 0) or 0
-    yes_ask = market.get("yes_ask", 0) or 0
-    last    = market.get("last_price", 0) or 0
+def parse_market(event, market):
+    # trade-api/v2 uses decimal dollars (0–1) not cents
+    def to_float(v):
+        try:
+            return float(v) if v is not None and v != "" else None
+        except (TypeError, ValueError):
+            return None
 
-    if yes_bid > 0 and yes_ask > 0:
-        implied_prob = (yes_bid + yes_ask) / 2 / 100
-    elif last > 0:
-        implied_prob = last / 100
+    yes_bid = to_float(market.get("yes_bid_dollars"))
+    yes_ask = to_float(market.get("yes_ask_dollars"))
+    last    = to_float(market.get("last_price_dollars"))
+
+    if yes_bid is not None and yes_ask is not None and yes_bid > 0 and yes_ask > 0:
+        implied_prob = (yes_bid + yes_ask) / 2
+    elif last is not None and last > 0:
+        implied_prob = last
     else:
         implied_prob = None
 
-    ticker       = market.get("ticker_name", market.get("ticker", ""))
-    event_ticker = event.get("ticker", "")
-    if not series_ticker:
-        series_ticker = event.get("series_ticker", "")
-    close_date   = market.get("close_date") or market.get("expiration_date", "")
+    series_ticker = event.get("series_ticker", "")
+    event_ticker  = event.get("event_ticker", "")
+    category      = event.get("category", "")
+    event_title   = event.get("title", "")
+    event_sub     = event.get("sub_title", "")
+    market_ticker = market.get("ticker", "")
+    yes_sub       = market.get("yes_sub_title", "") or ""
 
-    # Infer race_id from series ticker if not pre-computed
-    if race_id is None and series_ticker:
-        race_id = infer_race_id_from_ticker(series_ticker)
+    # Build the most useful "question" field. If the event has many markets
+    # (e.g. "Who will win the primary" with 15 candidates), combine event
+    # title + yes_sub_title so fuzzy matching has enough to work with.
+    if yes_sub and yes_sub.strip() and yes_sub.strip().lower() not in ("yes", "no"):
+        title = f"{event_title} — {yes_sub}"
+    else:
+        title = event_title
 
-    tags = event.get("tags") or []
-    tags_str = "|".join(t for t in tags if isinstance(t, str))
+    race_id = infer_race_id_from_ticker(series_ticker)
 
     return {
-        "ticker":        ticker,
+        "ticker":        market_ticker,
         "event_ticker":  event_ticker,
         "series_ticker": series_ticker,
-        "title":         market.get("title", event.get("title", "")),
-        "subtitle":      market.get("sub_title", ""),
-        "category":      event.get("category", ""),
-        "tags":          tags_str,
+        "title":         title,
+        "subtitle":      event_sub,
+        "category":      category,
+        "tags":          "",
         "race_id":       race_id,
-        "yes_bid":       yes_bid / 100 if yes_bid else None,
-        "yes_ask":       yes_ask / 100 if yes_ask else None,
+        "yes_bid":       yes_bid,
+        "yes_ask":       yes_ask,
         "implied_prob":  round(implied_prob, 4) if implied_prob is not None else None,
-        "open_interest": market.get("open_interest", 0),
-        "volume":        market.get("volume", 0),
-        "close_date":    str(close_date)[:10] if close_date else "",
+        "open_interest": to_float(market.get("open_interest_fp")) or 0,
+        "volume":        to_float(market.get("volume_fp")) or 0,
+        "close_date":    str(market.get("close_time", market.get("expiration_time", "")))[:10],
         "url":           f"https://kalshi.com/markets/{series_ticker}" if series_ticker else "",
         "fetched_at":    datetime.now(timezone.utc).isoformat(),
     }
@@ -195,49 +176,29 @@ def parse_market(event, market, series_ticker="", series_title="", race_id=None)
 
 def run():
     RAW.mkdir(parents=True, exist_ok=True)
+
+    print("Fetching all Kalshi open events via trade-api/v2...")
+    events = fetch_all_events_with_markets()
+    print(f"  Total events: {len(events)}")
+
     rows = []
     seen_tickers = set()
+    # Skip multivariate parlay markets — they have no equivalent on PM/PI
+    SKIP_EVENT_PREFIXES = ("KXMVE", "KXMULTIVARIATE")
 
-    # ── Phase 1: election series (House, Senate, Governor) ──────────────────
-    print("Fetching Kalshi election series...")
-    series_list = fetch_election_series()
-    print(f"  Found {len(series_list)} election-related series")
-
-    for i, series in enumerate(series_list):
-        sticker = series["ticker"]
-        stitle  = series.get("title", "")
-        race_id = infer_race_id_from_ticker(sticker)
-        events  = fetch_events_for_series(sticker)
-        for event in events:
-            for market in event.get("markets", []):
-                row = parse_market(event, market, sticker, stitle, race_id)
-                key = row["ticker"] or row["event_ticker"]
-                if key not in seen_tickers:
-                    seen_tickers.add(key)
-                    rows.append(row)
-        if (i + 1) % 50 == 0:
-            print(f"  Series progress: {i+1}/{len(series_list)}, {len(rows)} markets")
-        time.sleep(0.15)
-
-    election_count = len(rows)
-    print(f"  Election markets: {election_count}")
-
-    # ── Phase 2: all other open events ──────────────────────────────────────
-    print("\nFetching all open Kalshi events (non-election categories)...")
-    open_events = fetch_all_open_events()
-    print(f"  Total open events: {len(open_events)}")
-
-    for event in open_events:
-        series_ticker = event.get("series_ticker", "")
-        for market in event.get("markets", []):
-            row = parse_market(event, market, series_ticker)
-            key = row["ticker"] or row["event_ticker"]
-            if key not in seen_tickers:
+    for event in events:
+        et = (event.get("event_ticker") or "").upper()
+        if any(et.startswith(p) for p in SKIP_EVENT_PREFIXES):
+            continue
+        for market in event.get("markets") or []:
+            row = parse_market(event, market)
+            key = row["ticker"]
+            if key and key not in seen_tickers:
                 seen_tickers.add(key)
                 rows.append(row)
 
     df = pd.DataFrame(rows)
-    df = df[df["implied_prob"].notna()]
+    df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
 
     out = RAW / "kalshi_markets.csv"
     df.to_csv(out, index=False)

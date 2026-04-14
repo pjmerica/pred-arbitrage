@@ -192,6 +192,7 @@ def load_predictit():
     df["race_id"] = df["market_name"].apply(infer_race_id)
     df["settle_date"] = ""
     df["market_id"] = df["contract_id"].astype(str)
+    df["category"] = "Politics"  # PredictIt is politics-only
     return df
 
 
@@ -263,77 +264,131 @@ def match_political(dfs: dict) -> pd.DataFrame:
     return pd.DataFrame(pairs)
 
 
+CATEGORY_GROUPS = {
+    # Map platform-specific category names → normalized group so we only
+    # fuzzy-match within the same group. Hugely speeds up matching and cuts
+    # false positives.
+    "sports": "sports",
+    "nfl": "sports", "nba": "sports", "nhl": "sports", "mlb": "sports",
+    "soccer": "sports", "tennis": "sports", "golf": "sports",
+    "ufc": "sports", "mma": "sports", "boxing": "sports",
+    "esports": "esports",
+    "politics": "politics",
+    "elections": "politics",
+    "us-elections": "politics", "us-politics": "politics",
+    "geopolitics": "politics",
+    "crypto": "crypto", "crypto prices": "crypto",
+    "finance": "finance", "economics": "finance", "economy": "finance",
+    "stocks": "finance", "business": "finance", "financials": "finance",
+    "inflation": "finance",
+    "entertainment": "culture", "culture": "culture",
+    "pop-culture": "culture", "music": "culture",
+    "movies": "culture", "tv": "culture", "mentions": "culture",
+    "science": "science", "technology": "science",
+    "science and technology": "science", "tech": "science",
+    "ai": "science", "big tech": "science",
+    "climate": "climate", "weather": "climate",
+    "climate and weather": "climate", "climate & science": "climate",
+    "world": "world", "health": "health",
+    "companies": "companies", "social": "social",
+    "transportation": "misc",
+}
+
+
+def normalize_category(c: str) -> str:
+    if not c or not isinstance(c, str):
+        return "other"
+    return CATEGORY_GROUPS.get(c.strip().lower(), "other")
+
+
 def match_fuzzy(dfs: dict) -> pd.DataFrame:
-    """Fuzzy-match non-political markets across platform pairs."""
+    """Fuzzy-match non-political markets across platform pairs.
+
+    Only matches within the same category group for speed and precision.
+    Uses rapidfuzz.process.cdist for vectorized scoring.
+    """
+    import numpy as np
     pairs = []
     platform_names = list(dfs.keys())
 
     for i, pa in enumerate(platform_names):
         for pb in platform_names[i+1:]:
-            a = dfs[pa][dfs[pa]["race_id"].isna()].copy()
-            b = dfs[pb][dfs[pb]["race_id"].isna()].copy()
+            a_full = dfs[pa][dfs[pa]["race_id"].isna()].copy()
+            b_full = dfs[pb][dfs[pb]["race_id"].isna()].copy()
 
-            if a.empty or b.empty:
+            if a_full.empty or b_full.empty:
                 continue
 
-            b_norms = b["title_norm"].tolist()
-            b_ids = b["market_id"].tolist()
-            b_lookup = {bid: row for bid, row in zip(b_ids, b.itertuples())}
+            a_full["cat_group"] = a_full["category"].apply(normalize_category) if "category" in a_full.columns else "other"
+            b_full["cat_group"] = b_full["category"].apply(normalize_category) if "category" in b_full.columns else "other"
 
-            print(f"  Fuzzy matching {pa} ({len(a)}) vs {pb} ({len(b)})...")
+            shared_groups = set(a_full["cat_group"].unique()) & set(b_full["cat_group"].unique())
+            print(f"  Fuzzy matching {pa} ({len(a_full)}) vs {pb} ({len(b_full)}) across {len(shared_groups)} category groups...")
             matched = 0
 
-            for _, row_a in a.iterrows():
-                norm_a = row_a["title_norm"]
-                if not norm_a or len(norm_a) < 8:
+            for group in shared_groups:
+                a = a_full[a_full["cat_group"] == group].reset_index(drop=True)
+                b = b_full[b_full["cat_group"] == group].reset_index(drop=True)
+                if len(a) == 0 or len(b) == 0:
                     continue
 
-                results = fuzz_process.extract(
-                    norm_a, b_norms,
+                a_norms = a["title_norm"].fillna("").tolist()
+                b_norms = b["title_norm"].fillna("").tolist()
+
+                # Vectorized pairwise scoring. Score matrix shape (len_a, len_b).
+                score_matrix = fuzz_process.cdist(
+                    a_norms, b_norms,
                     scorer=fuzz.token_sort_ratio,
-                    score_cutoff=FUZZY_THRESHOLD,
-                    limit=MAX_CANDIDATES,
+                    workers=-1,
                 )
 
-                for norm_b_match, score, idx in results:
-                    row_b = b.iloc[idx]
-                    # Skip if same platform somehow
-                    if row_a.get("market_id") == row_b.get("market_id"):
+                # For each row in a, find up to MAX_CANDIDATES top matches above threshold
+                for ai in range(len(a)):
+                    row_a = a.iloc[ai]
+                    norm_a = a_norms[ai]
+                    if not norm_a or len(norm_a) < 8:
                         continue
+                    row_scores = score_matrix[ai]
+                    # Top candidates above threshold
+                    top_idx = np.argsort(-row_scores)[:MAX_CANDIDATES]
+                    results = [(b_norms[j], float(row_scores[j]), j) for j in top_idx if row_scores[j] >= FUZZY_THRESHOLD]
 
-                    # Drop if the questions contain different deadline years
-                    # e.g. "before 2027" vs "before 2028" should not match
-                    years_a = set(re.findall(r"\b(20\d{2})\b", str(row_a.get("question", ""))))
-                    years_b = set(re.findall(r"\b(20\d{2})\b", str(row_b.get("question", ""))))
-                    if years_a and years_b and not years_a.intersection(years_b):
-                        continue
-
-                    # Drop candidate-vs-party mismatches in fuzzy matches
-                    # e.g. "Will Kamala Harris win 2028?" vs "Which party wins 2028?"
-                    qa_type = political_contract_type(str(row_a.get("question", "")))
-                    qb_type = political_contract_type(str(row_b.get("question", "")))
-                    if qa_type in ("party_winner", "candidate") and qb_type in ("party_winner", "candidate"):
-                        if qa_type != qb_type:
+                    for norm_b_match, score, idx in results:
+                        row_b = b.iloc[idx]
+                        if row_a.get("market_id") == row_b.get("market_id"):
                             continue
 
-                    pairs.append({
-                        "match_type": "fuzzy",
-                        "race_id": None,
-                        "platform_a": pa,
-                        "platform_b": pb,
-                        "question_a": row_a.get("question", ""),
-                        "question_b": row_b.get("question", ""),
-                        "market_id_a": row_a.get("market_id", ""),
-                        "market_id_b": row_b.get("market_id", ""),
-                        "implied_prob_a": row_a.get("implied_prob"),
-                        "implied_prob_b": row_b.get("implied_prob"),
-                        "settle_date": row_a.get("settle_date", "") or row_b.get("settle_date", ""),
-                        "category": row_a.get("category", ""),
-                        "url_a": row_a.get("url", ""),
-                        "url_b": row_b.get("url", ""),
-                        "fuzzy_score": round(score, 1),
-                    })
-                    matched += 1
+                        # Drop if deadline years don't overlap
+                        years_a = set(re.findall(r"\b(20\d{2})\b", str(row_a.get("question", ""))))
+                        years_b = set(re.findall(r"\b(20\d{2})\b", str(row_b.get("question", ""))))
+                        if years_a and years_b and not years_a.intersection(years_b):
+                            continue
+
+                        # Drop candidate-vs-party mismatches
+                        qa_type = political_contract_type(str(row_a.get("question", "")))
+                        qb_type = political_contract_type(str(row_b.get("question", "")))
+                        if qa_type in ("party_winner", "candidate") and qb_type in ("party_winner", "candidate"):
+                            if qa_type != qb_type:
+                                continue
+
+                        pairs.append({
+                            "match_type": "fuzzy",
+                            "race_id": None,
+                            "platform_a": pa,
+                            "platform_b": pb,
+                            "question_a": row_a.get("question", ""),
+                            "question_b": row_b.get("question", ""),
+                            "market_id_a": row_a.get("market_id", ""),
+                            "market_id_b": row_b.get("market_id", ""),
+                            "implied_prob_a": row_a.get("implied_prob"),
+                            "implied_prob_b": row_b.get("implied_prob"),
+                            "settle_date": row_a.get("settle_date", "") or row_b.get("settle_date", ""),
+                            "category": row_a.get("category", ""),
+                            "url_a": row_a.get("url", ""),
+                            "url_b": row_b.get("url", ""),
+                            "fuzzy_score": round(score, 1),
+                        })
+                        matched += 1
 
             print(f"    -> {matched} fuzzy matches")
 
