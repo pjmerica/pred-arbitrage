@@ -85,6 +85,9 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b):
         "guaranteed_return_pct": None,
         "stake_a_pct": None,
         "stake_b_pct": None,
+        "stake_a_dollars": None,
+        "stake_b_dollars": None,
+        "profit_dollars": None,
         "action": "",
     }
 
@@ -117,6 +120,10 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b):
                     "guaranteed_return_pct": round(net * 100, 2),
                     "stake_a_pct": round(sA * 100, 1),
                     "stake_b_pct": round(sB * 100, 1),
+                    # Dollar amounts for a $100 total stake
+                    "stake_a_dollars": round(sA * 100, 2),
+                    "stake_b_dollars": round(sB * 100, 2),
+                    "profit_dollars": round(net * 100, 2),
                 })
                 break
 
