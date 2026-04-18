@@ -138,6 +138,10 @@ def parse_market(event, market):
 
     condition_id = market.get("conditionId", "")
     category = extract_category(event.get("tags") or [])
+    event_slug = event.get("slug", "") or ""
+    market_slug = market.get("slug", "") or ""
+    url_slug = event_slug or market_slug
+    url = f"https://polymarket.com/event/{url_slug}" if url_slug else None
 
     return {
         "condition_id": condition_id,
@@ -150,7 +154,9 @@ def parse_market(event, market):
         "best_ask": market.get("bestAsk"),
         "liquidity": event.get("liquidity"),
         "volume": market.get("volume"),
-        "url": f"https://polymarket.com/event/{condition_id}" if condition_id else None,
+        "event_slug": event_slug,
+        "market_slug": market_slug,
+        "url": url,
         "fetched_at": datetime.now(timezone.utc).isoformat(),
     }
 

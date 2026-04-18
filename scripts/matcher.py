@@ -371,6 +371,61 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                             if qa_type != qb_type:
                                 continue
 
+                        # Drop numeric-bucket mismatches: if both questions contain different
+                        # numeric ranges (e.g. "Above 5.6M" vs "65-68%"), they're different buckets
+                        # of the same event, not the same market. Compare normalized numeric tokens.
+                        q_a = str(row_a.get("question", ""))
+                        q_b = str(row_b.get("question", ""))
+                        nums_a = set(re.findall(r"\d+\.?\d*[%MK]?", q_a))
+                        nums_b = set(re.findall(r"\d+\.?\d*[%MK]?", q_b))
+                        # Strip year tokens (already filtered above)
+                        nums_a = {n for n in nums_a if n not in years_a and not re.match(r"^20\d{2}$", n)}
+                        nums_b = {n for n in nums_b if n not in years_b and not re.match(r"^20\d{2}$", n)}
+                        if nums_a and nums_b and not nums_a.intersection(nums_b):
+                            # Both have numeric quantifiers but none overlap → different buckets
+                            continue
+
+                        # "run for" / "announce" / "enter race" vs "win" are semantically different
+                        # questions about the same candidate — filter them out.
+                        run_words = ("run for", "runs for", "announce", "enter the", "file to run")
+                        win_words = ("win ", "wins ", "winner", "be the ", "be confirmed", "nominated")
+                        is_run_a = any(w in q_a.lower() for w in run_words)
+                        is_run_b = any(w in q_b.lower() for w in run_words)
+                        is_win_a = any(w in q_a.lower() for w in win_words)
+                        is_win_b = any(w in q_b.lower() for w in win_words)
+                        if (is_run_a and is_win_b and not is_run_b) or (is_run_b and is_win_a and not is_run_a):
+                            continue
+
+                        # Rank/position buckets: "top" / "#1" vs "#2" are different outcomes
+                        def rank_token(q):
+                            ql = q.lower()
+                            if re.search(r"\btop\b|#1\b|\bfirst\b|\bwinner\b", ql) and not re.search(r"#2|#3|second|third", ql):
+                                return "top"
+                            m = re.search(r"#([2-9])", ql)
+                            if m:
+                                return f"rank{m.group(1)}"
+                            return None
+                        r_a = rank_token(q_a)
+                        r_b = rank_token(q_b)
+                        if r_a and r_b and r_a != r_b:
+                            continue
+
+                        # Drop candidate-name mismatches within the same event:
+                        # "Will Velichie win..." vs "Will Vazrazhdane win..." share template but
+                        # name different subjects. Detect by finding distinct capitalized proper
+                        # nouns in the 'Will X ...' prefix.
+                        def extract_subject(q):
+                            m = re.match(r"\s*Will\s+([A-Z][A-Za-z'\-\.]+(?:\s+[A-Z][A-Za-z'\-\.]+){0,3})\s+", q)
+                            return m.group(1).lower() if m else None
+                        subj_a = extract_subject(q_a)
+                        subj_b = extract_subject(q_b)
+                        if subj_a and subj_b and subj_a != subj_b:
+                            # Both look like "Will X ..." with different named subjects
+                            # Skip generic words
+                            generic = {"the", "there", "a", "any", "another"}
+                            if subj_a.split()[0] not in generic and subj_b.split()[0] not in generic:
+                                continue
+
                         pairs.append({
                             "match_type": "fuzzy",
                             "race_id": None,
