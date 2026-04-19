@@ -362,9 +362,14 @@ function render() {
     </tr>`;
   }).join('');
 
-  // Re-wire sort
+  // Re-wire sort + draw arrow on the active column
   document.querySelectorAll('th[data-col]').forEach(th => {
-    th.classList.toggle('sorted', th.dataset.col === sortCol);
+    if (!th.dataset.label) th.dataset.label = th.textContent.trim();
+    const isActive = th.dataset.col === sortCol;
+    const arrow = isActive ? (sortDir === -1 ? ' \u25BC' : ' \u25B2') : '';
+    th.textContent = th.dataset.label + arrow;
+    th.classList.toggle('sorted', isActive);
+    th.style.cursor = 'pointer';
     th.onclick = () => {
       if (sortCol === th.dataset.col) sortDir *= -1;
       else { sortCol = th.dataset.col; sortDir = -1; }
