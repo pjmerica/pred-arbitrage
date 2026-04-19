@@ -128,6 +128,10 @@ tr.suspicious-row td { opacity: 0.6; }
     <input type="range" id="f-maxgap" min="0" max="100" step="1" value="100" style="min-width:140px;cursor:pointer;accent-color:#f87171">
   </div>
   <div class="filter-group">
+    <label>Min volume: <span id="vol-min-val">$500</span></label>
+    <input type="range" id="f-minvol" min="0" max="9" step="1" value="3" style="min-width:140px;cursor:pointer;accent-color:#34d399">
+  </div>
+  <div class="filter-group">
     <label>Profitable after fees</label>
     <select id="f-profitable">
       <option value="ALL">All</option>
@@ -188,6 +192,15 @@ tr.suspicious-row td { opacity: 0.6; }
 <script>
 // ── state ──────────────────────────────────────────────────────────────────
 let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide';
+// Volume slider stops (USD). Index 3 = $500 default.
+const VOL_STOPS = [0, 100, 250, 500, 1000, 5000, 10000, 50000, 100000, 1000000];
+let fMinVol = VOL_STOPS[3];
+function fmtVol(v) {
+  if (v === 0) return '$0';
+  if (v >= 1000000) return '$1M+';
+  if (v >= 1000) return '$' + (v / 1000) + 'k';
+  return '$' + v;
+}
 let sortCol = 'arb_type', sortDir = -1;
 
 const PLAT_COLORS = { kalshi: '#34d399', polymarket: '#a78bfa', predictit: '#f87171' };
@@ -241,6 +254,13 @@ function filtered() {
     if (fCategory !== 'ALL' && r.category !== fCategory) return false;
     if (fMinGap > 0 && (r.raw_gap_pp == null || r.raw_gap_pp < fMinGap)) return false;
     if (fMaxGap < 100 && (r.raw_gap_pp == null || r.raw_gap_pp > fMaxGap)) return false;
+    if (fMinVol > 0) {
+      // PredictIt has no public volume — exempt; otherwise require >= threshold.
+      const va = r.volume_a, vb = r.volume_b;
+      const okA = r.platform_a === 'predictit' || (va != null && va >= fMinVol);
+      const okB = r.platform_b === 'predictit' || (vb != null && vb >= fMinVol);
+      if (!okA || !okB) return false;
+    }
     if (fProfitable === 'yes' && !r.profitable_onesided && r.arb_type !== 'guaranteed') return false;
     if (fSettle !== 'ALL' && r.settle_date) {
       const d = new Date(r.settle_date);
@@ -366,6 +386,11 @@ document.getElementById('f-mingap').addEventListener('input', e => {
 document.getElementById('f-maxgap').addEventListener('input', e => {
   fMaxGap = parseFloat(e.target.value);
   document.getElementById('gap-max-val').textContent = fMaxGap === 100 ? '100pp' : fMaxGap + 'pp';
+  render();
+});
+document.getElementById('f-minvol').addEventListener('input', e => {
+  fMinVol = VOL_STOPS[parseInt(e.target.value)] ?? 0;
+  document.getElementById('vol-min-val').textContent = fmtVol(fMinVol);
   render();
 });
 document.getElementById('f-profitable').addEventListener('change', e => { fProfitable = e.target.value; render(); });
