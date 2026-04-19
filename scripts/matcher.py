@@ -259,6 +259,8 @@ def match_political(dfs: dict) -> pd.DataFrame:
                     "category": "Elections",
                     "url_a": r.get("url_a", ""),
                     "url_b": r.get("url_b", ""),
+                    "volume_a": r.get("volume_a", None),
+                    "volume_b": r.get("volume_b", None),
                     "fuzzy_score": 100,
                 })
     return pd.DataFrame(pairs)
@@ -441,6 +443,8 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                             "category": row_a.get("category", ""),
                             "url_a": row_a.get("url", ""),
                             "url_b": row_b.get("url", ""),
+                            "volume_a": row_a.get("volume", None),
+                            "volume_b": row_b.get("volume", None),
                             "fuzzy_score": round(score, 1),
                         })
                         matched += 1

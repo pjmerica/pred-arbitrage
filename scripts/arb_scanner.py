@@ -147,6 +147,23 @@ def run():
     df = df[df["implied_prob_a"].notna() & df["implied_prob_b"].notna()].copy()
     print(f"Processing {len(df)} matched pairs...")
 
+    # Volume floor: require at least $500 on each side that reports volume.
+    # PredictIt's API doesn't expose volume — those legs are skipped from the check.
+    MIN_VOLUME = 500.0
+    before = len(df)
+    df["volume_a"] = pd.to_numeric(df.get("volume_a"), errors="coerce")
+    df["volume_b"] = pd.to_numeric(df.get("volume_b"), errors="coerce")
+
+    def passes_volume(row):
+        va, vb = row["volume_a"], row["volume_b"]
+        pa, pb = row["platform_a"], row["platform_b"]
+        ok_a = (pa == "predictit") or (pd.notna(va) and va >= MIN_VOLUME)
+        ok_b = (pb == "predictit") or (pd.notna(vb) and vb >= MIN_VOLUME)
+        return ok_a and ok_b
+
+    df = df[df.apply(passes_volume, axis=1)].copy()
+    print(f"  After ${int(MIN_VOLUME)} volume floor: {len(df)} pairs (dropped {before - len(df)})")
+
     rows = []
     for _, r in df.iterrows():
         pa, pb = r["platform_a"], r["platform_b"]
@@ -177,6 +194,8 @@ def run():
             "settle_date": str(r.get("settle_date", ""))[:10],
             "url_a": r.get("url_a", ""),
             "url_b": r.get("url_b", ""),
+            "volume_a": None if pd.isna(r.get("volume_a")) else round(float(r.get("volume_a")), 2),
+            "volume_b": None if pd.isna(r.get("volume_b")) else round(float(r.get("volume_b")), 2),
             "fuzzy_score": r.get("fuzzy_score", 100),
             "suspicious": suspicious,
             **arb,
