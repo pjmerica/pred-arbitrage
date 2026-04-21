@@ -230,6 +230,28 @@ def match_political(dfs: dict) -> pd.DataFrame:
                 if type_a == "primary" or type_b == "primary":
                     continue
 
+                # For candidate markets on the same race, the candidate names
+                # must match. Otherwise we'd pair "Caruso wins CA-GOV" with
+                # "Steyer wins CA-GOV" just because they share race_id.
+                if type_a == "candidate" and type_b == "candidate":
+                    def candidate_name(q):
+                        m = re.search(r"will\s+([A-Z][A-Za-z'\-\.]+(?:\s+[A-Z][A-Za-z'\-\.]+){0,2})\s+(win|be\s+elected|become)", q, re.IGNORECASE)
+                        if m:
+                            return m.group(1).lower().strip()
+                        # PredictIt "— Tom Steyer" / Kalshi "? — Name" patterns
+                        m = re.search(r"[—\-]\s*([A-Z][A-Za-z'\-\.]+(?:\s+[A-Z][A-Za-z'\-\.]+){0,2})\s*$", q)
+                        if m:
+                            return m.group(1).lower().strip()
+                        return None
+                    name_a = candidate_name(qa)
+                    name_b = candidate_name(qb)
+                    if name_a and name_b:
+                        # Last-name match is sufficient (handles "Rick Caruso" vs "Caruso")
+                        last_a = name_a.split()[-1]
+                        last_b = name_b.split()[-1]
+                        if last_a != last_b:
+                            continue
+
                 prob_a = r.get("implied_prob_a")
                 prob_b = r.get("implied_prob_b")
 
@@ -410,6 +432,27 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         r_a = rank_token(q_a)
                         r_b = rank_token(q_b)
                         if r_a and r_b and r_a != r_b:
+                            continue
+
+                        # Date-bucket mismatch: one question is scoped to "before [date]" /
+                        # "by [date]" and the other isn't (or names a different date). Kalshi
+                        # often splits a single resolution into multiple date-bucket markets
+                        # ("Before Mar 1", "Before Apr 1"), which must not match a generic
+                        # Polymarket market for the same subject.
+                        def date_bucket(q):
+                            ql = q.lower()
+                            m = re.search(r"(?:before|by|on or before|no later than)\s+"
+                                          r"(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|"
+                                          r"jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
+                                          r"\s*\.?\s*(\d{1,2})?", ql)
+                            if m:
+                                return (m.group(1)[:3], m.group(2) or "")
+                            return None
+                        db_a = date_bucket(q_a)
+                        db_b = date_bucket(q_b)
+                        if (db_a and not db_b) or (db_b and not db_a):
+                            continue
+                        if db_a and db_b and db_a != db_b:
                             continue
 
                         # Drop candidate-name mismatches within the same event:
