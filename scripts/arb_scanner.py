@@ -28,9 +28,9 @@ ROOT = Path(__file__).parent.parent
 PROCESSED = ROOT / "data" / "processed"
 
 FEES = {
-    "kalshi":    0.02,
+    "kalshi":    0.03,
     "predictit": 0.12,
-    "polymarket": 0.02,
+    "polymarket": 0.03,
 }
 
 
