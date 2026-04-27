@@ -466,31 +466,37 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         if db_a and db_b and db_a != db_b:
                             continue
 
-                        # Month-anchor mismatch: catches questions like
-                        # "best coding model end of April 2026" vs
-                        # "best coding model end of December 2026" — same template,
-                        # different settlement months. The date_bucket() above only
-                        # fires on "before/by" phrasing; this catches "end of <month>",
-                        # "in <month>", "during <month>", "<month> 2026", etc.
-                        def month_anchor(q):
+                        # Month/day anchor mismatch: catches questions like
+                        # "best coding model end of April 2026" vs "...end of December 2026"
+                        # AND weekly markets like "Raw: 2026 - April 13" vs "...April 20"
+                        # which share the month but not the day.
+                        MONTHS_RE = (r"jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|"
+                                     r"jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|"
+                                     r"oct(?:ober)?|nov(?:ember)?|dec(?:ember)?")
+                        def month_day_anchors(q):
+                            """Return (months_set, dates_set) where dates_set holds
+                            (mon, day) tuples extracted from "<month> <1-31>" mentions."""
                             ql = q.lower()
-                            months = (r"jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|"
-                                      r"jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|"
-                                      r"oct(?:ober)?|nov(?:ember)?|dec(?:ember)?")
-                            found = set()
-                            for m in re.finditer(rf"\b({months})\b", ql):
-                                found.add(m.group(1)[:3])
-                            return found
-                        ma_a = month_anchor(q_a)
-                        ma_b = month_anchor(q_b)
-                        # If both name months and the sets are disjoint, they're
-                        # different settlement windows — not the same market.
+                            months_found = set()
+                            dates_found = set()
+                            for m in re.finditer(rf"\b({MONTHS_RE})\b\.?\s*(\d{{1,2}})?", ql):
+                                mon = m.group(1)[:3]
+                                months_found.add(mon)
+                                day = m.group(2)
+                                if day and 1 <= int(day) <= 31:
+                                    dates_found.add((mon, int(day)))
+                            return months_found, dates_found
+                        ma_a, da_a = month_day_anchors(q_a)
+                        ma_b, da_b = month_day_anchors(q_b)
+                        # Both name months but disjoint → different settlement window
                         if ma_a and ma_b and not (ma_a & ma_b):
                             continue
-                        # If exactly one names a month, the other is generic; that's
-                        # also a date-scope mismatch (e.g. Kalshi "end of December" vs
-                        # Polymarket "by 2026" with no month).
+                        # Exactly one names a month → date-scope mismatch
                         if (ma_a and not ma_b) or (ma_b and not ma_a):
+                            continue
+                        # Both name specific (month, day) dates and they're disjoint →
+                        # different weekly/daily buckets even within the same month
+                        if da_a and da_b and not (da_a & da_b):
                             continue
 
                         # Drop candidate-name mismatches within the same event:
