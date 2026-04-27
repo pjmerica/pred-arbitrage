@@ -116,8 +116,39 @@ def parse_market(event, market):
         except Exception:
             prices = []
 
+    # Pick implied_prob with this priority (freshest first):
+    #   1. midpoint of bestBid + bestAsk           (live orderbook)
+    #   2. bestAsk alone                            (only ask side)
+    #   3. bestBid alone                            (only bid side)
+    #   4. outcomePrices "Yes"                      (gamma snapshot, can be stale)
+    #   5. lastTradePrice                           (worst — can be days stale)
+    # Earlier code went straight to outcomePrices then lastTradePrice; for
+    # low-volume markets gamma's snapshot is wildly out of sync with the live
+    # CLOB book, producing fake arbs against Kalshi.
     implied_prob = None
-    if outcomes and prices and len(outcomes) == len(prices):
+    bb = market.get("bestBid")
+    ba = market.get("bestAsk")
+    try:
+        bb = float(bb) if bb is not None else None
+    except (TypeError, ValueError):
+        bb = None
+    try:
+        ba = float(ba) if ba is not None else None
+    except (TypeError, ValueError):
+        ba = None
+    # Require BOTH a bid AND an ask. A one-sided quote (only ba or only bb)
+    # is a stale standing order, not a real market — using it pairs against
+    # other platforms' tight quotes and produces fake arbs (e.g. a lone
+    # $0.86 sell order sitting on a dead market).
+    if bb is not None and ba is not None and 0 < bb <= ba < 1:
+        # Wide spread (>10pp) means the midpoint is fictional; only the ask
+        # is actually fillable. Use ask to be conservative.
+        if (ba - bb) > 0.10:
+            implied_prob = ba
+        else:
+            implied_prob = round((bb + ba) / 2, 4)
+
+    if implied_prob is None and outcomes and prices and len(outcomes) == len(prices):
         pairs = {}
         for o, p in zip(outcomes, prices):
             try:
@@ -127,13 +158,11 @@ def parse_market(event, market):
         if "Yes" in pairs:
             implied_prob = pairs["Yes"]
         elif len(pairs) == 2:
-            # Pick the non-"No" outcome
             for k, v in pairs.items():
                 if k.lower() != "no":
                     implied_prob = v
                     break
 
-    # Fallback to lastTradePrice
     if implied_prob is None:
         last = market.get("lastTradePrice")
         if last is not None:
