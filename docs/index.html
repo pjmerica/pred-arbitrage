@@ -180,6 +180,7 @@ tr.suspicious-row td { opacity: 0.6; }
         <th data-col="implied_prob_b">Prob B</th>
         <th data-col="raw_gap_pp">Raw Gap</th>
         <th data-col="net_gap_pp">Net Gap</th>
+        <th data-col="depth_a_max_at_3pp">Tradeable</th>
         <th data-col="guaranteed_return_pct">Guar. Return</th>
         <th data-col="stake_a_dollars">Bet ($100 total)</th>
         <th data-col="fuzzy_score">Match</th>
@@ -312,7 +313,7 @@ function render() {
   const tbody = document.getElementById('arb-body');
 
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="11" class="empty">No pairs match filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12" class="empty">No pairs match filters</td></tr>`;
     return;
   }
 
@@ -331,6 +332,13 @@ function render() {
     const rawStr = r.raw_gap_pp != null ? r.raw_gap_pp.toFixed(1) + 'pp' : '—';
     const netStr = r.net_gap_pp != null ? (r.net_gap_pp > 0 ? '+' : '') + r.net_gap_pp.toFixed(1) + 'pp' : '—';
     const netCls = r.net_gap_pp > 0 ? 'gap-pos' : 'gap-neg';
+
+    const da = r.depth_a_max_at_3pp, db = r.depth_b_max_at_3pp;
+    const fmtSize = v => v == null ? '—' : (v >= 1000 ? (v/1000).toFixed(1) + 'k' : v.toFixed(0));
+    const sizeCls = v => v == null ? 'color:#4a5568' : (v < 50 ? 'color:#f87171' : v < 500 ? 'color:#facc15' : 'color:#34d399');
+    const tradeableCell = (da == null && db == null)
+      ? '<span style="color:#4a5568;font-size:0.7rem">—</span>'
+      : `<span style="font-size:0.7rem"><span style="${sizeCls(da)}">${fmtSize(da)}</span> <span style="color:#4a5568">/</span> <span style="${sizeCls(db)}">${fmtSize(db)}</span></span>`;
 
     const retCell = isGuaranteed && r.guaranteed_return_pct != null
       ? `<span class="ret-val">${r.guaranteed_return_pct.toFixed(1)}% <span style="color:#64748b;font-size:0.7rem">(+$${r.profit_dollars != null ? r.profit_dollars.toFixed(2) : '—'} / $100)</span></span>` : '—';
@@ -356,6 +364,7 @@ function render() {
       <td style="color:#94a3b8">${probB}</td>
       <td style="font-weight:600;color:#e2e8f0">${rawStr}</td>
       <td class="${netCls}">${netStr}</td>
+      <td>${tradeableCell}</td>
       <td>${retCell}</td>
       <td>${stakeCell}</td>
       <td>${matchBadge}</td>

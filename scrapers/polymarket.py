@@ -5,9 +5,15 @@ API: https://gamma-api.polymarket.com/events
 Paginates all active events, extracts nested markets with category from tags.
 
 Output: data/raw/polymarket_markets.csv
-Fields: condition_id, market_id, question, category, end_date,
+Fields: condition_id, market_id, yes_token_id, no_token_id,
+        question, category, end_date,
         implied_prob, best_bid, best_ask, liquidity, volume,
         url, fetched_at
+
+Note: yes_token_id / no_token_id are the ERC-1155 token IDs needed for
+CLOB orderbook lookups (clob.polymarket.com/book?token_id=...). These are
+78-digit integers — read CSVs with dtype={"yes_token_id": str, "no_token_id": str}
+or pandas will silently corrupt them to floats.
 """
 
 import urllib.request
@@ -137,6 +143,25 @@ def parse_market(event, market):
                 pass
 
     condition_id = market.get("conditionId", "")
+
+    # clobTokenIds: JSON-encoded string '["yes_id","no_id"]' or a real list.
+    # Outcome order in `outcomes` aligns with token order. These are 78-digit
+    # ERC-1155 IDs needed for CLOB orderbook lookups.
+    raw_tokens = market.get("clobTokenIds")
+    yes_token = no_token = None
+    try:
+        tokens = json.loads(raw_tokens) if isinstance(raw_tokens, str) else raw_tokens
+        if isinstance(tokens, list) and len(tokens) >= 2 and outcomes and len(outcomes) >= 2:
+            for o, tid in zip(outcomes, tokens):
+                if str(o).lower() == "yes":
+                    yes_token = tid
+                elif str(o).lower() == "no":
+                    no_token = tid
+            if yes_token is None and no_token is None:
+                yes_token, no_token = tokens[0], tokens[1]
+    except (ValueError, TypeError):
+        pass
+
     category = extract_category(event.get("tags") or [])
     event_slug = event.get("slug", "") or ""
     market_slug = market.get("slug", "") or ""
@@ -146,6 +171,8 @@ def parse_market(event, market):
     return {
         "condition_id": condition_id,
         "market_id": market.get("id", ""),
+        "yes_token_id": yes_token,
+        "no_token_id": no_token,
         "question": market.get("question", event.get("title", "")),
         "category": category,
         "end_date": str(market.get("endDate", event.get("endDate", "")))[:10],

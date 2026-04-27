@@ -172,13 +172,24 @@ def load_kalshi():
 
 
 def load_polymarket():
-    df = pd.read_csv(RAW / "polymarket_markets.csv")
+    # yes_token_id / no_token_id are 78-digit ints — must read as str or
+    # pandas will silently corrupt them to floats (scientific notation),
+    # breaking CLOB orderbook lookups.
+    df = pd.read_csv(
+        RAW / "polymarket_markets.csv",
+        dtype={"yes_token_id": str, "no_token_id": str},
+    )
     df = df[df["implied_prob"].notna()].copy()
     df["platform"] = "polymarket"
     df["title_norm"] = df["question"].apply(normalise)
     df["race_id"] = df["question"].apply(infer_race_id)
     df["settle_date"] = df["end_date"].astype(str)
-    df["market_id"] = df["condition_id"]
+    # Use yes_token_id as market_id so fetch_depth can query CLOB orderbook
+    # directly. Fall back to condition_id for rows missing token ids.
+    df["market_id"] = df["yes_token_id"].where(
+        df["yes_token_id"].notna() & (df["yes_token_id"] != ""),
+        df["condition_id"],
+    )
     return df
 
 
@@ -453,6 +464,33 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         if (db_a and not db_b) or (db_b and not db_a):
                             continue
                         if db_a and db_b and db_a != db_b:
+                            continue
+
+                        # Month-anchor mismatch: catches questions like
+                        # "best coding model end of April 2026" vs
+                        # "best coding model end of December 2026" — same template,
+                        # different settlement months. The date_bucket() above only
+                        # fires on "before/by" phrasing; this catches "end of <month>",
+                        # "in <month>", "during <month>", "<month> 2026", etc.
+                        def month_anchor(q):
+                            ql = q.lower()
+                            months = (r"jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|"
+                                      r"jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|"
+                                      r"oct(?:ober)?|nov(?:ember)?|dec(?:ember)?")
+                            found = set()
+                            for m in re.finditer(rf"\b({months})\b", ql):
+                                found.add(m.group(1)[:3])
+                            return found
+                        ma_a = month_anchor(q_a)
+                        ma_b = month_anchor(q_b)
+                        # If both name months and the sets are disjoint, they're
+                        # different settlement windows — not the same market.
+                        if ma_a and ma_b and not (ma_a & ma_b):
+                            continue
+                        # If exactly one names a month, the other is generic; that's
+                        # also a date-scope mismatch (e.g. Kalshi "end of December" vs
+                        # Polymarket "by 2026" with no month).
+                        if (ma_a and not ma_b) or (ma_b and not ma_a):
                             continue
 
                         # Drop candidate-name mismatches within the same event:

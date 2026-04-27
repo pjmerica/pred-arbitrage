@@ -143,7 +143,9 @@ def run():
         print("No matched_pairs.csv found — run scripts/matcher.py first")
         return
 
-    df = pd.read_csv(pairs_path)
+    # Polymarket market_ids are 78-digit token ids — must read as str or
+    # pandas corrupts them to float (scientific notation), breaking depth lookup.
+    df = pd.read_csv(pairs_path, dtype={"market_id_a": str, "market_id_b": str})
     df = df[df["implied_prob_a"].notna() & df["implied_prob_b"].notna()].copy()
     print(f"Processing {len(df)} matched pairs...")
 
@@ -189,6 +191,43 @@ def run():
         })
 
     result = pd.DataFrame(rows)
+
+    # Emit depth_targets.csv for fetch_depth.py. Only kalshi/polymarket
+    # markets have queryable orderbooks.
+    targets = []
+    for _, r in result.iterrows():
+        for side in ("a", "b"):
+            plat = r.get(f"platform_{side}")
+            mid = r.get(f"market_id_{side}")
+            if plat in ("kalshi", "polymarket") and mid and not (isinstance(mid, float) and pd.isna(mid)):
+                targets.append({"platform": plat, "market_id": str(mid)})
+    if targets:
+        tdf = pd.DataFrame(targets).drop_duplicates(subset=["platform", "market_id"])
+        tdf["market_id"] = tdf["market_id"].astype(str)
+        tpath = PROCESSED / "depth_targets.csv"
+        tdf.to_csv(tpath, index=False)
+        print(f"Emitted {len(tdf)} unique depth targets to {tpath}")
+
+    # Join orderbook depth if fetch_depth.py has already run.
+    depth_path = ROOT / "data" / "raw" / "orderbook_depth.csv"
+    if depth_path.exists():
+        depth = pd.read_csv(depth_path, dtype={"market_id": str})
+        depth_cols = ["best_bid", "best_ask", "best_bid_size", "best_ask_size",
+                      "depth_bid_at_1pp", "depth_ask_at_1pp", "max_buy_size_at_3pp_edge"]
+        result["market_id_a"] = result["market_id_a"].astype(str)
+        result["market_id_b"] = result["market_id_b"].astype(str)
+        for side in ("a", "b"):
+            d = depth[["platform", "market_id"] + depth_cols].rename(
+                columns={"platform": f"platform_{side}",
+                         "market_id": f"market_id_{side}",
+                         **{c: f"depth_{side}_{c}" for c in depth_cols}}
+            )
+            result = result.merge(d, on=[f"platform_{side}", f"market_id_{side}"], how="left")
+        # Short alias used by the dashboard
+        result["depth_a_max_at_3pp"] = result.get("depth_a_max_buy_size_at_3pp_edge")
+        result["depth_b_max_at_3pp"] = result.get("depth_b_max_buy_size_at_3pp_edge")
+        joined = result["depth_a_max_at_3pp"].notna().sum()
+        print(f"Joined depth onto {joined}/{len(result)} pairs (A side)")
 
     # Sort: guaranteed first, then by settle_date asc (soonest), then raw_gap desc
     result["_is_guaranteed"] = (result["arb_type"] == "guaranteed").astype(int)
