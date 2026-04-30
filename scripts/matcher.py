@@ -406,18 +406,66 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                             if qa_type != qb_type:
                                 continue
 
+                        # For candidate/primary pairs, the candidate names must match.
+                        # PredictIt's "Who will win the 2028 GOP nom? — JD Vance" was
+                        # being paired with Polymarket's "Will Tom Brady win the 2028
+                        # GOP nomination?" because both classify as primary and the
+                        # title prefix is similar enough to score above the fuzzy
+                        # threshold.
+                        if qa_type in ("primary", "candidate") and qb_type in ("primary", "candidate"):
+                            def cand_last(q):
+                                ql = str(q)
+                                # Pattern 1: "Will <Name> win/be"
+                                m = re.search(r"will\s+([A-Z][A-Za-z'\-\.]+(?:\s+[A-Z][A-Za-z'\-\.]+){0,2})\s+(?:win|be\b|become)",
+                                              ql, re.IGNORECASE)
+                                if m: return m.group(1).split()[-1].lower().strip(".'-")
+                                # Pattern 2: "— <Name>" or "- <Name>" at end
+                                m = re.search(r"[—\-]\s*([A-Z][A-Za-z'\-\.]+(?:\s+[A-Z][A-Za-z'\-\.]+){0,2})\s*$", ql)
+                                if m: return m.group(1).split()[-1].lower().strip(".'-")
+                                return None
+                            la = cand_last(row_a.get("question", ""))
+                            lb = cand_last(row_b.get("question", ""))
+                            if la and lb and la != lb:
+                                continue
+
                         # Drop numeric-bucket mismatches: if both questions contain different
-                        # numeric ranges (e.g. "Above 5.6M" vs "65-68%"), they're different buckets
-                        # of the same event, not the same market. Compare normalized numeric tokens.
+                        # numeric ranges (e.g. "Above 5.6M" vs "65-68%", or "57° or below"
+                        # vs "67° or below"), they're different buckets of the same event,
+                        # not the same market.
                         q_a = str(row_a.get("question", ""))
                         q_b = str(row_b.get("question", ""))
-                        nums_a = set(re.findall(r"\d+\.?\d*[%MK]?", q_a))
-                        nums_b = set(re.findall(r"\d+\.?\d*[%MK]?", q_b))
-                        # Strip year tokens (already filtered above)
+
+                        # Strip date phrases first so "May 1" / "April 13" don't pollute
+                        # the comparison with the day-of-month number.
+                        date_re = (r"\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|"
+                                   r"jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|"
+                                   r"oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?\s*\d{1,2}\b")
+                        clean_a = re.sub(date_re, "", q_a, flags=re.IGNORECASE)
+                        clean_b = re.sub(date_re, "", q_b, flags=re.IGNORECASE)
+
+                        nums_a = set(re.findall(r"\d+\.?\d*[%MK]?", clean_a))
+                        nums_b = set(re.findall(r"\d+\.?\d*[%MK]?", clean_b))
                         nums_a = {n for n in nums_a if n not in years_a and not re.match(r"^20\d{2}$", n)}
                         nums_b = {n for n in nums_b if n not in years_b and not re.match(r"^20\d{2}$", n)}
                         if nums_a and nums_b and not nums_a.intersection(nums_b):
-                            # Both have numeric quantifiers but none overlap → different buckets
+                            continue
+
+                        # Threshold-bucket mismatch: questions like "X or below" / "above X" /
+                        # "between X and Y" with explicit numeric thresholds. Even if one
+                        # number happens to overlap, if there's a phrase-anchored threshold
+                        # on each side and they differ, they're different buckets.
+                        def threshold_value(q):
+                            ql = q.lower()
+                            for pat in [r"(\d+\.?\d*)\s*°?\s*(?:f|c)?\s*(?:or below|or less|or under|or fewer)",
+                                        r"(?:above|over|more than|greater than)\s+(\d+\.?\d*)",
+                                        r"(?:below|under|less than)\s+(\d+\.?\d*)",
+                                        r"(\d+\.?\d*)\s*°?\s*(?:f|c)\b"]:
+                                m = re.search(pat, ql)
+                                if m: return float(m.group(1))
+                            return None
+                        ta = threshold_value(q_a)
+                        tb = threshold_value(q_b)
+                        if ta is not None and tb is not None and abs(ta - tb) > 0.5:
                             continue
 
                         # "run for" / "announce" / "enter race" vs "win" are semantically different
@@ -443,6 +491,63 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         r_a = rank_token(q_a)
                         r_b = rank_token(q_b)
                         if r_a and r_b and r_a != r_b:
+                            continue
+
+                        # Office mismatch: "Presidential nominee" vs "Vice-Presidential
+                        # nominee" — same template, different office. Same logic for
+                        # candidate vs "will the nominee be a woman / under 60 / black".
+                        def office_role(q):
+                            ql = q.lower()
+                            if "vice-president" in ql or "vice president" in ql or "v.p." in ql or re.search(r"\bvp\b", ql):
+                                return "vp"
+                            if "president" in ql or "presidential" in ql:
+                                return "president"
+                            return None
+                        oa = office_role(q_a)
+                        ob = office_role(q_b)
+                        if oa and ob and oa != ob:
+                            continue
+
+                        # Demographic-property markets ("Will the nominee be a woman?",
+                        # "Will the winner be under 60?", "Will the next president be
+                        # a Republican?") describe a property of the winner, not WHICH
+                        # candidate wins. Don't pair them with named-candidate markets.
+                        def is_demographic(q):
+                            ql = q.lower()
+                            return bool(re.search(
+                                r"\b(?:nominee|winner|president|senator|governor|candidate)\b"
+                                r".{0,40}\bbe\s+(?:a\s+)?(?:woman|man|under|over|black|white|hispanic|"
+                                r"latino|jewish|muslim|christian|catholic|gay|lgbt|democrat|republican|"
+                                r"independent)\b", ql))
+                        da_dem = is_demographic(q_a)
+                        db_dem = is_demographic(q_b)
+                        if da_dem != db_dem:  # one is demographic, the other names a candidate
+                            continue
+
+                        # Sports / event sub-bet mismatch. Kalshi often lists outcomes
+                        # like "Team A vs Team B — Tie" (3-way moneyline) while
+                        # Polymarket has "Team A vs Team B: O/U 2.5" (totals). They
+                        # share the team prefix and score high on fuzzy match but are
+                        # totally different bets. Classify each side and skip if the
+                        # types differ.
+                        def sub_bet_type(q):
+                            ql = str(q).lower()
+                            if re.search(r"\bo/u\s*\d|\bover/under|\bover\s+\d|\bunder\s+\d", ql):
+                                return "totals"
+                            if re.search(r"\bspread:|\bspread\s*[+-]?\d|puck\s*line|run\s*line", ql):
+                                return "spread"
+                            if re.search(r"\bml\s*\(|\bmoneyline\b", ql):
+                                return "moneyline"
+                            if re.search(r"[—\-]\s*tie\s*$|\b—\s*draw\s*$", ql) or re.search(r"\btie\s*$", ql):
+                                return "3way_tie"
+                            if re.search(r"first\s+(half|quarter|period)|\b1h\b|\b1q\b|\bhalftime\b", ql):
+                                return "period"
+                            if re.search(r"player\s+(props?|points|rebounds|assists)|to\s+score|first\s+(goal|td|basket)", ql):
+                                return "player_prop"
+                            return None
+                        st_a = sub_bet_type(q_a)
+                        st_b = sub_bet_type(q_b)
+                        if (st_a or st_b) and st_a != st_b:
                             continue
 
                         # Date-bucket mismatch: one question is scoped to "before [date]" /
