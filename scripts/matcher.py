@@ -267,12 +267,41 @@ def match_political(dfs: dict) -> pd.DataFrame:
                 prob_b = r.get("implied_prob_b")
 
                 # If both are party_winner but asking about opposite parties,
-                # flip one so both probs represent the same party winning.
+                # we'd normally flip one ("Will Reps win" → 1 - prob), but
+                # this is only safe when the race is effectively 2-way.
+                # If a serious independent / third-party candidate has
+                # non-trivial probability (e.g. Osborn in NE 2026 at 30%),
+                # then 1 - P(Reps win) ≠ P(Dems win), and the cross-flipped
+                # pair would describe a basket that doesn't partition the
+                # outcome space — producing a fake guaranteed arb.
+                #
+                # Safety check: require BOTH platforms to have explicit
+                # Dem + Rep markets that sum to ≥0.97. If either platform's
+                # Dem + Rep < 0.97, the race has third-party probability and
+                # we drop the pair.
                 if type_a == "party_winner" and type_b == "party_winner":
                     side_a = party_side(qa)
                     side_b = party_side(qb)
                     if side_a and side_b and side_a != side_b:
-                        # Flip prob_b so it represents the same party as prob_a
+                        def party_sum(plat_df, race_id):
+                            sub = plat_df[plat_df["race_id"] == race_id]
+                            dem_p = rep_p = None
+                            for _, row in sub.iterrows():
+                                ps = party_side(str(row.get("question", "")))
+                                if ps == "dem" and dem_p is None:
+                                    dem_p = pd.to_numeric(row.get("implied_prob"), errors="coerce")
+                                elif ps == "rep" and rep_p is None:
+                                    rep_p = pd.to_numeric(row.get("implied_prob"), errors="coerce")
+                            if dem_p is None or rep_p is None or pd.isna(dem_p) or pd.isna(rep_p):
+                                return None
+                            return float(dem_p) + float(rep_p)
+                        sum_a = party_sum(dfs[pa], r["race_id"])
+                        sum_b = party_sum(dfs[pb], r["race_id"])
+                        if sum_a is None or sum_b is None or sum_a < 0.97 or sum_b < 0.97:
+                            # Race has meaningful third-party probability —
+                            # cross-flipped basket isn't a true arb.
+                            continue
+                        # Safe to flip
                         if prob_b is not None:
                             prob_b = round(1.0 - float(prob_b), 4)
                         qb = f"[flipped] {qb}"
