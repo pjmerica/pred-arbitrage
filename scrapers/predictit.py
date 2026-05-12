@@ -29,15 +29,29 @@ def fetch():
 
 def parse_contract(market, contract):
     last = contract.get("lastTradePrice")
-    buy_yes = contract.get("bestBuyYesCost")
-    sell_yes = contract.get("bestSellYesCost")
+    buy_yes = contract.get("bestBuyYesCost")    # price to BUY YES (= ask)
+    sell_yes = contract.get("bestSellYesCost")  # price to SELL YES (= bid)
 
-    if buy_yes is not None and sell_yes is not None:
+    # PredictIt reports the full price range ($0.01–$0.99) as bid/ask when
+    # a contract has no real two-sided market — e.g. a stale single-sided
+    # standing order, or no orders at all on one side. Naively averaging
+    # them gives a meaningless midpoint (~$0.50) that the scanner will
+    # then "arb" against another platform's tight quote.
+    #
+    # Treat a spread > 30pp as a broken book and refuse to publish a
+    # price — the matcher will then drop the row.
+    implied_prob = None
+    if buy_yes is not None and sell_yes is not None and (buy_yes - sell_yes) <= 0.30:
         implied_prob = (buy_yes + sell_yes) / 2
-    elif last is not None:
+    elif buy_yes is not None and sell_yes is None:
+        # only an ask side — use it as the cost-to-enter
+        implied_prob = buy_yes
+    elif sell_yes is not None and buy_yes is None:
+        implied_prob = sell_yes
+    elif last is not None and 0.01 < last < 0.99:
+        # fall back to last trade only if it isn't pinned at the price-range
+        # endpoints (which usually means stale)
         implied_prob = last
-    else:
-        implied_prob = None
 
     market_id = market.get("id")
     return {
