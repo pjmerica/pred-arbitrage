@@ -209,7 +209,18 @@ const PLAT_COLORS = { kalshi: '#34d399', polymarket: '#a78bfa', predictit: '#f87
 // ── init ───────────────────────────────────────────────────────────────────
 function init() {
   if (ARB.updated_at) {
-    document.getElementById('updated').textContent = 'Updated: ' + new Date(ARB.updated_at).toLocaleString();
+    const d = new Date(ARB.updated_at);
+    const ageDays = (Date.now() - d.getTime()) / 86400000;
+    const color = ageDays < 2 ? '#34d399' : ageDays < 7 ? '#facc15' : '#f87171';
+    const rel = ageDays < 1
+      ? `${Math.round(ageDays * 24)}h ago`
+      : `${Math.round(ageDays)}d ago`;
+    const abs = d.toLocaleString('en-US', {
+      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+    document.getElementById('updated').innerHTML =
+      `<span style="color:${color};font-weight:600">● Updated ${rel}</span>` +
+      `<span style="color:#64748b"> (${abs})</span>`;
   }
 
   // Populate category filter
