@@ -129,12 +129,21 @@ def parse_market(event, market):
     yes_ask = to_float(market.get("yes_ask_dollars"))
     last    = to_float(market.get("last_price_dollars"))
 
-    if yes_bid is not None and yes_ask is not None and yes_bid > 0 and yes_ask > 0:
+    # Only trust the bid/ask midpoint when the book has a tight spread.
+    # A wide-spread (>30pp) book is broken — only stale limit orders at
+    # the price-range endpoints — and the midpoint pairs against the
+    # other platform's tight quote to produce fake arbs.
+    implied_prob = None
+    if (yes_bid is not None and yes_ask is not None
+            and yes_bid > 0 and yes_ask > 0
+            and (yes_ask - yes_bid) <= 0.30):
         implied_prob = (yes_bid + yes_ask) / 2
-    elif last is not None and last > 0:
+    elif yes_ask is not None and yes_ask > 0 and yes_bid in (None, 0):
+        implied_prob = yes_ask
+    elif yes_bid is not None and yes_bid > 0 and yes_ask in (None, 0):
+        implied_prob = yes_bid
+    elif last is not None and 0.01 < last < 0.99:
         implied_prob = last
-    else:
-        implied_prob = None
 
     series_ticker = event.get("series_ticker", "")
     event_ticker  = event.get("event_ticker", "")

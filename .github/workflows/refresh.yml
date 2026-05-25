@@ -2,9 +2,10 @@ name: Daily refresh
 
 on:
   schedule:
-    # 12:30 UTC = 08:30 ET (offset 30 min from polling-agg to avoid
-    # both repos hammering Polymarket/Kalshi at the same instant).
-    - cron: '30 12 * * *'
+    # Two refreshes/day, offset 30 min from polling-agg so we don't hammer
+    # Polymarket/Kalshi at the same instant.
+    - cron: '30 12 * * *'   # 08:30 ET (morning)
+    - cron: '30 0 * * *'    # 20:30 ET (evening)
   workflow_dispatch:
 
 jobs:
