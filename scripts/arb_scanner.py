@@ -289,6 +289,8 @@ def run():
     def clean(v):
         if isinstance(v, float) and np.isnan(v):
             return None
+        if isinstance(v, list):
+            return v  # lists (e.g. suspicion_reasons) are valid JSON, pass through
         if pd.isna(v):
             return None
         return v
