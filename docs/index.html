@@ -336,7 +336,15 @@ function render() {
     const matchBadge = r.match_type === 'political'
       ? `<span class="badge-political">Race ID</span>`
       : `<span class="badge-fuzzy">${r.fuzzy_score}%</span>`;
-    const suspBadge = r.suspicious ? `<span class="badge-suspicious">⚠ Suspicious</span>` : '';
+    const reasonText = {
+      wide_gap: '>20pp raw gap', wide_spread_a: 'wide spread on A', wide_spread_b: 'wide spread on B',
+      one_sided_a: 'one-sided book on A', one_sided_b: 'one-sided book on B',
+      thin_depth_a: '<20 contracts tradeable on A', thin_depth_b: '<20 contracts tradeable on B',
+    };
+    const reasons = (r.suspicion_reasons || []).map(k => reasonText[k] || k);
+    const suspBadge = r.suspicious
+      ? `<span class="badge-suspicious" title="${reasons.join(' · ').replace(/"/g,'&quot;')}" style="cursor:help">⚠ verify</span>`
+      : '';
 
     const probA = r.implied_prob_a != null ? (r.implied_prob_a * 100).toFixed(1) + '%' : '—';
     const probB = r.implied_prob_b != null ? (r.implied_prob_b * 100).toFixed(1) + '%' : '—';

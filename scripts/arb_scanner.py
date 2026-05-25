@@ -165,8 +165,10 @@ def run():
         arb["action"] = arb["action"].replace("{pa}", pa.title()).replace("{pb}", pb.title())
 
         raw_gap_pp = arb["raw_gap_pp"]
-        # Flag gaps > 40pp as suspicious — likely a data/matching error
-        suspicious = bool(raw_gap_pp is not None and raw_gap_pp > 40)
+        # Flag gaps > 20pp as suspicious — large gaps usually indicate a
+        # scrape staleness, mismatched outcome, or broken book somewhere.
+        # Real arbs typically have gaps under 10pp.
+        suspicious = bool(raw_gap_pp is not None and raw_gap_pp > 20)
 
         rows.append({
             "match_type": r.get("match_type", "fuzzy"),
@@ -243,6 +245,26 @@ def run():
         result = result[~result.apply(lambda r: wide(r, "a") or wide(r, "b"), axis=1)]
         if before != len(result):
             print(f"Dropped {before - len(result)} pairs with wide depth-derived spread (>25pp)")
+
+        # Compute suspicion_reasons. >20pp gap, wide depth spread, one-sided
+        # book, or thin depth all warrant manual verification.
+        def reasons(row):
+            rs = []
+            if (row.get("raw_gap_pp") or 0) > 20:
+                rs.append("wide_gap")
+            for side in ("a", "b"):
+                bb = row.get(f"depth_{side}_best_bid")
+                ba = row.get(f"depth_{side}_best_ask")
+                if pd.notna(bb) and pd.notna(ba) and (ba - bb) > 0.15:
+                    rs.append(f"wide_spread_{side}")
+                if pd.notna(ba) and pd.isna(bb):
+                    rs.append(f"one_sided_{side}")
+                m3 = row.get(f"depth_{side}_max_at_3pp")
+                if pd.notna(m3) and m3 < 20:
+                    rs.append(f"thin_depth_{side}")
+            return rs
+        result["suspicion_reasons"] = result.apply(reasons, axis=1)
+        result["suspicious"] = result["suspicion_reasons"].apply(lambda rs: len(rs) > 0)
 
     # Sort: guaranteed first, then by settle_date asc (soonest), then raw_gap desc
     result["_is_guaranteed"] = (result["arb_type"] == "guaranteed").astype(int)
