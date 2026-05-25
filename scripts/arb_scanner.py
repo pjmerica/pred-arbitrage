@@ -229,6 +229,21 @@ def run():
         joined = result["depth_a_max_at_3pp"].notna().sum()
         print(f"Joined depth onto {joined}/{len(result)} pairs (A side)")
 
+        # Defense in depth: even if a scraper missed a wide-spread market
+        # at scrape time, the fetch_depth pull is fresh. Drop any pair
+        # where the depth-derived spread on EITHER side exceeds 25pp —
+        # those quotes can't be filled at the implied midpoint price.
+        def wide(row, side):
+            bb = row.get(f"depth_{side}_best_bid")
+            ba = row.get(f"depth_{side}_best_ask")
+            if pd.isna(bb) or pd.isna(ba) or bb is None or ba is None:
+                return False
+            return (ba - bb) > 0.25
+        before = len(result)
+        result = result[~result.apply(lambda r: wide(r, "a") or wide(r, "b"), axis=1)]
+        if before != len(result):
+            print(f"Dropped {before - len(result)} pairs with wide depth-derived spread (>25pp)")
+
     # Sort: guaranteed first, then by settle_date asc (soonest), then raw_gap desc
     result["_is_guaranteed"] = (result["arb_type"] == "guaranteed").astype(int)
     result["_settle_sort"] = result["settle_date"].replace("", "9999-99-99")
