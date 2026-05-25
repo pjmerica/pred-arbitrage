@@ -38,20 +38,17 @@ def parse_contract(market, contract):
     # them gives a meaningless midpoint (~$0.50) that the scanner will
     # then "arb" against another platform's tight quote.
     #
-    # Treat a spread > 30pp as a broken book and refuse to publish a
-    # price — the matcher will then drop the row.
+    # Treat a spread > 30pp as a broken book and refuse to publish a price.
+    # ALSO: one-sided quotes are almost always stale single orders on
+    # PredictIt — require both bid AND ask. Example: PA-07 primary had
+    # buy=$0.92 sell=None and last=$0.01 for one contract; the lone $0.92
+    # ask is a stale order and was getting paired against Kalshi to
+    # produce a fake 91pp arb.
     implied_prob = None
-    if buy_yes is not None and sell_yes is not None and (buy_yes - sell_yes) <= 0.30:
+    if (buy_yes is not None and sell_yes is not None
+            and buy_yes > 0 and sell_yes > 0
+            and (buy_yes - sell_yes) <= 0.30):
         implied_prob = (buy_yes + sell_yes) / 2
-    elif buy_yes is not None and sell_yes is None:
-        # only an ask side — use it as the cost-to-enter
-        implied_prob = buy_yes
-    elif sell_yes is not None and buy_yes is None:
-        implied_prob = sell_yes
-    elif last is not None and 0.01 < last < 0.99:
-        # fall back to last trade only if it isn't pinned at the price-range
-        # endpoints (which usually means stale)
-        implied_prob = last
 
     market_id = market.get("id")
     return {

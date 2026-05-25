@@ -633,21 +633,40 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         if da_a and da_b and not (da_a & da_b):
                             continue
 
-                        # Drop candidate-name mismatches within the same event:
-                        # "Will Velichie win..." vs "Will Vazrazhdane win..." share template but
-                        # name different subjects. Detect by finding distinct capitalized proper
-                        # nouns in the 'Will X ...' prefix.
+                        # Drop subject-name mismatches within the same event.
+                        # Handles both phrasings:
+                        #   Polymarket "Will <Name> win..." (subject after "Will")
+                        #   Kalshi    "Some question? — <Name>" (subject after dash)
+                        # Examples that should be dropped:
+                        #   "Will Velichie win..." vs "Will Vazrazhdane win..."
+                        #   "Top Global Netflix Movie this week? — The Crash" vs
+                        #     "Will 'Apex' be the top global Netflix movie this week?"
                         def extract_subject(q):
-                            m = re.match(r"\s*Will\s+([A-Z][A-Za-z'\-\.]+(?:\s+[A-Z][A-Za-z'\-\.]+){0,3})\s+", q)
-                            return m.group(1).lower() if m else None
+                            ql = q.strip()
+                            # Pattern 1: "Will <Name> win/be/become..."
+                            m = re.match(r"\s*Will\s+(['\"]?[A-Z][A-Za-z0-9'\"\-\.: ]+?)\s+(?:win|be\b|become|advance|attend|finish)",
+                                         ql, re.IGNORECASE)
+                            if m:
+                                return m.group(1).strip(" '\"").lower()
+                            # Pattern 2: trailing "— <Subject>" or "- <Subject>" (Kalshi)
+                            m = re.search(r"[—\-]\s*(['\"]?[A-Za-z0-9][A-Za-z0-9'\"\-\.: ]+?)\s*$", ql)
+                            if m:
+                                return m.group(1).strip(" '\"").lower()
+                            return None
                         subj_a = extract_subject(q_a)
                         subj_b = extract_subject(q_b)
                         if subj_a and subj_b and subj_a != subj_b:
-                            # Both look like "Will X ..." with different named subjects
-                            # Skip generic words
-                            generic = {"the", "there", "a", "any", "another"}
-                            if subj_a.split()[0] not in generic and subj_b.split()[0] not in generic:
-                                continue
+                            # Different named subjects → not the same market.
+                            # Allow generic words like "the", "another" to slip through.
+                            generic = {"the", "there", "a", "an", "any", "another", "no one", "none"}
+                            if subj_a not in generic and subj_b not in generic:
+                                # Also require the last-word (often the most distinctive
+                                # part of a name) is different too — handles "Apex" vs
+                                # "The Crash" but lets "Tom Brady" match "Brady".
+                                last_a = subj_a.split()[-1]
+                                last_b = subj_b.split()[-1]
+                                if last_a != last_b:
+                                    continue
 
                         pairs.append({
                             "match_type": "fuzzy",

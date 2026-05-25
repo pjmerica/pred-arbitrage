@@ -54,39 +54,58 @@ def get(path, params=None, max_retries=5):
     raise RuntimeError(f"Failed after {max_retries} retries: {url}")
 
 
-def infer_race_id_from_ticker(ticker: str) -> str | None:
-    """Infer race_id from a Kalshi series ticker like HOUSECA47, SENATEPARTYPA."""
+def infer_race_id_from_ticker(ticker: str, event_ticker: str = "", title: str = "") -> str | None:
+    """Infer race_id from a Kalshi series ticker like HOUSECA47, SENATEPARTYPA.
+
+    Critical fix: Kalshi has overlapping series tickers across cycles, e.g.
+    SENATEOH-26 vs SENATEOH-28 (regular) vs SENATEOHS-26 (special).
+    The year suffix is in event_ticker; we extract it and reject anything
+    that isn't 2026. Specials get '-S' suffix on race_id.
+    """
     t = (ticker or "").upper()
+    evt = (event_ticker or "").upper()
+
+    # Drop events from non-2026 cycles. Year usually appears as -YY at end
+    # of event_ticker (SENATEOH-28) or before another segment (KXSENATEPA-26-...).
+    year_match = re.search(r"-(\d{2})$", evt) or re.search(r"-(\d{2})-", evt)
+    if year_match and year_match.group(1) != "26":
+        return None
+
+    is_special = "special" in (title or "").lower()
+    def s_suffix(stem_match):
+        # Add -S if the series stem ends in S (e.g. SENATEOHS), OR the title
+        # mentions "special".
+        return "-S" if (stem_match or is_special) else ""
 
     # HOUSE{ST}{D} e.g. HOUSECA47, HOUSENH2
     m = re.match(r"HOUSE([A-Z]{2})(\d+)$", t)
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-H-{m.group(1)}-{m.group(2).zfill(2)}"
 
-    # SENATEPARTY{ST}
-    m = re.match(r"SENATEPARTY[-_]?([A-Z]{2})(?:[A-Z0-9]*)?$", t)
+    # SENATEPARTY{ST}[S]
+    m = re.match(r"SENATEPARTY[-_]?([A-Z]{2})(S?)$", t)
     if m and m.group(1) in STATE_ABBREVS:
-        return f"2026-SEN-{m.group(1)}"
+        return f"2026-SEN-{m.group(1)}{s_suffix(m.group(2) == 'S')}"
 
-    # SENATE{ST} e.g. SENATEPA, SENATENH
-    m = re.match(r"SENATE[-_]?([A-Z]{2})(?:[A-Z0-9]*)?$", t)
+    # SENATE{ST}[S] — anchored so SENATEOHS doesn't match the SENATEOH branch
+    m = re.match(r"SENATE[-_]?([A-Z]{2})(S?)$", t)
     if m and m.group(1) in STATE_ABBREVS:
-        return f"2026-SEN-{m.group(1)}"
+        return f"2026-SEN-{m.group(1)}{s_suffix(m.group(2) == 'S')}"
 
-    # KXSENATE{ST} e.g. KXSENATEMSR
-    m = re.match(r"KXSENATE([A-Z]{2})([A-Z]?)$", t)
+    # KXSENATE{ST}[S]
+    m = re.match(r"KXSENATE([A-Z]{2})(S?)$", t)
     if m and m.group(1) in STATE_ABBREVS:
-        return f"2026-SEN-{m.group(1)}"
+        return f"2026-SEN-{m.group(1)}{s_suffix(m.group(2) == 'S')}"
 
-    # GOVPARTY{ST}
-    m = re.match(r"GOVPARTY([A-Z]{2})(?:[A-Z0-9]*)?$", t)
+    # GOVPARTY{ST}[S]
+    m = re.match(r"GOVPARTY([A-Z]{2})(S?)$", t)
     if m and m.group(1) in STATE_ABBREVS:
-        return f"2026-GOV-{m.group(1)}"
+        return f"2026-GOV-{m.group(1)}{s_suffix(m.group(2) == 'S')}"
 
-    # KXGOV{ST}
-    m = re.match(r"KXGOV([A-Z]{2})[A-Z0-9]+$", t)
+    # KXGOV{ST}{suffix}
+    m = re.match(r"KXGOV([A-Z]{2})[A-Z0-9]*$", t)
     if m and m.group(1) in STATE_ABBREVS:
-        return f"2026-GOV-{m.group(1)}"
+        return f"2026-GOV-{m.group(1)}{s_suffix(False)}"
 
     return None
 
@@ -161,7 +180,7 @@ def parse_market(event, market):
     else:
         title = event_title
 
-    race_id = infer_race_id_from_ticker(series_ticker)
+    race_id = infer_race_id_from_ticker(series_ticker, event_ticker, event_title)
 
     return {
         "ticker":        market_ticker,
