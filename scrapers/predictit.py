@@ -44,10 +44,14 @@ def parse_contract(market, contract):
     # buy=$0.92 sell=None and last=$0.01 for one contract; the lone $0.92
     # ask is a stale order and was getting paired against Kalshi to
     # produce a fake 91pp arb.
+    # Spread > 15pp on PredictIt is still effectively a broken book — the
+    # bestBuyYes/bestSellYes ARE the best bid/ask, not depth quotes. A
+    # 29pp spread isn't "deep market," it's "no one wants to trade here."
+    # Midpoint of a wide book produces fake arbs against tight quotes.
     implied_prob = None
     if (buy_yes is not None and sell_yes is not None
             and buy_yes > 0 and sell_yes > 0
-            and (buy_yes - sell_yes) <= 0.30):
+            and (buy_yes - sell_yes) <= 0.15):
         implied_prob = (buy_yes + sell_yes) / 2
 
     market_id = market.get("id")
