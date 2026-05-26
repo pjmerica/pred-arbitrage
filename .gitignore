@@ -1,5 +1,7 @@
 data/raw/
-data/processed/
+data/processed/*
+# But DO track the human-maintained exclude list
+!data/processed/excluded_pairs.json
 __pycache__/
 *.pyc
 .env

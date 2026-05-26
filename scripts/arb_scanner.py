@@ -266,6 +266,43 @@ def run():
         result["suspicion_reasons"] = result.apply(reasons, axis=1)
         result["suspicious"] = result["suspicion_reasons"].apply(lambda rs: len(rs) > 0)
 
+        # Scrutinize >30pp pairs by fetching each market's resolution rules
+        # and comparing. Pairs where the rules diverge (low similarity)
+        # describe different outcomes — they're not real arbs, just markets
+        # with similar-sounding questions.
+        try:
+            from scripts.scrutiny import scrutinize as _scrutinize
+        except ImportError:
+            try:
+                import sys as _sys
+                _sys.path.insert(0, str(ROOT))
+                from scripts.scrutiny import scrutinize as _scrutinize
+            except Exception:
+                _scrutinize = None
+        if _scrutinize is not None:
+            scrut = _scrutinize(result.to_dict(orient="records"), threshold_pp=30)
+            def apply_scrut(row):
+                k = (str(row.get("market_id_a")), str(row.get("market_id_b")))
+                return scrut.get(k)
+            result["_scrut"] = result.apply(apply_scrut, axis=1)
+            # Drop pairs marked 'drop'
+            drop_mask = result["_scrut"].apply(lambda s: bool(s) and s.get("action") == "drop")
+            n_drop = int(drop_mask.sum())
+            if n_drop:
+                print(f"Dropped {n_drop} pairs after rules-text scrutiny (criteria_score < {50})")
+            result = result[~drop_mask].copy()
+            # Append warn reason + score for the survivors
+            def merge_scrut(row):
+                s = row.get("_scrut")
+                rs = list(row.get("suspicion_reasons") or [])
+                if s and s.get("action") == "warn":
+                    rs.append(f"criteria_warn:{s.get('reason')}")
+                return rs
+            result["suspicion_reasons"] = result.apply(merge_scrut, axis=1)
+            result["criteria_score"] = result["_scrut"].apply(lambda s: s.get("criteria_score") if s else None)
+            result["suspicious"] = result["suspicion_reasons"].apply(lambda rs: len(rs) > 0)
+            result = result.drop(columns=["_scrut"])
+
     # Sort: guaranteed first, then by settle_date asc (soonest), then raw_gap desc
     result["_is_guaranteed"] = (result["arb_type"] == "guaranteed").astype(int)
     result["_settle_sort"] = result["settle_date"].replace("", "9999-99-99")

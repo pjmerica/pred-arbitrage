@@ -341,7 +341,13 @@ function render() {
       one_sided_a: 'one-sided book on A', one_sided_b: 'one-sided book on B',
       thin_depth_a: '<20 contracts tradeable on A', thin_depth_b: '<20 contracts tradeable on B',
     };
-    const reasons = (r.suspicion_reasons || []).map(k => reasonText[k] || k);
+    const reasons = (r.suspicion_reasons || []).map(k => {
+      if (typeof k === 'string' && k.startsWith('criteria_warn')) {
+        const s = r.criteria_score != null ? ` (rules similarity ${r.criteria_score}/100)` : '';
+        return `resolution criteria may differ${s}`;
+      }
+      return reasonText[k] || k;
+    });
     const suspBadge = r.suspicious
       ? `<span class="badge-suspicious" title="${reasons.join(' · ').replace(/"/g,'&quot;')}" style="cursor:help">⚠ verify</span>`
       : '';
