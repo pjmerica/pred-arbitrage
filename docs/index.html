@@ -267,11 +267,15 @@ function filtered() {
     if (fMinGap > 0 && (r.raw_gap_pp == null || r.raw_gap_pp < fMinGap)) return false;
     if (fMaxGap < 100 && (r.raw_gap_pp == null || r.raw_gap_pp > fMaxGap)) return false;
     if (fMinVol > 0) {
-      // PredictIt has no public volume — exempt; otherwise require >= threshold.
+      // Keep a pair if EITHER side clears the volume floor — the gap is
+      // what matters, and one liquid side is enough to act on. PredictIt
+      // has no public volume, so a PredictIt leg counts as "passing"
+      // (its counterparty side still gets checked). Only hide when BOTH
+      // sides are below the floor.
       const va = r.volume_a, vb = r.volume_b;
       const okA = r.platform_a === 'predictit' || (va != null && va >= fMinVol);
       const okB = r.platform_b === 'predictit' || (vb != null && vb >= fMinVol);
-      if (!okA || !okB) return false;
+      if (!okA && !okB) return false;
     }
     if (fProfitable === 'yes' && !r.profitable_onesided && r.arb_type !== 'guaranteed') return false;
     if (fSettle !== 'ALL' && r.settle_date) {
