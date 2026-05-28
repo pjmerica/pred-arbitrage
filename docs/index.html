@@ -96,6 +96,10 @@ tr.suspicious-row td { opacity: 0.6; }
 
 <div class="controls">
   <div class="filter-group">
+    <label>Quick filter</label>
+    <button id="f-sports-only" type="button" style="padding:5px 12px;border-radius:99px;border:1px solid #2d3748;background:transparent;color:#94a3b8;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s">⚽ Sports only</button>
+  </div>
+  <div class="filter-group">
     <label>Type</label>
     <select id="f-type">
       <option value="ALL">All</option>
@@ -192,7 +196,7 @@ tr.suspicious-row td { opacity: 0.6; }
 
 <script>
 // ── state ──────────────────────────────────────────────────────────────────
-let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide';
+let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide', fSportsOnly = false;
 // Volume slider stops (USD). Index 3 = $500 default.
 const VOL_STOPS = [0, 100, 250, 500, 1000, 5000, 10000, 50000, 100000, 1000000];
 let fMinVol = VOL_STOPS[3];
@@ -253,9 +257,19 @@ function updateStats() {
 }
 
 // ── filter + sort ──────────────────────────────────────────────────────────
+// Categories we count as "sports" for the Sports-only toggle.
+const SPORTS_CATS = new Set(['Sports','NFL','NBA','NHL','MLB','Soccer','Tennis',
+  'Golf','UFC','MMA','Boxing','Esports','NCAAF','NCAAB','Cricket','Formula 1','F1']);
+
 function filtered() {
   const today = new Date();
   return ARB.races.filter(r => {
+    // Sports-only toggle is a hard short-circuit: show EVERY sports pair
+    // regardless of suspicious/gap/volume/profitability filters. The user
+    // explicitly asked to see them all when this is on.
+    if (fSportsOnly) {
+      return SPORTS_CATS.has(r.category);
+    }
     if (fType === 'guaranteed' && r.arb_type !== 'guaranteed') return false;
     if (fType === 'profitable' && !r.profitable_onesided) return false;
     if (fType === 'one-sided' && r.arb_type !== 'one-sided') return false;
@@ -439,6 +453,20 @@ document.getElementById('f-minvol').addEventListener('input', e => {
 document.getElementById('f-profitable').addEventListener('change', e => { fProfitable = e.target.value; render(); });
 document.getElementById('f-suspicious').addEventListener('change', e => { fSuspicious = e.target.value; render(); });
 document.getElementById('f-search').addEventListener('input', e => { fSearch = e.target.value; render(); });
+document.getElementById('f-sports-only').addEventListener('click', e => {
+  fSportsOnly = !fSportsOnly;
+  const btn = e.target;
+  if (fSportsOnly) {
+    btn.style.background = 'rgba(52,211,153,0.18)';
+    btn.style.color = '#34d399';
+    btn.style.borderColor = '#34d399';
+  } else {
+    btn.style.background = 'transparent';
+    btn.style.color = '#94a3b8';
+    btn.style.borderColor = '#2d3748';
+  }
+  render();
+});
 
 init();
 </script>
