@@ -86,6 +86,11 @@ tr.suspicious-row td { opacity: 0.6; }
   <span id="updated"></span>
 </header>
 
+<div class="tabs" style="display:flex;gap:0;border-bottom:1px solid #1e2433;padding:0 18px;margin-bottom:12px">
+  <button class="tab-btn active" data-tab="markets" type="button" style="padding:10px 22px;font-size:0.82rem;font-weight:600;color:#e2e8f0;background:transparent;border:none;border-bottom:2px solid #4f6ef7;cursor:pointer">Markets</button>
+  <button class="tab-btn" data-tab="sports" type="button" style="padding:10px 22px;font-size:0.82rem;font-weight:600;color:#64748b;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer">⚽ Sports <span id="tab-sports-count" style="color:#4a5568;font-size:0.74rem">·0</span></button>
+</div>
+
 <div class="stats-bar">
   <div class="stat"><span class="stat-val green" id="stat-guaranteed">—</span><span class="stat-lbl">Guaranteed Arb</span></div>
   <div class="stat"><span class="stat-val yellow" id="stat-profitable">—</span><span class="stat-lbl">Profitable (one-sided)</span></div>
@@ -95,10 +100,6 @@ tr.suspicious-row td { opacity: 0.6; }
 </div>
 
 <div class="controls">
-  <div class="filter-group">
-    <label>Quick filter</label>
-    <button id="f-sports-only" type="button" style="padding:5px 12px;border-radius:99px;border:1px solid #2d3748;background:transparent;color:#94a3b8;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s">⚽ Sports only</button>
-  </div>
   <div class="filter-group">
     <label>Type</label>
     <select id="f-type">
@@ -196,7 +197,8 @@ tr.suspicious-row td { opacity: 0.6; }
 
 <script>
 // ── state ──────────────────────────────────────────────────────────────────
-let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide', fSportsOnly = false;
+let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide';
+let currentTab = 'markets';  // 'markets' (default) or 'sports'
 // Volume slider stops (USD). Index 3 = $500 default.
 const VOL_STOPS = [0, 100, 250, 500, 1000, 5000, 10000, 50000, 100000, 1000000];
 let fMinVol = VOL_STOPS[3];
@@ -264,12 +266,11 @@ const SPORTS_CATS = new Set(['Sports','NFL','NBA','NHL','MLB','Soccer','Tennis',
 function filtered() {
   const today = new Date();
   return ARB.races.filter(r => {
-    // Sports-only toggle is a hard short-circuit: show EVERY sports pair
-    // regardless of suspicious/gap/volume/profitability filters. The user
-    // explicitly asked to see them all when this is on.
-    if (fSportsOnly) {
-      return SPORTS_CATS.has(r.category);
-    }
+    const isSports = SPORTS_CATS.has(r.category);
+    // Sports tab: show EVERY sports pair, ignoring all other filters.
+    if (currentTab === 'sports') return isSports;
+    // Markets tab (default): exclude sports so they live on their own tab.
+    if (isSports) return false;
     if (fType === 'guaranteed' && r.arb_type !== 'guaranteed') return false;
     if (fType === 'profitable' && !r.profitable_onesided) return false;
     if (fType === 'one-sided' && r.arb_type !== 'one-sided') return false;
@@ -453,20 +454,26 @@ document.getElementById('f-minvol').addEventListener('input', e => {
 document.getElementById('f-profitable').addEventListener('change', e => { fProfitable = e.target.value; render(); });
 document.getElementById('f-suspicious').addEventListener('change', e => { fSuspicious = e.target.value; render(); });
 document.getElementById('f-search').addEventListener('input', e => { fSearch = e.target.value; render(); });
-document.getElementById('f-sports-only').addEventListener('click', e => {
-  fSportsOnly = !fSportsOnly;
-  const btn = e.target;
-  if (fSportsOnly) {
-    btn.style.background = 'rgba(52,211,153,0.18)';
-    btn.style.color = '#34d399';
-    btn.style.borderColor = '#34d399';
-  } else {
-    btn.style.background = 'transparent';
-    btn.style.color = '#94a3b8';
-    btn.style.borderColor = '#2d3748';
-  }
-  render();
+// Tab switching. On Sports tab the filter bar is hidden (and ignored).
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      const on = (b === btn);
+      b.style.color = on ? '#e2e8f0' : '#64748b';
+      b.style.borderBottomColor = on ? '#4f6ef7' : 'transparent';
+      b.classList.toggle('active', on);
+    });
+    // Hide the filter bar entirely on the Sports tab — it shows everything.
+    document.querySelector('.controls').style.display = (currentTab === 'sports') ? 'none' : '';
+    render();
+  });
 });
+
+// Populate the count badge on the Sports tab.
+const SPORTS_TAB_COUNT = ARB.races.filter(r => SPORTS_CATS.has(r.category)).length;
+const sportsCountEl = document.getElementById('tab-sports-count');
+if (sportsCountEl) sportsCountEl.textContent = '·' + SPORTS_TAB_COUNT;
 
 init();
 </script>
