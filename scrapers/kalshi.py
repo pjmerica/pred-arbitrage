@@ -226,16 +226,30 @@ def run():
                 rows.append(row)
 
     df = pd.DataFrame(rows)
-    df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
-
     out = RAW / "kalshi_markets.csv"
+
+    # Handle empty / column-missing case gracefully. The Kalshi API
+    # occasionally returns 0 events (transient). Crashing here would kill
+    # the rest of the pipeline (Polymarket + PredictIt scrapes that would
+    # have worked fine). Better: warn, keep the previous CSV in place,
+    # and exit 0 so downstream steps still run on the older snapshot.
+    if df.empty or "implied_prob" not in df.columns:
+        print(f"\nWARNING: Kalshi API returned no usable rows ({len(df)} raw). "
+              f"Keeping previous {out.name} so downstream steps can still run.")
+        if not out.exists():
+            # First run with no data — write empty file so downstream can read.
+            df.to_csv(out, index=False)
+        return
+
+    df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
     df.to_csv(out, index=False)
     print(f"\nSaved {len(df)} markets to {out}")
 
-    race_matched = df["race_id"].notna().sum()
+    race_matched = df["race_id"].notna().sum() if "race_id" in df.columns else 0
     print(f"Race_id matched: {race_matched}/{len(df)}")
-    print("\nBy category:")
-    print(df.groupby("category")["ticker"].count().sort_values(ascending=False).to_string())
+    if "category" in df.columns and len(df):
+        print("\nBy category:")
+        print(df.groupby("category")["ticker"].count().sort_values(ascending=False).to_string())
 
 
 if __name__ == "__main__":
