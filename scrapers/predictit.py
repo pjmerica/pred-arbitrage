@@ -82,9 +82,15 @@ def run():
             rows.append(parse_contract(market, contract))
 
     df = pd.DataFrame(rows)
-    df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
-
     out = RAW / "predictit_markets.csv"
+
+    # PredictIt API occasionally returns nothing. Don't clobber a good
+    # prior CSV (matcher will treat missing/empty as no PredictIt data).
+    if df.empty or "implied_prob" not in df.columns:
+        print(f"\nWARNING: PredictIt returned no usable rows. Keeping previous {out.name} if it exists.")
+        return
+
+    df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
     df.to_csv(out, index=False)
     print(f"Saved {len(df)} contracts to {out}")
     print(f"Across {df['market_id'].nunique()} markets")

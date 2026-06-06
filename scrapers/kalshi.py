@@ -235,10 +235,11 @@ def run():
     # and exit 0 so downstream steps still run on the older snapshot.
     if df.empty or "implied_prob" not in df.columns:
         print(f"\nWARNING: Kalshi API returned no usable rows ({len(df)} raw). "
-              f"Keeping previous {out.name} so downstream steps can still run.")
-        if not out.exists():
-            # First run with no data — write empty file so downstream can read.
-            df.to_csv(out, index=False)
+              f"Keeping previous {out.name} if it exists; downstream loaders "
+              f"will treat a missing/empty file as no Kalshi data this run.")
+        # Don't write an empty CSV — matcher's _safe_read_csv handles a
+        # missing or zero-byte file by returning an empty DataFrame. Writing
+        # a zero-byte file used to make pd.read_csv crash on EmptyDataError.
         return
 
     df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]

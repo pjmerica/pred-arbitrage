@@ -234,6 +234,14 @@ def run():
             rows.append(parse_market(event, event))
 
     df = pd.DataFrame(rows)
+    out = RAW / "polymarket_markets.csv"
+
+    # Polymarket API occasionally returns nothing. Don't clobber a good
+    # prior CSV (matcher will treat missing/empty as no Polymarket data).
+    if df.empty or "implied_prob" not in df.columns:
+        print(f"\nWARNING: Polymarket returned no usable rows. Keeping previous {out.name} if it exists.")
+        return
+
     df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
     df = df.drop_duplicates(subset=["condition_id"])
 
@@ -252,7 +260,6 @@ def run():
     df = df[(liq >= 200) & has_two_sided]
     print(f"  Dropped {before - len(df)} markets (liquidity<$200 or spread>30pp)")
 
-    out = RAW / "polymarket_markets.csv"
     df.to_csv(out, index=False)
     print(f"Saved {len(df)} markets to {out}")
 

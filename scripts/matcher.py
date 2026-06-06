@@ -160,8 +160,25 @@ def normalise(title: str) -> str:
 
 # ── loaders ──────────────────────────────────────────────────────────────────
 
+def _safe_read_csv(path, **kw):
+    """Read a CSV, returning an empty DataFrame if the file is missing,
+    zero-byte, or has no columns. Lets us survive transient scraper
+    outages (Kalshi/Polymarket APIs occasionally return nothing) without
+    crashing the whole pipeline."""
+    if not path.exists():
+        print(f"  WARNING: {path.name} does not exist — using empty DataFrame")
+        return pd.DataFrame()
+    try:
+        return pd.read_csv(path, **kw)
+    except pd.errors.EmptyDataError:
+        print(f"  WARNING: {path.name} is empty — using empty DataFrame")
+        return pd.DataFrame()
+
+
 def load_kalshi():
-    df = pd.read_csv(RAW / "kalshi_markets.csv")
+    df = _safe_read_csv(RAW / "kalshi_markets.csv")
+    if df.empty or "implied_prob" not in df.columns:
+        return pd.DataFrame(columns=["market_id", "question", "race_id", "platform"])
     df = df[df["implied_prob"].notna()].copy()
     df["platform"] = "kalshi"
     df["title_norm"] = df["title"].apply(normalise)
@@ -175,10 +192,12 @@ def load_polymarket():
     # yes_token_id / no_token_id are 78-digit ints — must read as str or
     # pandas will silently corrupt them to floats (scientific notation),
     # breaking CLOB orderbook lookups.
-    df = pd.read_csv(
+    df = _safe_read_csv(
         RAW / "polymarket_markets.csv",
         dtype={"yes_token_id": str, "no_token_id": str},
     )
+    if df.empty or "implied_prob" not in df.columns:
+        return pd.DataFrame(columns=["market_id", "question", "race_id", "platform"])
     df = df[df["implied_prob"].notna()].copy()
     df["platform"] = "polymarket"
     df["title_norm"] = df["question"].apply(normalise)
@@ -194,7 +213,9 @@ def load_polymarket():
 
 
 def load_predictit():
-    df = pd.read_csv(RAW / "predictit_markets.csv")
+    df = _safe_read_csv(RAW / "predictit_markets.csv")
+    if df.empty or "implied_prob" not in df.columns:
+        return pd.DataFrame(columns=["market_id", "question", "race_id", "platform"])
     df = df[df["implied_prob"].notna()].copy()
     df["platform"] = "predictit"
     # Use contract name as question for matching (more specific)
