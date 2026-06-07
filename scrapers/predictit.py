@@ -84,11 +84,10 @@ def run():
     df = pd.DataFrame(rows)
     out = RAW / "predictit_markets.csv"
 
-    # PredictIt API occasionally returns nothing. Don't clobber a good
-    # prior CSV (matcher will treat missing/empty as no PredictIt data).
+    # If PredictIt returned nothing, FAIL THE RUN so the workflow doesn't
+    # push partial docs/ over yesterday's good dashboard.
     if df.empty or "implied_prob" not in df.columns:
-        print(f"\nWARNING: PredictIt returned no usable rows. Keeping previous {out.name} if it exists.")
-        return
+        raise SystemExit("PredictIt returned no usable rows. Aborting to keep the last good dashboard.")
 
     df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
     df.to_csv(out, index=False)

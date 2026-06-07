@@ -228,19 +228,14 @@ def run():
     df = pd.DataFrame(rows)
     out = RAW / "kalshi_markets.csv"
 
-    # Handle empty / column-missing case gracefully. The Kalshi API
-    # occasionally returns 0 events (transient). Crashing here would kill
-    # the rest of the pipeline (Polymarket + PredictIt scrapes that would
-    # have worked fine). Better: warn, keep the previous CSV in place,
-    # and exit 0 so downstream steps still run on the older snapshot.
+    # If the Kalshi API returned nothing, FAIL THE RUN. The workflow's
+    # commit step won't fire, so the live dashboard keeps showing the
+    # last good data instead of partial/empty data being pushed.
     if df.empty or "implied_prob" not in df.columns:
-        print(f"\nWARNING: Kalshi API returned no usable rows ({len(df)} raw). "
-              f"Keeping previous {out.name} if it exists; downstream loaders "
-              f"will treat a missing/empty file as no Kalshi data this run.")
-        # Don't write an empty CSV — matcher's _safe_read_csv handles a
-        # missing or zero-byte file by returning an empty DataFrame. Writing
-        # a zero-byte file used to make pd.read_csv crash on EmptyDataError.
-        return
+        raise SystemExit(
+            f"Kalshi API returned no usable rows ({len(df)} raw). "
+            "Aborting so the workflow doesn't overwrite docs/ with partial data."
+        )
 
     df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
     df.to_csv(out, index=False)
