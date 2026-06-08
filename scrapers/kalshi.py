@@ -35,7 +35,12 @@ STATE_ABBREVS = {
 }
 
 
-def get(path, params=None, max_retries=5):
+# HTTP status codes worth retrying. 429 = rate limit, 5xx = server error,
+# 403 sometimes fires as a transient WAF/edge hiccup (saw it on Kalshi
+# 2026-06-07 during a manual run; immediate retry worked).
+RETRY_CODES = {403, 408, 429, 500, 502, 503, 504}
+
+def get(path, params=None, max_retries=4):
     url = f"{BASE}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
@@ -45,9 +50,17 @@ def get(path, params=None, max_retries=5):
             with urllib.request.urlopen(req, timeout=30) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
-            if e.code == 429:
-                wait = 10 * (attempt + 1)
-                print(f"  Rate limited, waiting {wait}s...")
+            if e.code in RETRY_CODES and attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)  # 2s, 4s, 8s, 16s
+                print(f"  HTTP {e.code} on {path}, retry {attempt+1}/{max_retries-1} in {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
+        except urllib.error.URLError as e:
+            # Network-level (DNS, timeout, connection reset). Retry too.
+            if attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                print(f"  Network error on {path}: {e}, retry {attempt+1}/{max_retries-1} in {wait}s...")
                 time.sleep(wait)
                 continue
             raise

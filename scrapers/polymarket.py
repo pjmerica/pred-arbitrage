@@ -18,6 +18,7 @@ or pandas will silently corrupt them to floats.
 
 import urllib.request
 import urllib.parse
+import urllib.error
 import json
 import time
 import pandas as pd
@@ -39,13 +40,32 @@ PRIORITY_TAGS = [
 ]
 
 
-def get(path, params=None):
+RETRY_CODES = {403, 408, 429, 500, 502, 503, 504}
+
+def get(path, params=None, max_retries=4):
     url = f"{BASE}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+    for attempt in range(max_retries):
+        req = urllib.request.Request(url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code in RETRY_CODES and attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                print(f"  HTTP {e.code} on {path}, retry {attempt+1}/{max_retries-1} in {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
+        except urllib.error.URLError as e:
+            if attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                print(f"  Network error on {path}: {e}, retry {attempt+1}/{max_retries-1} in {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
+    raise RuntimeError(f"Failed after {max_retries} retries: {url}")
 
 
 def extract_category(tags):
