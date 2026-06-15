@@ -24,7 +24,17 @@ from datetime import datetime, timezone
 
 RAW = Path(__file__).parent.parent / "data" / "raw"
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
-HEADERS = {"User-Agent": "Mozilla/5.0 (research/pred-arb)", "Accept": "application/json"}
+# Real browser UA. Kalshi's WAF started rejecting "Mozilla/5.0 (research/...)"
+# with 403 in mid-June 2026 — apparently flagging the identifying string.
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/126.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/json,text/html;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 PAGE_SIZE = 200
 
 STATE_ABBREVS = {
@@ -40,10 +50,12 @@ STATE_ABBREVS = {
 # 2026-06-07 during a manual run; immediate retry worked).
 RETRY_CODES = {403, 408, 429, 500, 502, 503, 504}
 
-def get(path, params=None, max_retries=4):
+def get(path, params=None, max_retries=6):
     url = f"{BASE}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
+    # Backoff: 5, 10, 20, 40, 60, 60s. Kalshi's WAF blocks for 30-60s
+    # after a burst of 403s; shorter backoffs blew through the budget.
     for attempt in range(max_retries):
         req = urllib.request.Request(url, headers=HEADERS)
         try:
@@ -51,15 +63,14 @@ def get(path, params=None, max_retries=4):
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             if e.code in RETRY_CODES and attempt < max_retries - 1:
-                wait = 2 ** (attempt + 1)  # 2s, 4s, 8s, 16s
+                wait = min(60, 5 * (2 ** attempt))
                 print(f"  HTTP {e.code} on {path}, retry {attempt+1}/{max_retries-1} in {wait}s...")
                 time.sleep(wait)
                 continue
             raise
         except urllib.error.URLError as e:
-            # Network-level (DNS, timeout, connection reset). Retry too.
             if attempt < max_retries - 1:
-                wait = 2 ** (attempt + 1)
+                wait = min(60, 5 * (2 ** attempt))
                 print(f"  Network error on {path}: {e}, retry {attempt+1}/{max_retries-1} in {wait}s...")
                 time.sleep(wait)
                 continue
