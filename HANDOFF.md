@@ -235,20 +235,21 @@ public volume field and the counterparty was often below $500.
 
 ## When something looks fishy
 
-Two diagnostic scripts in the user's local checkout (not in this repo):
+The repo's primary diagnostic tool is `tools/deep_check.py` (see
+`tools/README.md`). It walks the top 50 arb candidates, refetches live
+orderbooks for both sides, and categorizes each as REAL / MARGINAL /
+THIN / GONE / WRONG_PAIR / PREDICTIT_LEG / ONE_PLATFORM at multiple
+slippage budgets.
 
-- `c:/Users/pjmer/Documents/audit_arbs.py` — top-K live verification
-  against orderbooks. Refetches live bid/ask and recomputes basket
-  cost. Shows whether a "guaranteed" arb actually survives current
-  prices.
-- `c:/Users/pjmer/Documents/deep_check_predarb.py` — multi-slippage
-  walk through the top 50 pairs. Shows max-fill-size at 0pp / 1pp /
-  3pp slippage so you can see if the apparent arb has any real depth.
-- `c:/Users/pjmer/Documents/verify_arbs.py` — same shape but newer,
-  includes the scrutiny-style criteria check.
+```bash
+python tools/deep_check.py
+```
 
-Run these when investigating a suspect pair. They live outside the
-repo because they're for the human, not the pipeline.
+Two additional lighter-weight diagnostic scripts live in the
+maintainer's local checkout outside this repo:
+`audit_arbs.py` (top-K live verification across both repos) and
+`verify_arbs.py` (newer shape with the scrutiny-style criteria check).
+Not committed because they target both repos via local absolute paths.
 
 ---
 
