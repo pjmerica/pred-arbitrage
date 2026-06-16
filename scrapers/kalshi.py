@@ -34,6 +34,11 @@ HEADERS = {
     ),
     "Accept": "application/json,text/html;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://kalshi.com/",
+    "Origin": "https://kalshi.com",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
 }
 PAGE_SIZE = 200
 
