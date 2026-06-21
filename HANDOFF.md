@@ -201,6 +201,40 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
    2026-06-21 because those pairs are now dropped at filter step 5
    instead of just being flagged.
 
+### Polymarket pagination
+
+Polymarket has TWO `/events` pagination endpoints:
+
+- **`/events?offset=N`** — offset-based, HARD-CAPPED at offset 2000.
+  Anything past that returns HTTP 422 with body
+  `"offset too large, use /events/keyset for deeper pagination"`.
+- **`/events/keyset?cursor=...`** — cursor-based, no cap. Returns
+  `{events: [...], next_cursor: "..."}`; follow the cursor until
+  empty/missing.
+
+`fetch_all_events()` uses keyset. The old code that used offset
+silently truncated every scrape to ~2000 events because the original
+"break on first exception" loop swallowed the 422 — and even the
+fixed retry-and-skip loop hit persistent 422s on every page past 2000.
+
+### Active-flag lies
+
+Both Polymarket and Kalshi leave already-resolved markets flagged
+`active=true` / status=open in their public feeds. Probed Polymarket
+2026-06-21: ~22% of "active" events had `endDate` in the past. Kalshi
+sample: 17,863 of 44,269 markets had `close_date` in the past.
+
+Don't trust the status flags. Filter on the date itself:
+
+- `scrapers/kalshi.py` skips rows where `close_date < today` before
+  emitting.
+- `scrapers/polymarket.py` drops rows where `end_date < today` in the
+  post-scrape cleaning step.
+
+There's also a downstream `settle_date < today` filter in
+`scripts/arb_scanner.py` for defense in depth (catches any market
+that resolves between scrape and dashboard render).
+
 ### Polymarket freshness: gamma scrape + live-CLOB freshen
 
 Polymarket has two endpoints we care about:

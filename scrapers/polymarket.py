@@ -97,69 +97,72 @@ def extract_category(tags):
 
 
 def fetch_all_events():
-    """Paginate all active events from Polymarket.
+    """Paginate all active events from Polymarket via /events/keyset.
 
-    Polymarket's /events endpoint occasionally returns HTTP 422 on a
-    specific page (seen in production 2026-06-21 at offset 2100); the
-    same page succeeds on retry. Old code did `except Exception: break`
-    which silently stopped pagination at the first hiccup, shipping a
-    small subset of the universe as if it were complete. Now we retry
-    a few times and SKIP a persistently-failing page rather than
-    abandoning the rest. The end-of-data signal is `batch == []`,
-    not the first exception.
+    History: we used to paginate /events with offset=N. Polymarket capped
+    offset at 2000 (probed 2026-06-21: any offset > 2000 returns HTTP 422
+    with body "offset too large, use /events/keyset for deeper pagination").
+    That cap silently truncated every scrape to the first ~2000 events
+    even though there are ~25k+ active.
 
-    Hard cap (MAX_PAGES) prevents an infinite loop if the API stops
-    decrementing the result set; PAGE_SIZE=100 means cap is 50000 events.
+    /events/keyset returns {events: [...], next_cursor: "..."}. We follow
+    the cursor until next_cursor is empty/missing.
+
+    The old offset-based retry-and-skip loop didn't help here because the
+    422s at offset > 2000 are deterministic, not transient. Cursor pagination
+    has no such cap.
     """
     all_events = []
-    offset = 0
+    cursor = None
     page = 0
-    consecutive_empty = 0
-    MAX_PAGES = 500
+    consecutive_failures = 0
+    MAX_PAGES = 1000  # safety cap; PAGE_SIZE=100 means 100k-event ceiling
     MAX_RETRIES_PER_PAGE = 3
     while page < MAX_PAGES:
-        batch = None
+        params = {
+            "limit": PAGE_SIZE,
+            "active": "true",
+            "closed": "false",
+        }
+        if cursor:
+            params["cursor"] = cursor
+
+        data = None
         for attempt in range(MAX_RETRIES_PER_PAGE):
             try:
-                batch = get("/events", {
-                    "limit": PAGE_SIZE,
-                    "active": "true",
-                    "closed": "false",
-                    "offset": offset,
-                })
+                data = get("/events/keyset", params)
                 break
             except Exception as e:
                 if attempt < MAX_RETRIES_PER_PAGE - 1:
                     wait = 2 * (attempt + 1)
-                    print(f"  Page at offset {offset} failed ({e}); retrying in {wait}s...")
+                    print(f"  Page (cursor={str(cursor)[:20]}...) failed ({e}); retrying in {wait}s...")
                     time.sleep(wait)
                 else:
-                    print(f"  Page at offset {offset} failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); skipping page and continuing")
-        if batch is None:
-            # All retries exhausted — skip this page, keep going. If we
-            # see 3 empty/failed pages in a row, give up (probably past
-            # the end of real data).
-            consecutive_empty += 1
-            if consecutive_empty >= 3:
-                print(f"  3 consecutive failed pages — stopping pagination at offset {offset}")
+                    print(f"  Page failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); stopping")
+        if data is None:
+            consecutive_failures += 1
+            if consecutive_failures >= 3:
+                print(f"  3 consecutive failed pages — stopping at page {page}")
                 break
-            offset += PAGE_SIZE
-            page += 1
-            continue
-        if not batch:
-            # Real end of data.
+            # Without a cursor advance we'd retry the same page forever, so
+            # give up. A future retry should reset by passing cursor=None.
             break
-        consecutive_empty = 0
-        all_events.extend(batch)
+
+        consecutive_failures = 0
+        events = data.get("events") if isinstance(data, dict) else None
+        if not events:
+            break  # real end of data
+        all_events.extend(events)
         page += 1
         if page % 20 == 0:
-            print(f"  Fetched {len(all_events)} events so far (offset {offset})...")
-        if len(batch) < PAGE_SIZE:
-            break
-        offset += PAGE_SIZE
+            print(f"  Fetched {len(all_events)} events so far (cursor pages: {page})...")
+
+        cursor = data.get("next_cursor") if isinstance(data, dict) else None
+        if not cursor:
+            break  # last page reached
         time.sleep(0.05)
     if page == MAX_PAGES:
-        print(f"  Hit MAX_PAGES={MAX_PAGES} — stopping. Bump the cap if Polymarket genuinely has > {MAX_PAGES * PAGE_SIZE} active events.")
+        print(f"  Hit MAX_PAGES={MAX_PAGES} — stopping. Bump the cap if Polymarket has > {MAX_PAGES * PAGE_SIZE} active events.")
     return all_events
 
 
@@ -312,6 +315,20 @@ def run():
 
     df = df[df["implied_prob"].notna() & (df["implied_prob"] > 0) & (df["implied_prob"] < 1)]
     df = df.drop_duplicates(subset=["condition_id"])
+
+    # Drop dead props that the platform still flags active=true. Polymarket's
+    # active/closed flags are unreliable — a probe on 2026-06-21 showed
+    # ~22% of "active" events had endDate already in the past. Filter on
+    # the date itself so a market that resolved 6 months ago doesn't
+    # show up as tradeable. Rows with no end_date are kept (don't drop on
+    # missing data; the downstream past-settle-date filter in arb_scanner
+    # catches whatever leaks through).
+    today_iso = datetime.now(timezone.utc).date().isoformat()
+    before = len(df)
+    df = df[~((df["end_date"].notna()) & (df["end_date"].astype(str).str[:10] < today_iso)
+              & (df["end_date"].astype(str).str.match(r"^\d{4}-\d{2}-\d{2}", na=False)))]
+    if before != len(df):
+        print(f"  Dropped {before - len(df)} markets with end_date in the past")
 
     # Drop unrealistic markets:
     #   1. Liquidity < $200 — basically no real trading

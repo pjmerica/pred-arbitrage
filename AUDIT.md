@@ -352,3 +352,42 @@ Files modified: `requirements.txt`, `scrapers/polymarket.py`,
 HANDOFF.md updated: new "Polymarket freshness" section explaining the
 gamma-then-CLOB design; new "Freshness guard" section; file-map and
 pipeline diagram updated.
+
+### 2026-06-21 (later evening) — pagination switch + dead-prop filters
+
+User asked to probe why the first manual run only pulled 6196
+Polymarket markets vs the ~25k we'd expected. Two findings:
+
+1. **Polymarket's `/events?offset=N` is capped at offset=2000.** Probed
+   directly: any offset > 2000 returns HTTP 422 with body
+   `"offset too large, use /events/keyset for deeper pagination"`.
+   This is a server-side API change, not a regression. The old retry
+   loop was masking it by stopping on the first error — and the new
+   one (skip-and-continue) was hitting persistent 422s on every page
+   past 2000.
+
+   Fix: switched `fetch_all_events()` to `/events/keyset` with cursor
+   pagination. Same retry/skip safety, no offset cap.
+
+2. **Both platforms leave dead markets flagged as active.** Probed
+   `active=true&closed=false` on Polymarket: 11 of 50 sampled events
+   had `endDate` already in the past. Kalshi CSV from earlier today
+   showed 17,863 of 44,269 markets with `close_date` already past.
+   Their own status flags lie. The downstream past-settle-date filter
+   in `arb_scanner.py` catches these eventually, but only after they
+   bloat the matcher input.
+
+   Fix: added scraper-level date filters.
+   - `scrapers/kalshi.py`: skip rows where `close_date < today`
+     before they even enter the dedup-then-emit loop.
+   - `scrapers/polymarket.py`: drop rows where `end_date < today` in
+     the post-scrape cleaning step (alongside the existing liquidity
+     and wide-spread drops).
+
+Files modified: `scrapers/kalshi.py`, `scrapers/polymarket.py`.
+
+Expected impact: dramatic shrink in scraper output (Kalshi: ~44k → ~26k;
+Polymarket: was capped at ~6k due to the bug, should jump back to ~20k
+clean after the keyset switch). Matcher universe should be roughly
+similar to pre-2026-06-21 — but every row now represents a market that
+is genuinely still trading.

@@ -1,4 +1,13 @@
-data/raw/
+data/raw/*
+# Track the scraper outputs themselves so production refreshes commit
+# them back to the repo and a fresh checkout has data to work with
+# (changed 2026-06-21 — previously gitignored entirely, which meant the
+# local CSV could silently lag production by months because nothing
+# ever pulled it down).
+!data/raw/kalshi_markets.csv
+!data/raw/polymarket_markets.csv
+!data/raw/predictit_markets.csv
+!data/raw/orderbook_depth.csv
 data/processed/*
 # But DO track the human-maintained exclude list
 !data/processed/excluded_pairs.json
@@ -6,6 +15,9 @@ data/processed/*
 # import time, useful to have committed so a fresh checkout has it
 # before the house_incumbents scraper runs.
 !data/processed/house_incumbents.json
+# And the election_pairs CSV — produced by scripts/elections.py, fed
+# into arb_scanner. Useful to inspect committed.
+!data/processed/election_pairs.csv
 __pycache__/
 *.pyc
 .env

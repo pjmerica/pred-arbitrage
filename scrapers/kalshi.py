@@ -236,13 +236,25 @@ def run():
     # Skip multivariate parlay markets — they have no equivalent on PM/PI
     SKIP_EVENT_PREFIXES = ("KXMVE", "KXMULTIVARIATE")
 
+    # Drop markets whose close_date is already in the past. Kalshi leaves
+    # resolved markets in the "open events" feed for days/weeks; on
+    # 2026-06-21 a sample of 44k markets contained ~17.8k with close_date
+    # already past. Those can't be traded but were diluting matcher input
+    # and producing dead-prop arbs.
+    today_iso = datetime.now(timezone.utc).date().isoformat()
     n_one_sided = 0
+    n_past = 0
     for event in events:
         et = (event.get("event_ticker") or "").upper()
         if any(et.startswith(p) for p in SKIP_EVENT_PREFIXES):
             continue
         for market in event.get("markets") or []:
             row = parse_market(event, market)
+            # Drop already-closed markets.
+            cd = (row.get("close_date") or "")[:10]
+            if cd and re.match(r"^\d{4}-\d{2}-\d{2}$", cd) and cd < today_iso:
+                n_past += 1
+                continue
             # Skip one-sided books — markets with a yes_ask but no yes_bid
             # can be bought into but not exited. They show a "price" that
             # isn't actually two-sided and clutter the dashboard. User
@@ -259,8 +271,10 @@ def run():
             if key and key not in seen_tickers:
                 seen_tickers.add(key)
                 rows.append(row)
+    if n_past:
+        print(f"  Skipped {n_past} markets with close_date in the past")
     if n_one_sided:
-        print(f"  Skipped {n_one_sided} one-sided markets (no bid → can't exit)")
+        print(f"  Skipped {n_one_sided} one-sided markets (no bid - can't exit)")
 
     df = pd.DataFrame(rows)
     out = RAW / "kalshi_markets.csv"
