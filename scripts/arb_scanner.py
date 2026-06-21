@@ -40,48 +40,50 @@ FEES = {
 }
 
 
-def compute_arb(prob_a, prob_b, fee_a, fee_b):
+def compute_arb(prob_a, prob_b, fee_a, fee_b,
+                bid_a=None, ask_a=None, bid_b=None, ask_b=None):
     """
     Returns arb type, net gap, guaranteed return, and stake ratios.
 
-    Guaranteed arb: buy Yes on A + buy No on B (= buy Yes complement).
-    Cost = prob_a + (1 - prob_b). If cost < 1, gross profit = 1 - cost.
-    Net profit after fees = gross - fee_a - fee_b.
+    PRICE SEMANTICS — what to pass for each leg:
+      - To BUY YES on platform X, you pay X's ASK.
+      - To BUY NO on platform X, you pay (1 - X's BID), because buying
+        NO is equivalent to selling YES into the bid stack.
 
-    Stake ratio (Kelly-style for guaranteed):
-      To equalise payout on both outcomes:
-        sA / total = (1 - prob_b) / (2 - prob_a - (1-prob_b))  ... simplifies to:
-        sA = (1 - prob_b) / (2 - prob_a - 1 + prob_b) = (1-prob_b)/(1 - prob_a + prob_b) -- hmm
-      Simpler: payout if A wins = sA/prob_a, payout if B wins = sB/(1-prob_b)
-      Set equal: sA/prob_a = sB/(1-prob_b), sA+sB=1
-        sA = prob_a / (prob_a + 1 - prob_b)  ... no, let's do it directly.
+    When bid/ask params are provided (from live orderbook fetch_depth),
+    we use them. Otherwise we fall back to using `prob_a` / `prob_b`
+    (which are usually midpoints) for both. The fallback overstates the
+    guaranteed return because midpoints are tighter than the real
+    fillable prices. Always prefer real bid/ask when available.
 
-      Actually for binary arb:
-        Bet sA on Yes@prob_a on platform A.  Return if Yes: sA/prob_a, if No: 0.
-        Bet sB on No (= Yes complement) at (1-prob_b) on platform B. Return if No: sB/(1-prob_b), if Yes: 0.
-        To guarantee same net on both outcomes:
-          sA / prob_a = sB / (1 - prob_b)
-          sA + sB = 1
-        => sA = prob_a / (prob_a + 1 - prob_b)  -- WRONG, let's re-derive.
+    Guaranteed arb structures we try:
+      Direction 1: Buy YES on A + Buy NO on B
+        cost = ask_a + (1 - bid_b)
+      Direction 2: Buy YES on B + Buy NO on A
+        cost = ask_b + (1 - bid_a)
+    If either cost < 1 (after fees), it's a guaranteed arb.
 
-      If Yes: win sA*(1/prob_a - 1) - sB  (A pays out (1-prob_a)/prob_a profit, B stake lost)
-              = sA/prob_a - sA - sB = sA/prob_a - 1
-      If No:  win sB*(1/(1-prob_b) - 1) - sA
-              = sB/(1-prob_b) - 1
-      Set equal: sA/prob_a = sB/(1-prob_b)  and sA+sB=1
-        sA = prob_a*(1-prob_b) / (prob_a*(1-prob_b) + (1-prob_b)*... hmm.
+    Stake sizing (standard inverse-odds) for Direction 1:
+      sA = (1/ask_a) / (1/ask_a + 1/(1-bid_b))
+      sB = (1/(1-bid_b)) / (1/ask_a + 1/(1-bid_b))
+    Guaranteed gross ROI = 1/cost - 1.
 
-      Simplest correct form:
-        sA = (1-prob_b) / ((1-prob_b) + prob_a*(... ))  -- let's just use the standard formula.
-
-      Standard prediction market arb stake formula:
-        sA = (1/prob_a) / (1/prob_a + 1/(1-prob_b))   -- normalised inverse odds
-        sB = (1/(1-prob_b)) / (1/prob_a + 1/(1-prob_b))
-        Guaranteed ROI (gross) = 1/(prob_a + (1-prob_b)) - 1  (only if prob_a+(1-prob_b)<1)
+    `raw_gap_pp` / `net_gap_pp` are still computed on midpoints —
+    they're the headline "how far apart are these markets" number for
+    the dashboard, not the arb math.
     """
     prob_a, prob_b = float(prob_a), float(prob_b)
     raw_gap = abs(prob_a - prob_b)
     net_gap = raw_gap - fee_a - fee_b
+
+    # If live bid/ask weren't supplied, fall back to midpoint for both
+    # sides. Less accurate but gives SOMETHING for pairs we couldn't
+    # fetch live depth on (predictit, markets that 404'd, etc.).
+    bid_a = bid_a if (bid_a is not None and bid_a > 0) else prob_a
+    ask_a = ask_a if (ask_a is not None and ask_a > 0) else prob_a
+    bid_b = bid_b if (bid_b is not None and bid_b > 0) else prob_b
+    ask_b = ask_b if (ask_b is not None and ask_b > 0) else prob_b
+    using_real_bookprices = any(p not in (prob_a, prob_b) for p in (bid_a, ask_a, bid_b, ask_b))
 
     result = {
         "raw_gap_pp": round(raw_gap * 100, 2),
@@ -95,43 +97,63 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b):
         "stake_b_dollars": None,
         "profit_dollars": None,
         "action": "",
+        # Audit fields so the dashboard can show "fillable price" not just midpoint
+        "fillable_ask_a": round(ask_a, 4),
+        "fillable_ask_b": round(ask_b, 4),
+        "fillable_bid_a": round(bid_a, 4),
+        "fillable_bid_b": round(bid_b, 4),
+        "arb_uses_live_book": bool(using_real_bookprices),
     }
 
-    # Try both directions for guaranteed arb
-    # Direction 1: buy Yes on A, buy No on B (i.e. buy Yes@prob_b complement)
-    for pA_yes, pB_yes in [(prob_a, prob_b), (prob_b, prob_a)]:
-        pB_no = 1 - pB_yes
-        cost = pA_yes + pB_no  # total cost to cover both outcomes
-        if cost < 1.0:
-            gross = 1.0 - cost
-            net = gross - fee_a - fee_b
-            if net > 0:
-                # Stake ratio using inverse-odds normalisation
-                inv_a = 1 / pA_yes
-                inv_b = 1 / pB_no
-                total_inv = inv_a + inv_b
-                sA = inv_a / total_inv
-                sB = inv_b / total_inv
+    # Two directions to try. Direction 1: YES on A + NO on B.
+    #   cost = ask_a + (1 - bid_b)
+    # Direction 2: YES on B + NO on A.
+    #   cost = ask_b + (1 - bid_a)
+    directions = [
+        # (pay_yes, pay_no, label_yes_platform, label_no_platform)
+        (ask_a, 1 - bid_b, "{pa}", "{pb}"),
+        (ask_b, 1 - bid_a, "{pb}", "{pa}"),
+    ]
+    best = None
+    for pay_yes, pay_no, lab_yes, lab_no in directions:
+        # Skip degenerate book states (e.g. bid >= 1 makes pay_no <= 0)
+        if not (0 < pay_yes < 1 and 0 < pay_no < 1):
+            continue
+        cost = pay_yes + pay_no
+        if cost >= 1.0:
+            continue
+        gross = 1.0 - cost
+        net = gross - fee_a - fee_b
+        if net <= 0:
+            continue
+        if best is None or net > best["net"]:
+            best = {"net": net, "pay_yes": pay_yes, "pay_no": pay_no,
+                    "lab_yes": lab_yes, "lab_no": lab_no}
 
-                if pA_yes == prob_a:
-                    action = f"Buy Yes on {'{pa}'}, Buy No on {'{pb}'}"
-                    stake_note = f"Stake {round(sA*100,1)}% on {{pa}} Yes + {round(sB*100,1)}% on {{pb}} No"
-                else:
-                    action = f"Buy Yes on {'{pb}'}, Buy No on {'{pa}'}"
-                    stake_note = f"Stake {round(sB*100,1)}% on {{pb}} Yes + {round(sA*100,1)}% on {{pa}} No"
-                    sA, sB = sB, sA  # keep sA = platform_a stake
-
-                result.update({
-                    "arb_type": "guaranteed",
-                    "guaranteed_return_pct": round(net * 100, 2),
-                    "stake_a_pct": round(sA * 100, 1),
-                    "stake_b_pct": round(sB * 100, 1),
-                    # Dollar amounts for a $100 total stake
-                    "stake_a_dollars": round(sA * 100, 2),
-                    "stake_b_dollars": round(sB * 100, 2),
-                    "profit_dollars": round(net * 100, 2),
-                })
-                break
+    if best is not None:
+        # Inverse-odds stake sizing. Stake more on the cheaper side so
+        # each outcome pays out the same nominal dollars.
+        inv_yes = 1 / best["pay_yes"]
+        inv_no = 1 / best["pay_no"]
+        total_inv = inv_yes + inv_no
+        s_yes = inv_yes / total_inv  # share of bankroll on the yes-leg
+        s_no = inv_no / total_inv
+        # Map (yes_side, no_side) back to (A, B) for stake_a / stake_b.
+        if best["lab_yes"] == "{pa}":
+            sA, sB = s_yes, s_no
+        else:
+            sA, sB = s_no, s_yes
+        result.update({
+            "arb_type": "guaranteed",
+            "guaranteed_return_pct": round(best["net"] * 100, 2),
+            "stake_a_pct": round(sA * 100, 1),
+            "stake_b_pct": round(sB * 100, 1),
+            "stake_a_dollars": round(sA * 100, 2),
+            "stake_b_dollars": round(sB * 100, 2),
+            "profit_dollars": round(best["net"] * 100, 2),
+            "action": (f"Buy Yes on {best['lab_yes']} at {best['pay_yes']*100:.1f}c "
+                       f"+ Buy No on {best['lab_no']} at {best['pay_no']*100:.1f}c"),
+        })
 
     # One-sided action label
     if result["arb_type"] == "one-sided":
@@ -375,24 +397,59 @@ def run():
                 result.at[idx, "implied_prob_b"] = mb
         if n_overridden:
             print(f"Overrode {n_overridden} prices with live depth midpoints")
-            # Recompute arb math on the new prices.
-            for idx, row in result.iterrows():
-                pa = row.get("implied_prob_a")
-                pb = row.get("implied_prob_b")
-                if pd.isna(pa) or pd.isna(pb):
-                    continue
-                fa = FEES.get(row.get("platform_a"), 0.05)
-                fb = FEES.get(row.get("platform_b"), 0.05)
-                arb = compute_arb(pa, pb, fa, fb)
-                arb["action"] = arb["action"].replace("{pa}", row.get("platform_a", "").title()) \
-                                              .replace("{pb}", row.get("platform_b", "").title())
-                for k, v in arb.items():
-                    result.at[idx, k] = v
-                # Suspicious flag was based on raw_gap > 20; the post-override
-                # value already lives in arb["raw_gap_pp"], so the flag in the
-                # row dict is stale. Re-stamp it.
-                rg = arb.get("raw_gap_pp")
-                result.at[idx, "suspicious"] = bool(rg is not None and rg > 20)
+        # Always recompute arb math on every depth-joined row, using REAL
+        # bid/ask for the YES/NO legs (not midpoints). This is the fix
+        # for the Somaliland-style fake-guaranteed-arb: midpoint math
+        # said 6.65% return but the actual ask was 21¢ (not midpoint 18¢),
+        # so a true buy-yes-buy-no basket cost more than 1.0 and there
+        # was no arb. We pass live bid/ask in for any row where depth
+        # data exists; compute_arb falls back to midpoints otherwise.
+        def _live(row, side, col):
+            v = row.get(f"depth_{side}_{col}")
+            if pd.isna(v) or v is None:
+                return None
+            try:
+                v = float(v)
+            except (TypeError, ValueError):
+                return None
+            return v if 0 < v < 1 else None
+        for idx, row in result.iterrows():
+            pa = row.get("implied_prob_a")
+            pb = row.get("implied_prob_b")
+            if pd.isna(pa) or pd.isna(pb):
+                continue
+            fa = FEES.get(row.get("platform_a"), 0.05)
+            fb = FEES.get(row.get("platform_b"), 0.05)
+            # PredictIt has no public live orderbook, only a single
+            # implied_prob field. Treating that as both bid AND ask
+            # produces fake guaranteed-arbs at any wide cross-platform
+            # gap (the math thinks you can buy YES at the same price
+            # someone else sold YES, which is never true). Force a
+            # synthetic ±5pp implied spread on PredictIt legs so the
+            # math reflects that you have to cross at least that much
+            # to actually trade.
+            PREDICTIT_HALF_SPREAD = 0.05
+            la_bid = _live(row, "a", "best_bid")
+            la_ask = _live(row, "a", "best_ask")
+            lb_bid = _live(row, "b", "best_bid")
+            lb_ask = _live(row, "b", "best_ask")
+            if row.get("platform_a") == "predictit" and la_bid is None and la_ask is None:
+                la_bid = max(0.01, pa - PREDICTIT_HALF_SPREAD)
+                la_ask = min(0.99, pa + PREDICTIT_HALF_SPREAD)
+            if row.get("platform_b") == "predictit" and lb_bid is None and lb_ask is None:
+                lb_bid = max(0.01, pb - PREDICTIT_HALF_SPREAD)
+                lb_ask = min(0.99, pb + PREDICTIT_HALF_SPREAD)
+            arb = compute_arb(
+                pa, pb, fa, fb,
+                bid_a=la_bid, ask_a=la_ask,
+                bid_b=lb_bid, ask_b=lb_ask,
+            )
+            arb["action"] = arb["action"].replace("{pa}", row.get("platform_a", "").title()) \
+                                          .replace("{pb}", row.get("platform_b", "").title())
+            for k, v in arb.items():
+                result.at[idx, k] = v
+            rg = arb.get("raw_gap_pp")
+            result.at[idx, "suspicious"] = bool(rg is not None and rg > 20)
 
         # Defense in depth: even if a scraper missed a wide-spread market
         # at scrape time, the fetch_depth pull is fresh. Drop any pair
