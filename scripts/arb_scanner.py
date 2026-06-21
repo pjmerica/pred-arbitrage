@@ -143,7 +143,53 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b):
     return result
 
 
+def _assert_scrape_freshness():
+    """Fail loudly if any platform's raw CSV is more than MAX_AGE_HOURS old.
+
+    Catches the silent-staleness failure mode where a scraper succeeds
+    structurally (no exit code) but the CSV it produced is from a
+    previous run because it didn't actually write new data. We had a
+    real incident on 2026-06-21 where Polymarket's CSV was 44 days old
+    while every daily refresh reported success. This guard fires before
+    arb_scanner does its work so the arb_data.js gets rewritten only
+    when the inputs are actually fresh.
+    """
+    MAX_AGE_HOURS = 12
+    raw = ROOT / "data" / "raw"
+    issues = []
+    for name in ("kalshi_markets.csv", "polymarket_markets.csv", "predictit_markets.csv"):
+        path = raw / name
+        if not path.exists():
+            issues.append(f"{name}: missing")
+            continue
+        try:
+            df = pd.read_csv(path, nrows=1, dtype={"yes_token_id": str, "no_token_id": str})
+        except Exception as e:
+            issues.append(f"{name}: unreadable ({e})")
+            continue
+        if "fetched_at" not in df.columns:
+            issues.append(f"{name}: no fetched_at column")
+            continue
+        ts = pd.to_datetime(df["fetched_at"].iloc[0], errors="coerce", utc=True)
+        if pd.isna(ts):
+            issues.append(f"{name}: unparseable fetched_at")
+            continue
+        age_h = (datetime.now(timezone.utc) - ts.to_pydatetime()).total_seconds() / 3600
+        if age_h > MAX_AGE_HOURS:
+            issues.append(f"{name}: stale by {age_h:.1f}h (max {MAX_AGE_HOURS}h)")
+    if issues:
+        print("FRESHNESS CHECK FAILED - refusing to write arb_data.js:")
+        for issue in issues:
+            print(f"  - {issue}")
+        raise SystemExit(
+            "One or more scraper CSVs are stale or missing. The cron will retry; "
+            "live dashboard keeps the last good snapshot."
+        )
+
+
 def run():
+    _assert_scrape_freshness()
+
     pairs_path = PROCESSED / "matched_pairs.csv"
     if not pairs_path.exists():
         print("No matched_pairs.csv found — run scripts/matcher.py first")

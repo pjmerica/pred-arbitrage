@@ -8,6 +8,13 @@ ROOT = Path(__file__).parent
 steps = [
     ("Kalshi scraper",        [sys.executable, "scrapers/kalshi.py"]),
     ("Polymarket scraper",    [sys.executable, "scrapers/polymarket.py"]),
+    # Replace Polymarket's gamma-cached bid/ask with live CLOB orderbook
+    # prices for EVERY market. Gamma snapshots lag the live book by
+    # minutes-to-hours on low-volume markets; the matcher would otherwise
+    # pair stale gamma quotes against fresh Kalshi quotes and produce
+    # fake arbs. ~4-6 min runtime with 16 worker threads. Added 2026-06-21
+    # after the NZ recognize-Palestine fake-20pp-arb incident.
+    ("Polymarket live freshen", [sys.executable, "scripts/freshen_polymarket.py"]),
     ("PredictIt scraper",     [sys.executable, "scrapers/predictit.py"]),
     # House incumbents — feeds utils/races.py with updated open-seat info
     # for the elections module. Optional: races.py falls back to a static

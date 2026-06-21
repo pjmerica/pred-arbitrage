@@ -302,3 +302,53 @@ concurrency; payoff is deletion of the wide-spread drop + depth-time
 override + most of the staleness-fighting code. Currently optimized
 for workflow speed (gamma is 3 min vs CLOB's 10-15 min); the
 staleness cost is the price.
+
+### 2026-06-21 (evening) — Wide-coverage live CLOB + freshness guard
+
+User reported pred-arb's daily refresh had been failing and asked for
+"something to make sure that the pulls from polymarket and kalshi are
+up to date." Three failure modes addressed:
+
+1. **pyyaml missing from requirements.txt**. The elections port
+   (this morning) added `scrapers/house_incumbents.py` which imports
+   `yaml`, but the new dep was never added to `requirements.txt`. Both
+   daily refreshes since the port failed at that step. One-line fix.
+
+2. **Polymarket scraper silently truncating to ~2100 events**. The
+   pagination loop did `except Exception: break` on the FIRST transient
+   error. Polymarket's `/events` endpoint returns occasional HTTP 422s
+   on specific offsets that succeed on retry. The "break" was causing
+   each daily refresh to ship a small subset of the universe as if it
+   were complete. Replaced with: 3 retries per page, skip persistently-
+   failing pages, stop only after 3 consecutive empty/failed pages.
+
+3. **Polymarket gamma snapshot staleness — the NZ-Palestine incident**.
+   Gamma's `bestBid`/`bestAsk` cache lags the live CLOB by minutes-to-
+   hours. NZ market shipped at 34¢ midpoint (gamma 16/34) when the
+   live CLOB was 17/20 (real midpoint 18.5¢). Earlier bandaids tried
+   to detect-and-drop wide gamma rows; that lost half the universe and
+   still missed close cases. **New approach:** `scripts/
+   freshen_polymarket.py` runs immediately after the gamma scrape and
+   re-fetches the live `clob.polymarket.com/book` for EVERY market in
+   parallel (16 worker threads, ~4-6 min), overwriting bid/ask/midpoint
+   with live values. The matcher then runs on actually-live prices.
+   Removed the 8pp scraper drop entirely.
+
+   Also fixed a bug in the freshen logic where I assumed CLOB bids
+   came back sorted best-first. Empirically they're unsorted (or
+   reverse-sorted). Sort explicitly with max(bids) / min(asks).
+
+4. **Freshness guard.** New `_assert_scrape_freshness()` at the top of
+   `arb_scanner.py:run()`. Reads the `fetched_at` of every raw CSV and
+   raises SystemExit if any is more than 12 hours old. Catches the
+   silent-staleness mode where a scraper succeeds structurally but
+   produces no new data. Live dashboard keeps the last good snapshot
+   when this fires.
+
+Files added: `scripts/freshen_polymarket.py` (~135 LOC).
+Files modified: `requirements.txt`, `scrapers/polymarket.py`,
+`scripts/arb_scanner.py`, `run_all.py`.
+
+HANDOFF.md updated: new "Polymarket freshness" section explaining the
+gamma-then-CLOB design; new "Freshness guard" section; file-map and
+pipeline diagram updated.

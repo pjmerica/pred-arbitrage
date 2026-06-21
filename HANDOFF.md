@@ -38,6 +38,9 @@ dashboard has two tabs:
 ```
 scrapers/kalshi.py        → data/raw/kalshi_markets.csv
 scrapers/polymarket.py    → data/raw/polymarket_markets.csv
+scripts/freshen_polymarket.py
+                          → overwrites polymarket_markets.csv with live
+                             CLOB bid/ask/midpoint (added 2026-06-21)
 scrapers/predictit.py     → data/raw/predictit_markets.csv
 scripts/matcher.py        → data/processed/matched_pairs.csv
 scripts/elections.py      → data/processed/election_pairs.csv  (added 2026-06-21)
@@ -198,33 +201,50 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
    2026-06-21 because those pairs are now dropped at filter step 5
    instead of just being flagged.
 
-### Why we don't just hit the live orderbook for every market
+### Polymarket freshness: gamma scrape + live-CLOB freshen
 
-Common question: "if the live CLOB has fresh prices, why scrape gamma at
-all?" The actual numbers (measured 2026-06-21 with a 50-request probe):
+Polymarket has two endpoints we care about:
 
-- `clob.polymarket.com/book` allows ~6 req/sec sequential with no
-  observed rate limiting in a short burst. No documented rate limit
-  found in public Polymarket docs.
-- 25k active markets ÷ 6 req/sec ≈ **70 minutes sequential**. With
-  modest concurrency (5-10 parallel) it'd drop to ~10-15 min.
-- For comparison: the gamma `/markets` bulk endpoint returns all 25k in
-  about 3 minutes.
+- `gamma-api.polymarket.com/events` — bulk metadata + cached snapshot
+  prices. Fast (~3 min for ~25k events) but `bestBid`/`bestAsk` can
+  lag the live CLOB by minutes-to-hours on low-volume markets.
+- `clob.polymarket.com/book?token_id=...` — live orderbook. One request
+  per market, no observed rate limit (measured ~6 req/sec single-
+  threaded in a 50-request probe).
 
-The current "scrape gamma, then depth-fetch only matched pairs" design
-is a **performance optimization, not a rate-limit constraint**. It's
-worth knowing the option to switch to wide-coverage CLOB is on the
-table — it'd cost extra workflow time but would let us delete the
-8pp wide-spread scraper drop, the depth-time price override, and most
-of the staleness-fighting code. See the AUDIT.md to-do list.
+The pipeline does both: gamma scrape fills in metadata + token_ids
+fast, then `scripts/freshen_polymarket.py` immediately re-fetches the
+live book for every market in parallel (16 worker threads, ~4-6 min
+total). The freshened bid/ask/midpoint overwrites the gamma values
+before the matcher runs, so the matcher works on actually-live prices.
 
-Kalshi is a different story: its `/markets` summary already returns
+Earlier we tried bandaid fixes (drop scraper rows with wide gamma
+spread, override matched-pair prices in the scanner after fetch_depth).
+Those covered some cases but missed others — markets the matcher
+never paired because the gamma price looked wrong never got a chance
+to be re-priced. Pre-matching freshen is the cleaner fix; the bandaids
+were ripped out on 2026-06-21.
+
+Kalshi is different: its `/markets` summary already returns
 near-realtime bid/ask in the same payload as market metadata, so a
 separate live-fetch buys little.
 
 PredictIt: there is no public orderbook endpoint. The single
 `marketdata/all` summary is everything they expose. Whatever it
 returns IS the freshest data available.
+
+### Freshness guard
+
+`scripts/arb_scanner.py:_assert_scrape_freshness()` runs at the top of
+`run()` and refuses to overwrite `docs/arb_data.js` unless EVERY raw
+CSV's `fetched_at` is within the last 12 hours. Catches the
+silent-staleness failure mode where a scraper succeeds structurally
+(no exit code) but the CSV it produced is from a previous run because
+it didn't actually write new data. We had a real incident on
+2026-06-21 where Polymarket's CSV was 44 days old while every daily
+refresh reported success. The guard fails the scanner step, the
+workflow's commit step is skipped, and the dashboard keeps the last
+good snapshot.
 
 ### Fees (round-trip)
 

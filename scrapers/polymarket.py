@@ -97,31 +97,69 @@ def extract_category(tags):
 
 
 def fetch_all_events():
-    """Paginate all active events from Polymarket."""
+    """Paginate all active events from Polymarket.
+
+    Polymarket's /events endpoint occasionally returns HTTP 422 on a
+    specific page (seen in production 2026-06-21 at offset 2100); the
+    same page succeeds on retry. Old code did `except Exception: break`
+    which silently stopped pagination at the first hiccup, shipping a
+    small subset of the universe as if it were complete. Now we retry
+    a few times and SKIP a persistently-failing page rather than
+    abandoning the rest. The end-of-data signal is `batch == []`,
+    not the first exception.
+
+    Hard cap (MAX_PAGES) prevents an infinite loop if the API stops
+    decrementing the result set; PAGE_SIZE=100 means cap is 50000 events.
+    """
     all_events = []
     offset = 0
     page = 0
-    while True:
-        try:
-            batch = get("/events", {
-                "limit": PAGE_SIZE,
-                "active": "true",
-                "closed": "false",
-                "offset": offset,
-            })
-        except Exception as e:
-            print(f"  Error at offset {offset}: {e}")
-            break
+    consecutive_empty = 0
+    MAX_PAGES = 500
+    MAX_RETRIES_PER_PAGE = 3
+    while page < MAX_PAGES:
+        batch = None
+        for attempt in range(MAX_RETRIES_PER_PAGE):
+            try:
+                batch = get("/events", {
+                    "limit": PAGE_SIZE,
+                    "active": "true",
+                    "closed": "false",
+                    "offset": offset,
+                })
+                break
+            except Exception as e:
+                if attempt < MAX_RETRIES_PER_PAGE - 1:
+                    wait = 2 * (attempt + 1)
+                    print(f"  Page at offset {offset} failed ({e}); retrying in {wait}s...")
+                    time.sleep(wait)
+                else:
+                    print(f"  Page at offset {offset} failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); skipping page and continuing")
+        if batch is None:
+            # All retries exhausted — skip this page, keep going. If we
+            # see 3 empty/failed pages in a row, give up (probably past
+            # the end of real data).
+            consecutive_empty += 1
+            if consecutive_empty >= 3:
+                print(f"  3 consecutive failed pages — stopping pagination at offset {offset}")
+                break
+            offset += PAGE_SIZE
+            page += 1
+            continue
         if not batch:
+            # Real end of data.
             break
+        consecutive_empty = 0
         all_events.extend(batch)
         page += 1
         if page % 20 == 0:
-            print(f"  Fetched {len(all_events)} events so far...")
+            print(f"  Fetched {len(all_events)} events so far (offset {offset})...")
         if len(batch) < PAGE_SIZE:
             break
         offset += PAGE_SIZE
         time.sleep(0.05)
+    if page == MAX_PAGES:
+        print(f"  Hit MAX_PAGES={MAX_PAGES} — stopping. Bump the cap if Polymarket genuinely has > {MAX_PAGES * PAGE_SIZE} active events.")
     return all_events
 
 
@@ -163,32 +201,21 @@ def parse_market(event, market):
         ba = None
     # Require BOTH a bid AND an ask. A one-sided quote (only ba or only bb)
     # is a stale standing order, not a real market — using it pairs against
-    # other platforms' tight quotes and produces fake arbs (e.g. a lone
-    # $0.86 sell order sitting on a dead market).
+    # other platforms' tight quotes and produces fake arbs.
     #
-    # Also drop the row entirely when the gamma snapshot reports a wide
-    # spread. Gamma's bid/ask lags the live CLOB by minutes-to-hours, so
-    # a 15pp-wide gamma quote is almost always a stale snapshot where the
-    # live book has tightened. Earlier we'd "use the ask to be conservative"
-    # in those cases — but using a stale high ask isn't conservative for a
-    # BUYER (which is what arb math needs); it makes the price look
-    # OPTIMISTIC. Example incident (2026-06-21): NZ recognizes-Palestine
-    # market had gamma bb=0.16 / ba=0.34 (18pp spread, used 0.34 as price);
-    # live CLOB depth showed bb=0.16 / ba=0.24 (8pp). The arb against
-    # Kalshi's 0.14 looked like a 20pp gap that didn't exist. fetch_depth
-    # re-checks the live book later but only on the matched pairs; nothing
-    # rescues bad scraper prices that never got paired.
-    #
-    # Threshold rationale: 8pp catches the worst gamma-stale rows while
-    # leaving genuinely thinly-traded markets (where 5-10pp spreads are
-    # normal). Markets dropped here may resurface tomorrow once gamma
-    # refreshes.
-    WIDE_SPREAD_PP = 0.08
+    # Wide-spread rows are KEPT at scrape time. Earlier code (2026-06-21
+    # morning) dropped rows whose gamma spread was >8pp on the theory that
+    # wide gamma is usually stale. That was overcautious: the scanner
+    # already refreshes prices from the live CLOB via fetch_depth for
+    # every matched pair (depth-time override), and the depth-derived
+    # spread filter drops pairs whose LIVE spread is >25pp. So a wide
+    # gamma snapshot that turns out to be stale will (a) get the right
+    # price restamped at depth time, or (b) get dropped at depth time
+    # if it's truly wide. Pre-emptively cutting at the scraper layer
+    # just prevents the matcher from finding pairs it would have
+    # restamped correctly.
     if bb is not None and ba is not None and 0 < bb <= ba < 1:
-        if (ba - bb) > WIDE_SPREAD_PP:
-            implied_prob = None  # drop — gamma quote is too stale to trust
-        else:
-            implied_prob = round((bb + ba) / 2, 4)
+        implied_prob = round((bb + ba) / 2, 4)
 
     if implied_prob is None and outcomes and prices and len(outcomes) == len(prices):
         pairs = {}
