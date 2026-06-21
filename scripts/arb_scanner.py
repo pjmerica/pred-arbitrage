@@ -357,6 +357,23 @@ def run():
             result["suspicious"] = result["suspicion_reasons"].apply(lambda rs: len(rs) > 0)
             result = result.drop(columns=["_scrut"])
 
+    # Drop pairs whose settle_date is in the past. Upstream APIs sometimes
+    # keep already-resolved markets in their "active" feed for a few days
+    # (Kalshi event-of-the-week markets, Polymarket weekly Netflix charts);
+    # those pairs can't be traded and just clutter the dashboard. Rows
+    # with no settle_date or with sentinel '9999-99-99' are KEPT so we
+    # don't silently lose rows that are tradeable but date-less.
+    today_iso = datetime.now(timezone.utc).date().isoformat()
+    def _is_past(s):
+        if not isinstance(s, str) or s in ("", "9999-99-99"):
+            return False
+        return s < today_iso
+    before = len(result)
+    result = result[~result["settle_date"].apply(_is_past)].copy()
+    dropped_past = before - len(result)
+    if dropped_past:
+        print(f"Dropped {dropped_past} pairs with settle_date in the past (today is {today_iso})")
+
     # Sort: guaranteed first, then by settle_date asc (soonest), then raw_gap desc
     result["_is_guaranteed"] = (result["arb_type"] == "guaranteed").astype(int)
     result["_settle_sort"] = result["settle_date"].replace("", "9999-99-99")
