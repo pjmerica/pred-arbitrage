@@ -190,36 +190,39 @@ def run():
     print(f"\nDone in {elapsed:.0f}s — ok={n_ok}, missing={n_missing}, no_token={n_no_token}")
 
     # Apply the fresh values. Only overwrite when we got a real number;
-    # leave gamma value in place when CLOB fetch failed (better than
-    # blanking the row).
+    # leave gamma value in place when CLOB fetch failed.
     #
-    # implied_prob picks (priority order, matching what polymarket.com
-    # shows when a user clicks in):
-    #   1. last_trade_price (from CLOB, if recent)
-    #   2. midpoint of bid + ask
-    # We don't fall back to gamma's value because by the time we got
-    # here the row had to come from a successful CLOB fetch.
+    # implied_prob = bid/ask MIDPOINT.
+    #
+    # Why not last_trade_price (which is what Kalshi shows on its UI)?
+    # Polymarket's UI shows a number that tracks the live order book —
+    # closer to the midpoint than to the most recent trade. Concrete
+    # example (2026-06-21): NY-13 Espaillat Polymarket market had
+    # live book bid 0.61 / ask 0.62 (midpoint 0.615), but
+    # last_trade_price was 0.43 (a stale trade from hours earlier on a
+    # thinly-traded contract). Polymarket's website was showing 62%.
+    # Our dashboard had shipped 43% because we used last_trade. User
+    # caught it and corrected the assumption: midpoint matches
+    # polymarket.com; last_trade does not.
+    #
+    # Kalshi is the opposite — its UI shows last_price, and the bid/ask
+    # midpoint there can be several pp off the displayed number. We
+    # match per-platform UI in scrapers/kalshi.py (uses last_price)
+    # and here (uses midpoint).
     now_iso = datetime.now(timezone.utc).isoformat()
     n_changed = 0
-    n_used_last = 0
-    n_used_mid = 0
     for i in range(n_total):
         bb = fresh_bb[i]
         ba = fresh_ba[i]
-        last = fresh_last[i]
         if bb is None and ba is None:
             continue
         df.at[i, "best_bid"] = bb
         df.at[i, "best_ask"] = ba
-        if last is not None and 0 < last < 1:
-            df.at[i, "implied_prob"] = round(last, 4)
-            n_used_last += 1
-        elif bb is not None and ba is not None and 0 < bb <= ba < 1:
+        if bb is not None and ba is not None and 0 < bb <= ba < 1:
             df.at[i, "implied_prob"] = round((bb + ba) / 2, 4)
-            n_used_mid += 1
         df.at[i, "fetched_at"] = now_iso
         n_changed += 1
-    print(f"Overwrote bid/ask on {n_changed} rows (implied_prob: {n_used_last} from last_trade, {n_used_mid} from midpoint)")
+    print(f"Overwrote bid/ask/midpoint on {n_changed} rows")
 
     # Drop rows where the CLOB confirmed the market is gone (no bids and
     # no asks AT ALL, distinct from "we failed to fetch"). We use the
