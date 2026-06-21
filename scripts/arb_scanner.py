@@ -408,33 +408,17 @@ def run():
                      + result.get("depth_no_b_best_ask", pd.Series(dtype=float)).notna().sum())
         print(f"Joined depth onto {joined}/{len(result)} pairs (A side); NO-book rows: {joined_no}")
 
-        # `implied_prob_a` / `implied_prob_b` are DISPLAY prices, meant
-        # to match what the platforms themselves show when a user clicks
-        # in. We used to overwrite them here with a depth-time midpoint;
-        # removed 2026-06-21 because:
-        #   (a) it was clobbering Kalshi's last_price (what Kalshi UI shows)
-        #       with the midpoint of the live bid/ask. User saw Somaliland
-        #       shipping as 18 cents (midpoint) when Kalshi UI shows 14
-        #       cents (last_price); the override was responsible.
-        #   (b) Polymarket gamma staleness — the original reason for the
-        #       override — is now handled by scripts/freshen_polymarket.py
-        #       which rewrites every Polymarket midpoint with live CLOB
-        #       data BEFORE the matcher runs.
-        # The arb math STILL uses the live depth bid/ask via
-        # `compute_arb(bid_a=depth_a_best_bid, ask_a=depth_a_best_ask, ...)`
-        # in the recompute block below — it doesn't depend on
-        # implied_prob_a/b for tradeable-price decisions. So leaving the
-        # display price as the scraper produced it (Kalshi last_price,
-        # Polymarket freshened midpoint) gives users a "matches the
-        # platform UI" number, and the arb math uses fillable prices
-        # under the hood.
-        # Always recompute arb math on every depth-joined row, using REAL
-        # bid/ask for the YES/NO legs (not midpoints). This is the fix
-        # for the Somaliland-style fake-guaranteed-arb: midpoint math
-        # said 6.65% return but the actual ask was 21¢ (not midpoint 18¢),
-        # so a true buy-yes-buy-no basket cost more than 1.0 and there
-        # was no arb. We pass live bid/ask in for any row where depth
-        # data exists; compute_arb falls back to midpoints otherwise.
+        # Recompute arb math on every depth-joined row using REAL bid/ask
+        # for the YES + NO legs (not midpoints). compute_arb falls back
+        # to midpoint when bid/ask is missing.
+        #
+        # `implied_prob_a/b` are DISPLAY prices (whatever the platforms
+        # show on their own UIs). We do NOT recompute them here — the
+        # scraper / freshen step set them correctly, and overwriting
+        # them with a depth-time midpoint would clobber Kalshi's
+        # last_price. The arb math doesn't need implied_prob_a/b; it
+        # reads from depth_a_best_bid / depth_a_best_ask / etc.
+        # See HANDOFF.md "Arb math" + "Display price" sections.
         def _live(row, prefix, col):
             v = row.get(f"{prefix}_{col}")
             if pd.isna(v) or v is None:

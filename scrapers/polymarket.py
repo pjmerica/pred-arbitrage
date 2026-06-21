@@ -183,16 +183,24 @@ def parse_market(event, market):
     outcomes = market.get("outcomes", "[]")
     prices   = market.get("outcomePrices", "[]")
 
-    # outcomePrices can be a JSON string or a list
+    # outcomes / outcomePrices can be JSON-encoded strings OR already-
+    # parsed lists depending on which gamma endpoint shape we get back.
+    # When parsing fails, default to [] and log to stderr so silent
+    # corruption is observable. If you see a lot of these in CI logs,
+    # gamma probably changed the field shape — investigate before they
+    # silently nuke the implied_prob fallback chain below.
+    market_id = market.get("id", "?")
     if isinstance(outcomes, str):
         try:
             outcomes = json.loads(outcomes)
-        except Exception:
+        except Exception as e:
+            print(f"  WARN: outcomes JSON parse failed on market {market_id}: {e}", file=sys.stderr)
             outcomes = []
     if isinstance(prices, str):
         try:
             prices = json.loads(prices)
-        except Exception:
+        except Exception as e:
+            print(f"  WARN: outcomePrices JSON parse failed on market {market_id}: {e}", file=sys.stderr)
             prices = []
 
     # Pick implied_prob with this priority (freshest first):

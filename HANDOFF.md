@@ -22,12 +22,16 @@ section captures the differences and what's specific to this side.
 Pulls every active market on three prediction-market platforms, matches
 similar markets across platforms by fuzzy text similarity, computes
 cross-platform price gaps (potential arbs), and ranks them. The
-dashboard has two tabs:
+dashboard has four tabs (added 2026-06-21):
 
 | Tab | What it shows |
 |---|---|
-| **Markets** | Every matched arb pair across politics, entertainment, finance, etc. The usual filters (type, platform pair, gap range, volume, profitable-only, settle-window, search, suspicious-hide). |
+| **All** | Every matched arb pair across all categories. Default tab. Standard filters (type, platform pair, gap range, volume, profitable-only, settle-window, search, suspicious-hide). |
+| **🗳 Elections** | US 2026 federal races (Senate / Governor / House). Includes the fuzzy matcher's Politics output AND the ported polling-agg election scanner output (`scripts/elections.py`). |
 | **⚽ Sports** | Every sports pair, unfiltered. Designed for browsing the cross-listed sports universe regardless of whether there's a real arb. |
+| **Other** | Everything else (entertainment, crypto, weather, etc). |
+
+Tab filtering uses `row.category_bucket` set in `scripts/arb_scanner.py`.
 
 ---
 
