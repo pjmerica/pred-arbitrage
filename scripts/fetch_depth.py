@@ -160,23 +160,53 @@ def run(targets_csv: Path = None, out_csv: Path = None, delay: float = 0.1):
         print(f"No targets file at {targets_csv}. Run arb_scanner.py first to emit it.")
         return
 
-    targets = pd.read_csv(targets_csv, dtype={"market_id": str})
+    targets = pd.read_csv(targets_csv, dtype={"market_id": str, "no_market_id": str})
     targets = targets[targets["platform"].isin(["kalshi", "polymarket"])].copy()
     targets = targets.dropna(subset=["market_id"]).drop_duplicates(subset=["platform", "market_id"])
+    # Backwards compat: older depth_targets.csv won't have the no_market_id column.
+    if "no_market_id" not in targets.columns:
+        targets["no_market_id"] = ""
+    targets["no_market_id"] = targets["no_market_id"].fillna("").astype(str)
     print(f"Fetching depth for {len(targets)} markets...")
 
     rows = []
+    n_no_fetched = 0
     for i, (_, r) in enumerate(targets.iterrows()):
-        rows.append(fetch_one(r["platform"], str(r["market_id"])))
+        plat = r["platform"]
+        mid = str(r["market_id"])
+        # Always fetch YES book for the row's market_id.
+        yes_row = fetch_one(plat, mid)
+        yes_row["side"] = "yes"
+        rows.append(yes_row)
+
+        # For Polymarket, ALSO fetch the NO orderbook when no_market_id
+        # was provided. Polymarket exposes YES and NO as separate tokens
+        # with their own bid/ask. We used to infer no_ask = 1 - yes_bid,
+        # which only matches when both books are tight and aligned;
+        # arb math against an inferred no_ask was producing spurious
+        # numbers on markets with asymmetric YES/NO books (2026-06-21).
+        no_mid = r.get("no_market_id", "")
+        if plat == "polymarket" and no_mid and no_mid != "nan":
+            no_row = fetch_one("polymarket", no_mid)
+            no_row["side"] = "no"
+            # Tag with the YES market_id too so the scanner can join on
+            # the original market identity.
+            no_row["yes_market_id"] = mid
+            rows.append(no_row)
+            n_no_fetched += 1
+
         if (i + 1) % 25 == 0:
-            print(f"  {i+1}/{len(targets)} fetched")
+            print(f"  {i+1}/{len(targets)} fetched ({n_no_fetched} NO books too)")
         time.sleep(delay)
 
     df = pd.DataFrame(rows)
     df["market_id"] = df["market_id"].astype(str)
+    if "yes_market_id" not in df.columns:
+        df["yes_market_id"] = ""
+    df["yes_market_id"] = df["yes_market_id"].fillna("").astype(str)
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out_csv, index=False)
-    print(f"Wrote {len(df)} depth rows to {out_csv}")
+    print(f"Wrote {len(df)} depth rows to {out_csv} (incl. {n_no_fetched} NO books)")
     if not df.empty:
         ok = df["best_ask"].notna().sum()
         print(f"  Got top-of-book for {ok}/{len(df)}")

@@ -41,32 +41,33 @@ FEES = {
 
 
 def compute_arb(prob_a, prob_b, fee_a, fee_b,
-                bid_a=None, ask_a=None, bid_b=None, ask_b=None):
+                bid_a=None, ask_a=None, bid_b=None, ask_b=None,
+                no_bid_a=None, no_ask_a=None, no_bid_b=None, no_ask_b=None):
     """
     Returns arb type, net gap, guaranteed return, and stake ratios.
 
     PRICE SEMANTICS — what to pass for each leg:
-      - To BUY YES on platform X, you pay X's ASK.
-      - To BUY NO on platform X, you pay (1 - X's BID), because buying
-        NO is equivalent to selling YES into the bid stack.
+      - YES leg buy: you pay platform X's YES ASK (= `ask_a` / `ask_b`).
+      - NO leg buy: you pay platform X's NO ASK (= `no_ask_a` / `no_ask_b`).
 
-    When bid/ask params are provided (from live orderbook fetch_depth),
-    we use them. Otherwise we fall back to using `prob_a` / `prob_b`
-    (which are usually midpoints) for both. The fallback overstates the
-    guaranteed return because midpoints are tighter than the real
-    fillable prices. Always prefer real bid/ask when available.
+    When the NO ask isn't available we fall back to (1 - YES bid) —
+    that's the synthetic equivalent, exact only when YES and NO books
+    are perfectly aligned. Real Polymarket markets sometimes have
+    asymmetric YES/NO books where the inferred price is materially off,
+    so prefer real `no_ask_*` when supplied.
+
+    When YES bid/ask aren't supplied (e.g. PredictIt where we have no
+    live orderbook), we fall back to using `prob_a` / `prob_b`
+    (midpoints) for ALL four sides. Less accurate but at least gives
+    SOMETHING. The arb_uses_live_book flag tells the dashboard whether
+    the numbers are real or estimated.
 
     Guaranteed arb structures we try:
       Direction 1: Buy YES on A + Buy NO on B
-        cost = ask_a + (1 - bid_b)
+        cost = ask_a + no_ask_b
       Direction 2: Buy YES on B + Buy NO on A
-        cost = ask_b + (1 - bid_a)
+        cost = ask_b + no_ask_a
     If either cost < 1 (after fees), it's a guaranteed arb.
-
-    Stake sizing (standard inverse-odds) for Direction 1:
-      sA = (1/ask_a) / (1/ask_a + 1/(1-bid_b))
-      sB = (1/(1-bid_b)) / (1/ask_a + 1/(1-bid_b))
-    Guaranteed gross ROI = 1/cost - 1.
 
     `raw_gap_pp` / `net_gap_pp` are still computed on midpoints —
     they're the headline "how far apart are these markets" number for
@@ -76,13 +77,24 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
     raw_gap = abs(prob_a - prob_b)
     net_gap = raw_gap - fee_a - fee_b
 
-    # If live bid/ask weren't supplied, fall back to midpoint for both
-    # sides. Less accurate but gives SOMETHING for pairs we couldn't
-    # fetch live depth on (predictit, markets that 404'd, etc.).
+    # YES bid/ask fallback: midpoint when no live data.
     bid_a = bid_a if (bid_a is not None and bid_a > 0) else prob_a
     ask_a = ask_a if (ask_a is not None and ask_a > 0) else prob_a
     bid_b = bid_b if (bid_b is not None and bid_b > 0) else prob_b
     ask_b = ask_b if (ask_b is not None and ask_b > 0) else prob_b
+
+    # NO ask fallback: (1 - YES bid). Exact for tight books, approximate
+    # otherwise. Will be overridden by real no_ask_* when available.
+    if no_ask_a is None or no_ask_a <= 0:
+        no_ask_a = max(0.001, 1 - bid_a)
+    if no_ask_b is None or no_ask_b <= 0:
+        no_ask_b = max(0.001, 1 - bid_b)
+    # NO bid not used in current arb math but exposed for the dashboard.
+    if no_bid_a is None or no_bid_a <= 0:
+        no_bid_a = max(0.001, 1 - ask_a)
+    if no_bid_b is None or no_bid_b <= 0:
+        no_bid_b = max(0.001, 1 - ask_b)
+
     using_real_bookprices = any(p not in (prob_a, prob_b) for p in (bid_a, ask_a, bid_b, ask_b))
 
     result = {
@@ -102,17 +114,20 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         "fillable_ask_b": round(ask_b, 4),
         "fillable_bid_a": round(bid_a, 4),
         "fillable_bid_b": round(bid_b, 4),
+        "fillable_no_ask_a": round(no_ask_a, 4),
+        "fillable_no_ask_b": round(no_ask_b, 4),
+        "fillable_no_bid_a": round(no_bid_a, 4),
+        "fillable_no_bid_b": round(no_bid_b, 4),
         "arb_uses_live_book": bool(using_real_bookprices),
     }
 
-    # Two directions to try. Direction 1: YES on A + NO on B.
-    #   cost = ask_a + (1 - bid_b)
-    # Direction 2: YES on B + NO on A.
-    #   cost = ask_b + (1 - bid_a)
+    # Two directions to try.
+    # Direction 1: YES on A + NO on B → cost = ask_a + no_ask_b
+    # Direction 2: YES on B + NO on A → cost = ask_b + no_ask_a
     directions = [
         # (pay_yes, pay_no, label_yes_platform, label_no_platform)
-        (ask_a, 1 - bid_b, "{pa}", "{pb}"),
-        (ask_b, 1 - bid_a, "{pb}", "{pa}"),
+        (ask_a, no_ask_b, "{pa}", "{pb}"),
+        (ask_b, no_ask_a, "{pb}", "{pa}"),
     ]
     best = None
     for pay_yes, pay_no, lab_yes, lab_no in directions:
@@ -317,41 +332,81 @@ def run():
     result["category_bucket"] = result["category"].apply(_bucket)
 
     # Emit depth_targets.csv for fetch_depth.py. Only kalshi/polymarket
-    # markets have queryable orderbooks.
+    # markets have queryable orderbooks. For Polymarket we ALSO emit the
+    # NO token id (no_market_id) so fetch_depth can pull the NO
+    # orderbook directly — previously we just inferred no_ask = (1 -
+    # yes_bid), which is wrong on any market where the YES and NO
+    # books aren't perfectly aligned. Polymarket's NO is a separately
+    # tradeable contract with its own bid/ask; for arb math we need
+    # the real number.
+    no_token_lookup = {}
+    try:
+        pm_df = pd.read_csv(ROOT / "data" / "raw" / "polymarket_markets.csv",
+                            dtype={"yes_token_id": str, "no_token_id": str})
+        if "yes_token_id" in pm_df.columns and "no_token_id" in pm_df.columns:
+            for _, row in pm_df[["yes_token_id", "no_token_id"]].dropna().iterrows():
+                no_token_lookup[str(row["yes_token_id"])] = str(row["no_token_id"])
+    except Exception as e:
+        print(f"  WARN: could not load polymarket NO-token lookup ({e}); NO depth will fall back to 1-YES_bid")
+
     targets = []
     for _, r in result.iterrows():
         for side in ("a", "b"):
             plat = r.get(f"platform_{side}")
             mid = r.get(f"market_id_{side}")
             if plat in ("kalshi", "polymarket") and mid and not (isinstance(mid, float) and pd.isna(mid)):
-                targets.append({"platform": plat, "market_id": str(mid)})
+                mid_str = str(mid)
+                no_mid = no_token_lookup.get(mid_str, "") if plat == "polymarket" else ""
+                targets.append({"platform": plat, "market_id": mid_str, "no_market_id": no_mid})
     if targets:
         tdf = pd.DataFrame(targets).drop_duplicates(subset=["platform", "market_id"])
         tdf["market_id"] = tdf["market_id"].astype(str)
+        tdf["no_market_id"] = tdf["no_market_id"].fillna("").astype(str)
         tpath = PROCESSED / "depth_targets.csv"
         tdf.to_csv(tpath, index=False)
-        print(f"Emitted {len(tdf)} unique depth targets to {tpath}")
+        n_with_no = (tdf["no_market_id"] != "").sum()
+        print(f"Emitted {len(tdf)} unique depth targets to {tpath} ({n_with_no} with NO-token)")
 
     # Join orderbook depth if fetch_depth.py has already run.
     depth_path = ROOT / "data" / "raw" / "orderbook_depth.csv"
     if depth_path.exists():
-        depth = pd.read_csv(depth_path, dtype={"market_id": str})
+        depth = pd.read_csv(depth_path, dtype={"market_id": str, "yes_market_id": str})
+        # Backwards compat for older depth CSVs without the side column —
+        # assume every row is a YES book.
+        if "side" not in depth.columns:
+            depth["side"] = "yes"
         depth_cols = ["best_bid", "best_ask", "best_bid_size", "best_ask_size",
                       "depth_bid_at_1pp", "depth_ask_at_1pp", "max_buy_size_at_3pp_edge"]
         result["market_id_a"] = result["market_id_a"].astype(str)
         result["market_id_b"] = result["market_id_b"].astype(str)
+
+        yes_depth = depth[depth["side"] == "yes"].copy()
+        no_depth = depth[depth["side"] == "no"].copy() if (depth["side"] == "no").any() else None
         for side in ("a", "b"):
-            d = depth[["platform", "market_id"] + depth_cols].rename(
+            # YES book: join on market_id (which IS the YES token for
+            # Polymarket, and the market_ticker for Kalshi).
+            d = yes_depth[["platform", "market_id"] + depth_cols].rename(
                 columns={"platform": f"platform_{side}",
                          "market_id": f"market_id_{side}",
                          **{c: f"depth_{side}_{c}" for c in depth_cols}}
             )
             result = result.merge(d, on=[f"platform_{side}", f"market_id_{side}"], how="left")
+            # NO book: only for Polymarket. fetch_depth tagged each NO row
+            # with yes_market_id so we can join back on the same key.
+            if no_depth is not None and not no_depth.empty:
+                nd = no_depth[["platform", "yes_market_id"] + depth_cols].rename(
+                    columns={"platform": f"platform_{side}",
+                             "yes_market_id": f"market_id_{side}",
+                             **{c: f"depth_no_{side}_{c}" for c in depth_cols}}
+                )
+                result = result.merge(nd, on=[f"platform_{side}", f"market_id_{side}"], how="left")
         # Short alias used by the dashboard
         result["depth_a_max_at_3pp"] = result.get("depth_a_max_buy_size_at_3pp_edge")
         result["depth_b_max_at_3pp"] = result.get("depth_b_max_buy_size_at_3pp_edge")
         joined = result["depth_a_max_at_3pp"].notna().sum()
-        print(f"Joined depth onto {joined}/{len(result)} pairs (A side)")
+        joined_no = (result.get("depth_no_a_best_ask", pd.Series(dtype=float)).notna().sum()
+                     + result.get("depth_no_b_best_ask", pd.Series(dtype=float)).notna().sum())
+        print(f"Joined depth onto {joined}/{len(result)} pairs (A side); NO-book rows: {joined_no}")
 
         # When live orderbook depth is available, override the implied_prob
         # we got from the scraper with the depth-time midpoint. The depth
@@ -404,8 +459,8 @@ def run():
         # so a true buy-yes-buy-no basket cost more than 1.0 and there
         # was no arb. We pass live bid/ask in for any row where depth
         # data exists; compute_arb falls back to midpoints otherwise.
-        def _live(row, side, col):
-            v = row.get(f"depth_{side}_{col}")
+        def _live(row, prefix, col):
+            v = row.get(f"{prefix}_{col}")
             if pd.isna(v) or v is None:
                 return None
             try:
@@ -420,19 +475,26 @@ def run():
                 continue
             fa = FEES.get(row.get("platform_a"), 0.05)
             fb = FEES.get(row.get("platform_b"), 0.05)
-            # PredictIt has no public live orderbook, only a single
-            # implied_prob field. Treating that as both bid AND ask
-            # produces fake guaranteed-arbs at any wide cross-platform
-            # gap (the math thinks you can buy YES at the same price
-            # someone else sold YES, which is never true). Force a
-            # synthetic ±5pp implied spread on PredictIt legs so the
-            # math reflects that you have to cross at least that much
-            # to actually trade.
+            # Real YES book from fetch_depth.
+            la_bid = _live(row, "depth_a", "best_bid")
+            la_ask = _live(row, "depth_a", "best_ask")
+            lb_bid = _live(row, "depth_b", "best_bid")
+            lb_ask = _live(row, "depth_b", "best_ask")
+            # Real NO book from fetch_depth (Polymarket only; tagged as
+            # `depth_no_a_*` / `depth_no_b_*` after the depth-join). Kalshi
+            # doesn't expose a separate NO token so this stays None there
+            # and compute_arb falls back to 1 - YES bid.
+            no_a_bid = _live(row, "depth_no_a", "best_bid")
+            no_a_ask = _live(row, "depth_no_a", "best_ask")
+            no_b_bid = _live(row, "depth_no_b", "best_bid")
+            no_b_ask = _live(row, "depth_no_b", "best_ask")
+            # PredictIt has no public live orderbook — synthesize a +/-5pp
+            # spread around the midpoint so the math doesn't treat the
+            # midpoint as both bid AND ask (which produces fake arbs at
+            # any wide cross-platform gap). Real fix is to flow PredictIt's
+            # bestBuyYes/bestSellYes through as actual bid/ask — tracked
+            # in AUDIT.md to-do.
             PREDICTIT_HALF_SPREAD = 0.05
-            la_bid = _live(row, "a", "best_bid")
-            la_ask = _live(row, "a", "best_ask")
-            lb_bid = _live(row, "b", "best_bid")
-            lb_ask = _live(row, "b", "best_ask")
             if row.get("platform_a") == "predictit" and la_bid is None and la_ask is None:
                 la_bid = max(0.01, pa - PREDICTIT_HALF_SPREAD)
                 la_ask = min(0.99, pa + PREDICTIT_HALF_SPREAD)
@@ -443,6 +505,8 @@ def run():
                 pa, pb, fa, fb,
                 bid_a=la_bid, ask_a=la_ask,
                 bid_b=lb_bid, ask_b=lb_ask,
+                no_bid_a=no_a_bid, no_ask_a=no_a_ask,
+                no_bid_b=no_b_bid, no_ask_b=no_b_ask,
             )
             arb["action"] = arb["action"].replace("{pa}", row.get("platform_a", "").title()) \
                                           .replace("{pb}", row.get("platform_b", "").title())
