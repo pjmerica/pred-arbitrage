@@ -236,16 +236,31 @@ def run():
     # Skip multivariate parlay markets — they have no equivalent on PM/PI
     SKIP_EVENT_PREFIXES = ("KXMVE", "KXMULTIVARIATE")
 
+    n_one_sided = 0
     for event in events:
         et = (event.get("event_ticker") or "").upper()
         if any(et.startswith(p) for p in SKIP_EVENT_PREFIXES):
             continue
         for market in event.get("markets") or []:
             row = parse_market(event, market)
+            # Skip one-sided books — markets with a yes_ask but no yes_bid
+            # can be bought into but not exited. They show a "price" that
+            # isn't actually two-sided and clutter the dashboard. User
+            # explicitly asked to filter these out at the pipeline level
+            # (2026-06-21). NOTE: we treat 0.0 as "no bid" here even
+            # though Kalshi technically allows a 1¢ resting bid — those
+            # 1¢ bids are usually market-maker scrapers, not real
+            # exit liquidity.
+            yb = row.get("yes_bid")
+            if yb is None or yb <= 0:
+                n_one_sided += 1
+                continue
             key = row["ticker"]
             if key and key not in seen_tickers:
                 seen_tickers.add(key)
                 rows.append(row)
+    if n_one_sided:
+        print(f"  Skipped {n_one_sided} one-sided markets (no bid → can't exit)")
 
     df = pd.DataFrame(rows)
     out = RAW / "kalshi_markets.csv"

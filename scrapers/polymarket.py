@@ -165,11 +165,28 @@ def parse_market(event, market):
     # is a stale standing order, not a real market — using it pairs against
     # other platforms' tight quotes and produces fake arbs (e.g. a lone
     # $0.86 sell order sitting on a dead market).
+    #
+    # Also drop the row entirely when the gamma snapshot reports a wide
+    # spread. Gamma's bid/ask lags the live CLOB by minutes-to-hours, so
+    # a 15pp-wide gamma quote is almost always a stale snapshot where the
+    # live book has tightened. Earlier we'd "use the ask to be conservative"
+    # in those cases — but using a stale high ask isn't conservative for a
+    # BUYER (which is what arb math needs); it makes the price look
+    # OPTIMISTIC. Example incident (2026-06-21): NZ recognizes-Palestine
+    # market had gamma bb=0.16 / ba=0.34 (18pp spread, used 0.34 as price);
+    # live CLOB depth showed bb=0.16 / ba=0.24 (8pp). The arb against
+    # Kalshi's 0.14 looked like a 20pp gap that didn't exist. fetch_depth
+    # re-checks the live book later but only on the matched pairs; nothing
+    # rescues bad scraper prices that never got paired.
+    #
+    # Threshold rationale: 8pp catches the worst gamma-stale rows while
+    # leaving genuinely thinly-traded markets (where 5-10pp spreads are
+    # normal). Markets dropped here may resurface tomorrow once gamma
+    # refreshes.
+    WIDE_SPREAD_PP = 0.08
     if bb is not None and ba is not None and 0 < bb <= ba < 1:
-        # Wide spread (>10pp) means the midpoint is fictional; only the ask
-        # is actually fillable. Use ask to be conservative.
-        if (ba - bb) > 0.10:
-            implied_prob = ba
+        if (ba - bb) > WIDE_SPREAD_PP:
+            implied_prob = None  # drop — gamma quote is too stale to trust
         else:
             implied_prob = round((bb + ba) / 2, 4)
 

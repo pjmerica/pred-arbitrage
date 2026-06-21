@@ -387,7 +387,6 @@ function render() {
       : `<span class="badge-fuzzy">${r.fuzzy_score}%</span>`;
     const reasonText = {
       wide_gap: '>20pp raw gap', wide_spread_a: 'wide spread on A', wide_spread_b: 'wide spread on B',
-      one_sided_a: 'one-sided book on A', one_sided_b: 'one-sided book on B',
       thin_depth_a: '<20 contracts tradeable on A', thin_depth_b: '<20 contracts tradeable on B',
     };
     const reasons = (r.suspicion_reasons || []).map(k => {

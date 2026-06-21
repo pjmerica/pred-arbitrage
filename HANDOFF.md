@@ -158,12 +158,73 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
 
 1. Scraper-time filters drop wide-spread / low-liquidity markets at the
    source.
+   - Polymarket: gamma snapshots with bid-ask spread > 8pp get dropped
+     entirely (the gamma /markets endpoint caches a snapshot that lags
+     the live CLOB by minutes-to-hours; wide spreads are usually a sign
+     that the cached snapshot is out of date). Earlier code used "ask"
+     as the price for wide-spread rows; that's optimistic for a buyer
+     and produced fake arbs against tighter cross-platform quotes (NZ
+     Palestine market: gamma 16-34¢ shipped as 34¢; live CLOB was
+     16-24¢, real midpoint 20¢ — the arb went from a fake 20pp to a
+     real 6pp).
+   - Kalshi: markets with `yes_bid` missing or 0 are dropped entirely
+     ("only buyers, no sellers" = can't exit a position).
 2. Cross-flip safety on 3-way races.
-3. Depth-derived spread filter after fetch_depth.
-4. Rules-text scrutiny for >30pp pairs (`scripts/scrutiny.py`), with
+3. **Depth-time price override** (2026-06-21). When `fetch_depth` has a
+   fresh live-CLOB midpoint for a market, the scanner overrides the
+   scrape-time `implied_prob_a/b` with that midpoint and recomputes the
+   arb math. Catches gamma-stale prices that escaped the scraper-time
+   wide-spread filter (e.g. spread was tight at scrape time but the
+   "tight" price was itself stale). Logged as
+   `Overrode N prices with live depth midpoints`.
+4. Depth-derived spread filter after fetch_depth (drops pairs with >25pp
+   spread on either side at depth-fetch time).
+5. **One-sided orderbook drop** (2026-06-21). Drops any pair where
+   either side's live orderbook has an ask but no bid (or bid ≤ 0).
+   Same logic as the Kalshi scrape-time filter, but rechecked at depth
+   time — a market can go one-sided in the minutes between scrape and
+   depth-fetch. User-requested as "only live props" (you can't exit a
+   position you can't sell into).
+6. **Past-settle-date drop** (2026-06-21). Drops any pair whose
+   `settle_date` is before today. Kalshi event-of-the-week and
+   Polymarket weekly charts sometimes stay in the "active" feed for a
+   few days after they resolve.
+7. Rules-text scrutiny for >30pp pairs (`scripts/scrutiny.py`), with
    `data/processed/excluded_pairs.json` for hand-curated criteria
    mismatches. The Iran nuclear deal is the only entry today.
-5. Per-pair `suspicion_reasons` array surfaces WHY a pair is flagged.
+8. Per-pair `suspicion_reasons` array surfaces WHY a pair is flagged.
+   Codes: `wide_gap`, `wide_spread_a/b`, `thin_depth_a/b`,
+   `criteria_warn`. `one_sided_a/b` was removed as a suspicion code in
+   2026-06-21 because those pairs are now dropped at filter step 5
+   instead of just being flagged.
+
+### Why we don't just hit the live orderbook for every market
+
+Common question: "if the live CLOB has fresh prices, why scrape gamma at
+all?" The actual numbers (measured 2026-06-21 with a 50-request probe):
+
+- `clob.polymarket.com/book` allows ~6 req/sec sequential with no
+  observed rate limiting in a short burst. No documented rate limit
+  found in public Polymarket docs.
+- 25k active markets ÷ 6 req/sec ≈ **70 minutes sequential**. With
+  modest concurrency (5-10 parallel) it'd drop to ~10-15 min.
+- For comparison: the gamma `/markets` bulk endpoint returns all 25k in
+  about 3 minutes.
+
+The current "scrape gamma, then depth-fetch only matched pairs" design
+is a **performance optimization, not a rate-limit constraint**. It's
+worth knowing the option to switch to wide-coverage CLOB is on the
+table — it'd cost extra workflow time but would let us delete the
+8pp wide-spread scraper drop, the depth-time price override, and most
+of the staleness-fighting code. See the AUDIT.md to-do list.
+
+Kalshi is a different story: its `/markets` summary already returns
+near-realtime bid/ask in the same payload as market metadata, so a
+separate live-fetch buys little.
+
+PredictIt: there is no public orderbook endpoint. The single
+`marketdata/all` summary is everything they expose. Whatever it
+returns IS the freshest data available.
 
 ### Fees (round-trip)
 

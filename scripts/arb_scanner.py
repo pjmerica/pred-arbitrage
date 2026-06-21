@@ -285,6 +285,69 @@ def run():
         joined = result["depth_a_max_at_3pp"].notna().sum()
         print(f"Joined depth onto {joined}/{len(result)} pairs (A side)")
 
+        # When live orderbook depth is available, override the implied_prob
+        # we got from the scraper with the depth-time midpoint. The depth
+        # fetch runs minutes AFTER the scrape and hits the live CLOB book
+        # directly (not the gamma snapshot for Polymarket, not a cached
+        # market summary for Kalshi). For markets that move during a refresh
+        # cycle, the depth-time price is materially fresher.
+        #
+        # Why this matters: Polymarket's gamma /markets endpoint reports
+        # bid/ask that can lag the live CLOB by minutes to hours on
+        # low-volume markets. Example incident (2026-06-21): the NZ
+        # recognizes-Palestine market scraped at midpoint=24% (gamma:
+        # bb=0.16 / ba=0.34) and shipped as a 20pp arb vs Kalshi's 14%.
+        # Live depth at the same instant showed bb=0.16 / ba=0.24, midpoint
+        # 20%. The arb was 6pp not 20pp. This override would have surfaced
+        # the right number; the scraper-side wide-spread drop catches it
+        # too but only if the spread is also wide AT scrape time.
+        #
+        # We only override when BOTH depth_best_bid and depth_best_ask are
+        # present and form a sane two-sided book; missing/NaN depth keeps
+        # the scraper price. Recompute raw_gap / net_gap / arb_type / etc.
+        # afterward since the price changed.
+        def _depth_mid(row, side):
+            bb = row.get(f"depth_{side}_best_bid")
+            ba = row.get(f"depth_{side}_best_ask")
+            if pd.isna(bb) or pd.isna(ba) or bb is None or ba is None:
+                return None
+            try:
+                bb, ba = float(bb), float(ba)
+            except (TypeError, ValueError):
+                return None
+            if not (0 < bb <= ba < 1):
+                return None
+            return round((bb + ba) / 2, 4)
+        n_overridden = 0
+        for idx, row in result.iterrows():
+            ma = _depth_mid(row, "a")
+            mb = _depth_mid(row, "b")
+            if ma is not None and ma != row.get("implied_prob_a"):
+                result.at[idx, "implied_prob_a"] = ma
+                n_overridden += 1
+            if mb is not None and mb != row.get("implied_prob_b"):
+                result.at[idx, "implied_prob_b"] = mb
+        if n_overridden:
+            print(f"Overrode {n_overridden} prices with live depth midpoints")
+            # Recompute arb math on the new prices.
+            for idx, row in result.iterrows():
+                pa = row.get("implied_prob_a")
+                pb = row.get("implied_prob_b")
+                if pd.isna(pa) or pd.isna(pb):
+                    continue
+                fa = FEES.get(row.get("platform_a"), 0.05)
+                fb = FEES.get(row.get("platform_b"), 0.05)
+                arb = compute_arb(pa, pb, fa, fb)
+                arb["action"] = arb["action"].replace("{pa}", row.get("platform_a", "").title()) \
+                                              .replace("{pb}", row.get("platform_b", "").title())
+                for k, v in arb.items():
+                    result.at[idx, k] = v
+                # Suspicious flag was based on raw_gap > 20; the post-override
+                # value already lives in arb["raw_gap_pp"], so the flag in the
+                # row dict is stale. Re-stamp it.
+                rg = arb.get("raw_gap_pp")
+                result.at[idx, "suspicious"] = bool(rg is not None and rg > 20)
+
         # Defense in depth: even if a scraper missed a wide-spread market
         # at scrape time, the fetch_depth pull is fresh. Drop any pair
         # where the depth-derived spread on EITHER side exceeds 25pp —
@@ -300,8 +363,28 @@ def run():
         if before != len(result):
             print(f"Dropped {before - len(result)} pairs with wide depth-derived spread (>25pp)")
 
-        # Compute suspicion_reasons. >20pp gap, wide depth spread, one-sided
-        # book, or thin depth all warrant manual verification.
+        # Drop pairs where the live orderbook on either side has no bid.
+        # The scraper already filters these out at scrape time, but a
+        # market can go one-sided in the minutes between scrape and the
+        # fetch_depth pull — catch that here. User explicitly asked for
+        # "only live props" (2026-06-21): if you can't exit, it's not
+        # really a tradeable position.
+        # Note: the depth columns are NaN for any pair we didn't fetch
+        # depth on (PredictIt legs, markets that 404'd, etc.). Those
+        # stay in — we don't drop on missing data, only on confirmed
+        # missing bid.
+        def one_sided(row, side):
+            bb = row.get(f"depth_{side}_best_bid")
+            ba = row.get(f"depth_{side}_best_ask")
+            return pd.notna(ba) and (pd.isna(bb) or bb is None or bb <= 0)
+        before = len(result)
+        result = result[~result.apply(lambda r: one_sided(r, "a") or one_sided(r, "b"), axis=1)]
+        if before != len(result):
+            print(f"Dropped {before - len(result)} pairs with one-sided orderbook (no bid - can't exit)")
+
+        # Compute suspicion_reasons. >20pp gap, wide depth spread, thin
+        # depth all warrant manual verification. (one_sided is no longer
+        # a suspicion code — pairs that fail it are dropped above.)
         def reasons(row):
             rs = []
             if (row.get("raw_gap_pp") or 0) > 20:
@@ -311,8 +394,6 @@ def run():
                 ba = row.get(f"depth_{side}_best_ask")
                 if pd.notna(bb) and pd.notna(ba) and (ba - bb) > 0.15:
                     rs.append(f"wide_spread_{side}")
-                if pd.notna(ba) and pd.isna(bb):
-                    rs.append(f"one_sided_{side}")
                 m3 = row.get(f"depth_{side}_max_at_3pp")
                 if pd.notna(m3) and m3 < 20:
                     rs.append(f"thin_depth_{side}")

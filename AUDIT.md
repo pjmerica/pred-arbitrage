@@ -240,3 +240,65 @@ Commit hash to be filled at push time.
   refreshed (was still showing the stale 3% rates).
 - README.md updated: four-tab description; pipeline step list expanded
   to cover the elections module + category tagging step.
+
+### 2026-06-21 (later that day) — Liveness pass: only-tradeable rows
+
+Pipeline-wide changes so the dashboard only ever shows pairs the user
+could actually trade right now. Triggered by the user spotting a stale
+gap on the "New Zealand recognizes Palestine before 2027" market
+(Kalshi 14¢ vs Polymarket 34¢; live CLOB showed Polymarket was actually
+~20¢, so the real gap was 6pp not 20pp).
+
+Diagnosis: Polymarket's gamma `/markets` endpoint is what we scrape for
+the bulk pass, and gamma caches a snapshot that lags the live CLOB by
+minutes-to-hours on low-volume markets. Old scraper logic for wide-
+spread gamma rows was "use the ask price to be conservative" — but
+"conservative" was the wrong word for a BUYER (which is what arb math
+needs); the stale-high ask makes the price look optimistic. NZ's
+gamma was bid=0.16 / ask=0.34 (18pp wide); shipped as 0.34. Live
+depth showed bid=0.16 / ask=0.24 (8pp).
+
+Five layered fixes:
+
+1. **`scrapers/kalshi.py`**: drop rows with `yes_bid <= 0` at the source
+   (about 7,700 of 44,000 markets). One-sided books can be bought into
+   but not exited.
+2. **`scrapers/polymarket.py`**: tighten the gamma wide-spread filter
+   from "spread > 10pp → use ask" to "spread > 8pp → drop the row".
+   Wide-spread gamma is almost always stale; using its ask poisons the
+   downstream arb math. Markets dropped here may resurface tomorrow
+   once gamma refreshes.
+3. **`scripts/arb_scanner.py`**: depth-time price override. When
+   `fetch_depth` has a fresh live-CLOB midpoint for a market, override
+   the scrape-time `implied_prob_a/b` with that midpoint and recompute
+   arb math. Caught 34 prices on the smoke run; NZ specifically went
+   from 14% vs 34% (fake 20pp) to 14% vs 20% (real 6pp guaranteed arb).
+4. **`scripts/arb_scanner.py`**: drop pairs where either side's live
+   orderbook has an ask but no bid (or bid ≤ 0). Same rationale as the
+   Kalshi scrape-time drop, but rechecked at depth-fetch time — a
+   market can go one-sided in the minutes between scrape and depth.
+   Dropped 74 pairs on the smoke run.
+5. **`scripts/arb_scanner.py`**: drop pairs with `settle_date` already
+   in the past. Resolved markets sometimes linger in upstream feeds.
+   Dropped 18 pairs on the smoke run.
+
+Removed `one_sided_a/b` from the suspicion reason map and from
+`docs/index.html`'s `reasonText` (those pairs are now dropped at fix
+#4 instead of being flagged).
+
+Pair counts: 562 → 495 after all five filters (with the existing
+locally-cached scraper CSV; production numbers will differ once the
+next cron re-scrapes).
+
+HANDOFF.md updated: new section "Why we don't just hit the live
+orderbook for every market" with actual measured numbers (6 req/sec
+on the CLOB book endpoint, no rate limiting observed in a 50-request
+probe — earlier "30+ minutes" claim was overstated); suspicion+
+scrutiny section rewritten to cover the new filter steps in order.
+
+**Open option worth considering:** switch the Polymarket scrape from
+gamma to wide-coverage CLOB. Measured cost is ~10-15 min with modest
+concurrency; payoff is deletion of the wide-spread drop + depth-time
+override + most of the staleness-fighting code. Currently optimized
+for workflow speed (gamma is 3 min vs CLOB's 10-15 min); the
+staleness cost is the price.
