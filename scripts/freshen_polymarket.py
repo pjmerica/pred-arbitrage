@@ -69,9 +69,15 @@ GLOBAL_TIMEOUT_S = 30 * 60  # hard cap so the workflow can't hang forever
 
 
 def fetch_book(token_id: str):
-    """Return (best_bid, best_ask) or (None, None) on failure / 404."""
+    """Return (best_bid, best_ask, last_trade) or (None, None, None) on failure.
+
+    CLOB book endpoint also returns `last_trade_price`. We pull it so
+    the caller can use it as the DISPLAY price (matches what
+    polymarket.com shows when a user clicks in), while keeping
+    best_bid / best_ask available for arb math via fetch_depth.
+    """
     if not token_id or token_id in ("nan", "None"):
-        return (None, None)
+        return (None, None, None)
     url = CLOB_BOOK_URL.format(tid=token_id)
     req = urllib.request.Request(url, headers=DEFAULT_HEADERS)
     try:
@@ -82,19 +88,20 @@ def fetch_book(token_id: str):
         # 429 / 5xx = transient — we don't retry here; the freshen pass
         # will rerun tomorrow and the gamma fallback is good enough for
         # one cycle. Count and continue.
-        return (None, None)
+        return (None, None, None)
     except Exception:
-        return (None, None)
+        return (None, None, None)
 
     # CLOB book shape: {"bids": [{"price": "0.16", "size": "..."}, ...],
-    #                   "asks": [{"price": "0.24", "size": "..."}, ...]}
-    # CRITICAL: the API does NOT sort with best-first. Empirically the
-    # bids array comes back roughly low-to-high and the asks high-to-low
-    # (presumably the order in which orders were posted, not sorted).
-    # So we have to sort here. Best bid = max bid price, best ask = min
-    # ask price. The earlier version of this function read rows[0]
-    # without sorting and returned the WORST price on each side
-    # (e.g. NZ market: bid=0.01 ask=0.99 instead of bid=0.17 ask=0.20).
+    #                   "asks": [{"price": "0.24", "size": "..."}, ...],
+    #                   "last_trade_price": "0.18"}
+    # CRITICAL: the API does NOT sort bids/asks with best-first.
+    # Empirically the bids array comes back roughly low-to-high and the
+    # asks high-to-low (presumably order-of-insertion, not sorted).
+    # We sort explicitly. Best bid = max bid price; best ask = min ask
+    # price. Earlier version read rows[0] without sorting and returned
+    # the WORST price on each side (NZ market: bid=0.01 ask=0.99
+    # instead of bid=0.17 ask=0.20).
     def _prices(side):
         rows = data.get(side) or []
         out = []
@@ -109,7 +116,16 @@ def fetch_book(token_id: str):
     asks = _prices("asks")
     bb = max(bids) if bids else None
     ba = min(asks) if asks else None
-    return (bb, ba)
+    last = None
+    raw_last = data.get("last_trade_price")
+    if raw_last is not None:
+        try:
+            last = float(raw_last)
+            if not (0 < last < 1):
+                last = None
+        except (TypeError, ValueError):
+            last = None
+    return (bb, ba, last)
 
 
 def run():
@@ -134,6 +150,7 @@ def run():
     t0 = time.time()
     fresh_bb = [None] * n_total
     fresh_ba = [None] * n_total
+    fresh_last = [None] * n_total
 
     n_ok = 0
     n_missing = 0
@@ -155,12 +172,13 @@ def run():
                 for f in futures:
                     f.cancel()
                 break
-            bb, ba = fut.result()
+            bb, ba, last = fut.result()
             if bb is None and ba is None:
                 n_missing += 1
             else:
                 fresh_bb[i] = bb
                 fresh_ba[i] = ba
+                fresh_last[i] = last
                 n_ok += 1
             done = n_ok + n_missing
             if done % 2000 == 0:
@@ -174,22 +192,34 @@ def run():
     # Apply the fresh values. Only overwrite when we got a real number;
     # leave gamma value in place when CLOB fetch failed (better than
     # blanking the row).
+    #
+    # implied_prob picks (priority order, matching what polymarket.com
+    # shows when a user clicks in):
+    #   1. last_trade_price (from CLOB, if recent)
+    #   2. midpoint of bid + ask
+    # We don't fall back to gamma's value because by the time we got
+    # here the row had to come from a successful CLOB fetch.
     now_iso = datetime.now(timezone.utc).isoformat()
     n_changed = 0
+    n_used_last = 0
+    n_used_mid = 0
     for i in range(n_total):
         bb = fresh_bb[i]
         ba = fresh_ba[i]
+        last = fresh_last[i]
         if bb is None and ba is None:
             continue
         df.at[i, "best_bid"] = bb
         df.at[i, "best_ask"] = ba
-        # Recompute implied_prob = midpoint when both sides exist; else
-        # leave whatever was there.
-        if bb is not None and ba is not None and 0 < bb <= ba < 1:
+        if last is not None and 0 < last < 1:
+            df.at[i, "implied_prob"] = round(last, 4)
+            n_used_last += 1
+        elif bb is not None and ba is not None and 0 < bb <= ba < 1:
             df.at[i, "implied_prob"] = round((bb + ba) / 2, 4)
+            n_used_mid += 1
         df.at[i, "fetched_at"] = now_iso
         n_changed += 1
-    print(f"Overwrote bid/ask/midpoint on {n_changed} rows")
+    print(f"Overwrote bid/ask on {n_changed} rows (implied_prob: {n_used_last} from last_trade, {n_used_mid} from midpoint)")
 
     # Drop rows where the CLOB confirmed the market is gone (no bids and
     # no asks AT ALL, distinct from "we failed to fetch"). We use the

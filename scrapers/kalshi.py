@@ -170,12 +170,29 @@ def parse_market(event, market):
     yes_ask = to_float(market.get("yes_ask_dollars"))
     last    = to_float(market.get("last_price_dollars"))
 
-    # Only trust the bid/ask midpoint when the book has a tight spread.
-    # A wide-spread (>30pp) book is broken — only stale limit orders at
-    # the price-range endpoints — and the midpoint pairs against the
-    # other platform's tight quote to produce fake arbs.
+    # Pick implied_prob to match what kalshi.com SHOWS to a user clicking
+    # into the market. Kalshi's UI displays `last_price` as the headline
+    # number. Earlier we used the bid/ask midpoint — that's a more
+    # accurate "current consensus" number but doesn't match what a user
+    # sees on the platform itself.
+    #
+    # User explicitly asked 2026-06-21: "I want the price on the UI when
+    # you click in which is 14 but our dashboard shows 18". Somaliland
+    # had bid=0.15 ask=0.21 last=0.14, midpoint 0.18 — Kalshi UI shows
+    # last (0.14), so we follow.
+    #
+    # Fallback chain when last_price is missing/garbage:
+    #   1. midpoint of bid + ask  (tight book = reasonable proxy)
+    #   2. ask alone  (only sellers)
+    #   3. bid alone  (only buyers)
+    # Arb math STILL uses real bid/ask via fillable_ask / fillable_no_ask
+    # (see compute_arb in arb_scanner.py) — implied_prob is for DISPLAY
+    # only and doesn't affect whether something is flagged a guaranteed
+    # arb.
     implied_prob = None
-    if (yes_bid is not None and yes_ask is not None
+    if last is not None and 0.01 < last < 0.99:
+        implied_prob = last
+    elif (yes_bid is not None and yes_ask is not None
             and yes_bid > 0 and yes_ask > 0
             and (yes_ask - yes_bid) <= 0.30):
         implied_prob = (yes_bid + yes_ask) / 2
@@ -183,8 +200,6 @@ def parse_market(event, market):
         implied_prob = yes_ask
     elif yes_bid is not None and yes_bid > 0 and yes_ask in (None, 0):
         implied_prob = yes_bid
-    elif last is not None and 0.01 < last < 0.99:
-        implied_prob = last
 
     series_ticker = event.get("series_ticker", "")
     event_ticker  = event.get("event_ticker", "")

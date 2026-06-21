@@ -408,50 +408,26 @@ def run():
                      + result.get("depth_no_b_best_ask", pd.Series(dtype=float)).notna().sum())
         print(f"Joined depth onto {joined}/{len(result)} pairs (A side); NO-book rows: {joined_no}")
 
-        # When live orderbook depth is available, override the implied_prob
-        # we got from the scraper with the depth-time midpoint. The depth
-        # fetch runs minutes AFTER the scrape and hits the live CLOB book
-        # directly (not the gamma snapshot for Polymarket, not a cached
-        # market summary for Kalshi). For markets that move during a refresh
-        # cycle, the depth-time price is materially fresher.
-        #
-        # Why this matters: Polymarket's gamma /markets endpoint reports
-        # bid/ask that can lag the live CLOB by minutes to hours on
-        # low-volume markets. Example incident (2026-06-21): the NZ
-        # recognizes-Palestine market scraped at midpoint=24% (gamma:
-        # bb=0.16 / ba=0.34) and shipped as a 20pp arb vs Kalshi's 14%.
-        # Live depth at the same instant showed bb=0.16 / ba=0.24, midpoint
-        # 20%. The arb was 6pp not 20pp. This override would have surfaced
-        # the right number; the scraper-side wide-spread drop catches it
-        # too but only if the spread is also wide AT scrape time.
-        #
-        # We only override when BOTH depth_best_bid and depth_best_ask are
-        # present and form a sane two-sided book; missing/NaN depth keeps
-        # the scraper price. Recompute raw_gap / net_gap / arb_type / etc.
-        # afterward since the price changed.
-        def _depth_mid(row, side):
-            bb = row.get(f"depth_{side}_best_bid")
-            ba = row.get(f"depth_{side}_best_ask")
-            if pd.isna(bb) or pd.isna(ba) or bb is None or ba is None:
-                return None
-            try:
-                bb, ba = float(bb), float(ba)
-            except (TypeError, ValueError):
-                return None
-            if not (0 < bb <= ba < 1):
-                return None
-            return round((bb + ba) / 2, 4)
-        n_overridden = 0
-        for idx, row in result.iterrows():
-            ma = _depth_mid(row, "a")
-            mb = _depth_mid(row, "b")
-            if ma is not None and ma != row.get("implied_prob_a"):
-                result.at[idx, "implied_prob_a"] = ma
-                n_overridden += 1
-            if mb is not None and mb != row.get("implied_prob_b"):
-                result.at[idx, "implied_prob_b"] = mb
-        if n_overridden:
-            print(f"Overrode {n_overridden} prices with live depth midpoints")
+        # `implied_prob_a` / `implied_prob_b` are DISPLAY prices, meant
+        # to match what the platforms themselves show when a user clicks
+        # in. We used to overwrite them here with a depth-time midpoint;
+        # removed 2026-06-21 because:
+        #   (a) it was clobbering Kalshi's last_price (what Kalshi UI shows)
+        #       with the midpoint of the live bid/ask. User saw Somaliland
+        #       shipping as 18 cents (midpoint) when Kalshi UI shows 14
+        #       cents (last_price); the override was responsible.
+        #   (b) Polymarket gamma staleness — the original reason for the
+        #       override — is now handled by scripts/freshen_polymarket.py
+        #       which rewrites every Polymarket midpoint with live CLOB
+        #       data BEFORE the matcher runs.
+        # The arb math STILL uses the live depth bid/ask via
+        # `compute_arb(bid_a=depth_a_best_bid, ask_a=depth_a_best_ask, ...)`
+        # in the recompute block below — it doesn't depend on
+        # implied_prob_a/b for tradeable-price decisions. So leaving the
+        # display price as the scraper produced it (Kalshi last_price,
+        # Polymarket freshened midpoint) gives users a "matches the
+        # platform UI" number, and the arb math uses fillable prices
+        # under the hood.
         # Always recompute arb math on every depth-joined row, using REAL
         # bid/ask for the YES/NO legs (not midpoints). This is the fix
         # for the Somaliland-style fake-guaranteed-arb: midpoint math
