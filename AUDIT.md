@@ -161,7 +161,21 @@ Highest leverage first.
 4. **Cross-repo sanity check.** Either a CI step that diffs
    `polling-agg-2026/scripts/arb_scanner.py:FEES` vs ours, or move the
    shared constants into a published shared package. The headers helper
-   is the same situation.
+   AND `scripts/elections.py` are now in the same situation —
+   `elections.py` is a hand-port of polling-agg's election logic, and
+   it WILL drift if polling-agg changes its parsing regexes / arb math
+   / fee model without someone re-syncing here. Three options:
+     a. Periodic manual diff (cheap, drifts silently).
+     b. CI step that fails if specific function source diffs.
+     c. Publish polling-agg's election module as a pip package,
+        pred-arb depends on it. Cleanest but most setup.
+5. **Deduplicate elections matches.** Pred-arb's fuzzy matcher already
+   surfaces some 2026 elections in its Politics output; `elections.py`
+   adds more (often the same ones via the direct race_id path). User
+   explicitly chose to accept duplicates today (2026-06-21) — flag a
+   "preferred source" once the volume is observable. The
+   race_id-based rows from `elections.py` are typically more accurate
+   than fuzzy text matches; prefer them when dedup happens.
 5. **Refactor `scripts/matcher.py` guard chain into named helpers.**
 6. **Verify the Node 20→24 migration didn't break anything.** GHA
    forced Node 24 around 2026-06-16; pred-arb's workflow uses
@@ -189,3 +203,40 @@ Commit hash to be filled at push time.
 - Synced `FEES` dict to 2%/12%/2% (was 3%/12%/3%). Matches polling-agg.
 - Added debounce on the dashboard search input in `docs/index.html`
   (150ms; numeric filters left as-is).
+
+### 2026-06-21 — Elections tab + ported polling-agg election logic
+
+- Copied `utils/races.py` (511-race registry) and
+  `scrapers/house_incumbents.py` verbatim from polling-agg-2026.
+- Created `scripts/elections.py` (~590 LOC). Three matching paths
+  (general / general_candidate / primary_candidate). Hand-ported from
+  polling-agg's `scripts/arb_scanner.py`. Reads pred-arb scraper CSVs
+  via normalizing adapter loaders that derive race_id from titles
+  (pred-arb scrapers don't pre-tag rows with race_id like polling-agg's
+  do). Output rows match pred-arb's existing schema (`implied_prob_a/b`,
+  `profitable_onesided`, `category='Elections'`, `category_bucket=
+  'Elections'`).
+- Wired into `run_all.py` between the matcher and arb scanner.
+- Modified `scripts/arb_scanner.py` to:
+  - Read `data/processed/election_pairs.csv` and concat its rows on
+    top of fuzzy-matcher output. Duplicates accepted today (user
+    decision).
+  - Compute `category_bucket ∈ {Elections, Sports, Other}` on every
+    row so the dashboard tabs can filter without re-running heuristics.
+- Rebuilt `docs/index.html` dashboard:
+  - Tab strip is now **All / 🗳 Elections / ⚽ Sports / Other** (was
+    Markets / Sports). Each tab filters the same dataset by
+    `row.category_bucket`.
+  - Tab count badges populated from row buckets.
+  - `bucketOf()` JS helper as a backwards-compat fallback for old
+    arb_data.js snapshots that don't have `category_bucket` yet.
+- Initial pair counts on the post-port smoke run: 589 total
+  (was 402 before the port). Breakdown: Elections 402, Other 150,
+  Sports 37. Election bucket: 174 fuzzy + 41 political + 187 ported
+  (53 general + 20 general_candidate + 114 primary_candidate).
+- HANDOFF.md updated: new "US-2026 elections" + "Categories and
+  dashboard tabs" sections under Architecture; file map expanded to
+  cover `utils/`, `house_incumbents.py`, `elections.py`; fee table
+  refreshed (was still showing the stale 3% rates).
+- README.md updated: four-tab description; pipeline step list expanded
+  to cover the elections module + category tagging step.

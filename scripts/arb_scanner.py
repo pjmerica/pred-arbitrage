@@ -200,6 +200,54 @@ def run():
 
     result = pd.DataFrame(rows)
 
+    # ── Append 2026 US-election rows produced by scripts/elections.py ──
+    # The election module runs before the scanner (see run_all.py) and
+    # writes data/processed/election_pairs.csv with pred-arb-shaped rows
+    # (same column names as `rows` above, plus a match_type tag of
+    # 'general' / 'general_candidate' / 'primary_candidate' and
+    # category='Elections'). We just concat — no dedup, since duplicates
+    # with the fuzzy matcher are acceptable today (user decision
+    # 2026-06-21). Missing file = elections step didn't run, treated as
+    # zero rows so the rest of the scanner survives.
+    election_path = PROCESSED / "election_pairs.csv"
+    if election_path.exists():
+        try:
+            elec = pd.read_csv(election_path,
+                               dtype={"market_id_a": str, "market_id_b": str})
+            if not elec.empty:
+                # Align column set with `result` so concat doesn't widen
+                # unexpectedly. Missing columns become NaN; extras get dropped.
+                for col in result.columns:
+                    if col not in elec.columns:
+                        elec[col] = None
+                elec = elec[list(result.columns)]
+                result = pd.concat([result, elec], ignore_index=True)
+                print(f"Appended {len(elec)} election pairs from election_pairs.csv")
+        except pd.errors.EmptyDataError:
+            print("election_pairs.csv is empty — skipping append")
+    else:
+        print("No election_pairs.csv — skipping (run scripts/elections.py first)")
+
+    # ── Tag every row with a top-level category for the dashboard tabs ──
+    # 'Elections' rows come from scripts/elections.py with the tag
+    # already set. Fuzzy-matcher rows have whatever the matcher put in
+    # the category column (e.g. 'Sports', 'Politics', 'Crypto'). For
+    # the new tab layout we collapse these into three buckets:
+    #   Elections — explicit category=='Elections' (only from elections.py)
+    #   Sports    — anything the matcher tagged 'Sports'
+    #   Other     — everything else
+    # The 'All' tab shows every row regardless.
+    def _bucket(cat):
+        if not isinstance(cat, str):
+            return "Other"
+        c = cat.strip().lower()
+        if c == "elections":
+            return "Elections"
+        if c == "sports":
+            return "Sports"
+        return "Other"
+    result["category_bucket"] = result["category"].apply(_bucket)
+
     # Emit depth_targets.csv for fetch_depth.py. Only kalshi/polymarket
     # markets have queryable orderbooks.
     targets = []

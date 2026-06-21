@@ -2,6 +2,10 @@ data/raw/
 data/processed/*
 # But DO track the human-maintained exclude list
 !data/processed/excluded_pairs.json
+# And the incumbents JSON — slowly-changing, read by utils/races.py at
+# import time, useful to have committed so a fresh checkout has it
+# before the house_incumbents scraper runs.
+!data/processed/house_incumbents.json
 __pycache__/
 *.pyc
 .env

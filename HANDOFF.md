@@ -1,6 +1,6 @@
 # Handoff — Pred Arbitrage
 
-**Last updated:** 2026-06-13
+**Last updated:** 2026-06-21
 **Status:** Live dashboard at https://pjmerica.github.io/pred-arbitrage/.
 GitHub Actions runs the full pipeline twice daily (12:30 + 00:30 UTC) and
 pushes refreshed `docs/arb_data.js` back to master.
@@ -40,8 +40,11 @@ scrapers/kalshi.py        → data/raw/kalshi_markets.csv
 scrapers/polymarket.py    → data/raw/polymarket_markets.csv
 scrapers/predictit.py     → data/raw/predictit_markets.csv
 scripts/matcher.py        → data/processed/matched_pairs.csv
+scripts/elections.py      → data/processed/election_pairs.csv  (added 2026-06-21)
 scripts/arb_scanner.py    → docs/arb_data.js + data/processed/depth_targets.csv
-                            (also runs scrutiny.py for >30pp pairs)
+                            (joins matched_pairs + election_pairs;
+                             also runs scrutiny.py for >30pp pairs;
+                             tags every row with category_bucket)
 scripts/fetch_depth.py    → data/raw/orderbook_depth.csv
 scripts/arb_scanner.py    → docs/arb_data.js (re-run, joins depth)
 ```
@@ -89,6 +92,66 @@ pair. In order:
 
 Each of these guards came from a specific false-pair bug.
 
+### US-2026 elections (ported from polling-agg-2026)
+
+`scripts/elections.py` is a parallel pair builder targeting 2026 US
+federal races (Senate / Governor / House). Ported from
+[polling-agg-2026](https://github.com/pjmerica/polling-agg-2026)'s
+`scripts/arb_scanner.py` on 2026-06-21. **Runs alongside the fuzzy
+matcher, doesn't replace it.** The scanner concatenates election rows
+on top of fuzzy rows in `docs/arb_data.js`. Duplicates with the
+fuzzy Politics path are acceptable today (user decision); future work
+can deduplicate.
+
+Three match paths emit rows with distinct `match_type` tags:
+
+- **`general`** — party-level Dem-yes vs Rep-yes markets joined on
+  canonical race_id (e.g. `2026-SEN-OH`). Only path that produces
+  `arb_type: guaranteed` rows, because it's the only one where both
+  legs of the basket exist as separately tradeable contracts.
+- **`general_candidate`** — per-candidate general markets ("Will Dan
+  Sullivan win the 2026 Alaska Senate race?") cross-matched on
+  `(state, office, district, candidate_last, candidate_first)`. Always
+  `arb_type: one-sided` (no candidate-no contract exists in this
+  template to build a guaranteed basket from).
+- **`primary_candidate`** — per-candidate primary markets ("Will Zach
+  Wahls be the Democratic nominee for Senate in Iowa?"). Same join
+  shape as general_candidate but with party in the key (a Dem and Rep
+  primary for the same office can have candidates with the same
+  surname).
+
+The race registry (`utils/races.py`) and the house-incumbents scraper
+(`scrapers/house_incumbents.py`) were copied verbatim from polling-agg
+to feed canonical race metadata. Pred-arb's own scrapers don't tag
+markets with race_id, so `elections.py` derives them from titles using
+`_extract_state_office()` + `_race_id_from()`.
+
+**Do not** add a runtime import dependency on polling-agg. The two
+repos stay independent (separate crons, separate live URLs). The cost
+is drift — see AUDIT.md for cross-repo to-do.
+
+**Inferred-complement is NOT used.** Polling-agg ripped it out on
+2026-06-18 (a Dem price filled from `1 - Rep` isn't a tradeable yes
+ask); the port carries the inner-join behavior forward.
+
+### Categories and dashboard tabs
+
+`scripts/arb_scanner.py` tags every row with
+`category_bucket ∈ {Elections, Sports, Other}` based on the source row's
+`category` field. The dashboard has four tabs filtering by this field:
+
+- **All** — every row, default tab.
+- **🗳 Elections** — `category_bucket == 'Elections'`. Includes both
+  the fuzzy matcher's Politics output AND the ported election rows.
+- **⚽ Sports** — `category_bucket == 'Sports'`. Browse mode — ignores
+  filter bar so every sports pair is visible regardless of arb size.
+- **Other** — everything else.
+
+Bucket assignment lives in one helper: `_bucket()` in
+`scripts/arb_scanner.py` and `bucketOf()` in `docs/index.html` (the
+latter is a backwards-compat fallback for snapshots without the
+`category_bucket` field). Keep them in sync.
+
 ### Suspicion + scrutiny pipeline
 
 Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
@@ -108,11 +171,13 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
 
 | Platform | Fee |
 |---|---|
-| Kalshi | 3% |
-| Polymarket | 3% |
+| Kalshi | 2% |
+| Polymarket | 2% |
 | PredictIt | 12% |
 
-Conservative. Real fills include slippage.
+Bumped from 3%/3%/12% in the 2026-06-20 audit to match polling-agg.
+Real fills include slippage. The `FEES` dict is the single source of
+truth; `scripts/elections.py` imports from there too — do not duplicate.
 
 ### Failure semantics
 
@@ -145,27 +210,52 @@ scrapers/
   kalshi.py            Kalshi v2 trade-api. DO NOT REVERT to v1.
   polymarket.py        gamma-api.polymarket.com. Captures yes_token_id / no_token_id.
   predictit.py         predictit.org/api/marketdata/all/.
+  house_incumbents.py  Ballotpedia + congress-legislators YAML, produces
+                       data/processed/house_incumbents.json. Read by
+                       utils/races.py at import. Ported from polling-agg
+                       2026-06-21 for the elections path.
 
 scripts/
   matcher.py           Reads all 3 markets CSVs, produces matched_pairs.csv.
                        Two paths: race_id-based political, fuzzy text for everything else.
                        Long chain of guards prevents false positives (see Matching above).
-  arb_scanner.py       Reads matched_pairs.csv, computes raw_gap_pp / net_gap_pp /
-                       arb_type / suspicion_reasons / scrutiny.py results.
-                       Produces docs/arb_data.js. Run twice around fetch_depth.py.
+  elections.py         2026 US-election arb builder ported from
+                       polling-agg-2026. Three match paths (general,
+                       general_candidate, primary_candidate). Writes
+                       data/processed/election_pairs.csv. Added 2026-06-21.
+  arb_scanner.py       Reads matched_pairs.csv + election_pairs.csv,
+                       computes raw_gap_pp / net_gap_pp / arb_type /
+                       suspicion_reasons / scrutiny.py results. Tags
+                       every row with category_bucket for the dashboard
+                       tabs. Produces docs/arb_data.js. Run twice
+                       around fetch_depth.py.
   fetch_depth.py       Reads depth_targets.csv, fetches Kalshi/Polymarket orderbook
                        ladders, writes orderbook_depth.csv.
   scrutiny.py          Fetches resolution rules + similarity scoring. Caches in
                        data/processed/scrutiny_cache.json (gitignored).
 
+utils/
+  http_headers.py      Shared real-browser HTTP headers / WAF-XHR set.
+                       Imported by every scraper + fetch_depth + scrutiny.
+                       Single source of truth — see AUDIT.md.
+  races.py             Canonical 2026 US race registry (35 Senate, 36 Gov,
+                       435 House). Exports RACE_BY_ID. Ported from
+                       polling-agg-2026 for the elections path.
+
 data/
   raw/                 Scraper outputs (gitignored).
-  processed/           All gitignored EXCEPT:
-    excluded_pairs.json    Tracked. Manual scrutiny excludes.
+  processed/           Mostly gitignored. Tracked:
+    excluded_pairs.json    Manual scrutiny excludes.
+    house_incumbents.json  Output of scrapers/house_incumbents.py.
+    election_pairs.csv     Output of scripts/elections.py.
 
 docs/                  GitHub Pages site. Tracked.
-  index.html           Two-tab dashboard (Markets, Sports).
-  arb_data.js          Arb pairs feed.
+  index.html           Four-tab dashboard (All, Elections, Sports, Other).
+                       Tab filtering uses row.category_bucket from the
+                       scanner (with a SPORTS_CATS fallback for legacy
+                       snapshots).
+  arb_data.js          Arb pairs feed. Includes top-level `total`,
+                       `guaranteed_count`, `fees`, `updated_at`.
 ```
 
 ---

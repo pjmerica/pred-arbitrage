@@ -1,0 +1,3501 @@
+{
+  "fetched_at": "2026-06-21T03:58:06.503832+00:00",
+  "members": [
+    {
+      "race_id": "2026-H-AK-01",
+      "incumbent_name": "Nicholas J. Begich III",
+      "incumbent_party": "R",
+      "bioguide_id": "B001323",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-01",
+      "incumbent_name": "Barry Moore",
+      "incumbent_party": "R",
+      "bioguide_id": "M001212",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-02",
+      "incumbent_name": "Shomari Figures",
+      "incumbent_party": "D",
+      "bioguide_id": "F000481",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-03",
+      "incumbent_name": "Mike Rogers",
+      "incumbent_party": "R",
+      "bioguide_id": "R000575",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-04",
+      "incumbent_name": "Robert B. Aderholt",
+      "incumbent_party": "R",
+      "bioguide_id": "A000055",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-05",
+      "incumbent_name": "Dale W. Strong",
+      "incumbent_party": "R",
+      "bioguide_id": "S001220",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-06",
+      "incumbent_name": "Gary J. Palmer",
+      "incumbent_party": "R",
+      "bioguide_id": "P000609",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AL-07",
+      "incumbent_name": "Terri A. Sewell",
+      "incumbent_party": "D",
+      "bioguide_id": "S001185",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AR-01",
+      "incumbent_name": "Eric A. \"Rick\" Crawford",
+      "incumbent_party": "R",
+      "bioguide_id": "C001087",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AR-02",
+      "incumbent_name": "J. French Hill",
+      "incumbent_party": "R",
+      "bioguide_id": "H001072",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AR-03",
+      "incumbent_name": "Steve Womack",
+      "incumbent_party": "R",
+      "bioguide_id": "W000809",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AR-04",
+      "incumbent_name": "Bruce Westerman",
+      "incumbent_party": "R",
+      "bioguide_id": "W000821",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AS-01",
+      "incumbent_name": "Aumua Amata Coleman Radewagen",
+      "incumbent_party": "R",
+      "bioguide_id": "R000600",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-01",
+      "incumbent_name": "David Schweikert",
+      "incumbent_party": "R",
+      "bioguide_id": "S001183",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-02",
+      "incumbent_name": "Elijah Crane",
+      "incumbent_party": "R",
+      "bioguide_id": "C001132",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-03",
+      "incumbent_name": "Yassamin Ansari",
+      "incumbent_party": "D",
+      "bioguide_id": "A000381",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-04",
+      "incumbent_name": "Greg Stanton",
+      "incumbent_party": "D",
+      "bioguide_id": "S001211",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-05",
+      "incumbent_name": "Andy Biggs",
+      "incumbent_party": "R",
+      "bioguide_id": "B001302",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-06",
+      "incumbent_name": "Juan Ciscomani",
+      "incumbent_party": "R",
+      "bioguide_id": "C001133",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-07",
+      "incumbent_name": "Adelita S. Grijalva",
+      "incumbent_party": "D",
+      "bioguide_id": "G000606",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-08",
+      "incumbent_name": "Abraham J. Hamadeh",
+      "incumbent_party": "R",
+      "bioguide_id": "H001098",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-AZ-09",
+      "incumbent_name": "Paul A. Gosar",
+      "incumbent_party": "R",
+      "bioguide_id": "G000565",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-01",
+      "incumbent_name": "James Gallagher",
+      "incumbent_party": "R",
+      "bioguide_id": "G000607",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-02",
+      "incumbent_name": "Jared Huffman",
+      "incumbent_party": "D",
+      "bioguide_id": "H001068",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-03",
+      "incumbent_name": "Kevin Kiley",
+      "incumbent_party": "I",
+      "bioguide_id": "K000401",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-04",
+      "incumbent_name": "Mike Thompson",
+      "incumbent_party": "D",
+      "bioguide_id": "T000460",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-05",
+      "incumbent_name": "Tom McClintock",
+      "incumbent_party": "R",
+      "bioguide_id": "M001177",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-06",
+      "incumbent_name": "Ami Bera",
+      "incumbent_party": "D",
+      "bioguide_id": "B001287",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-07",
+      "incumbent_name": "Doris O. Matsui",
+      "incumbent_party": "D",
+      "bioguide_id": "M001163",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-08",
+      "incumbent_name": "John Garamendi",
+      "incumbent_party": "D",
+      "bioguide_id": "G000559",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-09",
+      "incumbent_name": "Josh Harder",
+      "incumbent_party": "D",
+      "bioguide_id": "H001090",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-10",
+      "incumbent_name": "Mark DeSaulnier",
+      "incumbent_party": "D",
+      "bioguide_id": "D000623",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-11",
+      "incumbent_name": "Nancy Pelosi",
+      "incumbent_party": "D",
+      "bioguide_id": "P000197",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-12",
+      "incumbent_name": "Lateefah Simon",
+      "incumbent_party": "D",
+      "bioguide_id": "S001231",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-13",
+      "incumbent_name": "Adam Gray",
+      "incumbent_party": "D",
+      "bioguide_id": "G000605",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-15",
+      "incumbent_name": "Kevin Mullin",
+      "incumbent_party": "D",
+      "bioguide_id": "M001225",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-16",
+      "incumbent_name": "Sam T. Liccardo",
+      "incumbent_party": "D",
+      "bioguide_id": "L000607",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-17",
+      "incumbent_name": "Ro Khanna",
+      "incumbent_party": "D",
+      "bioguide_id": "K000389",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-18",
+      "incumbent_name": "Zoe Lofgren",
+      "incumbent_party": "D",
+      "bioguide_id": "L000397",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-19",
+      "incumbent_name": "Jimmy Panetta",
+      "incumbent_party": "D",
+      "bioguide_id": "P000613",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-20",
+      "incumbent_name": "Vince Fong",
+      "incumbent_party": "R",
+      "bioguide_id": "F000480",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-21",
+      "incumbent_name": "Jim Costa",
+      "incumbent_party": "D",
+      "bioguide_id": "C001059",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-22",
+      "incumbent_name": "David G. Valadao",
+      "incumbent_party": "R",
+      "bioguide_id": "V000129",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-23",
+      "incumbent_name": "Jay Obernolte",
+      "incumbent_party": "R",
+      "bioguide_id": "O000019",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-24",
+      "incumbent_name": "Salud O. Carbajal",
+      "incumbent_party": "D",
+      "bioguide_id": "C001112",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-25",
+      "incumbent_name": "Raul Ruiz",
+      "incumbent_party": "D",
+      "bioguide_id": "R000599",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-26",
+      "incumbent_name": "Julia Brownley",
+      "incumbent_party": "D",
+      "bioguide_id": "B001285",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-27",
+      "incumbent_name": "George Whitesides",
+      "incumbent_party": "D",
+      "bioguide_id": "W000830",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-28",
+      "incumbent_name": "Judy Chu",
+      "incumbent_party": "D",
+      "bioguide_id": "C001080",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-29",
+      "incumbent_name": "Luz M. Rivas",
+      "incumbent_party": "D",
+      "bioguide_id": "R000620",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-30",
+      "incumbent_name": "Laura Friedman",
+      "incumbent_party": "D",
+      "bioguide_id": "F000483",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-31",
+      "incumbent_name": "Gilbert Ray Cisneros, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "C001123",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-32",
+      "incumbent_name": "Brad Sherman",
+      "incumbent_party": "D",
+      "bioguide_id": "S000344",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-33",
+      "incumbent_name": "Pete Aguilar",
+      "incumbent_party": "D",
+      "bioguide_id": "A000371",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-34",
+      "incumbent_name": "Jimmy Gomez",
+      "incumbent_party": "D",
+      "bioguide_id": "G000585",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-35",
+      "incumbent_name": "Norma J. Torres",
+      "incumbent_party": "D",
+      "bioguide_id": "T000474",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-36",
+      "incumbent_name": "Ted Lieu",
+      "incumbent_party": "D",
+      "bioguide_id": "L000582",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-37",
+      "incumbent_name": "Sydney Kamlager-Dove",
+      "incumbent_party": "D",
+      "bioguide_id": "K000400",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-38",
+      "incumbent_name": "Linda T. Sánchez",
+      "incumbent_party": "D",
+      "bioguide_id": "S001156",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-39",
+      "incumbent_name": "Mark Takano",
+      "incumbent_party": "D",
+      "bioguide_id": "T000472",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-40",
+      "incumbent_name": "Young Kim",
+      "incumbent_party": "R",
+      "bioguide_id": "K000397",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-41",
+      "incumbent_name": "Ken Calvert",
+      "incumbent_party": "R",
+      "bioguide_id": "C000059",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-42",
+      "incumbent_name": "Robert Garcia",
+      "incumbent_party": "D",
+      "bioguide_id": "G000598",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-43",
+      "incumbent_name": "Maxine Waters",
+      "incumbent_party": "D",
+      "bioguide_id": "W000187",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-44",
+      "incumbent_name": "Nanette Diaz Barragán",
+      "incumbent_party": "D",
+      "bioguide_id": "B001300",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-45",
+      "incumbent_name": "Derek Tran",
+      "incumbent_party": "D",
+      "bioguide_id": "T000491",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-46",
+      "incumbent_name": "J. Luis Correa",
+      "incumbent_party": "D",
+      "bioguide_id": "C001110",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-47",
+      "incumbent_name": "Dave Min",
+      "incumbent_party": "D",
+      "bioguide_id": "M001241",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-48",
+      "incumbent_name": "Darrell Issa",
+      "incumbent_party": "R",
+      "bioguide_id": "I000056",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-49",
+      "incumbent_name": "Mike Levin",
+      "incumbent_party": "D",
+      "bioguide_id": "L000593",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-50",
+      "incumbent_name": "Scott H. Peters",
+      "incumbent_party": "D",
+      "bioguide_id": "P000608",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-51",
+      "incumbent_name": "Sara Jacobs",
+      "incumbent_party": "D",
+      "bioguide_id": "J000305",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-52",
+      "incumbent_name": "Juan Vargas",
+      "incumbent_party": "D",
+      "bioguide_id": "V000130",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-01",
+      "incumbent_name": "Diana DeGette",
+      "incumbent_party": "D",
+      "bioguide_id": "D000197",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-02",
+      "incumbent_name": "Joe Neguse",
+      "incumbent_party": "D",
+      "bioguide_id": "N000191",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-03",
+      "incumbent_name": "Jeff Hurd",
+      "incumbent_party": "R",
+      "bioguide_id": "H001100",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-04",
+      "incumbent_name": "Lauren Boebert",
+      "incumbent_party": "R",
+      "bioguide_id": "B000825",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-05",
+      "incumbent_name": "Jeff Crank",
+      "incumbent_party": "R",
+      "bioguide_id": "C001137",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-06",
+      "incumbent_name": "Jason Crow",
+      "incumbent_party": "D",
+      "bioguide_id": "C001121",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-07",
+      "incumbent_name": "Brittany Pettersen",
+      "incumbent_party": "D",
+      "bioguide_id": "P000620",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CO-08",
+      "incumbent_name": "Gabe Evans",
+      "incumbent_party": "R",
+      "bioguide_id": "E000300",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CT-01",
+      "incumbent_name": "John B. Larson",
+      "incumbent_party": "D",
+      "bioguide_id": "L000557",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CT-02",
+      "incumbent_name": "Joe Courtney",
+      "incumbent_party": "D",
+      "bioguide_id": "C001069",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CT-03",
+      "incumbent_name": "Rosa L. DeLauro",
+      "incumbent_party": "D",
+      "bioguide_id": "D000216",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CT-04",
+      "incumbent_name": "James A. Himes",
+      "incumbent_party": "D",
+      "bioguide_id": "H001047",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CT-05",
+      "incumbent_name": "Jahana Hayes",
+      "incumbent_party": "D",
+      "bioguide_id": "H001081",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-DC-01",
+      "incumbent_name": "Eleanor Holmes Norton",
+      "incumbent_party": "D",
+      "bioguide_id": "N000147",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-DE-01",
+      "incumbent_name": "Sarah McBride",
+      "incumbent_party": "D",
+      "bioguide_id": "M001238",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-01",
+      "incumbent_name": "Jimmy Patronis",
+      "incumbent_party": "R",
+      "bioguide_id": "P000622",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-02",
+      "incumbent_name": "Neal P. Dunn",
+      "incumbent_party": "R",
+      "bioguide_id": "D000628",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-03",
+      "incumbent_name": "Kat Cammack",
+      "incumbent_party": "R",
+      "bioguide_id": "C001039",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-04",
+      "incumbent_name": "Aaron Bean",
+      "incumbent_party": "R",
+      "bioguide_id": "B001314",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-05",
+      "incumbent_name": "John H. Rutherford",
+      "incumbent_party": "R",
+      "bioguide_id": "R000609",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-06",
+      "incumbent_name": "Randy Fine",
+      "incumbent_party": "R",
+      "bioguide_id": "F000484",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-07",
+      "incumbent_name": "Cory Mills",
+      "incumbent_party": "R",
+      "bioguide_id": "M001216",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-08",
+      "incumbent_name": "Mike Haridopolos",
+      "incumbent_party": "R",
+      "bioguide_id": "H001099",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-09",
+      "incumbent_name": "Darren Soto",
+      "incumbent_party": "D",
+      "bioguide_id": "S001200",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-10",
+      "incumbent_name": "Maxwell Frost",
+      "incumbent_party": "D",
+      "bioguide_id": "F000476",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-11",
+      "incumbent_name": "Daniel Webster",
+      "incumbent_party": "R",
+      "bioguide_id": "W000806",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-12",
+      "incumbent_name": "Gus M. Bilirakis",
+      "incumbent_party": "R",
+      "bioguide_id": "B001257",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-13",
+      "incumbent_name": "Anna Paulina Luna",
+      "incumbent_party": "R",
+      "bioguide_id": "L000596",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-14",
+      "incumbent_name": "Kathy Castor",
+      "incumbent_party": "D",
+      "bioguide_id": "C001066",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-15",
+      "incumbent_name": "Laurel M. Lee",
+      "incumbent_party": "R",
+      "bioguide_id": "L000597",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-16",
+      "incumbent_name": "Vern Buchanan",
+      "incumbent_party": "R",
+      "bioguide_id": "B001260",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-17",
+      "incumbent_name": "W. Gregory Steube",
+      "incumbent_party": "R",
+      "bioguide_id": "S001214",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-18",
+      "incumbent_name": "Scott Franklin",
+      "incumbent_party": "R",
+      "bioguide_id": "F000472",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-19",
+      "incumbent_name": "Byron Donalds",
+      "incumbent_party": "R",
+      "bioguide_id": "D000032",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-21",
+      "incumbent_name": "Brian J. Mast",
+      "incumbent_party": "R",
+      "bioguide_id": "M001199",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-22",
+      "incumbent_name": "Lois Frankel",
+      "incumbent_party": "D",
+      "bioguide_id": "F000462",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-23",
+      "incumbent_name": "Jared Moskowitz",
+      "incumbent_party": "D",
+      "bioguide_id": "M001217",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-24",
+      "incumbent_name": "Frederica S. Wilson",
+      "incumbent_party": "D",
+      "bioguide_id": "W000808",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-25",
+      "incumbent_name": "Debbie Wasserman Schultz",
+      "incumbent_party": "D",
+      "bioguide_id": "W000797",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-26",
+      "incumbent_name": "Mario Diaz-Balart",
+      "incumbent_party": "R",
+      "bioguide_id": "D000600",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-27",
+      "incumbent_name": "Maria Elvira Salazar",
+      "incumbent_party": "R",
+      "bioguide_id": "S000168",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-FL-28",
+      "incumbent_name": "Carlos A. Gimenez",
+      "incumbent_party": "R",
+      "bioguide_id": "G000593",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-01",
+      "incumbent_name": "Earl L. \"Buddy\" Carter",
+      "incumbent_party": "R",
+      "bioguide_id": "C001103",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-02",
+      "incumbent_name": "Sanford D. Bishop, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "B000490",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-03",
+      "incumbent_name": "Brian Jack",
+      "incumbent_party": "R",
+      "bioguide_id": "J000311",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-04",
+      "incumbent_name": "Henry C. \"Hank\" Johnson, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "J000288",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-05",
+      "incumbent_name": "Nikema Williams",
+      "incumbent_party": "D",
+      "bioguide_id": "W000788",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-06",
+      "incumbent_name": "Lucy McBath",
+      "incumbent_party": "D",
+      "bioguide_id": "M001208",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-07",
+      "incumbent_name": "Richard McCormick",
+      "incumbent_party": "R",
+      "bioguide_id": "M001218",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-08",
+      "incumbent_name": "Austin Scott",
+      "incumbent_party": "R",
+      "bioguide_id": "S001189",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-09",
+      "incumbent_name": "Andrew S. Clyde",
+      "incumbent_party": "R",
+      "bioguide_id": "C001116",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-10",
+      "incumbent_name": "Mike Collins",
+      "incumbent_party": "R",
+      "bioguide_id": "C001129",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-11",
+      "incumbent_name": "Barry Loudermilk",
+      "incumbent_party": "R",
+      "bioguide_id": "L000583",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-12",
+      "incumbent_name": "Rick W. Allen",
+      "incumbent_party": "R",
+      "bioguide_id": "A000372",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-14",
+      "incumbent_name": "Clay Fuller",
+      "incumbent_party": "R",
+      "bioguide_id": "F000485",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GU-01",
+      "incumbent_name": "James C. Moylan",
+      "incumbent_party": "R",
+      "bioguide_id": "M001219",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-HI-01",
+      "incumbent_name": "Ed Case",
+      "incumbent_party": "D",
+      "bioguide_id": "C001055",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-HI-02",
+      "incumbent_name": "Jill N. Tokuda",
+      "incumbent_party": "D",
+      "bioguide_id": "T000487",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IA-01",
+      "incumbent_name": "Mariannette Miller-Meeks",
+      "incumbent_party": "R",
+      "bioguide_id": "M001215",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IA-02",
+      "incumbent_name": "Ashley Hinson",
+      "incumbent_party": "R",
+      "bioguide_id": "H001091",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IA-03",
+      "incumbent_name": "Zachary Nunn",
+      "incumbent_party": "R",
+      "bioguide_id": "N000193",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IA-04",
+      "incumbent_name": "Randy Feenstra",
+      "incumbent_party": "R",
+      "bioguide_id": "F000446",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-ID-01",
+      "incumbent_name": "Russ Fulcher",
+      "incumbent_party": "R",
+      "bioguide_id": "F000469",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-ID-02",
+      "incumbent_name": "Michael K. Simpson",
+      "incumbent_party": "R",
+      "bioguide_id": "S001148",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-01",
+      "incumbent_name": "Jonathan L. Jackson",
+      "incumbent_party": "D",
+      "bioguide_id": "J000309",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-02",
+      "incumbent_name": "Robin L. Kelly",
+      "incumbent_party": "D",
+      "bioguide_id": "K000385",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-03",
+      "incumbent_name": "Delia C. Ramirez",
+      "incumbent_party": "D",
+      "bioguide_id": "R000617",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-04",
+      "incumbent_name": "Jesús G. \"Chuy\" García",
+      "incumbent_party": "D",
+      "bioguide_id": "G000586",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-05",
+      "incumbent_name": "Mike Quigley",
+      "incumbent_party": "D",
+      "bioguide_id": "Q000023",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-06",
+      "incumbent_name": "Sean Casten",
+      "incumbent_party": "D",
+      "bioguide_id": "C001117",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-07",
+      "incumbent_name": "Danny K. Davis",
+      "incumbent_party": "D",
+      "bioguide_id": "D000096",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-08",
+      "incumbent_name": "Raja Krishnamoorthi",
+      "incumbent_party": "D",
+      "bioguide_id": "K000391",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-09",
+      "incumbent_name": "Janice D. Schakowsky",
+      "incumbent_party": "D",
+      "bioguide_id": "S001145",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-10",
+      "incumbent_name": "Bradley Scott Schneider",
+      "incumbent_party": "D",
+      "bioguide_id": "S001190",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-11",
+      "incumbent_name": "Bill Foster",
+      "incumbent_party": "D",
+      "bioguide_id": "F000454",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-12",
+      "incumbent_name": "Mike Bost",
+      "incumbent_party": "R",
+      "bioguide_id": "B001295",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-13",
+      "incumbent_name": "Nikki Budzinski",
+      "incumbent_party": "D",
+      "bioguide_id": "B001315",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-14",
+      "incumbent_name": "Lauren Underwood",
+      "incumbent_party": "D",
+      "bioguide_id": "U000040",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-15",
+      "incumbent_name": "Mary E. Miller",
+      "incumbent_party": "R",
+      "bioguide_id": "M001211",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-16",
+      "incumbent_name": "Darin LaHood",
+      "incumbent_party": "R",
+      "bioguide_id": "L000585",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IL-17",
+      "incumbent_name": "Eric Sorensen",
+      "incumbent_party": "D",
+      "bioguide_id": "S001225",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-01",
+      "incumbent_name": "Frank J. Mrvan",
+      "incumbent_party": "D",
+      "bioguide_id": "M001214",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-02",
+      "incumbent_name": "Rudy Yakym III",
+      "incumbent_party": "R",
+      "bioguide_id": "Y000067",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-03",
+      "incumbent_name": "Marlin A. Stutzman",
+      "incumbent_party": "R",
+      "bioguide_id": "S001188",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-04",
+      "incumbent_name": "James R. Baird",
+      "incumbent_party": "R",
+      "bioguide_id": "B001307",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-05",
+      "incumbent_name": "Victoria Spartz",
+      "incumbent_party": "R",
+      "bioguide_id": "S000929",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-06",
+      "incumbent_name": "Jefferson Shreve",
+      "incumbent_party": "R",
+      "bioguide_id": "S001229",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-07",
+      "incumbent_name": "André Carson",
+      "incumbent_party": "D",
+      "bioguide_id": "C001072",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-08",
+      "incumbent_name": "Mark B. Messmer",
+      "incumbent_party": "R",
+      "bioguide_id": "M001233",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-IN-09",
+      "incumbent_name": "Erin Houchin",
+      "incumbent_party": "R",
+      "bioguide_id": "H001093",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KS-01",
+      "incumbent_name": "Tracey Mann",
+      "incumbent_party": "R",
+      "bioguide_id": "M000871",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KS-02",
+      "incumbent_name": "Derek Schmidt",
+      "incumbent_party": "R",
+      "bioguide_id": "S001228",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KS-03",
+      "incumbent_name": "Sharice Davids",
+      "incumbent_party": "D",
+      "bioguide_id": "D000629",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KS-04",
+      "incumbent_name": "Ron Estes",
+      "incumbent_party": "R",
+      "bioguide_id": "E000298",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KY-01",
+      "incumbent_name": "James Comer",
+      "incumbent_party": "R",
+      "bioguide_id": "C001108",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KY-02",
+      "incumbent_name": "Brett Guthrie",
+      "incumbent_party": "R",
+      "bioguide_id": "G000558",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KY-03",
+      "incumbent_name": "Morgan McGarvey",
+      "incumbent_party": "D",
+      "bioguide_id": "M001220",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KY-04",
+      "incumbent_name": "Thomas Massie",
+      "incumbent_party": "R",
+      "bioguide_id": "M001184",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KY-05",
+      "incumbent_name": "Harold Rogers",
+      "incumbent_party": "R",
+      "bioguide_id": "R000395",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-KY-06",
+      "incumbent_name": "Andy Barr",
+      "incumbent_party": "R",
+      "bioguide_id": "B001282",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-LA-01",
+      "incumbent_name": "Steve Scalise",
+      "incumbent_party": "R",
+      "bioguide_id": "S001176",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-LA-02",
+      "incumbent_name": "Troy A. Carter",
+      "incumbent_party": "D",
+      "bioguide_id": "C001125",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-LA-03",
+      "incumbent_name": "Clay Higgins",
+      "incumbent_party": "R",
+      "bioguide_id": "H001077",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-LA-04",
+      "incumbent_name": "Mike Johnson",
+      "incumbent_party": "R",
+      "bioguide_id": "J000299",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-LA-05",
+      "incumbent_name": "Julia Letlow",
+      "incumbent_party": "R",
+      "bioguide_id": "L000595",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-LA-06",
+      "incumbent_name": "Cleo Fields",
+      "incumbent_party": "D",
+      "bioguide_id": "F000110",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-01",
+      "incumbent_name": "Richard E. Neal",
+      "incumbent_party": "D",
+      "bioguide_id": "N000015",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-02",
+      "incumbent_name": "James P. McGovern",
+      "incumbent_party": "D",
+      "bioguide_id": "M000312",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-03",
+      "incumbent_name": "Lori Trahan",
+      "incumbent_party": "D",
+      "bioguide_id": "T000482",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-04",
+      "incumbent_name": "Jake Auchincloss",
+      "incumbent_party": "D",
+      "bioguide_id": "A000148",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-05",
+      "incumbent_name": "Katherine M. Clark",
+      "incumbent_party": "D",
+      "bioguide_id": "C001101",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-06",
+      "incumbent_name": "Seth Moulton",
+      "incumbent_party": "D",
+      "bioguide_id": "M001196",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-07",
+      "incumbent_name": "Ayanna Pressley",
+      "incumbent_party": "D",
+      "bioguide_id": "P000617",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-08",
+      "incumbent_name": "Stephen F. Lynch",
+      "incumbent_party": "D",
+      "bioguide_id": "L000562",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MA-09",
+      "incumbent_name": "William R. Keating",
+      "incumbent_party": "D",
+      "bioguide_id": "K000375",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-01",
+      "incumbent_name": "Andy Harris",
+      "incumbent_party": "R",
+      "bioguide_id": "H001052",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-02",
+      "incumbent_name": "Johnny Olszewski, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "O000176",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-03",
+      "incumbent_name": "Sarah Elfreth",
+      "incumbent_party": "D",
+      "bioguide_id": "E000301",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-04",
+      "incumbent_name": "Glenn Ivey",
+      "incumbent_party": "D",
+      "bioguide_id": "I000058",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-05",
+      "incumbent_name": "Steny H. Hoyer",
+      "incumbent_party": "D",
+      "bioguide_id": "H000874",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-06",
+      "incumbent_name": "April McClain Delaney",
+      "incumbent_party": "D",
+      "bioguide_id": "M001232",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-07",
+      "incumbent_name": "Kweisi Mfume",
+      "incumbent_party": "D",
+      "bioguide_id": "M000687",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MD-08",
+      "incumbent_name": "Jamie Raskin",
+      "incumbent_party": "D",
+      "bioguide_id": "R000606",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-ME-01",
+      "incumbent_name": "Chellie Pingree",
+      "incumbent_party": "D",
+      "bioguide_id": "P000597",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-ME-02",
+      "incumbent_name": "Jared F. Golden",
+      "incumbent_party": "D",
+      "bioguide_id": "G000592",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-01",
+      "incumbent_name": "Jack Bergman",
+      "incumbent_party": "R",
+      "bioguide_id": "B001301",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-02",
+      "incumbent_name": "John R. Moolenaar",
+      "incumbent_party": "R",
+      "bioguide_id": "M001194",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-03",
+      "incumbent_name": "Hillary J. Scholten",
+      "incumbent_party": "D",
+      "bioguide_id": "S001221",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-04",
+      "incumbent_name": "Bill Huizenga",
+      "incumbent_party": "R",
+      "bioguide_id": "H001058",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-05",
+      "incumbent_name": "Tim Walberg",
+      "incumbent_party": "R",
+      "bioguide_id": "W000798",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-06",
+      "incumbent_name": "Debbie Dingell",
+      "incumbent_party": "D",
+      "bioguide_id": "D000624",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-07",
+      "incumbent_name": "Tom Barrett",
+      "incumbent_party": "R",
+      "bioguide_id": "B001321",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-08",
+      "incumbent_name": "Kristen McDonald Rivet",
+      "incumbent_party": "D",
+      "bioguide_id": "M001237",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-09",
+      "incumbent_name": "Lisa C. McClain",
+      "incumbent_party": "R",
+      "bioguide_id": "M001136",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-10",
+      "incumbent_name": "John James",
+      "incumbent_party": "R",
+      "bioguide_id": "J000307",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-11",
+      "incumbent_name": "Haley M. Stevens",
+      "incumbent_party": "D",
+      "bioguide_id": "S001215",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-12",
+      "incumbent_name": "Rashida Tlaib",
+      "incumbent_party": "D",
+      "bioguide_id": "T000481",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MI-13",
+      "incumbent_name": "Shri Thanedar",
+      "incumbent_party": "D",
+      "bioguide_id": "T000488",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-01",
+      "incumbent_name": "Brad Finstad",
+      "incumbent_party": "R",
+      "bioguide_id": "F000475",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-02",
+      "incumbent_name": "Angie Craig",
+      "incumbent_party": "D",
+      "bioguide_id": "C001119",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-03",
+      "incumbent_name": "Kelly Morrison",
+      "incumbent_party": "D",
+      "bioguide_id": "M001234",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-04",
+      "incumbent_name": "Betty McCollum",
+      "incumbent_party": "D",
+      "bioguide_id": "M001143",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-05",
+      "incumbent_name": "Ilhan Omar",
+      "incumbent_party": "D",
+      "bioguide_id": "O000173",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-06",
+      "incumbent_name": "Tom Emmer",
+      "incumbent_party": "R",
+      "bioguide_id": "E000294",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-07",
+      "incumbent_name": "Michelle Fischbach",
+      "incumbent_party": "R",
+      "bioguide_id": "F000470",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MN-08",
+      "incumbent_name": "Pete Stauber",
+      "incumbent_party": "R",
+      "bioguide_id": "S001212",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-01",
+      "incumbent_name": "Wesley Bell",
+      "incumbent_party": "D",
+      "bioguide_id": "B001324",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-02",
+      "incumbent_name": "Ann Wagner",
+      "incumbent_party": "R",
+      "bioguide_id": "W000812",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-03",
+      "incumbent_name": "Robert F. Onder, Jr.",
+      "incumbent_party": "R",
+      "bioguide_id": "O000177",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-04",
+      "incumbent_name": "Mark Alford",
+      "incumbent_party": "R",
+      "bioguide_id": "A000379",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-05",
+      "incumbent_name": "Emanuel Cleaver",
+      "incumbent_party": "D",
+      "bioguide_id": "C001061",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-06",
+      "incumbent_name": "Sam Graves",
+      "incumbent_party": "R",
+      "bioguide_id": "G000546",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-07",
+      "incumbent_name": "Eric Burlison",
+      "incumbent_party": "R",
+      "bioguide_id": "B001316",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MO-08",
+      "incumbent_name": "Jason Smith",
+      "incumbent_party": "R",
+      "bioguide_id": "S001195",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MP-01",
+      "incumbent_name": "Kimberlyn King-Hinds",
+      "incumbent_party": "R",
+      "bioguide_id": "K000404",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MS-01",
+      "incumbent_name": "Trent Kelly",
+      "incumbent_party": "R",
+      "bioguide_id": "K000388",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MS-02",
+      "incumbent_name": "Bennie G. Thompson",
+      "incumbent_party": "D",
+      "bioguide_id": "T000193",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MS-03",
+      "incumbent_name": "Michael Guest",
+      "incumbent_party": "R",
+      "bioguide_id": "G000591",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MS-04",
+      "incumbent_name": "Mike Ezell",
+      "incumbent_party": "R",
+      "bioguide_id": "E000235",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MT-01",
+      "incumbent_name": "Ryan K. Zinke",
+      "incumbent_party": "R",
+      "bioguide_id": "Z000018",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-MT-02",
+      "incumbent_name": "Troy Downing",
+      "incumbent_party": "R",
+      "bioguide_id": "D000634",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-01",
+      "incumbent_name": "Donald G. Davis",
+      "incumbent_party": "D",
+      "bioguide_id": "D000230",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-02",
+      "incumbent_name": "Deborah K. Ross",
+      "incumbent_party": "D",
+      "bioguide_id": "R000305",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-03",
+      "incumbent_name": "Gregory F. Murphy",
+      "incumbent_party": "R",
+      "bioguide_id": "M001210",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-04",
+      "incumbent_name": "Valerie P. Foushee",
+      "incumbent_party": "D",
+      "bioguide_id": "F000477",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-05",
+      "incumbent_name": "Virginia Foxx",
+      "incumbent_party": "R",
+      "bioguide_id": "F000450",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-06",
+      "incumbent_name": "Addison P. McDowell",
+      "incumbent_party": "R",
+      "bioguide_id": "M001240",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-07",
+      "incumbent_name": "David Rouzer",
+      "incumbent_party": "R",
+      "bioguide_id": "R000603",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-08",
+      "incumbent_name": "Mark Harris",
+      "incumbent_party": "R",
+      "bioguide_id": "H001102",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-09",
+      "incumbent_name": "Richard Hudson",
+      "incumbent_party": "R",
+      "bioguide_id": "H001067",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-10",
+      "incumbent_name": "Pat Harrigan",
+      "incumbent_party": "R",
+      "bioguide_id": "H001101",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-11",
+      "incumbent_name": "Chuck Edwards",
+      "incumbent_party": "R",
+      "bioguide_id": "E000246",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-12",
+      "incumbent_name": "Alma S. Adams",
+      "incumbent_party": "D",
+      "bioguide_id": "A000370",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-13",
+      "incumbent_name": "Brad Knott",
+      "incumbent_party": "R",
+      "bioguide_id": "K000405",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NC-14",
+      "incumbent_name": "Tim Moore",
+      "incumbent_party": "R",
+      "bioguide_id": "M001236",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-ND-01",
+      "incumbent_name": "Julie Fedorchak",
+      "incumbent_party": "R",
+      "bioguide_id": "F000482",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NE-01",
+      "incumbent_name": "Mike Flood",
+      "incumbent_party": "R",
+      "bioguide_id": "F000474",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NE-02",
+      "incumbent_name": "Don Bacon",
+      "incumbent_party": "R",
+      "bioguide_id": "B001298",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NE-03",
+      "incumbent_name": "Adrian Smith",
+      "incumbent_party": "R",
+      "bioguide_id": "S001172",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NH-01",
+      "incumbent_name": "Chris Pappas",
+      "incumbent_party": "D",
+      "bioguide_id": "P000614",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NH-02",
+      "incumbent_name": "Maggie Goodlander",
+      "incumbent_party": "D",
+      "bioguide_id": "G000604",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-01",
+      "incumbent_name": "Donald Norcross",
+      "incumbent_party": "D",
+      "bioguide_id": "N000188",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-02",
+      "incumbent_name": "Jefferson Van Drew",
+      "incumbent_party": "R",
+      "bioguide_id": "V000133",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-03",
+      "incumbent_name": "Herbert C. Conaway, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "C001136",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-04",
+      "incumbent_name": "Christopher H. Smith",
+      "incumbent_party": "R",
+      "bioguide_id": "S000522",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-05",
+      "incumbent_name": "Josh Gottheimer",
+      "incumbent_party": "D",
+      "bioguide_id": "G000583",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-06",
+      "incumbent_name": "Frank Pallone, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "P000034",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-07",
+      "incumbent_name": "Thomas H. Kean, Jr.",
+      "incumbent_party": "R",
+      "bioguide_id": "K000398",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-08",
+      "incumbent_name": "Robert Menendez",
+      "incumbent_party": "D",
+      "bioguide_id": "M001226",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-09",
+      "incumbent_name": "Nellie Pou",
+      "incumbent_party": "D",
+      "bioguide_id": "P000621",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-10",
+      "incumbent_name": "LaMonica McIver",
+      "incumbent_party": "D",
+      "bioguide_id": "M001229",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-11",
+      "incumbent_name": "Analilia Mejia",
+      "incumbent_party": "D",
+      "bioguide_id": "M001246",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NJ-12",
+      "incumbent_name": "Bonnie Watson Coleman",
+      "incumbent_party": "D",
+      "bioguide_id": "W000822",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NM-01",
+      "incumbent_name": "Melanie A. Stansbury",
+      "incumbent_party": "D",
+      "bioguide_id": "S001218",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NM-02",
+      "incumbent_name": "Gabe Vasquez",
+      "incumbent_party": "D",
+      "bioguide_id": "V000136",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NM-03",
+      "incumbent_name": "Teresa Leger Fernandez",
+      "incumbent_party": "D",
+      "bioguide_id": "L000273",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NV-01",
+      "incumbent_name": "Dina Titus",
+      "incumbent_party": "D",
+      "bioguide_id": "T000468",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NV-02",
+      "incumbent_name": "Mark E. Amodei",
+      "incumbent_party": "R",
+      "bioguide_id": "A000369",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NV-03",
+      "incumbent_name": "Susie Lee",
+      "incumbent_party": "D",
+      "bioguide_id": "L000590",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NV-04",
+      "incumbent_name": "Steven Horsford",
+      "incumbent_party": "D",
+      "bioguide_id": "H001066",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-01",
+      "incumbent_name": "Nick LaLota",
+      "incumbent_party": "R",
+      "bioguide_id": "L000598",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-02",
+      "incumbent_name": "Andrew R. Garbarino",
+      "incumbent_party": "R",
+      "bioguide_id": "G000597",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-03",
+      "incumbent_name": "Thomas R. Suozzi",
+      "incumbent_party": "D",
+      "bioguide_id": "S001201",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-04",
+      "incumbent_name": "Laura Gillen",
+      "incumbent_party": "D",
+      "bioguide_id": "G000602",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-05",
+      "incumbent_name": "Gregory W. Meeks",
+      "incumbent_party": "D",
+      "bioguide_id": "M001137",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-06",
+      "incumbent_name": "Grace Meng",
+      "incumbent_party": "D",
+      "bioguide_id": "M001188",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-07",
+      "incumbent_name": "Nydia M. Velázquez",
+      "incumbent_party": "D",
+      "bioguide_id": "V000081",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-08",
+      "incumbent_name": "Hakeem S. Jeffries",
+      "incumbent_party": "D",
+      "bioguide_id": "J000294",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-09",
+      "incumbent_name": "Yvette D. Clarke",
+      "incumbent_party": "D",
+      "bioguide_id": "C001067",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-10",
+      "incumbent_name": "Daniel S. Goldman",
+      "incumbent_party": "D",
+      "bioguide_id": "G000599",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-11",
+      "incumbent_name": "Nicole Malliotakis",
+      "incumbent_party": "R",
+      "bioguide_id": "M000317",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-12",
+      "incumbent_name": "Jerrold Nadler",
+      "incumbent_party": "D",
+      "bioguide_id": "N000002",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-13",
+      "incumbent_name": "Adriano Espaillat",
+      "incumbent_party": "D",
+      "bioguide_id": "E000297",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-14",
+      "incumbent_name": "Alexandria Ocasio-Cortez",
+      "incumbent_party": "D",
+      "bioguide_id": "O000172",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-15",
+      "incumbent_name": "Ritchie Torres",
+      "incumbent_party": "D",
+      "bioguide_id": "T000486",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-16",
+      "incumbent_name": "George Latimer",
+      "incumbent_party": "D",
+      "bioguide_id": "L000606",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-17",
+      "incumbent_name": "Michael Lawler",
+      "incumbent_party": "R",
+      "bioguide_id": "L000599",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-18",
+      "incumbent_name": "Patrick Ryan",
+      "incumbent_party": "D",
+      "bioguide_id": "R000579",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-19",
+      "incumbent_name": "Josh Riley",
+      "incumbent_party": "D",
+      "bioguide_id": "R000622",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-20",
+      "incumbent_name": "Paul Tonko",
+      "incumbent_party": "D",
+      "bioguide_id": "T000469",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-21",
+      "incumbent_name": "Elise M. Stefanik",
+      "incumbent_party": "R",
+      "bioguide_id": "S001196",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-22",
+      "incumbent_name": "John W. Mannion",
+      "incumbent_party": "D",
+      "bioguide_id": "M001231",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-23",
+      "incumbent_name": "Nicholas A. Langworthy",
+      "incumbent_party": "R",
+      "bioguide_id": "L000600",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-24",
+      "incumbent_name": "Claudia Tenney",
+      "incumbent_party": "R",
+      "bioguide_id": "T000478",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-25",
+      "incumbent_name": "Joseph D. Morelle",
+      "incumbent_party": "D",
+      "bioguide_id": "M001206",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-NY-26",
+      "incumbent_name": "Timothy M. Kennedy",
+      "incumbent_party": "D",
+      "bioguide_id": "K000402",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-01",
+      "incumbent_name": "Greg Landsman",
+      "incumbent_party": "D",
+      "bioguide_id": "L000601",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-02",
+      "incumbent_name": "David J. Taylor",
+      "incumbent_party": "R",
+      "bioguide_id": "T000490",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-03",
+      "incumbent_name": "Joyce Beatty",
+      "incumbent_party": "D",
+      "bioguide_id": "B001281",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-04",
+      "incumbent_name": "Jim Jordan",
+      "incumbent_party": "R",
+      "bioguide_id": "J000289",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-05",
+      "incumbent_name": "Robert E. Latta",
+      "incumbent_party": "R",
+      "bioguide_id": "L000566",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-06",
+      "incumbent_name": "Michael A. Rulli",
+      "incumbent_party": "R",
+      "bioguide_id": "R000619",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-07",
+      "incumbent_name": "Max L. Miller",
+      "incumbent_party": "R",
+      "bioguide_id": "M001222",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-08",
+      "incumbent_name": "Warren Davidson",
+      "incumbent_party": "R",
+      "bioguide_id": "D000626",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-09",
+      "incumbent_name": "Marcy Kaptur",
+      "incumbent_party": "D",
+      "bioguide_id": "K000009",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-10",
+      "incumbent_name": "Michael R. Turner",
+      "incumbent_party": "R",
+      "bioguide_id": "T000463",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-11",
+      "incumbent_name": "Shontel M. Brown",
+      "incumbent_party": "D",
+      "bioguide_id": "B001313",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-12",
+      "incumbent_name": "Troy Balderson",
+      "incumbent_party": "R",
+      "bioguide_id": "B001306",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-13",
+      "incumbent_name": "Emilia Strong Sykes",
+      "incumbent_party": "D",
+      "bioguide_id": "S001223",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-14",
+      "incumbent_name": "David P. Joyce",
+      "incumbent_party": "R",
+      "bioguide_id": "J000295",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OH-15",
+      "incumbent_name": "Mike Carey",
+      "incumbent_party": "R",
+      "bioguide_id": "C001126",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OK-01",
+      "incumbent_name": "Kevin Hern",
+      "incumbent_party": "R",
+      "bioguide_id": "H001082",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OK-02",
+      "incumbent_name": "Josh Brecheen",
+      "incumbent_party": "R",
+      "bioguide_id": "B001317",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OK-03",
+      "incumbent_name": "Frank D. Lucas",
+      "incumbent_party": "R",
+      "bioguide_id": "L000491",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OK-04",
+      "incumbent_name": "Tom Cole",
+      "incumbent_party": "R",
+      "bioguide_id": "C001053",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OK-05",
+      "incumbent_name": "Stephanie I. Bice",
+      "incumbent_party": "R",
+      "bioguide_id": "B000740",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OR-01",
+      "incumbent_name": "Suzanne Bonamici",
+      "incumbent_party": "D",
+      "bioguide_id": "B001278",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OR-02",
+      "incumbent_name": "Cliff Bentz",
+      "incumbent_party": "R",
+      "bioguide_id": "B000668",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OR-03",
+      "incumbent_name": "Maxine Dexter",
+      "incumbent_party": "D",
+      "bioguide_id": "D000635",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OR-04",
+      "incumbent_name": "Val T. Hoyle",
+      "incumbent_party": "D",
+      "bioguide_id": "H001094",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OR-05",
+      "incumbent_name": "Janelle S. Bynum",
+      "incumbent_party": "D",
+      "bioguide_id": "B001326",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-OR-06",
+      "incumbent_name": "Andrea Salinas",
+      "incumbent_party": "D",
+      "bioguide_id": "S001226",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-01",
+      "incumbent_name": "Brian K. Fitzpatrick",
+      "incumbent_party": "R",
+      "bioguide_id": "F000466",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-02",
+      "incumbent_name": "Brendan F. Boyle",
+      "incumbent_party": "D",
+      "bioguide_id": "B001296",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-03",
+      "incumbent_name": "Dwight Evans",
+      "incumbent_party": "D",
+      "bioguide_id": "E000296",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-04",
+      "incumbent_name": "Madeleine Dean",
+      "incumbent_party": "D",
+      "bioguide_id": "D000631",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-05",
+      "incumbent_name": "Mary Gay Scanlon",
+      "incumbent_party": "D",
+      "bioguide_id": "S001205",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-06",
+      "incumbent_name": "Chrissy Houlahan",
+      "incumbent_party": "D",
+      "bioguide_id": "H001085",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-07",
+      "incumbent_name": "Ryan Mackenzie",
+      "incumbent_party": "R",
+      "bioguide_id": "M001230",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-08",
+      "incumbent_name": "Robert P. Bresnahan, Jr.",
+      "incumbent_party": "R",
+      "bioguide_id": "B001327",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-09",
+      "incumbent_name": "Daniel Meuser",
+      "incumbent_party": "R",
+      "bioguide_id": "M001204",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-10",
+      "incumbent_name": "Scott Perry",
+      "incumbent_party": "R",
+      "bioguide_id": "P000605",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-11",
+      "incumbent_name": "Lloyd Smucker",
+      "incumbent_party": "R",
+      "bioguide_id": "S001199",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-12",
+      "incumbent_name": "Summer L. Lee",
+      "incumbent_party": "D",
+      "bioguide_id": "L000602",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-13",
+      "incumbent_name": "John Joyce",
+      "incumbent_party": "R",
+      "bioguide_id": "J000302",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-14",
+      "incumbent_name": "Guy Reschenthaler",
+      "incumbent_party": "R",
+      "bioguide_id": "R000610",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-15",
+      "incumbent_name": "Glenn Thompson",
+      "incumbent_party": "R",
+      "bioguide_id": "T000467",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-16",
+      "incumbent_name": "Mike Kelly",
+      "incumbent_party": "R",
+      "bioguide_id": "K000376",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PA-17",
+      "incumbent_name": "Christopher R. Deluzio",
+      "incumbent_party": "D",
+      "bioguide_id": "D000530",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-PR-01",
+      "incumbent_name": "Pablo José Hernández",
+      "incumbent_party": "D",
+      "bioguide_id": "H001103",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-RI-01",
+      "incumbent_name": "Gabe Amo",
+      "incumbent_party": "D",
+      "bioguide_id": "A000380",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-RI-02",
+      "incumbent_name": "Seth Magaziner",
+      "incumbent_party": "D",
+      "bioguide_id": "M001223",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-01",
+      "incumbent_name": "Nancy Mace",
+      "incumbent_party": "R",
+      "bioguide_id": "M000194",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-02",
+      "incumbent_name": "Joe Wilson",
+      "incumbent_party": "R",
+      "bioguide_id": "W000795",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-03",
+      "incumbent_name": "Sheri Biggs",
+      "incumbent_party": "R",
+      "bioguide_id": "B001325",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-04",
+      "incumbent_name": "William R. Timmons IV",
+      "incumbent_party": "R",
+      "bioguide_id": "T000480",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-05",
+      "incumbent_name": "Ralph Norman",
+      "incumbent_party": "R",
+      "bioguide_id": "N000190",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-06",
+      "incumbent_name": "James E. Clyburn",
+      "incumbent_party": "D",
+      "bioguide_id": "C000537",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SC-07",
+      "incumbent_name": "Russell Fry",
+      "incumbent_party": "R",
+      "bioguide_id": "F000478",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-SD-01",
+      "incumbent_name": "Dusty Johnson",
+      "incumbent_party": "R",
+      "bioguide_id": "J000301",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-01",
+      "incumbent_name": "Diana Harshbarger",
+      "incumbent_party": "R",
+      "bioguide_id": "H001086",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-02",
+      "incumbent_name": "Tim Burchett",
+      "incumbent_party": "R",
+      "bioguide_id": "B001309",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-03",
+      "incumbent_name": "Charles J. \"Chuck\" Fleischmann",
+      "incumbent_party": "R",
+      "bioguide_id": "F000459",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-04",
+      "incumbent_name": "Scott DesJarlais",
+      "incumbent_party": "R",
+      "bioguide_id": "D000616",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-05",
+      "incumbent_name": "Andrew Ogles",
+      "incumbent_party": "R",
+      "bioguide_id": "O000175",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-06",
+      "incumbent_name": "John W. Rose",
+      "incumbent_party": "R",
+      "bioguide_id": "R000612",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-07",
+      "incumbent_name": "Matt Van Epps",
+      "incumbent_party": "R",
+      "bioguide_id": "V000139",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-08",
+      "incumbent_name": "David Kustoff",
+      "incumbent_party": "R",
+      "bioguide_id": "K000392",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TN-09",
+      "incumbent_name": "Steve Cohen",
+      "incumbent_party": "D",
+      "bioguide_id": "C001068",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-01",
+      "incumbent_name": "Nathaniel Moran",
+      "incumbent_party": "R",
+      "bioguide_id": "M001224",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-02",
+      "incumbent_name": "Dan Crenshaw",
+      "incumbent_party": "R",
+      "bioguide_id": "C001120",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-03",
+      "incumbent_name": "Keith Self",
+      "incumbent_party": "R",
+      "bioguide_id": "S001224",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-04",
+      "incumbent_name": "Pat Fallon",
+      "incumbent_party": "R",
+      "bioguide_id": "F000246",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-05",
+      "incumbent_name": "Lance Gooden",
+      "incumbent_party": "R",
+      "bioguide_id": "G000589",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-06",
+      "incumbent_name": "Jake Ellzey",
+      "incumbent_party": "R",
+      "bioguide_id": "E000071",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-07",
+      "incumbent_name": "Lizzie Fletcher",
+      "incumbent_party": "D",
+      "bioguide_id": "F000468",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-08",
+      "incumbent_name": "Morgan Luttrell",
+      "incumbent_party": "R",
+      "bioguide_id": "L000603",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-09",
+      "incumbent_name": "Al Green",
+      "incumbent_party": "D",
+      "bioguide_id": "G000553",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-10",
+      "incumbent_name": "Michael T. McCaul",
+      "incumbent_party": "R",
+      "bioguide_id": "M001157",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-11",
+      "incumbent_name": "August Pfluger",
+      "incumbent_party": "R",
+      "bioguide_id": "P000048",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-12",
+      "incumbent_name": "Craig A. Goldman",
+      "incumbent_party": "R",
+      "bioguide_id": "G000601",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-13",
+      "incumbent_name": "Ronny Jackson",
+      "incumbent_party": "R",
+      "bioguide_id": "J000304",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-14",
+      "incumbent_name": "Randy K. Weber, Sr.",
+      "incumbent_party": "R",
+      "bioguide_id": "W000814",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-15",
+      "incumbent_name": "Monica De La Cruz",
+      "incumbent_party": "R",
+      "bioguide_id": "D000594",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-16",
+      "incumbent_name": "Veronica Escobar",
+      "incumbent_party": "D",
+      "bioguide_id": "E000299",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-17",
+      "incumbent_name": "Pete Sessions",
+      "incumbent_party": "R",
+      "bioguide_id": "S000250",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-18",
+      "incumbent_name": "Christian D. Menefee",
+      "incumbent_party": "D",
+      "bioguide_id": "M001245",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-19",
+      "incumbent_name": "Jodey C. Arrington",
+      "incumbent_party": "R",
+      "bioguide_id": "A000375",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-20",
+      "incumbent_name": "Joaquin Castro",
+      "incumbent_party": "D",
+      "bioguide_id": "C001091",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-21",
+      "incumbent_name": "Chip Roy",
+      "incumbent_party": "R",
+      "bioguide_id": "R000614",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-22",
+      "incumbent_name": "Troy E. Nehls",
+      "incumbent_party": "R",
+      "bioguide_id": "N000026",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-24",
+      "incumbent_name": "Beth Van Duyne",
+      "incumbent_party": "R",
+      "bioguide_id": "V000134",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-25",
+      "incumbent_name": "Roger Williams",
+      "incumbent_party": "R",
+      "bioguide_id": "W000816",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-26",
+      "incumbent_name": "Brandon Gill",
+      "incumbent_party": "R",
+      "bioguide_id": "G000603",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-27",
+      "incumbent_name": "Michael Cloud",
+      "incumbent_party": "R",
+      "bioguide_id": "C001115",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-28",
+      "incumbent_name": "Henry Cuellar",
+      "incumbent_party": "D",
+      "bioguide_id": "C001063",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-29",
+      "incumbent_name": "Sylvia R. Garcia",
+      "incumbent_party": "D",
+      "bioguide_id": "G000587",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-30",
+      "incumbent_name": "Jasmine Crockett",
+      "incumbent_party": "D",
+      "bioguide_id": "C001130",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-31",
+      "incumbent_name": "John R. Carter",
+      "incumbent_party": "R",
+      "bioguide_id": "C001051",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-32",
+      "incumbent_name": "Julie Johnson",
+      "incumbent_party": "D",
+      "bioguide_id": "J000310",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-33",
+      "incumbent_name": "Marc A. Veasey",
+      "incumbent_party": "D",
+      "bioguide_id": "V000131",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-34",
+      "incumbent_name": "Vicente Gonzalez",
+      "incumbent_party": "D",
+      "bioguide_id": "G000581",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-35",
+      "incumbent_name": "Greg Casar",
+      "incumbent_party": "D",
+      "bioguide_id": "C001131",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-36",
+      "incumbent_name": "Brian Babin",
+      "incumbent_party": "R",
+      "bioguide_id": "B001291",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-37",
+      "incumbent_name": "Lloyd Doggett",
+      "incumbent_party": "D",
+      "bioguide_id": "D000399",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-TX-38",
+      "incumbent_name": "Wesley Hunt",
+      "incumbent_party": "R",
+      "bioguide_id": "H001095",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-UT-01",
+      "incumbent_name": "Blake D. Moore",
+      "incumbent_party": "R",
+      "bioguide_id": "M001213",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-UT-02",
+      "incumbent_name": "Celeste Maloy",
+      "incumbent_party": "R",
+      "bioguide_id": "M001228",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-UT-03",
+      "incumbent_name": "Mike Kennedy",
+      "incumbent_party": "R",
+      "bioguide_id": "K000403",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-UT-04",
+      "incumbent_name": "Burgess Owens",
+      "incumbent_party": "R",
+      "bioguide_id": "O000086",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-01",
+      "incumbent_name": "Robert J. Wittman",
+      "incumbent_party": "R",
+      "bioguide_id": "W000804",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-02",
+      "incumbent_name": "Jennifer A. Kiggans",
+      "incumbent_party": "R",
+      "bioguide_id": "K000399",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-03",
+      "incumbent_name": "Robert C. \"Bobby\" Scott",
+      "incumbent_party": "D",
+      "bioguide_id": "S000185",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-04",
+      "incumbent_name": "Jennifer L. McClellan",
+      "incumbent_party": "D",
+      "bioguide_id": "M001227",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-05",
+      "incumbent_name": "John J. McGuire III",
+      "incumbent_party": "R",
+      "bioguide_id": "M001239",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-06",
+      "incumbent_name": "Ben Cline",
+      "incumbent_party": "R",
+      "bioguide_id": "C001118",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-07",
+      "incumbent_name": "Eugene Simon Vindman",
+      "incumbent_party": "D",
+      "bioguide_id": "V000138",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-08",
+      "incumbent_name": "Donald S. Beyer, Jr.",
+      "incumbent_party": "D",
+      "bioguide_id": "B001292",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-09",
+      "incumbent_name": "H. Morgan Griffith",
+      "incumbent_party": "R",
+      "bioguide_id": "G000568",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-10",
+      "incumbent_name": "Suhas Subramanyam",
+      "incumbent_party": "D",
+      "bioguide_id": "S001230",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VA-11",
+      "incumbent_name": "James R. Walkinshaw",
+      "incumbent_party": "D",
+      "bioguide_id": "W000831",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VI-01",
+      "incumbent_name": "Stacey E. Plaskett",
+      "incumbent_party": "D",
+      "bioguide_id": "P000610",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-VT-01",
+      "incumbent_name": "Becca Balint",
+      "incumbent_party": "D",
+      "bioguide_id": "B001318",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-01",
+      "incumbent_name": "Suzan K. DelBene",
+      "incumbent_party": "D",
+      "bioguide_id": "D000617",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-02",
+      "incumbent_name": "Rick Larsen",
+      "incumbent_party": "D",
+      "bioguide_id": "L000560",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-03",
+      "incumbent_name": "Marie Gluesenkamp Perez",
+      "incumbent_party": "D",
+      "bioguide_id": "G000600",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-04",
+      "incumbent_name": "Dan Newhouse",
+      "incumbent_party": "R",
+      "bioguide_id": "N000189",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-05",
+      "incumbent_name": "Michael Baumgartner",
+      "incumbent_party": "R",
+      "bioguide_id": "B001322",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-06",
+      "incumbent_name": "Emily Randall",
+      "incumbent_party": "D",
+      "bioguide_id": "R000621",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-07",
+      "incumbent_name": "Pramila Jayapal",
+      "incumbent_party": "D",
+      "bioguide_id": "J000298",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-08",
+      "incumbent_name": "Kim Schrier",
+      "incumbent_party": "D",
+      "bioguide_id": "S001216",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-09",
+      "incumbent_name": "Adam Smith",
+      "incumbent_party": "D",
+      "bioguide_id": "S000510",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WA-10",
+      "incumbent_name": "Marilyn Strickland",
+      "incumbent_party": "D",
+      "bioguide_id": "S001159",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-01",
+      "incumbent_name": "Bryan Steil",
+      "incumbent_party": "R",
+      "bioguide_id": "S001213",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-02",
+      "incumbent_name": "Mark Pocan",
+      "incumbent_party": "D",
+      "bioguide_id": "P000607",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-03",
+      "incumbent_name": "Derrick Van Orden",
+      "incumbent_party": "R",
+      "bioguide_id": "V000135",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-04",
+      "incumbent_name": "Gwen Moore",
+      "incumbent_party": "D",
+      "bioguide_id": "M001160",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-05",
+      "incumbent_name": "Scott Fitzgerald",
+      "incumbent_party": "R",
+      "bioguide_id": "F000471",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-06",
+      "incumbent_name": "Glenn Grothman",
+      "incumbent_party": "R",
+      "bioguide_id": "G000576",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-07",
+      "incumbent_name": "Thomas P. Tiffany",
+      "incumbent_party": "R",
+      "bioguide_id": "T000165",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WI-08",
+      "incumbent_name": "Tony Wied",
+      "incumbent_party": "R",
+      "bioguide_id": "W000829",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WV-01",
+      "incumbent_name": "Carol D. Miller",
+      "incumbent_party": "R",
+      "bioguide_id": "M001205",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WV-02",
+      "incumbent_name": "Riley M. Moore",
+      "incumbent_party": "R",
+      "bioguide_id": "M001235",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-WY-01",
+      "incumbent_name": "Harriet M. Hageman",
+      "incumbent_party": "R",
+      "bioguide_id": "H001096",
+      "open_seat": false,
+      "open_reason": ""
+    }
+  ]
+}

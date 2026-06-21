@@ -12,12 +12,20 @@ entertainment, crypto, politics, weather, etc.).
 
 ## What it shows
 
-Two tabs:
+Four tabs, filtered by row category:
 
-- **Markets** — every matched arb pair, with the usual filters (type,
+- **All** — every matched arb pair, with the usual filters (type,
   platform pair, gap range, volume, settle window, suspicious-hide).
+- **🗳 Elections** — 2026 US Senate / Governor / House races. Pulls from
+  two paths: the fuzzy matcher's Politics category AND a ported version
+  of polling-agg-2026's election scanner (`scripts/elections.py`). The
+  ported logic adds party-level Dem/Rep markets, per-candidate
+  general-election pairs, and per-candidate primary pairs — all matched
+  on canonical race_id rather than fuzzy text.
 - **⚽ Sports** — every sports pair unfiltered. For browsing the
   cross-listed sports universe regardless of arb size.
+- **Other** — everything else (entertainment, crypto, weather, policy,
+  etc).
 
 Each pair includes raw gap / net gap after fees / guaranteed-return %
 where applicable / tradeable depth / a `⚠ verify` badge listing all
@@ -36,14 +44,23 @@ two repos don't hit the same APIs simultaneously). Each run:
    within category groups. Several guards strip false matches
    (candidate-name mismatch, sub-bet type mismatch, threshold-bucket
    mismatch, etc.).
-3. Computes cross-platform price gaps. For any pair > 30pp gap, fetches
+3. Runs `scripts/elections.py` — the US-2026 election-specific arb
+   builder ported from polling-agg-2026. Matches party-level Dem/Rep
+   markets on canonical race_id, plus per-candidate general and primary
+   markets keyed on `(state, office, district, candidate_last_name)`.
+   Writes `data/processed/election_pairs.csv` which the scanner appends
+   on top of its fuzzy output (duplicates with the fuzzy Politics path
+   are acceptable today and may be deduplicated later).
+4. Computes cross-platform price gaps. For any pair > 30pp gap, fetches
    each market's resolution rules and runs a text similarity check
    (`scripts/scrutiny.py`): pairs scoring under 50 are dropped entirely,
    50–75 are kept but tagged `criteria_warn`, ≥75 pass clean.
-4. Fetches live orderbook depth for matched pairs and re-runs the
+5. Tags every row with `category_bucket ∈ {Elections, Sports, Other}`
+   so the dashboard tabs can filter without re-parsing the raw category.
+6. Fetches live orderbook depth for matched pairs and re-runs the
    scanner to surface top-of-book size and "tradeable" depth within 1pp
    and 3pp of the best ask.
-5. Commits the refreshed `docs/arb_data.js` back to master.
+7. Commits the refreshed `docs/arb_data.js` back to master.
 
 GitHub Pages auto-redeploys from `/docs`. Cron is best-effort — actual
 fire time can lag 5–30 min.

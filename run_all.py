@@ -9,7 +9,17 @@ steps = [
     ("Kalshi scraper",        [sys.executable, "scrapers/kalshi.py"]),
     ("Polymarket scraper",    [sys.executable, "scrapers/polymarket.py"]),
     ("PredictIt scraper",     [sys.executable, "scrapers/predictit.py"]),
+    # House incumbents — feeds utils/races.py with updated open-seat info
+    # for the elections module. Optional: races.py falls back to a static
+    # HOUSE_KNOWN_OPEN list if the JSON isn't present.
+    ("House incumbents",      [sys.executable, "scrapers/house_incumbents.py"]),
     ("Matcher",               [sys.executable, "scripts/matcher.py"]),
+    # 2026 US-election arb pairs — ported from polling-agg-2026 (sibling
+    # repo). Writes data/processed/election_pairs.csv which arb_scanner
+    # appends to its own fuzzy-matcher output. Runs alongside the
+    # existing matcher rather than replacing it; duplicates are
+    # acceptable today and can be deduplicated later.
+    ("Elections (US 2026)",   [sys.executable, "scripts/elections.py"]),
     ("Arb scanner (pass 1)",  [sys.executable, "scripts/arb_scanner.py"]),
     ("Fetch orderbook depth", [sys.executable, "scripts/fetch_depth.py"]),
     ("Arb scanner (pass 2)",  [sys.executable, "scripts/arb_scanner.py"]),
