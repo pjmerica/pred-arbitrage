@@ -161,17 +161,18 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
 
 1. Scraper-time filters drop wide-spread / low-liquidity markets at the
    source.
-   - Polymarket: gamma snapshots with bid-ask spread > 8pp get dropped
-     entirely (the gamma /markets endpoint caches a snapshot that lags
-     the live CLOB by minutes-to-hours; wide spreads are usually a sign
-     that the cached snapshot is out of date). Earlier code used "ask"
-     as the price for wide-spread rows; that's optimistic for a buyer
-     and produced fake arbs against tighter cross-platform quotes (NZ
-     Palestine market: gamma 16-34¢ shipped as 34¢; live CLOB was
-     16-24¢, real midpoint 20¢ — the arb went from a fake 20pp to a
-     real 6pp).
+   - Polymarket: liquidity < $200 OR spread > 30pp gets dropped at
+     scrape time. The earlier 8pp-spread-drop was reverted on
+     2026-06-21 — once `freshen_polymarket.py` rewrites every
+     gamma snapshot with a live CLOB midpoint right after the scrape,
+     the 8pp filter became unnecessary defensive code that was
+     cutting too much.
+   - Polymarket: end_date < today gets dropped (Polymarket leaves
+     resolved markets flagged active=true; see "Active-flag lies").
    - Kalshi: markets with `yes_bid` missing or 0 are dropped entirely
      ("only buyers, no sellers" = can't exit a position).
+   - Kalshi: close_date < today gets dropped (same active-flag-lies
+     story).
 2. Cross-flip safety on 3-way races.
 3. **Depth-time price override** (2026-06-21). When `fetch_depth` has a
    fresh live-CLOB midpoint for a market, the scanner overrides the
@@ -201,21 +202,99 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
    2026-06-21 because those pairs are now dropped at filter step 5
    instead of just being flagged.
 
-### Polymarket pagination
+### Polymarket pagination — current state and gotchas
 
-Polymarket has TWO `/events` pagination endpoints:
+**TL;DR**: we use `gamma-api.polymarket.com/events?offset=N` capped at
+2000. The "real" fix lives at `clob.polymarket.com/markets` (paginates
+properly to ~55k markets) but uses a different field shape and needs a
+parser rewrite — tracked in AUDIT.md.
 
-- **`/events?offset=N`** — offset-based, HARD-CAPPED at offset 2000.
-  Anything past that returns HTTP 422 with body
-  `"offset too large, use /events/keyset for deeper pagination"`.
-- **`/events/keyset?cursor=...`** — cursor-based, no cap. Returns
-  `{events: [...], next_cursor: "..."}`; follow the cursor until
-  empty/missing.
+History (chronological, painful — keep this so the next person doesn't
+re-tread it):
 
-`fetch_all_events()` uses keyset. The old code that used offset
-silently truncated every scrape to ~2000 events because the original
-"break on first exception" loop swallowed the 422 — and even the
-fixed retry-and-skip loop hit persistent 422s on every page past 2000.
+1. **`/events?offset=N`** — what we used originally. Polymarket added a
+   hard cap at offset=2000 in mid-June 2026; anything past returns HTTP
+   422 with body
+   `"offset too large, use /events/keyset for deeper pagination"`.
+
+2. **`/events/keyset?cursor=...`** — what the 422 message tells you to
+   use. **Don't.** Probed 2026-06-21 evening: the `next_cursor`
+   returned does NOT advance the pagination. Pass it back with any
+   parameter name (`cursor`, `next_cursor`, `page_token`, `after`,
+   `pagination_cursor`) and you get the EXACT SAME 100 events forever.
+   A run with this endpoint paginated 100,000 "events" that were
+   actually 1,000 duplicates of the first page, yielded only 46
+   matched pairs / 1 guaranteed arb. Likely a Polymarket-side bug or
+   undocumented parameter we haven't found.
+
+3. **Current**: reverted to `/events?offset=N` capped at 2000. We lose
+   visibility into markets past offset 2000, but at least we have a
+   working pipeline producing 200+ pairs. `fetch_all_events()` in
+   `scrapers/polymarket.py` carries a long docstring with this
+   history; don't rip it out.
+
+4. **The real fix (tracked in AUDIT.md as next-handoff work)**:
+   `clob.polymarket.com/markets` returns 1000 markets per page with a
+   working `next_cursor` (base64-encoded offset that actually advances).
+   Probed it: walked 60 pages = 55,343 unique markets. Has a
+   `tokens` array containing both YES and NO `token_id` directly (no
+   separate lookup needed), plus a real `accepting_orders` boolean
+   instead of gamma's lies. Field names are completely different —
+   needs `parse_market()` rewritten.
+
+### NO-token orderbook for Polymarket
+
+For matched pairs, `scripts/fetch_depth.py` pulls BOTH the YES and NO
+orderbooks. Polymarket exposes YES and NO as separately tradeable
+tokens with their own bid/ask, so the arb math should use the real NO
+ask for the buy-NO leg rather than inferring `1 - YES_bid`.
+
+How it flows:
+1. `arb_scanner.py` (pass 1) looks up `no_token_id` from
+   `polymarket_markets.csv` for every Polymarket leg of every matched
+   pair, writes it into `depth_targets.csv` as `no_market_id`.
+2. `fetch_depth.py` sees `no_market_id` on a target row, fetches the
+   NO orderbook in addition to the YES one. Writes the NO row to
+   `orderbook_depth.csv` with `side="no"` and `yes_market_id=<the
+   original YES token>` so the scanner can join them back together.
+3. `arb_scanner.py` (pass 2) splits `orderbook_depth.csv` into yes and
+   no subsets, joins both onto each pair. New columns:
+   `depth_no_a_best_bid`, `depth_no_a_best_ask`, etc.
+4. `compute_arb()` uses the real NO ask for the buy-NO leg when
+   available; falls back to `1 - YES_bid` only when NO data isn't
+   present (Kalshi has no separate NO token; Polymarket markets that
+   404'd on the NO fetch).
+
+Kalshi doesn't expose a separate NO token, so `no_market_id` stays
+empty for those rows and the math always falls back to the inferred
+form (which is fine — Kalshi's YES book is tight enough that the
+inference is exact).
+
+### Arb math: real fillable prices, not midpoints
+
+`compute_arb()` in `scripts/arb_scanner.py` takes `bid_a/ask_a/bid_b/
+ask_b` (YES-leg orderbook) and `no_bid_a/no_ask_a/no_bid_b/no_ask_b`
+(NO-leg orderbook) kwargs. The two basket directions tried:
+
+- **Direction 1**: Buy YES on A + Buy NO on B → `cost = ask_a + no_ask_b`
+- **Direction 2**: Buy YES on B + Buy NO on A → `cost = ask_b + no_ask_a`
+
+If either cost < 1 after fees, it's a guaranteed arb. Picks the
+higher-net direction. Falls back to midpoint when bid/ask data is
+missing (PredictIt, markets that 404'd on depth fetch).
+
+Incident that triggered this rewrite (2026-06-21): the "Will Trump
+recognize Somaliland?" pair shipped as a 6.65% guaranteed arb because
+the math subtracted midpoints + fees. Real fillable basket (Buy YES
+Polymarket 7.6¢ + Buy NO Kalshi 85¢ = 92.6¢) gives ~3.4% guaranteed
+after fees — still real, just smaller. The midpoint version overstated
+by ~3pp.
+
+**Each row exposes `fillable_ask_a`, `fillable_bid_a`, `fillable_no_ask_a`,
+`fillable_no_bid_a`, etc.** so the dashboard can show what you'd
+actually pay vs what the platform UI displays. The `implied_prob_a/b`
+fields still hold the midpoint (matches what the platforms show when
+you click in).
 
 ### Active-flag lies
 
@@ -334,6 +413,15 @@ scripts/
   matcher.py           Reads all 3 markets CSVs, produces matched_pairs.csv.
                        Two paths: race_id-based political, fuzzy text for everything else.
                        Long chain of guards prevents false positives (see Matching above).
+  freshen_polymarket.py
+                       Refetches clob.polymarket.com/book for EVERY
+                       Polymarket market in parallel (16 workers, ~4-6 min)
+                       and overwrites bid/ask/midpoint with live values.
+                       Replaces gamma's cached snapshot, which lags the
+                       live CLOB by minutes-to-hours. Added 2026-06-21.
+                       Sort bug discovered: CLOB doesn't return bids/asks
+                       sorted best-first; sort explicitly with
+                       max(bids) / min(asks).
   elections.py         2026 US-election arb builder ported from
                        polling-agg-2026. Three match paths (general,
                        general_candidate, primary_candidate). Writes
@@ -344,8 +432,15 @@ scripts/
                        every row with category_bucket for the dashboard
                        tabs. Produces docs/arb_data.js. Run twice
                        around fetch_depth.py.
-  fetch_depth.py       Reads depth_targets.csv, fetches Kalshi/Polymarket orderbook
-                       ladders, writes orderbook_depth.csv.
+                       _assert_scrape_freshness() at top of run() refuses
+                       to overwrite arb_data.js if any raw CSV is
+                       >12h stale.
+                       compute_arb() uses real ASK / NO-ASK for the arb
+                       math (see "Arb math" section above), not midpoints.
+  fetch_depth.py       Reads depth_targets.csv, fetches Kalshi/Polymarket
+                       orderbook ladders, writes orderbook_depth.csv.
+                       For Polymarket rows with a no_market_id, fetches
+                       BOTH the YES and NO books (added 2026-06-21).
   scrutiny.py          Fetches resolution rules + similarity scoring. Caches in
                        data/processed/scrutiny_cache.json (gitignored).
 
@@ -358,7 +453,17 @@ utils/
                        polling-agg-2026 for the elections path.
 
 data/
-  raw/                 Scraper outputs (gitignored).
+  raw/                 Scraper outputs. .gitignore tracks these specifically:
+    kalshi_markets.csv     Output of scrapers/kalshi.py.
+    polymarket_markets.csv Output of scrapers/polymarket.py + freshen.
+    predictit_markets.csv  Output of scrapers/predictit.py.
+    orderbook_depth.csv    Output of scripts/fetch_depth.py (YES + NO rows).
+                       Changed 2026-06-21: previously the entire data/raw
+                       was gitignored, which meant production refreshes
+                       wrote CSVs only to the runner's ephemeral disk —
+                       a fresh checkout had nothing to work with. Now
+                       the workflow's "git add data/" actually commits
+                       them back.
   processed/           Mostly gitignored. Tracked:
     excluded_pairs.json    Manual scrutiny excludes.
     house_incumbents.json  Output of scrapers/house_incumbents.py.

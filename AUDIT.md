@@ -148,41 +148,158 @@ Lines are post-fixes from this audit.
 
 ---
 
-## To-do (open)
+## To-do — next handoff
 
-Highest leverage first.
+Ordered by leverage. Items 1-3 are blocking-quality issues; the rest
+are improvements.
 
-1. **Pin `requirements.txt`** to versions matching what the GHA runner
-   ships: `pandas>=2.2,<3.0`, `numpy>=2.0,<3.0`, `rapidfuzz>=3.0`.
-2. **Add a smoke test.** Run each scraper with a small limit, verify
-   the CSV shape, run the matcher on truncated data, check
-   `arb_data.js` has rows.
-3. **Log silently-swallowed JSON parse failures in `polymarket.py`**.
-4. **Cross-repo sanity check.** Either a CI step that diffs
-   `polling-agg-2026/scripts/arb_scanner.py:FEES` vs ours, or move the
-   shared constants into a published shared package. The headers helper
-   AND `scripts/elections.py` are now in the same situation —
-   `elections.py` is a hand-port of polling-agg's election logic, and
-   it WILL drift if polling-agg changes its parsing regexes / arb math
-   / fee model without someone re-syncing here. Three options:
-     a. Periodic manual diff (cheap, drifts silently).
-     b. CI step that fails if specific function source diffs.
-     c. Publish polling-agg's election module as a pip package,
-        pred-arb depends on it. Cleanest but most setup.
-5. **Deduplicate elections matches.** Pred-arb's fuzzy matcher already
-   surfaces some 2026 elections in its Politics output; `elections.py`
-   adds more (often the same ones via the direct race_id path). User
-   explicitly chose to accept duplicates today (2026-06-21) — flag a
-   "preferred source" once the volume is observable. The
-   race_id-based rows from `elections.py` are typically more accurate
-   than fuzzy text matches; prefer them when dedup happens.
-5. **Refactor `scripts/matcher.py` guard chain into named helpers.**
-6. **Verify the Node 20→24 migration didn't break anything.** GHA
-   forced Node 24 around 2026-06-16; pred-arb's workflow uses
-   `actions/checkout@v4` and `actions/setup-python@v5` (Node-20-built).
-   The annotation says they're auto-running on Node 24 now. Worth
-   bumping to versions explicitly built for Node 24 before the
-   2026-09-16 cutoff.
+### 1. Rewrite Polymarket scraper to use `clob.polymarket.com/markets`
+
+**Why**: gamma's `/events?offset=N` is hard-capped at offset=2000.
+`/events/keyset` is broken (cursor doesn't advance). The CLOB endpoint
+paginates properly and returns the full ~55k market universe.
+
+**What you get for free**: the `tokens[]` array contains both YES and
+NO `token_id` directly — you can delete the no_token_id lookup we
+flow through `depth_targets.csv → fetch_depth.py`. Also a real
+`accepting_orders` boolean instead of gamma's lying `active=true` flag.
+
+**Sketch**:
+- Endpoint: `https://clob.polymarket.com/markets?next_cursor=...`
+- Returns `{data: [...], next_cursor: "...", limit, count}`.
+- next_cursor is base64-encoded offset (`MTAwMA==` = 1000); pass it
+  back as `next_cursor` param. Genuinely advances. End-of-data signal
+  is `next_cursor == "LTE="` (base64 `-1`).
+- Each row has different fields than gamma: `condition_id`, `question`,
+  `tokens[].token_id` (YES and NO), `end_date_iso`, `accepting_orders`,
+  `enable_order_book`. Need to rewrite `parse_market()` to map these
+  to our CSV schema (yes_token_id, no_token_id, question, end_date,
+  implied_prob, best_bid, best_ask, liquidity, volume, ...). Some
+  fields aren't in CLOB rows — `liquidity` and `volume` come from
+  gamma; might need to keep gamma as a supplementary fetch for those.
+- Filter: `accepting_orders == true` AND `enable_order_book == true`
+  AND `end_date_iso >= today`.
+
+After this is in, `freshen_polymarket.py` becomes mostly redundant
+(CLOB metadata is fresher than gamma) — could be retired or kept as a
+defensive depth-time price refresh.
+
+### 2. Flow PredictIt `bestBuyYes` / `bestSellYes` through as real bid/ask
+
+**Why**: PredictIt has no live orderbook, but the `bestBuyYesCost` and
+`bestSellYesCost` fields ARE actual bid/ask. Today we throw them away
+in `scrapers/predictit.py` after using them for spread-filter, then
+the arb scanner uses a synthetic ±5pp spread around the midpoint as a
+stopgap. Result: PredictIt-leg arbs are still noisier than they need
+to be.
+
+**What to do**:
+- `scrapers/predictit.py`: write `best_buy_yes` and `best_sell_yes`
+  through to the CSV (they're already there) — already done; verify.
+- `scripts/matcher.py:load_predictit()`: preserve those columns into
+  `matched_pairs.csv`.
+- `scripts/arb_scanner.py`: when platform is predictit, populate
+  `bid_a/ask_a` (or b) from those fields instead of the synthetic
+  ±5pp. The PredictIt scrutiny path in `compute_arb` should fall
+  through to the real-bid/ask logic.
+
+### 3. Surface fillable bid/ask in the dashboard UI
+
+**Why**: `compute_arb` already adds `fillable_ask_a`, `fillable_bid_a`,
+`fillable_no_ask_a`, etc. to every row, but `docs/index.html` only
+shows the midpoint (`implied_prob_a/b`). The midpoint matches what
+the platforms display when you click in, but the ACTUAL arb math
+runs on the fillable prices — they should be visible.
+
+**What to do**: in the row template, show midpoint as the headline
+number (today's behavior) but expose fillable_ask + fillable_no_ask
+in a small grey subtitle so users can verify the math: "Buy YES on
+Kalshi @ 21¢ ask + Buy NO on Polymarket @ 92.9¢ ask = $1.139 cost".
+For guaranteed-arb rows specifically, show the stake_note too (it's
+already computed).
+
+### 4. Pin `requirements.txt`
+
+`pandas>=2.2,<3.0`, `numpy>=2.0,<3.0`, `rapidfuzz>=3.0`, `pyyaml>=6.0`.
+
+### 5. Smoke test in CI
+
+Run each scraper with a small limit, verify the CSV shape, run the
+matcher on truncated data, check `arb_data.js` has rows. One file,
+runs in <30s on every PR. This would have caught the keyset-broken
+bug before it shipped — the test would have asserted `len(events) >
+some-floor` and noticed only 100 events.
+
+### 6. Polling-agg cross-repo sync mechanism
+
+`scripts/elections.py` is a hand-port from polling-agg's
+`arb_scanner.py`. It WILL drift. Options:
+- a. Periodic manual diff (cheap, drifts silently).
+- b. CI step that fails if specific function sources diverge.
+- c. Publish polling-agg's election module as a pip package and
+  depend on it. Cleanest, most setup.
+
+Same situation for `utils/http_headers.py` and the `FEES` dict (both
+duplicated between repos).
+
+### 7. Dedup elections matches between fuzzy + ported paths
+
+Today both pred-arb's fuzzy matcher AND the ported elections module
+surface US-2026 races. Duplicates accepted on user's explicit call
+(2026-06-21). Pick a winner: race_id-based rows from `elections.py`
+are typically more accurate than fuzzy text matches, so prefer those
+when a dedup pass goes in.
+
+### 8. Refactor `scripts/matcher.py` (750 LOC, guard chain)
+
+Extract each false-pair guard into a named helper:
+`_guard_candidate_name`, `_guard_sub_bet_type`, `_guard_threshold`,
+etc. Doesn't change behavior; just makes it possible to edit one
+guard without re-reading 750 lines.
+
+### 9. Verify Node 20→24 migration
+
+GHA forced Node 24 around 2026-06-16. Workflows still use
+`actions/checkout@v4` and `actions/setup-python@v5` (Node-20-built),
+running under Node 24 forcibly. Bump to the Node-24-native versions
+before the 2026-09-16 cutoff.
+
+### 10. Log silently-swallowed JSON parse failures in `polymarket.py`
+
+Two `except Exception:` blocks in `parse_market()` silently default to
+`[]` for outcomes/prices. Add a `print(... file=sys.stderr)` so we
+notice if gamma's field shape changes.
+
+### 11. Investigate Polymarket scraper truncation
+
+Even with offset capped at 2000, recent prod runs show ~6k markets
+saved (events expand to markets — each event has multiple). Worth
+spot-checking we're seeing all the events we expect. Item 1 (CLOB
+rewrite) makes this moot.
+
+---
+
+## Bugs squashed today worth remembering
+
+- **`bool(NaN)` is True**: see `[[handoff]]` "Python footguns"
+  (polling-agg AUDIT). Anywhere we read an optional flag column from a
+  pandas DataFrame, use `is True` not `bool(...)`.
+- **CLOB book API doesn't sort bids/asks best-first.** Empirically
+  bids come back roughly low-to-high. Sort explicitly with
+  `max(bids)` / `min(asks)`. (Cost me an hour writing
+  `freshen_polymarket.py`.)
+- **Polymarket gamma's `active=true&closed=false` flags lie.** ~22%
+  of "active" events have endDate in the past. Filter on the date
+  itself.
+- **Kalshi's `open_events` feed includes already-closed markets.**
+  ~40% of rows have close_date in the past. Filter on date.
+- **Polymarket gamma's bestBid/bestAsk lags the live CLOB by
+  minutes-to-hours on low-volume markets.** Don't trust gamma prices
+  for arb math; always re-fetch the live CLOB book.
+- **Polymarket `/events/keyset` cursor doesn't advance.** Don't use it.
+- **PredictIt rows with bid 2¢ / ask 99¢ get midpoint 50.5%.** Their
+  scraper-time spread > 15pp filter catches most but not all. The
+  arb scanner should use real bid/ask, not midpoint.
 
 ---
 
@@ -391,3 +508,72 @@ Polymarket: was capped at ~6k due to the bug, should jump back to ~20k
 clean after the keyset switch). Matcher universe should be roughly
 similar to pre-2026-06-21 — but every row now represents a market that
 is genuinely still trading.
+
+### 2026-06-21 (final pass) — real ASK / NO ask arb math + keyset revert
+
+Three things tonight:
+
+**A) Arb math now uses real fillable prices (ASK for YES leg, real NO
+ASK for NO leg).** User noticed the "Will Trump recognize Somaliland?
+Before 2027" pair shipping as 6.65% guaranteed when the live Kalshi
+ask was 21¢ (not midpoint 18¢). Previously the math used:
+
+```
+cost = prob_a (midpoint) + (1 - prob_b (midpoint))
+```
+
+That's the cost to enter at MIDPOINT, which is never actually fillable.
+The fix: `compute_arb()` takes new `bid_a/ask_a/bid_b/ask_b` and
+`no_bid_a/no_ask_a/no_bid_b/no_ask_b` kwargs. Uses real ASK for the
+buy-YES leg, real NO ASK for the buy-NO leg. Falls back to midpoint
+only when bid/ask data is missing (PredictIt has no public orderbook;
+synthetic ±5pp spread stopgap added).
+
+After the fix, Somaliland correctly downgrades to a ~3.4% guaranteed
+arb (Buy YES Polymarket 7.6¢ + Buy NO Kalshi 85¢ = 92.6¢, net 3.4%
+after 4% combined fees). Real, just smaller than the midpoint-math
+overstate.
+
+User asked: "why are you guessing at No bids, why not just pulling
+the No price?" Correct call. Polymarket exposes YES and NO as separate
+CLOB tokens (`yes_token_id` / `no_token_id`). Wired the NO token
+through `depth_targets.csv → fetch_depth.py → orderbook_depth.csv` so
+the scanner reads real NO bid/ask instead of inferring `1 - YES_bid`.
+Inference only matches reality on tight symmetric books; an
+asymmetric-book test showed inferred returns 11% guaranteed where
+real returns 6% — exactly the 5pp inflation pattern we'd been seeing.
+
+Each row now also exposes `fillable_ask_a/b`, `fillable_bid_a/b`,
+`fillable_no_ask_a/b`, `fillable_no_bid_a/b` so the dashboard can
+show what you'd actually pay vs what the platform UI displays.
+
+**B) Polymarket `/events/keyset` is broken.** This pass had a brief
+detour where I tried to use it (the previous AUDIT entry's "switch to
+keyset" change). Probed it directly: passing the returned `next_cursor`
+back as `cursor` / `next_cursor` / `page_token` / `after` /
+`pagination_cursor` all return the SAME 100 events forever. Production
+run paginated 100,000 "events" that were 1,000 duplicates, yielded
+46 matched pairs / 1 guaranteed arb. **Reverted to `/events?offset=N`
+capped at 2000.** Universe goes back to ~200 matched pairs / handful
+of guaranteed arbs — much better than the keyset disaster, slightly
+less than the pre-cap days.
+
+**C) Discovered the REAL fix for Polymarket coverage:
+`clob.polymarket.com/markets`**. This is a separate endpoint that:
+- Paginates properly (probed: 60 pages = 55k+ unique markets, real
+  `next_cursor` base64-encoded offset that genuinely advances)
+- Returns 1000 markets per page (10x gamma's 100)
+- Includes `tokens[]` array with both YES and NO token_ids directly
+  (no separate lookup needed; would also delete the no_token_id
+  flow we just added)
+- Has real `accepting_orders` boolean instead of gamma's lying
+  `active=true&closed=false` flags
+
+The field shape is completely different from gamma's nested
+`{events: [{markets: [...]}]}`, so it needs `parse_market()` rewritten.
+Not doing it inline tonight — left as the top item in the to-do list
+below.
+
+Files modified: `scripts/arb_scanner.py` (compute_arb + depth-join +
+depth_targets emit), `scripts/fetch_depth.py` (NO orderbook fetch),
+`scrapers/polymarket.py` (keyset revert).
