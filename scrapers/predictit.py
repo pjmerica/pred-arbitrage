@@ -12,15 +12,20 @@ Fields: market_id, market_name, contract_id, contract_name,
 
 import urllib.request
 import urllib.error
+import sys
 import json
 import time
 import pandas as pd
 from pathlib import Path
 from datetime import datetime, timezone
 
-RAW = Path(__file__).parent.parent / "data" / "raw"
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+from utils.http_headers import DEFAULT_HEADERS
+
+RAW = ROOT / "data" / "raw"
 URL = "https://www.predictit.org/api/marketdata/all/"
-HEADERS = {"User-Agent": "Mozilla/5.0 (research/pred-arb)", "Accept": "application/json"}
+HEADERS = DEFAULT_HEADERS
 
 
 RETRY_CODES = {403, 408, 429, 500, 502, 503, 504}

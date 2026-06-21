@@ -17,6 +17,7 @@ or pandas will silently corrupt them to floats.
 """
 
 import urllib.request
+import sys
 import urllib.parse
 import urllib.error
 import json
@@ -25,9 +26,13 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime, timezone
 
-RAW = Path(__file__).parent.parent / "data" / "raw"
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+from utils.http_headers import DEFAULT_HEADERS
+
+RAW = ROOT / "data" / "raw"
 BASE = "https://gamma-api.polymarket.com"
-HEADERS = {"User-Agent": "Mozilla/5.0 (research/pred-arb)", "Accept": "application/json"}
+HEADERS = DEFAULT_HEADERS
 PAGE_SIZE = 100
 
 # Tags to use as category (first matching tag wins, in priority order)

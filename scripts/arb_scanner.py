@@ -28,9 +28,15 @@ ROOT = Path(__file__).parent.parent
 PROCESSED = ROOT / "data" / "processed"
 
 FEES = {
-    "kalshi":    0.03,
+    # Conservative round-trip fee approximation per platform. Kept in
+    # lockstep with polling-agg's FEES dict.
+    # Kalshi taker fee tops out around 1% each way; Polymarket gas + fee
+    # tops out around 1% each way; 2% per platform leaves a cushion
+    # against slippage without burying real arbs under fake-fee math.
+    # PredictIt is 5% on profits + 5% on withdrawals = 12% effective.
+    "kalshi":    0.02,
     "predictit": 0.12,
-    "polymarket": 0.03,
+    "polymarket": 0.02,
 }
 
 

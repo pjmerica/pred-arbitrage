@@ -198,6 +198,12 @@ tr.suspicious-row td { opacity: 0.6; }
 <script>
 // ── state ──────────────────────────────────────────────────────────────────
 let fType = 'ALL', fPair = 'ALL', fCategory = 'ALL', fMinGap = 0, fMaxGap = 100, fProfitable = 'ALL', fSettle = 'ALL', fSearch = '', fSuspicious = 'hide';
+
+// Debounce the search input so a typing burst folds into a single render.
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
 let currentTab = 'markets';  // 'markets' (default) or 'sports'
 // Volume slider stops (USD). Index 3 = $500 default.
 const VOL_STOPS = [0, 100, 250, 500, 1000, 5000, 10000, 50000, 100000, 1000000];
@@ -453,7 +459,7 @@ document.getElementById('f-minvol').addEventListener('input', e => {
 });
 document.getElementById('f-profitable').addEventListener('change', e => { fProfitable = e.target.value; render(); });
 document.getElementById('f-suspicious').addEventListener('change', e => { fSuspicious = e.target.value; render(); });
-document.getElementById('f-search').addEventListener('input', e => { fSearch = e.target.value; render(); });
+document.getElementById('f-search').addEventListener('input', debounce(e => { fSearch = e.target.value; render(); }, 150));
 // Tab switching. On Sports tab the filter bar is hidden (and ignored).
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {

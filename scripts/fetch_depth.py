@@ -30,6 +30,7 @@ Inputs (read from data/processed/depth_targets.csv produced by arb_scanner):
 Output: data/raw/orderbook_depth.csv
 """
 
+import sys
 import json
 import time
 import urllib.request
@@ -39,12 +40,15 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+from utils.http_headers import DEFAULT_HEADERS
+
 RAW = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
 KALSHI_OB_URL = "https://api.elections.kalshi.com/trade-api/v2/markets/{ticker}/orderbook?depth=50"
 POLY_OB_URL = "https://clob.polymarket.com/book?token_id={tid}"
-HEADERS = {"User-Agent": "Mozilla/5.0 (research/pred-arb)", "Accept": "application/json"}
+HEADERS = DEFAULT_HEADERS
 
 EDGE_PP = 0.03   # "max size before paying 3pp worse than best ask"
 NEAR_PP = 0.01   # "depth within 1pp of best price"

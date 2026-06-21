@@ -22,17 +22,21 @@ re-fetch the same rules every run.
 import json
 import re
 import time
+import sys
 import urllib.request
 import urllib.parse
 from difflib import SequenceMatcher
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+from utils.http_headers import DEFAULT_HEADERS
+
 PROCESSED = ROOT / "data" / "processed"
 CACHE_PATH = PROCESSED / "scrutiny_cache.json"
 EXCLUDE_PATH = PROCESSED / "excluded_pairs.json"
 
-HEADERS = {"User-Agent": "Mozilla/5.0 (research/scrutiny)", "Accept": "application/json"}
+HEADERS = DEFAULT_HEADERS
 
 # Cache rules for 7 days — they rarely change.
 CACHE_TTL_SEC = 7 * 24 * 3600
