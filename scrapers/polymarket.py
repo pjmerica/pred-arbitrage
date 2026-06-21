@@ -97,72 +97,85 @@ def extract_category(tags):
 
 
 def fetch_all_events():
-    """Paginate all active events from Polymarket via /events/keyset.
+    """Paginate active events from Polymarket /events?offset=N.
 
-    History: we used to paginate /events with offset=N. Polymarket capped
-    offset at 2000 (probed 2026-06-21: any offset > 2000 returns HTTP 422
-    with body "offset too large, use /events/keyset for deeper pagination").
-    That cap silently truncated every scrape to the first ~2000 events
-    even though there are ~25k+ active.
+    History (chronological, painful):
 
-    /events/keyset returns {events: [...], next_cursor: "..."}. We follow
-    the cursor until next_cursor is empty/missing.
+    1. We used `?offset=N` happily for months. Polymarket added a hard
+       cap at offset=2000 sometime around mid-June 2026. Anything past
+       returns HTTP 422 with body
+       "offset too large, use /events/keyset for deeper pagination".
 
-    The old offset-based retry-and-skip loop didn't help here because the
-    422s at offset > 2000 are deterministic, not transient. Cursor pagination
-    has no such cap.
+    2. Switched to /events/keyset. Probed 2026-06-21 evening: the
+       endpoint returns a `next_cursor` but PASSING IT BACK DOESN'T
+       ADVANCE — every page after the first returns the exact same 100
+       events. Tested with cursor / next_cursor / page_token / after /
+       pagination_cursor as the parameter name; none worked. Bug on
+       Polymarket's side (or undocumented param name). Net result: with
+       keyset we'd silently scrape the same 100 events forever.
+
+    3. Reverted to /events?offset=N capped at 2000. We get up to ~2000
+       active events with this; the universe of really-active markets
+       is around that anyway after the dead-prop filter. Polymarket's
+       full universe of ~55k markets lives at clob.polymarket.com/markets
+       (which DOES paginate properly), but that endpoint has a different
+       field shape — rewrite tracked in AUDIT.md as the proper fix.
+
+    Defensive: skip persistently-failing pages but stop on 3 consecutive
+    skips or after the 2000-offset cap.
     """
     all_events = []
-    cursor = None
+    seen_event_ids = set()
+    offset = 0
     page = 0
     consecutive_failures = 0
-    MAX_PAGES = 1000  # safety cap; PAGE_SIZE=100 means 100k-event ceiling
+    OFFSET_CAP = 2000  # Polymarket hard cap; > 2000 returns HTTP 422
     MAX_RETRIES_PER_PAGE = 3
-    while page < MAX_PAGES:
+    while offset < OFFSET_CAP:
         params = {
             "limit": PAGE_SIZE,
             "active": "true",
             "closed": "false",
+            "offset": offset,
         }
-        if cursor:
-            params["cursor"] = cursor
-
         data = None
         for attempt in range(MAX_RETRIES_PER_PAGE):
             try:
-                data = get("/events/keyset", params)
+                data = get("/events", params)
                 break
             except Exception as e:
                 if attempt < MAX_RETRIES_PER_PAGE - 1:
                     wait = 2 * (attempt + 1)
-                    print(f"  Page (cursor={str(cursor)[:20]}...) failed ({e}); retrying in {wait}s...")
+                    print(f"  Page (offset={offset}) failed ({e}); retrying in {wait}s...")
                     time.sleep(wait)
                 else:
-                    print(f"  Page failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); stopping")
+                    print(f"  Page (offset={offset}) failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); skipping")
         if data is None:
             consecutive_failures += 1
             if consecutive_failures >= 3:
-                print(f"  3 consecutive failed pages — stopping at page {page}")
+                print(f"  3 consecutive failed pages — stopping at offset {offset}")
                 break
-            # Without a cursor advance we'd retry the same page forever, so
-            # give up. A future retry should reset by passing cursor=None.
-            break
+            offset += PAGE_SIZE
+            page += 1
+            continue
 
         consecutive_failures = 0
-        events = data.get("events") if isinstance(data, dict) else None
+        events = data if isinstance(data, list) else []
         if not events:
-            break  # real end of data
-        all_events.extend(events)
+            break
+        new_events = [e for e in events if e.get("id") not in seen_event_ids]
+        for e in new_events:
+            seen_event_ids.add(e.get("id"))
+        all_events.extend(new_events)
         page += 1
-        if page % 20 == 0:
-            print(f"  Fetched {len(all_events)} events so far (cursor pages: {page})...")
-
-        cursor = data.get("next_cursor") if isinstance(data, dict) else None
-        if not cursor:
-            break  # last page reached
+        if page % 5 == 0:
+            print(f"  Fetched {len(all_events)} events so far (offset {offset})...")
+        if len(events) < PAGE_SIZE:
+            break
+        offset += PAGE_SIZE
         time.sleep(0.05)
-    if page == MAX_PAGES:
-        print(f"  Hit MAX_PAGES={MAX_PAGES} — stopping. Bump the cap if Polymarket has > {MAX_PAGES * PAGE_SIZE} active events.")
+    if offset >= OFFSET_CAP:
+        print(f"  Hit OFFSET_CAP={OFFSET_CAP} (Polymarket's hard limit). Switch to clob.polymarket.com/markets to get the rest — see AUDIT.md.")
     return all_events
 
 
