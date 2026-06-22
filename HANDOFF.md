@@ -274,31 +274,107 @@ empty for those rows and the math always falls back to the inferred
 form (which is fine — Kalshi's YES book is tight enough that the
 inference is exact).
 
-### Arb math: real fillable prices, not midpoints
+### Price semantics — READ THIS BEFORE CHANGING ANY PRICE FIELD
 
-`compute_arb()` in `scripts/arb_scanner.py` takes `bid_a/ask_a/bid_b/
-ask_b` (YES-leg orderbook) and `no_bid_a/no_ask_a/no_bid_b/no_ask_b`
-(NO-leg orderbook) kwargs. The two basket directions tried:
+There are FOUR distinct numbers floating around for each market.
+They are NOT interchangeable. Mixing them up has produced two real
+incidents already (Somaliland 2026-06-21 morning, Espaillat
+2026-06-21 evening) — both shipped wrong numbers to the dashboard.
 
-- **Direction 1**: Buy YES on A + Buy NO on B → `cost = ask_a + no_ask_b`
-- **Direction 2**: Buy YES on B + Buy NO on A → `cost = ask_b + no_ask_a`
+| Number | What it means | Range relationship |
+|---|---|---|
+| **Best bid** | What someone is willing to PAY you for YES right now | bid ≤ midpoint ≤ ask |
+| **Best ask** | What someone is willing to SELL YES to you for right now | bid ≤ midpoint ≤ ask |
+| **Midpoint** | `(bid + ask) / 2` | always between |
+| **Last trade price** | What the most recent trade actually cleared at | can be ANYWHERE — even outside [bid, ask] if the book moved since the last trade |
 
-If either cost < 1 after fees, it's a guaranteed arb. Picks the
-higher-net direction. Falls back to midpoint when bid/ask data is
-missing (PredictIt, markets that 404'd on depth fetch).
+A market that displays "62%" on a platform website is showing ONE of
+those four numbers. **Which one depends on the platform**:
 
-Incident that triggered this rewrite (2026-06-21): the "Will Trump
-recognize Somaliland?" pair shipped as a 6.65% guaranteed arb because
-the math subtracted midpoints + fees. Real fillable basket (Buy YES
-Polymarket 7.6¢ + Buy NO Kalshi 85¢ = 92.6¢) gives ~3.4% guaranteed
-after fees — still real, just smaller. The midpoint version overstated
-by ~3pp.
+- **Kalshi** shows `last_price` as the headline. Their UI surfaces
+  what someone last paid. On illiquid markets this can be hours or
+  days stale and well outside the current bid/ask spread.
+- **Polymarket** shows a number that tracks the **live order book** —
+  effectively the bid/ask midpoint. Their UI updates near-realtime as
+  the book moves. `last_trade_price` on Polymarket is NOT what
+  polymarket.com shows on the headline; it's separate data.
+- **PredictIt** shows a single price per contract; we treat it as
+  the midpoint of `bestBuyYesCost` and `bestSellYesCost`.
 
-**Each row exposes `fillable_ask_a`, `fillable_bid_a`, `fillable_no_ask_a`,
-`fillable_no_bid_a`, etc.** so the dashboard can show what you'd
-actually pay vs what the platform UI displays. The `implied_prob_a/b`
-fields still hold the midpoint (matches what the platforms show when
-you click in).
+### The dashboard uses TWO prices per market: display vs fillable
+
+For each row in `docs/arb_data.js`:
+
+- **`implied_prob_a` / `implied_prob_b`** — the DISPLAY price, picked
+  to match what the platform's own UI shows. Per-platform:
+  - Kalshi: `last_price` (from `scrapers/kalshi.py`)
+  - Polymarket: bid/ask midpoint (from `scripts/freshen_polymarket.py`)
+  - PredictIt: midpoint of bestBuy/bestSell (from `scrapers/predictit.py`)
+- **`fillable_ask_a/b`, `fillable_bid_a/b`, `fillable_no_ask_a/b`,
+  `fillable_no_bid_a/b`** — the actual live orderbook prices from
+  `fetch_depth.py`. These are what you'd actually pay or receive.
+
+**The dashboard SHOWS the display price.** Users want to see "the
+platform shows 62¢" not "you'd pay 64¢ to buy because that's the
+ask." When they click through to verify, the number matches.
+
+**The arb math RUNS on fillable prices.** `compute_arb()` reads from
+`fillable_ask_*` and `fillable_no_ask_*`, never from `implied_prob_*`.
+Whether something is flagged a guaranteed arb depends on what you
+can actually buy at — midpoint math overstates by 1-5pp typically.
+
+### The Somaliland incident (2026-06-21 morning)
+
+The "Will Trump recognize Somaliland?" pair shipped as a 6.65%
+guaranteed arb on the dashboard. Symptom: pair looked great on paper.
+Root cause: arb math was subtracting midpoints + fees. Real fillable
+basket (Buy YES Polymarket 7.6¢ ask + Buy NO Kalshi at 1 - 0.15 bid =
+85¢) = 92.6¢, giving ~3.4% net after fees — still real, just smaller.
+The midpoint version overstated by ~3pp.
+
+Fix: rewrote `compute_arb` to take real `ask_a`/`ask_b`/`no_ask_a`/
+`no_ask_b` kwargs and use them. `implied_prob_*` no longer affects
+arb math.
+
+### The Espaillat incident (2026-06-21 evening)
+
+The "NY-13 Espaillat" Polymarket pair shipped on the dashboard at
+43%, but polymarket.com was showing 62% for the same market.
+Symptom: dashboard number completely disagreed with what the user
+saw on the platform.
+
+Diagnosis:
+- Live Polymarket CLOB book: bid 0.61 / ask 0.62 / midpoint 0.615 →
+  62% on polymarket.com
+- `last_trade_price` on the CLOB: 0.43 (a stale trade from hours
+  earlier on a thinly-traded contract)
+- Our `freshen_polymarket.py` was preferring `last_trade_price` over
+  midpoint when populating `implied_prob`. We'd defaulted to the
+  Kalshi rule ("UIs show last price") without checking that the
+  rule held for Polymarket. It does not.
+
+Fix: per-platform display rule. Kalshi keeps `last_price`; Polymarket
+goes back to midpoint. **Don't unify these without verifying the UI
+on each platform** — they really do display different things, and
+the dashboard's job is to match each one.
+
+### Anti-pattern checklist (don't do these)
+
+- ❌ Use Polymarket's `last_trade_price` as the display number.
+  Polymarket's UI doesn't.
+- ❌ Use Kalshi's bid/ask midpoint as the display number. Kalshi's
+  UI doesn't.
+- ❌ Use the display price (`implied_prob_*`) in the arb math. It's
+  not fillable; you can't trade at the midpoint or at last-trade.
+- ❌ Infer Polymarket's NO ask as `1 - YES_bid`. Polymarket has a
+  separate NO token with its own bid/ask; fetch it directly (we now
+  do, via `no_market_id` in `depth_targets.csv`).
+- ❌ Trust a market's `active=true&closed=false` flag. Both Polymarket
+  and Kalshi leave dead markets flagged active for weeks. Filter on
+  the date itself.
+- ❌ Trust the `next_cursor` Polymarket's `/events/keyset` returns.
+  It doesn't actually advance pagination — see "Polymarket
+  pagination" section.
 
 ### Active-flag lies
 

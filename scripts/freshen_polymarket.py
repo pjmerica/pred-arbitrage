@@ -192,23 +192,29 @@ def run():
     # Apply the fresh values. Only overwrite when we got a real number;
     # leave gamma value in place when CLOB fetch failed.
     #
-    # implied_prob = bid/ask MIDPOINT.
+    # implied_prob = bid/ask MIDPOINT. This is the DISPLAY price for
+    # Polymarket — matches what polymarket.com shows on its UI. Don't
+    # change without reading HANDOFF.md "Price semantics — READ THIS
+    # BEFORE CHANGING ANY PRICE FIELD".
     #
-    # Why not last_trade_price (which is what Kalshi shows on its UI)?
-    # Polymarket's UI shows a number that tracks the live order book —
-    # closer to the midpoint than to the most recent trade. Concrete
-    # example (2026-06-21): NY-13 Espaillat Polymarket market had
-    # live book bid 0.61 / ask 0.62 (midpoint 0.615), but
-    # last_trade_price was 0.43 (a stale trade from hours earlier on a
-    # thinly-traded contract). Polymarket's website was showing 62%.
-    # Our dashboard had shipped 43% because we used last_trade. User
-    # caught it and corrected the assumption: midpoint matches
-    # polymarket.com; last_trade does not.
+    # PER-PLATFORM RULE (each platform's UI surfaces something different):
+    #   Kalshi:     last_price                          (scrapers/kalshi.py)
+    #   Polymarket: bid/ask midpoint                    (HERE)
+    #   PredictIt:  midpoint of bestBuyYes/bestSellYes  (scrapers/predictit.py)
+    # DO NOT unify these without verifying the UI of every platform.
     #
-    # Kalshi is the opposite — its UI shows last_price, and the bid/ask
-    # midpoint there can be several pp off the displayed number. We
-    # match per-platform UI in scrapers/kalshi.py (uses last_price)
-    # and here (uses midpoint).
+    # Why MIDPOINT (and not last_trade_price, which is what Kalshi uses)?
+    # Polymarket's UI tracks the live order book in near-realtime, not
+    # the most recent trade. Concrete example (2026-06-21): NY-13
+    # Espaillat market had live book bid 0.61 / ask 0.62 (midpoint
+    # 0.615), but last_trade_price was 0.43 — a stale trade from hours
+    # earlier on a thinly-traded contract. Polymarket's website showed
+    # 62%; our dashboard had shipped 43% because we used last_trade.
+    # User caught it; we reverted to midpoint here. Don't re-litigate.
+    #
+    # Arb math STILL uses real bid/ask via fillable_ask / fillable_no_ask
+    # in compute_arb. implied_prob is DISPLAY only and doesn't affect
+    # whether something is flagged a guaranteed arb.
     now_iso = datetime.now(timezone.utc).isoformat()
     n_changed = 0
     for i in range(n_total):

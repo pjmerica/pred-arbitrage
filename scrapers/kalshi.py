@@ -170,16 +170,24 @@ def parse_market(event, market):
     yes_ask = to_float(market.get("yes_ask_dollars"))
     last    = to_float(market.get("last_price_dollars"))
 
-    # Pick implied_prob to match what kalshi.com SHOWS to a user clicking
-    # into the market. Kalshi's UI displays `last_price` as the headline
-    # number. Earlier we used the bid/ask midpoint — that's a more
-    # accurate "current consensus" number but doesn't match what a user
-    # sees on the platform itself.
+    # implied_prob = last_price. This is the DISPLAY price — what
+    # kalshi.com shows on the headline when a user clicks into the
+    # market. Don't change this without reading HANDOFF.md "Price
+    # semantics — READ THIS BEFORE CHANGING ANY PRICE FIELD".
     #
-    # User explicitly asked 2026-06-21: "I want the price on the UI when
-    # you click in which is 14 but our dashboard shows 18". Somaliland
-    # had bid=0.15 ask=0.21 last=0.14, midpoint 0.18 — Kalshi UI shows
-    # last (0.14), so we follow.
+    # Why last_price and not midpoint: Kalshi's website surfaces the
+    # last-trade number, not the bid/ask midpoint. For Somaliland on
+    # 2026-06-21: bid 0.15, ask 0.21, last 0.14. Kalshi UI showed 14¢.
+    # Our dashboard used to show 18¢ (midpoint) which mismatched —
+    # user reported, we fixed.
+    #
+    # PER-PLATFORM RULE (each platform's UI surfaces something different):
+    #   Kalshi:     last_price  (HERE)
+    #   Polymarket: bid/ask midpoint  (in scripts/freshen_polymarket.py)
+    #   PredictIt:  midpoint of bestBuyYes/bestSellYes  (in scrapers/predictit.py)
+    # DO NOT unify these without verifying the UI of every platform.
+    # Polymarket's UI does NOT show last_trade_price even though
+    # Kalshi's does — see the Espaillat incident in HANDOFF.md.
     #
     # Fallback chain when last_price is missing/garbage:
     #   1. midpoint of bid + ask  (tight book = reasonable proxy)

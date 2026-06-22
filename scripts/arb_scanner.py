@@ -46,32 +46,48 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
     """
     Returns arb type, net gap, guaranteed return, and stake ratios.
 
-    PRICE SEMANTICS — what to pass for each leg:
-      - YES leg buy: you pay platform X's YES ASK (= `ask_a` / `ask_b`).
-      - NO leg buy: you pay platform X's NO ASK (= `no_ask_a` / `no_ask_b`).
+    THERE ARE TWO PRICE LAYERS HERE. Don't mix them up.
 
-    When the NO ask isn't available we fall back to (1 - YES bid) —
-    that's the synthetic equivalent, exact only when YES and NO books
-    are perfectly aligned. Real Polymarket markets sometimes have
-    asymmetric YES/NO books where the inferred price is materially off,
-    so prefer real `no_ask_*` when supplied.
+    Layer 1: DISPLAY (`prob_a`, `prob_b`)
+      Whatever the platform's UI shows as "the price". Per-platform:
+        - Kalshi:     last_price            (kalshi.com displays this)
+        - Polymarket: bid/ask midpoint      (polymarket.com tracks the book)
+        - PredictIt:  midpoint of bestBuy/bestSell
+      These are passed in via implied_prob_a/b. We use them ONLY for
+      `raw_gap_pp` / `net_gap_pp` — the "how far apart are these
+      markets" headline number that mirrors the dashboard.
 
-    When YES bid/ask aren't supplied (e.g. PredictIt where we have no
-    live orderbook), we fall back to using `prob_a` / `prob_b`
-    (midpoints) for ALL four sides. Less accurate but at least gives
-    SOMETHING. The arb_uses_live_book flag tells the dashboard whether
-    the numbers are real or estimated.
+    Layer 2: FILLABLE (`bid_a/ask_a/bid_b/ask_b` + the no_* variants)
+      What you'd ACTUALLY pay or receive to trade right now. The arb
+      math runs on these:
+        - YES leg buy → pay platform X's YES ASK (`ask_a` / `ask_b`)
+        - NO leg buy  → pay platform X's NO ASK  (`no_ask_a` / `no_ask_b`)
+      Display prices are NOT used in the cost calculation. A pair can
+      have a wide display gap (e.g. raw_gap 20pp because Kalshi shows
+      last_price and Polymarket shows live midpoint) but no real arb
+      after fees once you use real asks.
+
+    When NO ask isn't supplied (Kalshi has no separate NO token; some
+    Polymarket markets 404 on the NO fetch), we infer no_ask = 1 - bid.
+    Exact for tight symmetric books, approximate otherwise. Prefer real
+    `no_ask_*` when available — pred-arb-2026-06-21 incident:
+    asymmetric Polymarket books were producing 5pp arb-return
+    inflation under inference.
+
+    When YES bid/ask aren't supplied (PredictIt — no live orderbook),
+    we fall back to using `prob_a` / `prob_b` for ALL four sides. Less
+    accurate but at least gives SOMETHING. The `arb_uses_live_book`
+    flag in the output dict tells the dashboard whether the numbers
+    are real or estimated.
 
     Guaranteed arb structures we try:
-      Direction 1: Buy YES on A + Buy NO on B
-        cost = ask_a + no_ask_b
-      Direction 2: Buy YES on B + Buy NO on A
-        cost = ask_b + no_ask_a
-    If either cost < 1 (after fees), it's a guaranteed arb.
+      Direction 1: Buy YES on A + Buy NO on B → cost = ask_a + no_ask_b
+      Direction 2: Buy YES on B + Buy NO on A → cost = ask_b + no_ask_a
+    If either cost < 1 (after fees), it's a guaranteed arb. Picks the
+    direction with the higher net return.
 
-    `raw_gap_pp` / `net_gap_pp` are still computed on midpoints —
-    they're the headline "how far apart are these markets" number for
-    the dashboard, not the arb math.
+    See HANDOFF.md "Price semantics" for the full anti-pattern list +
+    the Somaliland and Espaillat incidents that drove this design.
     """
     prob_a, prob_b = float(prob_a), float(prob_b)
     raw_gap = abs(prob_a - prob_b)

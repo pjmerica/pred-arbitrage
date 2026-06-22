@@ -300,6 +300,13 @@ rewrite) makes this moot.
 - **PredictIt rows with bid 2¢ / ask 99¢ get midpoint 50.5%.** Their
   scraper-time spread > 15pp filter catches most but not all. The
   arb scanner should use real bid/ask, not midpoint.
+- **Platforms display different prices on their UIs.** Kalshi shows
+  `last_price`; Polymarket shows bid/ask midpoint. The dashboard's
+  display price (`implied_prob_a/b`) must be picked per-platform to
+  match each one — unifying the rule breaks one or the other. See the
+  Espaillat incident below. Anti-pattern: "I'll simplify by using
+  midpoint everywhere" / "I'll simplify by using last_price
+  everywhere" — both wrong.
 
 ---
 
@@ -577,3 +584,60 @@ below.
 Files modified: `scripts/arb_scanner.py` (compute_arb + depth-join +
 depth_targets emit), `scripts/fetch_depth.py` (NO orderbook fetch),
 `scrapers/polymarket.py` (keyset revert).
+
+### 2026-06-21 (late evening) — Display price per-platform rule (the Espaillat incident)
+
+User reported the "NY-13 Adriano Espaillat" Polymarket side showing
+**43%** on our dashboard while polymarket.com was showing **62%** for
+the same market.
+
+Diagnosis:
+- Live Polymarket CLOB book at the time of check: bid 0.61 / ask 0.62
+  / midpoint **0.615**. Polymarket's UI was showing 62% (rounded
+  midpoint).
+- `last_trade_price` on the same CLOB endpoint: **0.43** — a stale
+  trade from hours earlier on a thinly-traded contract. The trade
+  cleared at 43¢; nothing has traded since but the order book has
+  moved up to a 61-62¢ spread.
+- Our `scripts/freshen_polymarket.py` (introduced earlier today) was
+  preferring `last_trade_price` over midpoint when populating
+  Polymarket's `implied_prob`. We'd applied the Kalshi rule
+  ("platforms show last_price") to Polymarket without verifying.
+
+The hidden assumption: **platforms display the same price field**.
+They don't. Kalshi's UI shows last-trade; Polymarket's UI tracks the
+live order book and looks more like a midpoint. The Espaillat market
+exposed this because last_trade and midpoint differed by 18pp.
+
+Earlier today the **Somaliland incident** was the inverse problem on
+the same axis. There the *display* was already correct (Kalshi 18¢
+midpoint) but the *arb math* was wrong (using midpoint instead of
+real ASK to compute basket cost). Both incidents trace back to the
+same root cause: failing to keep DISPLAY price and FILLABLE price as
+distinct concepts.
+
+**The fix** (commit aadec8d): per-platform display rule, codified.
+- `scrapers/kalshi.py` → `implied_prob = last_price` (matches kalshi.com)
+- `scripts/freshen_polymarket.py` → `implied_prob = bid/ask midpoint` (matches polymarket.com)
+- `scrapers/predictit.py` → `implied_prob = midpoint of bestBuy/bestSell` (matches predictit.org, unchanged)
+
+The arb math (`compute_arb()` in `scripts/arb_scanner.py`) is unaffected
+— it has always taken its prices from `fillable_ask_*` and
+`fillable_no_ask_*`, never from `implied_prob_*`. Display and fillable
+are now firmly two separate concepts.
+
+**Anti-pattern checklist** (added to HANDOFF.md "Price semantics"
+section):
+- ❌ Use Polymarket's `last_trade_price` as the display number
+- ❌ Use Kalshi's bid/ask midpoint as the display number
+- ❌ Use the display price (`implied_prob_*`) in the arb math
+- ❌ Infer Polymarket's NO ask as `1 - YES_bid` (it has a separate token)
+- ❌ Trust a market's `active=true&closed=false` flag
+- ❌ Trust the cursor that Polymarket's `/events/keyset` returns
+
+Files modified: `scripts/freshen_polymarket.py` (revert to midpoint),
+`scripts/arb_scanner.py` (compute_arb docstring expanded),
+`scrapers/kalshi.py` (per-platform rule called out in comment),
+`HANDOFF.md` ("Price semantics" section rewritten with full table +
+anti-pattern list + both incidents documented),
+`NOTES_FOR_REVIEWER.md` (section 2 rewritten).

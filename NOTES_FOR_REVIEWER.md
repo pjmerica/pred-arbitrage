@@ -65,24 +65,47 @@ explicit decision 2026-06-21, to be deduplicated later.
 `polling-agg-2026` and will drift if either side changes its election
 logic. See `AUDIT.md` to-do #6 for the sync options.
 
-### 2. The arb math uses real bid/ask, not what's shown to users
+### 2. There are TWO price layers — display vs fillable
 
-Each row in `arb_data.js` has TWO sets of prices:
+Easy to misread the codebase here. Every row in `arb_data.js` has:
 
-- **`implied_prob_a/b`** — display prices. These match what kalshi.com
-  / polymarket.com show on their own UIs. Kalshi shows last-trade
-  price; Polymarket shows last-trade-or-midpoint. Don't use these for
-  computing whether an arb exists.
-- **`fillable_ask_a/b`, `fillable_bid_a/b`, `fillable_no_ask_a/b`,
-  `fillable_no_bid_a/b`** — the live orderbook prices you'd actually
-  pay. These ARE what the arb math uses.
+**Display prices** — what we show on the dashboard, picked per
+platform to match the number that platform's own UI shows:
+- `implied_prob_a/b` ← this is the display number
+- **Kalshi** dashboard price = Kalshi's `last_price` (kalshi.com
+  shows last-trade)
+- **Polymarket** dashboard price = bid/ask midpoint (polymarket.com
+  tracks the live order book, not last-trade)
+- **PredictIt** dashboard price = midpoint of `bestBuyYes`/`bestSellYes`
 
-The two diverge by 5-10pp on illiquid markets. Showing display prices
-to users while running math on fillable prices is intentional — users
-want to see "the platform shows 14¢" not "you'd pay 21¢ to buy
-because that's the ask." But the arb decision uses the ask.
+**Fillable prices** — what you'd actually pay or receive to trade:
+- `fillable_ask_a/b` — buy YES = pay the ask
+- `fillable_bid_a/b` — sell YES = receive the bid
+- `fillable_no_ask_a/b` — buy NO = pay the NO ask (Polymarket has a
+  separate NO token; Kalshi infers from `1 - YES_bid`)
+- `fillable_no_bid_a/b` — sell NO = receive the NO bid
 
-See `HANDOFF.md` "Arb math" section for the full justification.
+**The dashboard SHOWS display prices.** **The arb math RUNS on
+fillable prices.** `compute_arb()` reads `fillable_ask_*` and
+`fillable_no_ask_*`, never touches `implied_prob_*`.
+
+Critical: **the per-platform display rule is real, not a bug.**
+Kalshi and Polymarket genuinely display different things on their UIs
+— Kalshi shows last-trade, Polymarket shows midpoint. If you
+"simplify" by unifying them, the dashboard's headline price stops
+matching what users see when they click through to the platform. See
+the **Espaillat incident** in `HANDOFF.md`'s "Price semantics"
+section for what happens when you get this wrong.
+
+Anti-patterns the code intentionally avoids:
+- Using `last_trade_price` as the display number for Polymarket
+- Using midpoint as the display number for Kalshi
+- Using `implied_prob` in the arb math (it's display, not fillable)
+- Inferring Polymarket NO ask as `1 - YES_bid` (Polymarket has a
+  real NO token with its own book; fetch it)
+
+See `HANDOFF.md` → "Price semantics — READ THIS BEFORE CHANGING ANY
+PRICE FIELD" for the full anti-pattern checklist and incident log.
 
 ### 3. Polymarket pagination is currently capped at ~2000 events
 
