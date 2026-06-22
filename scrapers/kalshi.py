@@ -227,6 +227,30 @@ def parse_market(event, market):
 
     race_id = infer_race_id_from_ticker(series_ticker, event_ticker, event_title)
 
+    # URL construction: kalshi.com routes are SPA-driven. The path that
+    # both Kalshi's own UI uses and that our users will hit when clicking
+    # through is:
+    #
+    #   https://kalshi.com/markets/{series_ticker_lower}/{event_ticker_lower}
+    #
+    # The two-segment form is critical for series that contain MULTIPLE
+    # events. Example incident (2026-06-21): KXNHPRIMARY covers all NH
+    # primaries (NH-01 D, NH-01 R, NH-02 D, NH-02 R). The single-segment
+    # URL `kalshi.com/markets/KXNHPRIMARY` makes Kalshi's SPA pick an
+    # event arbitrarily — for the "NH-01 R Noveletsky" row it landed on
+    # KXNHPRIMARY-02R26 (NH-02) instead of -01R26 (NH-01). Adding the
+    # event_ticker pins the right one.
+    #
+    # We URL-lowercase both segments to match what Kalshi's own
+    # navigation produces (their canonical URLs are lowercase even though
+    # the API tickers are uppercase).
+    if series_ticker and event_ticker:
+        market_url = f"https://kalshi.com/markets/{series_ticker.lower()}/{event_ticker.lower()}"
+    elif series_ticker:
+        market_url = f"https://kalshi.com/markets/{series_ticker.lower()}"
+    else:
+        market_url = ""
+
     return {
         "ticker":        market_ticker,
         "event_ticker":  event_ticker,
@@ -242,7 +266,7 @@ def parse_market(event, market):
         "open_interest": to_float(market.get("open_interest_fp")) or 0,
         "volume":        to_float(market.get("volume_fp")) or 0,
         "close_date":    str(market.get("close_time", market.get("expiration_time", "")))[:10],
-        "url":           f"https://kalshi.com/markets/{series_ticker}" if series_ticker else "",
+        "url":           market_url,
         "fetched_at":    datetime.now(timezone.utc).isoformat(),
     }
 

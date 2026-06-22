@@ -57,10 +57,30 @@ from scripts.arb_scanner import FEES
 
 # ── URL helpers ───────────────────────────────────────────────────────────────
 
-def kalshi_url(series_ticker):
+def kalshi_url(series_ticker, market_ticker=None):
+    """Build a Kalshi market URL that lands on the SPECIFIC event, not
+    just the series. Kalshi market_tickers are shaped as
+    `{series}-{event_specifier}-{market_specifier}` (e.g. KXNHPRIMARY-
+    01R26-HNOV). The event-specific URL is two segments:
+
+        kalshi.com/markets/{series_lower}/{event_ticker_lower}
+
+    Without the second segment, Kalshi's SPA picks an event from the
+    series arbitrarily — for KXNHPRIMARY-01R26-HNOV (NH-01 Republican
+    Noveletsky) it was landing on KXNHPRIMARY-02R26 (NH-02). See
+    scrapers/kalshi.py's parse_market for the matching scraper-side fix
+    and the HANDOFF.md entry."""
     if pd.isna(series_ticker) or not series_ticker:
         return None
-    return f"https://kalshi.com/markets/{series_ticker}"
+    series_lc = str(series_ticker).lower()
+    if market_ticker and not pd.isna(market_ticker):
+        # event_ticker = market_ticker with the trailing market segment
+        # stripped. "KXNHPRIMARY-01R26-HNOV" -> "KXNHPRIMARY-01R26".
+        parts = str(market_ticker).split("-")
+        if len(parts) >= 3:
+            event_ticker = "-".join(parts[:-1]).lower()
+            return f"https://kalshi.com/markets/{series_lc}/{event_ticker}"
+    return f"https://kalshi.com/markets/{series_lc}"
 
 
 def predictit_url(market_id):
@@ -283,7 +303,13 @@ def _load_kalshi_general():
                   "kalshi_series_ticker", "kalshi_dem_ticker"]].merge(
         rep[["race_id", "kalshi_rep", "kalshi_rep_ticker"]], on="race_id", how="inner"
     )
-    merged["kalshi_url"] = merged["kalshi_series_ticker"].apply(kalshi_url)
+    # Pass the dem market_ticker so kalshi_url() can derive the event
+    # ticker and build the two-segment URL (lands on the right event,
+    # not just the series page — see kalshi_url docstring).
+    merged["kalshi_url"] = merged.apply(
+        lambda r: kalshi_url(r.get("kalshi_series_ticker"), r.get("kalshi_dem_ticker")),
+        axis=1,
+    )
     return merged
 
 
@@ -511,7 +537,7 @@ def _load_general_candidates():
                 "candidate_last": last, "candidate_first": _first_initial(name),
                 "candidate_name": name, "platform": "kalshi",
                 "prob": float(r["implied_prob"]),
-                "url": kalshi_url(r.get("series_ticker")),
+                "url": kalshi_url(r.get("series_ticker"), r.get("market_ticker")),
                 "volume": pd.to_numeric(r.get("volume"), errors="coerce"),
                 "oi": pd.to_numeric(r.get("open_interest"), errors="coerce"),
                 "market_id": r.get("market_ticker"),
@@ -634,7 +660,7 @@ def _load_primary_candidates():
                 "candidate_first": _first_initial(name),
                 "candidate_name": name, "platform": "kalshi",
                 "prob": float(r["implied_prob"]),
-                "url": kalshi_url(r.get("series_ticker")),
+                "url": kalshi_url(r.get("series_ticker"), r.get("market_ticker")),
                 "volume": pd.to_numeric(r.get("volume"), errors="coerce"),
                 "oi": pd.to_numeric(r.get("open_interest"), errors="coerce"),
                 "market_id": r.get("market_ticker"),
