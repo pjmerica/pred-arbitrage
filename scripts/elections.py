@@ -269,11 +269,23 @@ def _load_kalshi_general():
         return pd.DataFrame()
     df = df[df["race_id"].notna() & df["implied_prob"].notna()].copy()
 
+    # Match the dem/rep side. Kalshi serves general-election party
+    # markets under two different title shapes depending on which event
+    # template it is:
+    #   1. polling-agg-flavor: "Will Democratic win the House race for WI-1?"
+    #      (regex needs "Democratic" + "win" together)
+    #   2. pred-arb-flavor:    "WI-01 House winner? — Democratic party"
+    #      (pred-arb's parse_market joins event_title with yes_sub_title
+    #      using ' — '; the "party" suffix is the giveaway)
+    # If we only match shape (1) we miss every pred-arb House market
+    # (Wisconsin WI-01 was reported on 2026-06-22 as the symptom).
     dem_mask = df["market_title"].str.contains(
-        r"Democrat(?:ic)?s?\s+win|Will Democrat(?:ic)?s?\s+win", case=False, na=False
+        r"Democrat(?:ic)?s?\s+win|Will Democrat(?:ic)?s?\s+win|Democrat(?:ic)?\s+party\b",
+        case=False, na=False,
     ) & ~df["market_title"].str.contains("nominee|primary|nominate", case=False, na=False)
     rep_mask = df["market_title"].str.contains(
-        r"Republican(?:s)?\s+win|Will Republican(?:s)?\s+win", case=False, na=False
+        r"Republican(?:s)?\s+win|Will Republican(?:s)?\s+win|Republican\s+party\b",
+        case=False, na=False,
     ) & ~df["market_title"].str.contains("nominee|primary|nominate", case=False, na=False)
 
     cols = ["implied_prob", "open_interest", "volume", "series_ticker", "market_ticker", "market_title"]
