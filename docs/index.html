@@ -178,8 +178,9 @@ tr.suspicious-row td { opacity: 0.6; }
 
 <div class="explainer">
   <strong>Guaranteed arb</strong> — buy Yes on one platform + No on the other. Total cost &lt; $1 = locked profit regardless of outcome.
+  <strong>One-sided</strong> — same market priced differently across platforms, but you can't construct a risk-free basket (e.g. buying both Yes legs is just doubling the bet, not hedging). You'd be taking a directional view that prices will converge: buy on the cheap side, optionally short the expensive side. Profit isn't locked in — the underlying outcome still has to happen the way you bet.
   <strong>Net gap</strong> subtracts estimated round-trip fees (Kalshi ~2%, Polymarket ~2%, PredictIt ~12%).
-  <strong>Stake ratio</strong> = how to split your bankroll so both legs pay out equally.
+  <strong>Stake ratio</strong> = how to split your bankroll so both legs pay out equally (guaranteed only).
   Sorted by guaranteed first, then soonest settlement date. <strong>Suspicious</strong> = gap &gt;40pp, likely a data or matching artifact — hidden by default.
 </div>
 
