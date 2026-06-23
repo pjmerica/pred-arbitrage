@@ -43,7 +43,9 @@ tr.guaranteed td { background: rgba(52,211,153,0.025); }
 tr.guaranteed:hover td { background: rgba(52,211,153,0.05); }
 
 .badge-guaranteed { display: inline-block; background: rgba(52,211,153,0.15); color: #34d399; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; font-weight: 700; }
-.badge-onesided   { display: inline-block; background: rgba(148,163,184,0.08); color: #64748b; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; }
+.badge-prefee     { display: inline-block; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; font-weight: 600; }
+.badge-pricegap   { display: inline-block; background: rgba(148,163,184,0.12); color: #94a3b8; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; }
+.badge-onesided   { display: inline-block; background: rgba(148,163,184,0.08); color: #64748b; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; font-style: italic; }
 .badge-political  { display: inline-block; background: rgba(167,139,250,0.12); color: #a78bfa; border-radius: 4px; padding: 2px 5px; font-size: 0.62rem; margin-left: 4px; }
 .badge-fuzzy      { display: inline-block; background: rgba(96,165,250,0.1); color: #60a5fa; border-radius: 4px; padding: 2px 5px; font-size: 0.62rem; margin-left: 4px; }
 .badge-suspicious { display: inline-block; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 4px; padding: 2px 5px; font-size: 0.62rem; margin-left: 4px; }
@@ -103,7 +105,7 @@ tr.suspicious-row td { opacity: 0.6; }
 
 <div class="stats-bar">
   <div class="stat"><span class="stat-val green" id="stat-guaranteed">—</span><span class="stat-lbl">Guaranteed Arb</span></div>
-  <div class="stat"><span class="stat-val yellow" id="stat-profitable">—</span><span class="stat-lbl">Profitable (one-sided)</span></div>
+  <div class="stat"><span class="stat-val yellow" id="stat-profitable">—</span><span class="stat-lbl">Pre-fee (gap before fees)</span></div>
   <div class="stat"><span class="stat-val blue" id="stat-total">—</span><span class="stat-lbl">Total Pairs</span></div>
   <div class="stat"><span class="stat-val" id="stat-best-ret" style="color:#34d399">—</span><span class="stat-lbl">Best Guaranteed Return</span></div>
   <div class="stat"><span class="stat-val" id="stat-soonest" style="color:#facc15">—</span><span class="stat-lbl">Soonest Settlement</span></div>
@@ -114,9 +116,10 @@ tr.suspicious-row td { opacity: 0.6; }
     <label>Type</label>
     <select id="f-type">
       <option value="ALL">All</option>
-      <option value="guaranteed">Guaranteed arb only</option>
-      <option value="profitable">Profitable after fees</option>
-      <option value="one-sided">One-sided only</option>
+      <option value="guaranteed">Guaranteed (locked profit)</option>
+      <option value="pre-fee">Pre-fee (fees eat the gap)</option>
+      <option value="price-gap">Price-gap (no arb possible)</option>
+      <option value="one-sided">One-sided (data incomplete)</option>
     </select>
   </div>
   <div class="filter-group">
@@ -177,8 +180,13 @@ tr.suspicious-row td { opacity: 0.6; }
 </div>
 
 <div class="explainer">
-  <strong>Guaranteed arb</strong> — buy Yes on one platform + No on the other. Total cost &lt; $1 = locked profit regardless of outcome.
-  <strong>One-sided</strong> — same market priced differently across platforms, but you can't construct a risk-free basket (e.g. buying both Yes legs is just doubling the bet, not hedging). You'd be taking a directional view that prices will converge: buy on the cheap side, optionally short the expensive side. Profit isn't locked in — the underlying outcome still has to happen the way you bet.
+  Every pair gets one of four <strong>Type</strong> labels based on real fillable bid/ask prices on each platform:
+  <ul style="margin: 6px 0 6px 18px; padding: 0;">
+    <li><strong>Guaranteed</strong> — Buy Yes on one platform + Buy No on the other. Total cost &lt; $1 AFTER fees = locked profit regardless of outcome.</li>
+    <li><strong>Pre-fee</strong> — The Yes + No basket costs &lt; $1 before fees but fees eat the gap. Could become a real arb if the platforms drop fees or if your effective fees are lower than our estimate.</li>
+    <li><strong>Price-gap</strong> — Markets disagree in implied probability, but the Yes + No basket costs ≥ $1 even with zero fees. No risk-free basket exists. You could still bet directionally (buy on the cheap side, optionally short the expensive side) but profit isn't locked in — the underlying outcome still has to happen the way you bet.</li>
+    <li><strong>One-sided</strong> — Real bid/ask wasn't available on at least one leg (typical for PredictIt — no public orderbook). Prices are inferred and the classification isn't reliable; treat as directional only.</li>
+  </ul>
   <strong>Net gap</strong> subtracts estimated round-trip fees (Kalshi ~2%, Polymarket ~2%, PredictIt ~12%).
   <strong>Stake ratio</strong> = how to split your bankroll so both legs pay out equally (guaranteed only).
   Sorted by guaranteed first, then soonest settlement date. <strong>Suspicious</strong> = gap &gt;40pp, likely a data or matching artifact — hidden by default.
@@ -263,7 +271,7 @@ function init() {
 
 function updateStats() {
   const guaranteed = ARB.races.filter(r => r.arb_type === 'guaranteed');
-  const profitable  = ARB.races.filter(r => r.profitable_onesided && r.arb_type !== 'guaranteed');
+  const profitable  = ARB.races.filter(r => r.arb_type === 'pre-fee');
   document.getElementById('stat-guaranteed').textContent = guaranteed.length;
   document.getElementById('stat-profitable').textContent = profitable.length;
   document.getElementById('stat-total').textContent = ARB.total || ARB.races.length;
@@ -303,8 +311,9 @@ function filtered() {
     // that "browse mode" behavior when the Sports tab is active.
     if (currentTab === 'sports') return true;
     if (fType === 'guaranteed' && r.arb_type !== 'guaranteed') return false;
-    if (fType === 'profitable' && !r.profitable_onesided) return false;
-    if (fType === 'one-sided' && r.arb_type !== 'one-sided') return false;
+    if (fType === 'pre-fee'    && r.arb_type !== 'pre-fee')    return false;
+    if (fType === 'price-gap'  && r.arb_type !== 'price-gap')  return false;
+    if (fType === 'one-sided'  && r.arb_type !== 'one-sided')  return false;
     if (fPair !== 'ALL') {
       const pair = [r.platform_a, r.platform_b].sort().join('/');
       if (pair !== fPair) return false;
@@ -380,9 +389,12 @@ function render() {
 
   tbody.innerHTML = rows.map(r => {
     const isGuaranteed = r.arb_type === 'guaranteed';
-    const typeBadge = isGuaranteed
-      ? `<span class="badge-guaranteed">★ Guaranteed</span>`
-      : `<span class="badge-onesided">One-sided</span>`;
+    const typeBadge =
+      r.arb_type === 'guaranteed' ? `<span class="badge-guaranteed">★ Guaranteed</span>` :
+      r.arb_type === 'pre-fee'    ? `<span class="badge-prefee" title="Yes+No basket costs <$1 pre-fee but fees eat the gap">Pre-fee</span>` :
+      r.arb_type === 'price-gap'  ? `<span class="badge-pricegap" title="Markets disagree but no risk-free basket exists">Price-gap</span>` :
+      r.arb_type === 'one-sided'  ? `<span class="badge-onesided" title="Real bid/ask unavailable on at least one leg — classification uncertain">One-sided</span>` :
+      `<span class="badge-onesided">${r.arb_type || '?'}</span>`;
     const matchBadge = r.match_type === 'political'
       ? `<span class="badge-political">Race ID</span>`
       : `<span class="badge-fuzzy">${r.fuzzy_score}%</span>`;

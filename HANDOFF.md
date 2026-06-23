@@ -274,6 +274,28 @@ empty for those rows and the math always falls back to the inferred
 form (which is fine — Kalshi's YES book is tight enough that the
 inference is exact).
 
+### arb_type taxonomy (4 buckets, set by compute_arb)
+
+Every row in `docs/arb_data.js` has exactly one of these `arb_type`
+values. Classification is based on the Yes+No basket math AND the
+quality of the underlying price data:
+
+| arb_type | Meaning | Production count (typical) |
+|---|---|---|
+| `guaranteed` | Yes+No basket costs < $1 AFTER fees → locked profit. Real bid/ask on the winning direction required. | ~5 |
+| `pre-fee` | Yes+No basket costs < $1 pre-fee but ≥ $1 after fees. Real data; fees eat the gap. | ~30 |
+| `price-gap` | Yes+No basket costs ≥ $1 even pre-fee. Markets disagree but no risk-free basket exists. Real data on at least one direction. | ~250 |
+| `one-sided` | Real bid/ask wasn't available on either direction (typically PredictIt-leg pairs — no public orderbook). Prices are inferred; classification is uncertain. | ~300 |
+
+The check is in `compute_arb` in `scripts/arb_scanner.py`. Each
+direction (YES on A + NO on B, and YES on B + NO on A) is evaluated
+for both cost-under-$1 and real-data status; the row is classified
+based on the best direction.
+
+Display badges in the dashboard: green ★ for guaranteed, yellow for
+pre-fee, grey for price-gap, italic grey for one-sided. The filter
+dropdown lets users restrict to one type.
+
 ### Price semantics — READ THIS BEFORE CHANGING ANY PRICE FIELD
 
 There are FOUR distinct numbers floating around for each market.

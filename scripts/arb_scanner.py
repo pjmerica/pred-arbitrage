@@ -93,6 +93,16 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
     raw_gap = abs(prob_a - prob_b)
     net_gap = raw_gap - fee_a - fee_b
 
+    # Track which sides have REAL fetched bid/ask vs inferred fallback.
+    # A leg counts as "real" if the live YES bid+ask AND a live NO ask
+    # were provided (Polymarket usually; Kalshi never has a separate NO
+    # token so no_ask is always inferred from 1 - YES_bid; PredictIt has
+    # no live orderbook at all).
+    yes_a_real = bid_a is not None and bid_a > 0 and ask_a is not None and ask_a > 0
+    yes_b_real = bid_b is not None and bid_b > 0 and ask_b is not None and ask_b > 0
+    no_a_real  = no_ask_a is not None and no_ask_a > 0
+    no_b_real  = no_ask_b is not None and no_ask_b > 0
+
     # YES bid/ask fallback: midpoint when no live data.
     bid_a = bid_a if (bid_a is not None and bid_a > 0) else prob_a
     ask_a = ask_a if (ask_a is not None and ask_a > 0) else prob_a
@@ -113,11 +123,18 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
 
     using_real_bookprices = any(p not in (prob_a, prob_b) for p in (bid_a, ask_a, bid_b, ask_b))
 
+    # arb_type taxonomy (set below based on basket math + data quality):
+    #   guaranteed  — Yes+No basket < $1 AFTER fees → locked profit
+    #   pre-fee     — basket < $1 pre-fee but ≥ $1 after fees (fees eat it)
+    #   price-gap   — basket ≥ $1 even pre-fee (no arb possible at any fee)
+    #   one-sided   — we couldn't fetch real bid/ask on at least one leg,
+    #                 so we can't reliably classify (numbers are inferred)
+    # We default to "price-gap" and upgrade/downgrade as we learn more.
     result = {
         "raw_gap_pp": round(raw_gap * 100, 2),
         "net_gap_pp": round(net_gap * 100, 2),
         "profitable_onesided": bool(net_gap > 0),
-        "arb_type": "one-sided",
+        "arb_type": "price-gap",
         "guaranteed_return_pct": None,
         "stake_a_pct": None,
         "stake_b_pct": None,
@@ -135,41 +152,60 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         "fillable_no_bid_a": round(no_bid_a, 4),
         "fillable_no_bid_b": round(no_bid_b, 4),
         "arb_uses_live_book": bool(using_real_bookprices),
+        # Data-quality flags so the dashboard can hover-tip why we
+        # labeled something `one-sided`.
+        "yes_a_real": bool(yes_a_real),
+        "yes_b_real": bool(yes_b_real),
+        "no_a_real":  bool(no_a_real),
+        "no_b_real":  bool(no_b_real),
     }
 
-    # Two directions to try.
-    # Direction 1: YES on A + NO on B → cost = ask_a + no_ask_b
-    # Direction 2: YES on B + NO on A → cost = ask_b + no_ask_a
+    # Two directions to try. Direction 1: YES on A + NO on B. Direction 2: YES on B + NO on A.
+    # For each, find:
+    #   pre-fee net = 1 - (pay_yes + pay_no)
+    #   after-fee net = pre-fee net - fee_a - fee_b
     directions = [
-        # (pay_yes, pay_no, label_yes_platform, label_no_platform)
-        (ask_a, no_ask_b, "{pa}", "{pb}"),
-        (ask_b, no_ask_a, "{pb}", "{pa}"),
+        # (pay_yes, pay_no, label_yes_platform, label_no_platform,
+        #  is_real)  ← is_real means BOTH legs used real fetched data
+        (ask_a, no_ask_b, "{pa}", "{pb}", yes_a_real and no_b_real),
+        (ask_b, no_ask_a, "{pb}", "{pa}", yes_b_real and no_a_real),
     ]
-    best = None
-    for pay_yes, pay_no, lab_yes, lab_no in directions:
+    best_post_fee = None       # for guaranteed
+    best_pre_fee = None        # for pre-fee (positive gross even if net negative)
+    any_direction_real = False
+    for pay_yes, pay_no, lab_yes, lab_no, is_real in directions:
         # Skip degenerate book states (e.g. bid >= 1 makes pay_no <= 0)
         if not (0 < pay_yes < 1 and 0 < pay_no < 1):
             continue
+        if is_real:
+            any_direction_real = True
         cost = pay_yes + pay_no
-        if cost >= 1.0:
-            continue
         gross = 1.0 - cost
         net = gross - fee_a - fee_b
-        if net <= 0:
-            continue
-        if best is None or net > best["net"]:
-            best = {"net": net, "pay_yes": pay_yes, "pay_no": pay_no,
-                    "lab_yes": lab_yes, "lab_no": lab_no}
+        if gross > 0:
+            if best_pre_fee is None or gross > best_pre_fee["gross"]:
+                best_pre_fee = {"gross": gross, "net": net, "pay_yes": pay_yes,
+                                "pay_no": pay_no, "lab_yes": lab_yes, "lab_no": lab_no,
+                                "is_real": is_real}
+        if net > 0:
+            if best_post_fee is None or net > best_post_fee["net"]:
+                best_post_fee = {"net": net, "pay_yes": pay_yes, "pay_no": pay_no,
+                                 "lab_yes": lab_yes, "lab_no": lab_no, "is_real": is_real}
 
-    if best is not None:
-        # Inverse-odds stake sizing. Stake more on the cheaper side so
-        # each outcome pays out the same nominal dollars.
+    # Classification precedence:
+    #   1. If best_post_fee is real AND fees were paid → guaranteed
+    #      (we trust this even when only ONE direction had real data,
+    #      as long as the winning direction did)
+    #   2. Elif best_pre_fee is real but not post-fee → pre-fee
+    #   3. Elif we had real data on at least one direction → price-gap
+    #   4. Else → one-sided (data missing/inferred on both directions)
+    if best_post_fee is not None and best_post_fee["is_real"]:
+        best = best_post_fee
         inv_yes = 1 / best["pay_yes"]
         inv_no = 1 / best["pay_no"]
         total_inv = inv_yes + inv_no
-        s_yes = inv_yes / total_inv  # share of bankroll on the yes-leg
+        s_yes = inv_yes / total_inv
         s_no = inv_no / total_inv
-        # Map (yes_side, no_side) back to (A, B) for stake_a / stake_b.
         if best["lab_yes"] == "{pa}":
             sA, sB = s_yes, s_no
         else:
@@ -185,13 +221,32 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
             "action": (f"Buy Yes on {best['lab_yes']} at {best['pay_yes']*100:.1f}c "
                        f"+ Buy No on {best['lab_no']} at {best['pay_no']*100:.1f}c"),
         })
+    elif best_pre_fee is not None and best_pre_fee["is_real"]:
+        # Basket cost < $1 pre-fee but fees eat the gap, with real prices.
+        best = best_pre_fee
+        result.update({
+            "arb_type": "pre-fee",
+            "guaranteed_return_pct": round(best["net"] * 100, 2),  # negative
+            "action": (f"Buy Yes on {best['lab_yes']} at {best['pay_yes']*100:.1f}c "
+                       f"+ Buy No on {best['lab_no']} at {best['pay_no']*100:.1f}c "
+                       f"(pre-fee gross {best['gross']*100:.2f}%, fees eat it)"),
+        })
+    elif any_direction_real:
+        # Had real data but no profitable basket — markets disagree but
+        # no risk-free combination exists.
+        result["arb_type"] = "price-gap"
+    else:
+        # No real bid/ask on either direction — can't classify reliably.
+        result["arb_type"] = "one-sided"
 
-    # One-sided action label
-    if result["arb_type"] == "one-sided":
+    # Per-bucket action message when not already set above.
+    if result["arb_type"] == "price-gap":
         if prob_a > prob_b:
             result["action"] = "Buy Yes on {pb} (cheaper), sell/fade on {pa}"
         else:
             result["action"] = "Buy Yes on {pa} (cheaper), sell/fade on {pb}"
+    elif result["arb_type"] == "one-sided":
+        result["action"] = "Inferred prices — fetch real bid/ask to classify"
 
     return result
 
