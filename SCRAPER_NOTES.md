@@ -399,6 +399,38 @@ matching on the title string.
 
 ---
 
+## Cross-platform matching gotchas
+
+### Time-window mismatches across platforms
+
+Same outcome, different time horizon → real prices diverge for
+legitimate reasons; matcher pairs them anyway. Examples seen:
+
+- Kalshi: "Will Elon Musk receive a pardon **before Jan 21, 2029**" at
+  43¢ (Trump's whole second term)
+- PredictIt: "Will Trump pardon Elon Musk **in 2026**" at 7.5¢ (just
+  this year)
+- 35.5pp gap on the same person → looks like a guaranteed arb, isn't.
+
+**Where it leaks through**: scrutiny.py skips every pair where one
+leg is PredictIt because there's no PredictIt rule-fetch endpoint to
+do similarity scoring. Year-mismatch heuristic added 2026-06-22:
+scrutiny extracts `20\d\d` from each side's question text and drops
+the pair when the year sets are disjoint AND raw_gap > 30pp. Runs
+before the PredictIt skip so it covers those too.
+
+### Polymarket "[flipped]" pairs from political matcher
+
+`scripts/matcher.py:match_political` constructs cross-party arb
+candidates by flipping one platform's "Dem-YES" to mean "Rep-NO" on
+the other. Output rows are tagged with `[flipped]` in the question
+text. Watch this path carefully: the NY Governor 72.1% guaranteed
+arb shipped on 2026-06-22 was a bogus number that survived the math
+because `compute_arb` was likely treating a flipped probability
+inconsistently. If you see suspiciously-high `political`-match-type
+guaranteed arbs (NY Gov, etc), check the math against real fillable
+prices first.
+
 ## Things you'll discover and want to add here
 
 If you find yourself probing one of the APIs by hand because some

@@ -149,19 +149,49 @@ def scrutinize(pairs, threshold_pp=30):
                 for e in _load_excludes()}
     out = {}
     inspected = 0
+    n_year_drop = 0
     for p in pairs:
         pa = p.get("platform_a"); pb = p.get("platform_b")
         ma = p.get("market_id_a"); mb = p.get("market_id_b")
         gap = p.get("raw_gap_pp") or 0
         key = (str(ma), str(mb))
+
+        # Manual exclude — applies regardless of platform.
+        if ma is not None and mb is not None and (
+            (pa, str(ma), pb, str(mb)) in excludes or (pb, str(mb), pa, str(ma)) in excludes
+        ):
+            out[key] = {"criteria_score": 0, "action": "drop", "reason": "manual_exclude"}
+            continue
+
+        # Year-mismatch heuristic — catches the class of fake-arb where
+        # the same candidate / event appears on both platforms but with
+        # different time horizons. Example caught 2026-06-22: Kalshi
+        # "Will Elon Musk receive a pardon before Jan 21, 2029" vs
+        # PredictIt "Will Trump pardon Elon Musk in 2026". Same person,
+        # vastly different windows → real probabilities differ by 30+pp
+        # for legitimate reasons; scanner ships as fake guaranteed arb.
+        #
+        # Runs BEFORE the predictit skip below so predictit-leg pairs
+        # also get the year check (rule-text similarity is unavailable
+        # for predictit but title-year extraction is).
+        if gap > threshold_pp:
+            qa = (p.get("question_a") or "")
+            qb = (p.get("question_b") or "")
+            years_a = set(re.findall(r"\b20\d{2}\b", qa))
+            years_b = set(re.findall(r"\b20\d{2}\b", qb))
+            # If both sides specify years and they don't overlap, drop.
+            if years_a and years_b and years_a.isdisjoint(years_b):
+                out[key] = {
+                    "criteria_score": 0,
+                    "action": "drop",
+                    "reason": f"year_mismatch:{sorted(years_a)}vs{sorted(years_b)}",
+                }
+                n_year_drop += 1
+                continue
+
         if pa in ("predictit",) or pb in ("predictit",):
             continue  # predictit rule fetch needs a different endpoint
         if ma is None or mb is None:
-            continue
-
-        # Manual exclude
-        if (pa, str(ma), pb, str(mb)) in excludes or (pb, str(mb), pa, str(ma)) in excludes:
-            out[key] = {"criteria_score": 0, "action": "drop", "reason": "manual_exclude"}
             continue
 
         if gap <= threshold_pp:
@@ -184,6 +214,8 @@ def scrutinize(pairs, threshold_pp=30):
     _save_cache(cache)
     if inspected:
         print(f"  Scrutinized {inspected} pairs with raw_gap > {threshold_pp}pp")
+    if n_year_drop:
+        print(f"  Dropped {n_year_drop} pairs with year-mismatch in question text")
     return out
 
 
