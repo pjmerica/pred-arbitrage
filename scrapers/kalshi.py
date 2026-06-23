@@ -216,6 +216,12 @@ def parse_market(event, market):
     event_sub     = event.get("sub_title", "")
     market_ticker = market.get("ticker", "")
     yes_sub       = market.get("yes_sub_title", "") or ""
+    # Kalshi's raw per-market title (e.g. "Will Democratic win the House
+    # race for WI-1?"). Different from our constructed `title` below.
+    # Preserved so elections.py can use it for side-detection with the
+    # same regex polling-agg uses — see SCRAPER_NOTES.md and
+    # elections.py:_load_kalshi_general.
+    raw_market_title = market.get("title", "") or ""
 
     # Build the most useful "question" field. If the event has many markets
     # (e.g. "Who will win the primary" with 15 candidates), combine event
@@ -256,7 +262,24 @@ def parse_market(event, market):
         "event_ticker":  event_ticker,
         "series_ticker": series_ticker,
         "title":         title,
+        # raw_market_title preserves Kalshi's API `title` field exactly
+        # (e.g. "Will Democratic win the House race for WI-1?"). This is
+        # the title shape polling-agg uses for side detection. elections.py
+        # consumes it via _load_kalshi_general; downstream side-regex
+        # then matches polling-agg's exactly.
+        "raw_market_title": raw_market_title,
         "subtitle":      event_sub,
+        # yes_sub_title is what kalshi.com displays as the "side label"
+        # for a market — for general-election rows it's the party
+        # ("Democratic party" / "Republican party"); for candidate rows
+        # it's the candidate name. We construct `title` by joining
+        # event_title + yes_sub above, but preserving the raw field on
+        # its own column lets downstream code split markets by side
+        # without parsing a joined string. Polling-agg's Kalshi data
+        # has a different title shape; pulling yes_sub_title out as a
+        # column keeps pred-arb's dem/rep logic from depending on the
+        # constructed title format.
+        "yes_sub_title": yes_sub,
         "category":      category,
         "tags":          "",
         "race_id":       race_id,

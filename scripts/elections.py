@@ -263,30 +263,63 @@ def _first_initial(name: str) -> str | None:
 # ── general (party-level) loaders ─────────────────────────────────────────────
 
 def _load_kalshi_general():
-    """Per-race Kalshi Dem/Rep prob, picking the highest-OI market per side."""
+    """Per-race Kalshi Dem/Rep prob, picking the highest-OI market per side.
+
+    Side assignment (Dem vs Rep) uses the same logic polling-agg uses:
+    a regex on Kalshi's RAW per-market title (e.g. "Will Democratic win
+    the House race for WI-1?"). The scraper preserves that raw title
+    in a `raw_market_title` column (2026-06-22) so this function can
+    work on the exact same input shape polling-agg does.
+
+    Old CSVs scraped before raw_market_title existed fall back to the
+    `market_title` column (which pred-arb constructs as
+    "<event> — <yes_sub>"). The fallback regex is broadened to catch
+    the constructed shape — primarily so a fresh checkout with a stale
+    CSV still works on the morning after the gitignore-data change.
+
+    Markets that aren't general-election party markets — primary
+    nominations, candidate markets, etc. — get filtered out by the
+    explicit `nominee|primary|nominate` exclusion.
+    """
     df = _load_kalshi_normalized()
     if df.empty or "race_id" not in df.columns or "implied_prob" not in df.columns:
         return pd.DataFrame()
     df = df[df["race_id"].notna() & df["implied_prob"].notna()].copy()
 
-    # Match the dem/rep side. Kalshi serves general-election party
-    # markets under two different title shapes depending on which event
-    # template it is:
-    #   1. polling-agg-flavor: "Will Democratic win the House race for WI-1?"
-    #      (regex needs "Democratic" + "win" together)
-    #   2. pred-arb-flavor:    "WI-01 House winner? — Democratic party"
-    #      (pred-arb's parse_market joins event_title with yes_sub_title
-    #      using ' — '; the "party" suffix is the giveaway)
-    # If we only match shape (1) we miss every pred-arb House market
-    # (Wisconsin WI-01 was reported on 2026-06-22 as the symptom).
-    dem_mask = df["market_title"].str.contains(
+    # Prefer raw_market_title (= Kalshi's API title field, identical
+    # shape to polling-agg's market_title). Fall back to the constructed
+    # market_title for old CSVs scraped before raw_market_title existed.
+    if "raw_market_title" in df.columns:
+        title_for_match = df["raw_market_title"].fillna("").astype(str)
+        # Some rows may have raw_market_title="" (event-only rows or
+        # API quirks). Backfill from the constructed title in that case.
+        empty = title_for_match.eq("")
+        if empty.any():
+            title_for_match = title_for_match.where(
+                ~empty, df["market_title"].fillna("").astype(str)
+            )
+    else:
+        title_for_match = df["market_title"].fillna("").astype(str)
+
+    # Exclude nomination/primary markets — they share the series ticker
+    # with general markets but ask a different question.
+    not_primary = ~title_for_match.str.contains(
+        "nominee|primary|nominate", case=False, na=False
+    )
+
+    # Side detection. The first two alternatives in each regex match
+    # polling-agg's raw API title shape (preferred). The "...party"
+    # alternative is a fallback that catches pred-arb's constructed
+    # title shape ("WI-01 House winner? — Democratic party") on rows
+    # where raw_market_title wasn't preserved.
+    dem_mask = title_for_match.str.contains(
         r"Democrat(?:ic)?s?\s+win|Will Democrat(?:ic)?s?\s+win|Democrat(?:ic)?\s+party\b",
         case=False, na=False,
-    ) & ~df["market_title"].str.contains("nominee|primary|nominate", case=False, na=False)
-    rep_mask = df["market_title"].str.contains(
+    ) & not_primary
+    rep_mask = title_for_match.str.contains(
         r"Republican(?:s)?\s+win|Will Republican(?:s)?\s+win|Republican\s+party\b",
         case=False, na=False,
-    ) & ~df["market_title"].str.contains("nominee|primary|nominate", case=False, na=False)
+    ) & not_primary
 
     cols = ["implied_prob", "open_interest", "volume", "series_ticker", "market_ticker", "market_title"]
     if "market_ticker" not in df.columns:
