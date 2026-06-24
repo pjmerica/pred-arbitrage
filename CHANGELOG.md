@@ -21,6 +21,7 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 ## 2026-06-24
 
+- `[506f80e]` docs: introduce CHANGELOG.md — established the convention that every hand-written commit gets a one-line entry here. Data-refresh commits from the cron are excluded. Backfilled every hand-written commit from 2026-06-20 onward.
 - `[39d8491]` matcher: drop pairs whose subject diverges on a common-prefix template — fixes the Taiwan/Somaliland fake pair where the existing `extract_subject` guard's verb list (win/be/become/...) missed "Will Trump recognize <X>" templates. New guard: when titles share a 3+ word common prefix and the next token diverges with both being alphabetic non-stopwords ≥3 chars, drop. Sat after the existing subject guard so the strict surname logic still runs first for "Will X win/be..." patterns.
 - `[9f7816b]` dashboard: add 6 per-platform YES/NO ASK columns — K-Yes, K-No, Po-Yes, Po-No, Pr-Yes, Pr-No showing fillable ASK in cents. Cells `—` when the platform isn't in the pair or when real bid/ask wasn't fetched. Complements the existing midpoint columns (Prob A / Prob B); the new columns show what you'd actually pay to trade.
 
