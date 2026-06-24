@@ -689,6 +689,48 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                                 if last_a != last_b:
                                     continue
 
+                        # Common-prefix subject guard. When two titles
+                        # share a long common prefix, the diverging
+                        # portion IS the subject (e.g. "Will Trump
+                        # recognize <SUBJECT> ..."). extract_subject
+                        # above only handles a fixed list of verbs
+                        # (win/be/become/...) and misses Trump-recognize,
+                        # Trump-pardon, Trump-fire, etc. — produced fake
+                        # Taiwan/Somaliland pair in production 2026-06-24.
+                        #
+                        # Algorithm: find the longest common prefix of
+                        # the two normalised titles (word-by-word). The
+                        # NEXT word on each side is the "discriminator"
+                        # — if both discriminators are alphabetic, of
+                        # length >=3, and are different, the markets
+                        # are about different subjects.
+                        #
+                        # Skips when the common prefix is too short
+                        # (<3 words = no shared template, this guard
+                        # isn't applicable).
+                        def _tokens(s):
+                            return re.findall(r"[A-Za-z0-9]+", s.lower())
+                        ta = _tokens(q_a)
+                        tb = _tokens(q_b)
+                        common = 0
+                        while common < min(len(ta), len(tb)) and ta[common] == tb[common]:
+                            common += 1
+                        if common >= 3 and common < min(len(ta), len(tb)):
+                            disc_a = ta[common]
+                            disc_b = tb[common]
+                            # Stopwords that don't carry subject info even
+                            # when they happen to be the diverging token.
+                            stop = {"a","an","the","be","is","will","do","does",
+                                    "on","in","at","to","for","by","of","before",
+                                    "after","or","and","with","next","this","that"}
+                            if (disc_a != disc_b
+                                    and disc_a.isalpha() and disc_b.isalpha()
+                                    and len(disc_a) >= 3 and len(disc_b) >= 3
+                                    and disc_a not in stop and disc_b not in stop):
+                                # Different discriminator tokens after a
+                                # 3+ word common prefix — different subjects.
+                                continue
+
                         pairs.append({
                             "match_type": "fuzzy",
                             "race_id": None,
