@@ -168,6 +168,16 @@ def parse_market(event, market):
 
     yes_bid = to_float(market.get("yes_bid_dollars"))
     yes_ask = to_float(market.get("yes_ask_dollars"))
+    # NO bid/ask — Kalshi exposes these explicitly. They're constrained
+    # by the matching engine to be (1 - yes_ask) and (1 - yes_bid)
+    # respectively, but we preserve the API values verbatim so
+    # downstream code can use real numbers instead of inferring.
+    # Polymarket needs separate NO fetching because their two-token
+    # CLOB lets YES and NO drift; Kalshi enforces YES+NO=1 at the
+    # engine. Either way, having both columns means downstream code
+    # doesn't have to reason about the difference.
+    no_bid  = to_float(market.get("no_bid_dollars"))
+    no_ask  = to_float(market.get("no_ask_dollars"))
     last    = to_float(market.get("last_price_dollars"))
 
     # implied_prob = last_price. This is the DISPLAY price — what
@@ -285,6 +295,8 @@ def parse_market(event, market):
         "race_id":       race_id,
         "yes_bid":       yes_bid,
         "yes_ask":       yes_ask,
+        "no_bid":        no_bid,
+        "no_ask":        no_ask,
         "implied_prob":  round(implied_prob, 4) if implied_prob is not None else None,
         "open_interest": to_float(market.get("open_interest_fp")) or 0,
         "volume":        to_float(market.get("volume_fp")) or 0,

@@ -307,6 +307,28 @@ def run():
     # pandas corrupts them to float (scientific notation), breaking depth lookup.
     df = pd.read_csv(pairs_path, dtype={"market_id_a": str, "market_id_b": str})
     df = df[df["implied_prob_a"].notna() & df["implied_prob_b"].notna()].copy()
+
+    # Kalshi NO bid/ask lookup. The matcher only forwards implied_prob
+    # so we re-read the source CSV to grab no_bid/no_ask per ticker.
+    # Kalshi's matching engine enforces YES + NO = 1, so these are
+    # mathematically equivalent to (1 - yes_ask, 1 - yes_bid), but
+    # downstream code (compute_arb's no_a_real / no_b_real flags +
+    # the dashboard K-No column) needs an "I actually fetched this"
+    # signal rather than "I inferred it". Reading from the CSV
+    # provides that signal cleanly.
+    kalshi_no_lookup = {}
+    kalshi_csv = ROOT / "data" / "raw" / "kalshi_markets.csv"
+    if kalshi_csv.exists():
+        try:
+            kdf = pd.read_csv(kalshi_csv)
+            if "no_bid" in kdf.columns and "no_ask" in kdf.columns:
+                for _, r in kdf[["ticker", "no_bid", "no_ask"]].dropna(subset=["ticker"]).iterrows():
+                    kalshi_no_lookup[str(r["ticker"])] = (
+                        float(r["no_bid"]) if pd.notna(r["no_bid"]) else None,
+                        float(r["no_ask"]) if pd.notna(r["no_ask"]) else None,
+                    )
+        except Exception as e:
+            print(f"  WARN: could not build kalshi NO lookup ({e})")
     print(f"Processing {len(df)} matched pairs...")
 
     # Volume is exposed in the JSON so the dashboard can filter live.
@@ -511,14 +533,29 @@ def run():
             la_ask = _live(row, "depth_a", "best_ask")
             lb_bid = _live(row, "depth_b", "best_bid")
             lb_ask = _live(row, "depth_b", "best_ask")
-            # Real NO book from fetch_depth (Polymarket only; tagged as
-            # `depth_no_a_*` / `depth_no_b_*` after the depth-join). Kalshi
-            # doesn't expose a separate NO token so this stays None there
-            # and compute_arb falls back to 1 - YES bid.
+            # Real NO book — two sources depending on platform:
+            #   Polymarket: from fetch_depth (separate NO token; the
+            #     YES and NO books on Polymarket can drift).
+            #   Kalshi: from kalshi_no_lookup built off the source CSV
+            #     (Kalshi's API exposes no_bid_dollars/no_ask_dollars on
+            #     every market; the matching engine enforces YES+NO=1
+            #     so these mirror 1-yes_ask / 1-yes_bid, but having the
+            #     real values makes no_a_real / no_b_real flags accurate
+            #     and populates the dashboard K-No column).
             no_a_bid = _live(row, "depth_no_a", "best_bid")
             no_a_ask = _live(row, "depth_no_a", "best_ask")
             no_b_bid = _live(row, "depth_no_b", "best_bid")
             no_b_ask = _live(row, "depth_no_b", "best_ask")
+            if no_a_bid is None and no_a_ask is None and row.get("platform_a") == "kalshi":
+                k_no = kalshi_no_lookup.get(str(row.get("market_id_a", "")))
+                if k_no:
+                    no_a_bid = k_no[0] if k_no[0] and 0 < k_no[0] < 1 else None
+                    no_a_ask = k_no[1] if k_no[1] and 0 < k_no[1] < 1 else None
+            if no_b_bid is None and no_b_ask is None and row.get("platform_b") == "kalshi":
+                k_no = kalshi_no_lookup.get(str(row.get("market_id_b", "")))
+                if k_no:
+                    no_b_bid = k_no[0] if k_no[0] and 0 < k_no[0] < 1 else None
+                    no_b_ask = k_no[1] if k_no[1] and 0 < k_no[1] < 1 else None
             # PredictIt has no public live orderbook — synthesize a +/-5pp
             # spread around the midpoint so the math doesn't treat the
             # midpoint as both bid AND ask (which produces fake arbs at
