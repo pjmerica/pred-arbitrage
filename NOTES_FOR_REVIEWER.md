@@ -1,8 +1,10 @@
 # Notes for the Reviewer — pred-arbitrage
 
 **Audience**: senior engineer doing a code-correctness + onboarding +
-security review. Start here, then go to `HANDOFF.md` for architecture
-and `AUDIT.md` for the prioritized to-do list.
+security review. Start here, then go to `HANDOFF.md` for architecture,
+`AUDIT.md` for the prioritized to-do list, and `CHANGELOG.md` for the
+running log of every hand-written commit (data-refresh commits
+excluded).
 
 **Status**: live at https://pjmerica.github.io/pred-arbitrage/. Daily
 cron at 12:30 and 00:30 UTC. Most recent manual run as of writing:
