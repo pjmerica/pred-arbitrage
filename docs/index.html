@@ -202,6 +202,15 @@ tr.suspicious-row td { opacity: 0.6; }
         <th data-col="settle_date">Settles</th>
         <th data-col="implied_prob_a">Prob A</th>
         <th data-col="implied_prob_b">Prob B</th>
+        <!-- Per-platform fillable ASK columns. Cell shows '—' when the
+             pair doesn't include that platform OR when we couldn't fetch
+             the real bid/ask (typical for PredictIt). -->
+        <th title="Kalshi YES ask (what you'd pay to buy YES on Kalshi)">K-Yes</th>
+        <th title="Kalshi NO ask (what you'd pay to buy NO on Kalshi)">K-No</th>
+        <th title="Polymarket YES ask">Po-Yes</th>
+        <th title="Polymarket NO ask">Po-No</th>
+        <th title="PredictIt YES ask">Pr-Yes</th>
+        <th title="PredictIt NO ask">Pr-No</th>
         <th data-col="raw_gap_pp">Raw Gap</th>
         <th data-col="net_gap_pp">Net Gap</th>
         <th data-col="depth_a_max_at_3pp">Tradeable</th>
@@ -383,7 +392,7 @@ function render() {
   const tbody = document.getElementById('arb-body');
 
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="12" class="empty">No pairs match filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="18" class="empty">No pairs match filters</td></tr>`;
     return;
   }
 
@@ -415,6 +424,38 @@ function render() {
 
     const probA = r.implied_prob_a != null ? (r.implied_prob_a * 100).toFixed(1) + '%' : '—';
     const probB = r.implied_prob_b != null ? (r.implied_prob_b * 100).toFixed(1) + '%' : '—';
+
+    // Per-platform YES/NO fillable ASK cells. Only the two platforms
+    // in this pair have prices; the third shows '—'. We use ASK (what
+    // you'd pay to buy) because that's the price the arb math runs on
+    // and the actually-tradeable number. Midpoint = (bid+ask)/2 lives
+    // in implied_prob_a/b columns to the left of these.
+    //
+    // PredictIt rarely has real fetched bid/ask (no public orderbook),
+    // so its cells are usually '—' even when PredictIt IS in the pair.
+    // fillable_*_a is the A-side platform's data; fillable_*_b is B-side.
+    function priceFor(platform, side) {
+      // side: 'yes' or 'no'
+      const isA = r.platform_a === platform;
+      const isB = r.platform_b === platform;
+      if (!isA && !isB) return null;
+      const suffix = isA ? 'a' : 'b';
+      const realFlag = side === 'yes' ? r[`yes_${suffix}_real`] : r[`no_${suffix}_real`];
+      const field = side === 'yes' ? `fillable_ask_${suffix}` : `fillable_no_ask_${suffix}`;
+      const v = r[field];
+      if (v == null || !realFlag) return null;
+      return v;
+    }
+    function fmtCent(v) {
+      return v == null ? '<span style="color:#4a5568">—</span>'
+                       : `<span style="font-size:0.78rem">${(v * 100).toFixed(0)}¢</span>`;
+    }
+    const kYes  = fmtCent(priceFor('kalshi',     'yes'));
+    const kNo   = fmtCent(priceFor('kalshi',     'no'));
+    const poYes = fmtCent(priceFor('polymarket', 'yes'));
+    const poNo  = fmtCent(priceFor('polymarket', 'no'));
+    const prYes = fmtCent(priceFor('predictit',  'yes'));
+    const prNo  = fmtCent(priceFor('predictit',  'no'));
     const rawStr = r.raw_gap_pp != null ? r.raw_gap_pp.toFixed(1) + 'pp' : '—';
     const netStr = r.net_gap_pp != null ? (r.net_gap_pp > 0 ? '+' : '') + r.net_gap_pp.toFixed(1) + 'pp' : '—';
     const netCls = r.net_gap_pp > 0 ? 'gap-pos' : 'gap-neg';
@@ -448,6 +489,12 @@ function render() {
       <td>${settleStr}</td>
       <td style="color:#94a3b8">${probA}</td>
       <td style="color:#94a3b8">${probB}</td>
+      <td style="text-align:right">${kYes}</td>
+      <td style="text-align:right">${kNo}</td>
+      <td style="text-align:right">${poYes}</td>
+      <td style="text-align:right">${poNo}</td>
+      <td style="text-align:right">${prYes}</td>
+      <td style="text-align:right">${prNo}</td>
       <td style="font-weight:600;color:#e2e8f0">${rawStr}</td>
       <td class="${netCls}">${netStr}</td>
       <td>${tradeableCell}</td>
