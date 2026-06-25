@@ -1,400 +1,395 @@
 market_id,market_name,contract_id,contract_name,implied_prob,best_buy_yes,best_sell_yes,last_trade_price,status,url,fetched_at
-7589,How many House seats will Republicans win in the 2026 midterm election?,28361,192 or fewer,0.22,0.23,0.21,0.22,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.860977+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28362,193 to 197,0.08,0.09,0.07,0.08,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.860997+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28369,198 to 202,0.1,0.11,0.09,0.09,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861002+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28367,203 to 207,0.145,0.15,0.14,0.14,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861007+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28366,208 to 212,0.145,0.15,0.14,0.16,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861011+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28370,213 to 217,0.105,0.11,0.1,0.11,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861014+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28368,218 to 222,0.105,0.11,0.1,0.1,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861018+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28365,223 to 227,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861022+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28363,228 to 232,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861025+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28364,233 to 237,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861032+00:00
-7589,How many House seats will Republicans win in the 2026 midterm election?,28371,238 or more,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/7589,2026-06-24T21:31:03.861035+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31925,JD Vance,0.375,0.38,0.37,0.38,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861041+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31930,Marco Rubio,0.275,0.28,0.27,0.28,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861045+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31928,Donald Trump,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861048+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31929,Donald Trump Jr.,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861052+00:00
-8152,Who will win the 2028 Republican presidential nomination?,34115,Tucker Carlson,0.055,0.06,0.05,0.05,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861056+00:00
-8152,Who will win the 2028 Republican presidential nomination?,32069,Ron DeSantis,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861059+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31933,Brian Kemp,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861062+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31932,Glenn Youngkin,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861066+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31926,Tulsi Gabbard,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861071+00:00
-8152,Who will win the 2028 Republican presidential nomination?,31927,Ted Cruz,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861074+00:00
-8152,Who will win the 2028 Republican presidential nomination?,32829,M. Taylor Greene,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8152,2026-06-24T21:31:03.861081+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31937,Gavin Newsom,0.225,0.23,0.22,0.22,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861091+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31936,A. Ocasio-Cortez,0.115,0.12,0.11,0.12,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861094+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,32160,Jon Ossoff,0.12,0.13,0.11,0.11,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861098+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31934,Kamala Harris,0.095,0.1,0.09,0.1,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861101+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31940,Josh Shapiro,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861106+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31935,Pete Buttigieg,0.055,0.06,0.05,0.06,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861110+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31941,Andy Beshear,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861113+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,32387,Rahm Emanuel,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861116+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,33094,Mark Kelly,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861120+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31938,JB Pritzker,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861124+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31942,Wes Moore,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861127+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,33680,Ro Khanna,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861130+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31939,Gretchen Whitmer,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861134+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31943,Stephen A Smith,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861139+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,31944,Cory Booker,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861144+00:00
-8153,Who will win the 2028 Democratic presidential nomination?,32017,Ruben Gallego,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8153,2026-06-24T21:31:03.861149+00:00
-8155,Which party will control the Senate after the 2026 election?,31948,Republican,0.605,0.61,0.6,0.6,Open,https://www.predictit.org/markets/detail/8155,2026-06-24T21:31:03.861155+00:00
-8155,Which party will control the Senate after the 2026 election?,31947,Democratic,0.405,0.41,0.4,0.41,Open,https://www.predictit.org/markets/detail/8155,2026-06-24T21:31:03.861159+00:00
-8156,Which party will win the 2026 US Senate election in Georgia?,31950,Democratic,0.825,0.83,0.82,0.83,Open,https://www.predictit.org/markets/detail/8156,2026-06-24T21:31:03.861164+00:00
-8156,Which party will win the 2026 US Senate election in Georgia?,31949,Republican,0.17,0.18,0.16,0.15,Open,https://www.predictit.org/markets/detail/8156,2026-06-24T21:31:03.861168+00:00
-8157,Which party will win the House in the 2026 election?,31951,Democratic,0.725,0.73,0.72,0.73,Open,https://www.predictit.org/markets/detail/8157,2026-06-24T21:31:03.861171+00:00
-8157,Which party will win the House in the 2026 election?,31952,Republican,0.29,0.3,0.28,0.29,Open,https://www.predictit.org/markets/detail/8157,2026-06-24T21:31:03.861174+00:00
-8158,Which party will win the 2026 US Senate election in Michigan?,31954,Democratic,0.695,0.71,0.68,0.69,Open,https://www.predictit.org/markets/detail/8158,2026-06-24T21:31:03.861178+00:00
-8158,Which party will win the 2026 US Senate election in Michigan?,31953,Republican,0.315,0.33,0.3,0.32,Open,https://www.predictit.org/markets/detail/8158,2026-06-24T21:31:03.861186+00:00
-8159,Which party will win the 2026 US Senate election in Maine?,31956,Democratic,0.535,0.55,0.52,0.53,Open,https://www.predictit.org/markets/detail/8159,2026-06-24T21:31:03.861189+00:00
-8159,Which party will win the 2026 US Senate election in Maine?,31955,Republican,0.465,0.47,0.46,0.46,Open,https://www.predictit.org/markets/detail/8159,2026-06-24T21:31:03.861193+00:00
-8160,Which party will win the 2026 US Senate election in North Carolina?,31958,Democratic,0.83,0.84,0.82,0.82,Open,https://www.predictit.org/markets/detail/8160,2026-06-24T21:31:03.861196+00:00
-8160,Which party will win the 2026 US Senate election in North Carolina?,31957,Republican,0.185,0.19,0.18,0.18,Open,https://www.predictit.org/markets/detail/8160,2026-06-24T21:31:03.861200+00:00
-8161,Which party will win the 2026 US Senate election in New Hampshire?,31960,Democratic,0.795,0.84,0.75,0.84,Open,https://www.predictit.org/markets/detail/8161,2026-06-24T21:31:03.861203+00:00
-8161,Which party will win the 2026 US Senate election in New Hampshire?,31959,Republican,0.185,0.2,0.17,0.17,Open,https://www.predictit.org/markets/detail/8161,2026-06-24T21:31:03.861206+00:00
-8162,Which party will win the 2026 US Senate election in Minnesota?,31962,Democratic,0.87,0.9,0.84,0.85,Open,https://www.predictit.org/markets/detail/8162,2026-06-24T21:31:03.861210+00:00
-8162,Which party will win the 2026 US Senate election in Minnesota?,31961,Republican,0.13,0.14,0.12,0.12,Open,https://www.predictit.org/markets/detail/8162,2026-06-24T21:31:03.861213+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31964,47 or fewer,0.165,0.17,0.16,0.16,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861217+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31968,48,0.155,0.16,0.15,0.16,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861221+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31969,49,0.195,0.2,0.19,0.2,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861225+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31965,50,0.2,0.21,0.19,0.2,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861228+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31970,51,0.145,0.16,0.13,0.15,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861231+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31973,52,0.09,0.1,0.08,0.09,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861234+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31966,53,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861238+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31972,54,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861241+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31967,55,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861244+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31963,56,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861247+00:00
-8163,How many Senate seats will the GOP control after the 2026 midterms?,31971,57 or more,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8163,2026-06-24T21:31:03.861251+00:00
-8166,Who will win the 2026 election for governor of California?,31984,Xavier Becerra,0.915,0.92,0.91,0.91,Open,https://www.predictit.org/markets/detail/8166,2026-06-24T21:31:03.861256+00:00
-8166,Who will win the 2026 election for governor of California?,31986,Steve Hilton,0.08,0.09,0.07,0.08,Open,https://www.predictit.org/markets/detail/8166,2026-06-24T21:31:03.861259+00:00
-8167,Who will win the 2026 Michigan Democratic Senate nomination?,31990,Abdul El-Sayed,0.74,0.75,0.73,0.73,Open,https://www.predictit.org/markets/detail/8167,2026-06-24T21:31:03.861322+00:00
-8167,Who will win the 2026 Michigan Democratic Senate nomination?,31992,Haley Stevens,0.255,0.27,0.24,0.27,Open,https://www.predictit.org/markets/detail/8167,2026-06-24T21:31:03.861326+00:00
-8167,Who will win the 2026 Michigan Democratic Senate nomination?,31991,Mallory McMorrow,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8167,2026-06-24T21:31:03.861329+00:00
-8171,Who will win the 2028 US presidential election?,32018,JD Vance,0.235,0.24,0.23,0.24,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861340+00:00
-8171,Who will win the 2028 US presidential election?,32023,Gavin Newsom,0.175,0.18,0.17,0.17,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861344+00:00
-8171,Who will win the 2028 US presidential election?,32024,Marco Rubio,0.155,0.16,0.15,0.15,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861347+00:00
-8171,Who will win the 2028 US presidential election?,32019,A. Ocasio-Cortez,0.095,0.1,0.09,0.09,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861350+00:00
-8171,Who will win the 2028 US presidential election?,34386,Jon Ossoff,0.075,0.08,0.07,0.07,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861354+00:00
-8171,Who will win the 2028 US presidential election?,32020,Josh Shapiro,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861357+00:00
-8171,Who will win the 2028 US presidential election?,32021,Kamala Harris,0.055,0.06,0.05,0.05,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861362+00:00
-8171,Who will win the 2028 US presidential election?,32022,Pete Buttigieg,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861366+00:00
-8171,Who will win the 2028 US presidential election?,32026,Gretchen Whitmer,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861369+00:00
-8171,Who will win the 2028 US presidential election?,32066,Donald Trump,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861372+00:00
-8171,Who will win the 2028 US presidential election?,34444,Andy Beshear,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861378+00:00
-8171,Who will win the 2028 US presidential election?,32682,JB Pritzker,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8171,2026-06-24T21:31:03.861384+00:00
-8172,Which party will win the 2026 US Senate election in Nebraska?,32027,Republican,0.745,0.76,0.73,0.77,Open,https://www.predictit.org/markets/detail/8172,2026-06-24T21:31:03.861388+00:00
-8172,Which party will win the 2026 US Senate election in Nebraska?,32029,Independent,0.265,0.31,0.22,0.22,Open,https://www.predictit.org/markets/detail/8172,2026-06-24T21:31:03.861391+00:00
-8173,Which party will win the 2026 US Senate election in Texas?,32030,Republican (Paxton),0.635,0.64,0.63,0.64,Open,https://www.predictit.org/markets/detail/8173,2026-06-24T21:31:03.861397+00:00
-8173,Which party will win the 2026 US Senate election in Texas?,32031,Democrats (Talarico),0.375,0.38,0.37,0.37,Open,https://www.predictit.org/markets/detail/8173,2026-06-24T21:31:03.861400+00:00
-8174,Which party will win the 2026 US Senate election in Virginia?,32033,Democratic,0.96,0.98,0.94,0.98,Open,https://www.predictit.org/markets/detail/8174,2026-06-24T21:31:03.861404+00:00
-8174,Which party will win the 2026 US Senate election in Virginia?,32032,Republican,0.035,0.05,0.02,0.02,Open,https://www.predictit.org/markets/detail/8174,2026-06-24T21:31:03.861407+00:00
-8175,Which party will win the 2026 US Senate special election in Ohio?,32035,Democratic,0.53,0.54,0.52,0.52,Open,https://www.predictit.org/markets/detail/8175,2026-06-24T21:31:03.861412+00:00
-8175,Which party will win the 2026 US Senate special election in Ohio?,32034,Republican,0.455,0.46,0.45,0.46,Open,https://www.predictit.org/markets/detail/8175,2026-06-24T21:31:03.861416+00:00
-8177,Which party will win the 2026 US House election in Maine's 2nd District?,32045,Republican,0.635,0.69,0.58,0.61,Open,https://www.predictit.org/markets/detail/8177,2026-06-24T21:31:03.861421+00:00
-8177,Which party will win the 2026 US House election in Maine's 2nd District?,32046,Democratic,0.405,0.48,0.33,0.33,Open,https://www.predictit.org/markets/detail/8177,2026-06-24T21:31:03.861424+00:00
-8179,Who will win the 2026 Michigan Republican Senate nomination?,32056,Mike Rogers,0.975,0.98,0.97,0.97,Open,https://www.predictit.org/markets/detail/8179,2026-06-24T21:31:03.861428+00:00
-8181,Which party will win the 2028 US presidential election?,32068,Democratic,0.6,0.61,0.59,0.61,Open,https://www.predictit.org/markets/detail/8181,2026-06-24T21:31:03.861439+00:00
-8181,Which party will win the 2028 US presidential election?,32067,Republican,0.44,0.45,0.43,0.43,Open,https://www.predictit.org/markets/detail/8181,2026-06-24T21:31:03.861443+00:00
-8183,Which party will win the 2026 US House election in Nebraska's 2nd District?,32080,Democratic,0.89,0.93,0.85,0.92,Open,https://www.predictit.org/markets/detail/8183,2026-06-24T21:31:03.861448+00:00
-8183,Which party will win the 2026 US House election in Nebraska's 2nd District?,32079,Republican,0.115,0.15,0.08,0.1,Open,https://www.predictit.org/markets/detail/8183,2026-06-24T21:31:03.861451+00:00
-8184,Which party will win the 2026 US House race in North Carolina's 1st District?,32081,Republican,0.555,0.56,0.55,0.56,Open,https://www.predictit.org/markets/detail/8184,2026-06-24T21:31:03.861454+00:00
-8184,Which party will win the 2026 US House race in North Carolina's 1st District?,32082,Democratic,0.45,0.46,0.44,0.43,Open,https://www.predictit.org/markets/detail/8184,2026-06-24T21:31:03.861458+00:00
-8185,Which party will win the 2026 US House election in New Mexico's 2nd District?,32084,Democratic,0.87,0.88,0.86,0.79,Open,https://www.predictit.org/markets/detail/8185,2026-06-24T21:31:03.861461+00:00
-8185,Which party will win the 2026 US House election in New Mexico's 2nd District?,32083,Republican,0.125,0.14,0.11,0.21,Open,https://www.predictit.org/markets/detail/8185,2026-06-24T21:31:03.861465+00:00
-8186,Which party will win the 2026 US House election in New York's 4th District?,32085,Republican,0.17,0.19,0.15,0.19,Open,https://www.predictit.org/markets/detail/8186,2026-06-24T21:31:03.861473+00:00
-8188,Which party will win the 2026 US House election in Washington's 3rd District?,32090,Democratic,0.87,0.88,0.86,0.83,Open,https://www.predictit.org/markets/detail/8188,2026-06-24T21:31:03.861485+00:00
-8188,Which party will win the 2026 US House election in Washington's 3rd District?,32089,Republican,0.16,0.17,0.15,0.16,Open,https://www.predictit.org/markets/detail/8188,2026-06-24T21:31:03.861488+00:00
-8189,Which party will win the 2026 US House election in Arizona's 1st District?,32092,Democratic,0.79,0.85,0.73,0.8,Open,https://www.predictit.org/markets/detail/8189,2026-06-24T21:31:03.861491+00:00
-8189,Which party will win the 2026 US House election in Arizona's 1st District?,32091,Republican,0.17,0.2,0.14,0.15,Open,https://www.predictit.org/markets/detail/8189,2026-06-24T21:31:03.861495+00:00
-8190,Which party will win the 2026 US House election in Arizona's 6th District?,32093,Republican,0.08,0.1,0.06,0.06,Open,https://www.predictit.org/markets/detail/8190,2026-06-24T21:31:03.861501+00:00
-8192,Which party will win the 2026 US House election in Iowa's 1st District?,32098,Democratic,0.74,0.75,0.73,0.73,Open,https://www.predictit.org/markets/detail/8192,2026-06-24T21:31:03.861510+00:00
-8192,Which party will win the 2026 US House election in Iowa's 1st District?,32097,Republican,0.355,0.43,0.28,0.44,Open,https://www.predictit.org/markets/detail/8192,2026-06-24T21:31:03.861513+00:00
-8193,Which party will win the 2026 US House election in Michigan's 7th District?,32100,Democratic,0.765,0.77,0.76,0.76,Open,https://www.predictit.org/markets/detail/8193,2026-06-24T21:31:03.861518+00:00
-8193,Which party will win the 2026 US House election in Michigan's 7th District?,32099,Republican,0.205,0.21,0.2,0.21,Open,https://www.predictit.org/markets/detail/8193,2026-06-24T21:31:03.861521+00:00
-8194,Which party will win the 2026 US House election in Pennsylvania's 7th District?,32102,Democratic,0.775,0.84,0.71,0.83,Open,https://www.predictit.org/markets/detail/8194,2026-06-24T21:31:03.861525+00:00
-8194,Which party will win the 2026 US House election in Pennsylvania's 7th District?,32101,Republican,0.21,0.26,0.16,0.14,Open,https://www.predictit.org/markets/detail/8194,2026-06-24T21:31:03.861528+00:00
-8195,Which party will win the 2026 US House election in Pennsylvania's 10th District?,32103,Republican,0.14,0.2,0.08,0.2,Open,https://www.predictit.org/markets/detail/8195,2026-06-24T21:31:03.861535+00:00
-8202,Who will win the 2026 Arizona Republican nomination for governor?,32129,Andy Biggs,0.955,0.97,0.94,0.93,Open,https://www.predictit.org/markets/detail/8202,2026-06-24T21:31:03.861558+00:00
-8202,Who will win the 2026 Arizona Republican nomination for governor?,32532,David Schweikert,0.035,0.05,0.02,0.03,Open,https://www.predictit.org/markets/detail/8202,2026-06-24T21:31:03.861562+00:00
-8204,Who will win the 2026 Michigan Republican nomination for governor?,32135,John James,0.855,0.89,0.82,0.86,Open,https://www.predictit.org/markets/detail/8204,2026-06-24T21:31:03.861582+00:00
-8204,Who will win the 2026 Michigan Republican nomination for governor?,33627,Perry Johnson,0.12,0.17,0.07,0.06,Open,https://www.predictit.org/markets/detail/8204,2026-06-24T21:31:03.861587+00:00
-8204,Who will win the 2026 Michigan Republican nomination for governor?,32134,Mike Cox,0.025,0.04,0.01,0.02,Open,https://www.predictit.org/markets/detail/8204,2026-06-24T21:31:03.861590+00:00
-8206,Who will win the 2026 Michigan Democratic nomination for governor?,32145,Jocelyn Benson,0.96,0.98,0.94,0.94,Open,https://www.predictit.org/markets/detail/8206,2026-06-24T21:31:03.861621+00:00
-8206,Who will win the 2026 Michigan Democratic nomination for governor?,32146,Garlin Gilchrist,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8206,2026-06-24T21:31:03.861624+00:00
-8211,Which party will win the 2026 election for governor of Arizona?,32164,Democratic,0.74,0.79,0.69,0.7,Open,https://www.predictit.org/markets/detail/8211,2026-06-24T21:31:03.861627+00:00
-8211,Which party will win the 2026 election for governor of Arizona?,32163,Republican,0.235,0.3,0.17,0.3,Open,https://www.predictit.org/markets/detail/8211,2026-06-24T21:31:03.861631+00:00
-8212,Which party will win the 2026 election for governor of Michigan?,32166,Democratic,0.795,0.8,0.79,0.8,Open,https://www.predictit.org/markets/detail/8212,2026-06-24T21:31:03.861634+00:00
-8212,Which party will win the 2026 election for governor of Michigan?,32165,Republican,0.17,0.18,0.16,0.16,Open,https://www.predictit.org/markets/detail/8212,2026-06-24T21:31:03.861638+00:00
-8212,Which party will win the 2026 election for governor of Michigan?,32356,Independent,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8212,2026-06-24T21:31:03.861641+00:00
-8213,Which party will win the 2026 election for governor of Wisconsin?,32168,Democratic,0.785,0.81,0.76,0.76,Open,https://www.predictit.org/markets/detail/8213,2026-06-24T21:31:03.861644+00:00
-8213,Which party will win the 2026 election for governor of Wisconsin?,32167,Republican,0.22,0.24,0.2,0.24,Open,https://www.predictit.org/markets/detail/8213,2026-06-24T21:31:03.861648+00:00
-8214,Which party will win the 2026 election for governor of Kansas?,32169,Republican,0.72,0.79,0.65,0.64,Open,https://www.predictit.org/markets/detail/8214,2026-06-24T21:31:03.861653+00:00
-8215,Which party will win the 2026 election for governor of New York?,32172,Democratic,0.95,0.96,0.94,0.96,Open,https://www.predictit.org/markets/detail/8215,2026-06-24T21:31:03.861659+00:00
-8215,Which party will win the 2026 election for governor of New York?,32171,Republican,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8215,2026-06-24T21:31:03.861663+00:00
-8228,Which party will win the 2026 US Senate election in Florida?,32195,Republican,0.845,0.86,0.83,0.83,Open,https://www.predictit.org/markets/detail/8228,2026-06-24T21:31:03.861673+00:00
-8228,Which party will win the 2026 US Senate election in Florida?,32196,Democratic,0.175,0.18,0.17,0.17,Open,https://www.predictit.org/markets/detail/8228,2026-06-24T21:31:03.861676+00:00
-8243,Who will win the 2026 Minnesota Democratic Senate nomination?,32287,Peggy Flanagan,0.825,0.88,0.77,0.88,Open,https://www.predictit.org/markets/detail/8243,2026-06-24T21:31:03.861695+00:00
-8243,Who will win the 2026 Minnesota Democratic Senate nomination?,32286,Angie Craig,0.195,0.25,0.14,0.14,Open,https://www.predictit.org/markets/detail/8243,2026-06-24T21:31:03.861698+00:00
-8245,Who will win the 2026 election for governor of Alaska?,32302,Bernadette Wilson,0.265,0.29,0.24,0.24,Open,https://www.predictit.org/markets/detail/8245,2026-06-24T21:31:03.861704+00:00
-8245,Who will win the 2026 election for governor of Alaska?,32298,Click Bishop,0.07,0.08,0.06,0.08,Open,https://www.predictit.org/markets/detail/8245,2026-06-24T21:31:03.861707+00:00
-8245,Who will win the 2026 election for governor of Alaska?,32299,Nancy Dahlstrom,0.07,0.1,0.04,0.04,Open,https://www.predictit.org/markets/detail/8245,2026-06-24T21:31:03.861711+00:00
-8245,Who will win the 2026 election for governor of Alaska?,32312,Shelley Hughes,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8245,2026-06-24T21:31:03.861714+00:00
-8246,Who will be the next Supreme Court nominee?,32307,Andrew Oldham,0.23,0.28,0.18,0.17,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861728+00:00
-8246,Who will be the next Supreme Court nominee?,32303,James Ho,0.115,0.15,0.08,0.15,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861732+00:00
-8246,Who will be the next Supreme Court nominee?,32304,Amul Thapar,0.1,0.12,0.08,0.11,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861735+00:00
-8246,Who will be the next Supreme Court nominee?,32308,Aileen Cannon,0.065,0.09,0.04,0.09,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861738+00:00
-8246,Who will be the next Supreme Court nominee?,32309,Emil Bove,0.1,0.12,0.08,0.08,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861741+00:00
-8246,Who will be the next Supreme Court nominee?,32305,Neomi Rao,0.045,0.06,0.03,0.06,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861744+00:00
-8246,Who will be the next Supreme Court nominee?,32310,Mike Lee,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861747+00:00
-8246,Who will be the next Supreme Court nominee?,33695,Ted Cruz,0.09,0.15,0.03,0.04,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861751+00:00
-8246,Who will be the next Supreme Court nominee?,32306,Kyle Duncan,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8246,2026-06-24T21:31:03.861756+00:00
-8248,Who will win the 2026 Tennessee Republican nomination for governor?,32323,Marsha Blackburn,0.925,0.96,0.89,0.97,Open,https://www.predictit.org/markets/detail/8248,2026-06-24T21:31:03.861761+00:00
-8248,Who will win the 2026 Tennessee Republican nomination for governor?,32324,John Rose,0.06,0.09,0.03,0.09,Open,https://www.predictit.org/markets/detail/8248,2026-06-24T21:31:03.861764+00:00
-8271,Which party will win the 2026 US Senate election in Alaska?,32430,Democratic,0.575,0.6,0.55,0.55,Open,https://www.predictit.org/markets/detail/8271,2026-06-24T21:31:03.861767+00:00
-8271,Which party will win the 2026 US Senate election in Alaska?,32429,Republican,0.435,0.46,0.41,0.41,Open,https://www.predictit.org/markets/detail/8271,2026-06-24T21:31:03.861770+00:00
-8274,Which party will win the 2026 US Senate election in Iowa?,32442,Republican,0.605,0.62,0.59,0.63,Open,https://www.predictit.org/markets/detail/8274,2026-06-24T21:31:03.861776+00:00
-8274,Which party will win the 2026 US Senate election in Iowa?,32443,Democratic,0.39,0.4,0.38,0.39,Open,https://www.predictit.org/markets/detail/8274,2026-06-24T21:31:03.861780+00:00
-8278,Will Trump pardon Ghislaine Maxwell or commute her sentence before July 2026?,32456,Will Trump pardon Ghislaine Maxwell or commute her sentence before July 2026?,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8278,2026-06-24T21:31:03.861783+00:00
-8294,Who will win the 2026 Wisconsin Democratic nomination for governor?,32529,Sara Rodriguez,0.43,0.45,0.41,0.41,Open,https://www.predictit.org/markets/detail/8294,2026-06-24T21:31:03.861786+00:00
-8294,Who will win the 2026 Wisconsin Democratic nomination for governor?,32531,Kelda Roys,0.02,0.03,0.01,0.04,Open,https://www.predictit.org/markets/detail/8294,2026-06-24T21:31:03.861797+00:00
-8294,Who will win the 2026 Wisconsin Democratic nomination for governor?,32533,Missy Hughes,0.015,0.02,0.01,0.03,Open,https://www.predictit.org/markets/detail/8294,2026-06-24T21:31:03.861800+00:00
-8297,Which party will win the 2026 election for governor of Minnesota?,32554,Democratic,0.925,0.96,0.89,0.96,Open,https://www.predictit.org/markets/detail/8297,2026-06-24T21:31:03.861806+00:00
-8297,Which party will win the 2026 election for governor of Minnesota?,32553,Republican,0.075,0.09,0.06,0.06,Open,https://www.predictit.org/markets/detail/8297,2026-06-24T21:31:03.861809+00:00
-8298,Who will win the 2026 Minnesota Republican nomination for governor?,33168,Kendall Qualls,0.49,0.5,0.48,0.49,Open,https://www.predictit.org/markets/detail/8298,2026-06-24T21:31:03.861813+00:00
-8298,Who will win the 2026 Minnesota Republican nomination for governor?,32559,Lisa Demuth,0.26,0.27,0.25,0.26,Open,https://www.predictit.org/markets/detail/8298,2026-06-24T21:31:03.861816+00:00
-8298,Who will win the 2026 Minnesota Republican nomination for governor?,32558,Mike Lindell,0.22,0.24,0.2,0.2,Open,https://www.predictit.org/markets/detail/8298,2026-06-24T21:31:03.861819+00:00
-8345,Will Mike Johnson remain Speaker of the House through the 119th Congress?,32831,Will Mike Johnson remain Speaker of the House through the 119th Congress?,0.865,0.87,0.86,0.86,Open,https://www.predictit.org/markets/detail/8345,2026-06-24T21:31:03.861840+00:00
-8349,Will Chuck Schumer remain the Democratic Leader through the 119th Congress?,32854,Will Chuck Schumer remain the Democratic Leader through the 119th Congress?,0.895,0.9,0.89,0.9,Open,https://www.predictit.org/markets/detail/8349,2026-06-24T21:31:03.861843+00:00
-8351,Who will win the 2026 New Hampshire Republican Senate nomination?,32861,John Sununu,0.945,0.96,0.93,0.95,Open,https://www.predictit.org/markets/detail/8351,2026-06-24T21:31:03.861847+00:00
-8351,Who will win the 2026 New Hampshire Republican Senate nomination?,32860,Scott Brown,0.05,0.06,0.04,0.05,Open,https://www.predictit.org/markets/detail/8351,2026-06-24T21:31:03.861850+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32893,JD Vance,0.45,0.48,0.42,0.45,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861854+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32894,Marco Rubio,0.275,0.28,0.27,0.27,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861857+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32896,Brian Kemp,0.03,0.04,0.02,0.04,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861862+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32897,Ron DeSantis,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861865+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32898,M. Taylor Greene,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861869+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32913,Nikki Haley,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861872+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32895,Kristi Noem,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861875+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32912,Tulsi Gabbard,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861878+00:00
-8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32914,Ted Cruz,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8357,2026-06-24T21:31:03.861882+00:00
-8359,Who will win the 2026 Massachusetts Democratic Senate nomination?,32909,Ed Markey,0.8,0.82,0.78,0.89,Open,https://www.predictit.org/markets/detail/8359,2026-06-24T21:31:03.861885+00:00
-8359,Who will win the 2026 Massachusetts Democratic Senate nomination?,32910,Seth Moulton,0.17,0.24,0.1,0.11,Open,https://www.predictit.org/markets/detail/8359,2026-06-24T21:31:03.861888+00:00
-8363,Which office will AOC announce a run for by the end of 2027?,32930,Senate,0.485,0.5,0.47,0.5,Open,https://www.predictit.org/markets/detail/8363,2026-06-24T21:31:03.861896+00:00
-8363,Which office will AOC announce a run for by the end of 2027?,32929,President,0.41,0.44,0.38,0.38,Open,https://www.predictit.org/markets/detail/8363,2026-06-24T21:31:03.861901+00:00
-8370,Who will be elected Los Angeles mayor in 2026?,32979,Karen Bass,0.585,0.6,0.57,0.6,Open,https://www.predictit.org/markets/detail/8370,2026-06-24T21:31:03.861905+00:00
-8370,Who will be elected Los Angeles mayor in 2026?,34085,Nithya Raman,0.395,0.4,0.39,0.4,Open,https://www.predictit.org/markets/detail/8370,2026-06-24T21:31:03.861908+00:00
-8370,Who will be elected Los Angeles mayor in 2026?,33938,Spencer Pratt,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8370,2026-06-24T21:31:03.861913+00:00
-8373,Who will win the 2026 Peruvian presidential election?,32988,Keiko Fujimori,0.98,0.99,0.97,0.99,Open,https://www.predictit.org/markets/detail/8373,2026-06-24T21:31:03.861933+00:00
-8374,Who will win the 2026 Florida Republican nomination for governor?,33000,Byron Donalds,0.95,0.96,0.94,0.97,Open,https://www.predictit.org/markets/detail/8374,2026-06-24T21:31:03.861979+00:00
-8374,Who will win the 2026 Florida Republican nomination for governor?,33002,James Fishback,0.065,0.07,0.06,0.06,Open,https://www.predictit.org/markets/detail/8374,2026-06-24T21:31:03.861983+00:00
-8375,Which party will win the 2026 US Senate election in South Carolina?,33005,Republican,0.86,0.87,0.85,0.86,Open,https://www.predictit.org/markets/detail/8375,2026-06-24T21:31:03.861995+00:00
-8375,Which party will win the 2026 US Senate election in South Carolina?,33006,Democratic,0.16,0.2,0.12,0.17,Open,https://www.predictit.org/markets/detail/8375,2026-06-24T21:31:03.861999+00:00
-8376,Which party will win the 2026 US Senate election in South Dakota?,33007,Republican,0.925,0.94,0.91,0.91,Open,https://www.predictit.org/markets/detail/8376,2026-06-24T21:31:03.862002+00:00
-8376,Which party will win the 2026 US Senate election in South Dakota?,33008,Democratic,0.06,0.09,0.03,0.09,Open,https://www.predictit.org/markets/detail/8376,2026-06-24T21:31:03.862005+00:00
-8377,Which party will win the 2026 US Senate election in Montana?,33009,Republican,0.86,0.9,0.82,0.88,Open,https://www.predictit.org/markets/detail/8377,2026-06-24T21:31:03.862009+00:00
-8377,Which party will win the 2026 US Senate election in Montana?,33519,Independent,0.16,0.2,0.12,0.11,Open,https://www.predictit.org/markets/detail/8377,2026-06-24T21:31:03.862012+00:00
-8377,Which party will win the 2026 US Senate election in Montana?,33010,Democratic,0.02,0.03,0.01,0.03,Open,https://www.predictit.org/markets/detail/8377,2026-06-24T21:31:03.862015+00:00
-8378,Which party will win the 2026 election for governor of Iowa?,33012,Democratic,0.695,0.74,0.65,0.65,Open,https://www.predictit.org/markets/detail/8378,2026-06-24T21:31:03.862018+00:00
-8378,Which party will win the 2026 election for governor of Iowa?,33011,Republican,0.335,0.38,0.29,0.36,Open,https://www.predictit.org/markets/detail/8378,2026-06-24T21:31:03.862023+00:00
-8381,Which party will win the 2026 US Senate election in Massachusetts?,33033,Democratic,0.965,0.97,0.96,0.95,Open,https://www.predictit.org/markets/detail/8381,2026-06-24T21:31:03.862027+00:00
-8381,Which party will win the 2026 US Senate election in Massachusetts?,33032,Republican,0.035,0.04,0.03,0.05,Open,https://www.predictit.org/markets/detail/8381,2026-06-24T21:31:03.862030+00:00
-8382,Which party will win the 2026 US Senate election in Rhode Island?,33035,Democratic,0.965,0.97,0.96,0.97,Open,https://www.predictit.org/markets/detail/8382,2026-06-24T21:31:03.862033+00:00
-8382,Which party will win the 2026 US Senate election in Rhode Island?,33034,Republican,0.035,0.05,0.02,0.03,Open,https://www.predictit.org/markets/detail/8382,2026-06-24T21:31:03.862036+00:00
-8383,Which party will win the 2026 US Senate election in New Jersey?,33037,Democratic,0.91,0.96,0.86,0.97,Open,https://www.predictit.org/markets/detail/8383,2026-06-24T21:31:03.862040+00:00
-8383,Which party will win the 2026 US Senate election in New Jersey?,33036,Republican,0.035,0.04,0.03,0.05,Open,https://www.predictit.org/markets/detail/8383,2026-06-24T21:31:03.862043+00:00
-8384,Which party will win the 2026 US Senate election in Alabama?,33038,Republican,0.965,0.98,0.95,0.97,Open,https://www.predictit.org/markets/detail/8384,2026-06-24T21:31:03.862048+00:00
-8384,Which party will win the 2026 US Senate election in Alabama?,33039,Democratic,0.02,0.03,0.01,0.03,Open,https://www.predictit.org/markets/detail/8384,2026-06-24T21:31:03.862052+00:00
-8385,Which party will win the 2026 US Senate election in Tennessee?,33040,Republican,0.935,0.95,0.92,0.95,Open,https://www.predictit.org/markets/detail/8385,2026-06-24T21:31:03.862055+00:00
-8385,Which party will win the 2026 US Senate election in Tennessee?,33041,Democratic,0.07,0.09,0.05,0.09,Open,https://www.predictit.org/markets/detail/8385,2026-06-24T21:31:03.862060+00:00
-8386,Which party will win the 2026 US Senate election in Kentucky?,33042,Republican,0.915,0.95,0.88,0.95,Open,https://www.predictit.org/markets/detail/8386,2026-06-24T21:31:03.862064+00:00
-8386,Which party will win the 2026 US Senate election in Kentucky?,33043,Democratic,0.065,0.08,0.05,0.06,Open,https://www.predictit.org/markets/detail/8386,2026-06-24T21:31:03.862069+00:00
-8387,Which party will win the 2026 US Senate election in West Virginia?,33044,Republican,0.96,0.98,0.94,0.95,Open,https://www.predictit.org/markets/detail/8387,2026-06-24T21:31:03.862072+00:00
-8387,Which party will win the 2026 US Senate election in West Virginia?,33045,Democratic,0.05,0.07,0.03,0.03,Open,https://www.predictit.org/markets/detail/8387,2026-06-24T21:31:03.862075+00:00
-8388,Which party will win the 2026 US Senate election in Mississippi?,33046,Republican,0.94,0.96,0.92,0.92,Open,https://www.predictit.org/markets/detail/8388,2026-06-24T21:31:03.862079+00:00
-8388,Which party will win the 2026 US Senate election in Mississippi?,33047,Democratic,0.085,0.1,0.07,0.07,Open,https://www.predictit.org/markets/detail/8388,2026-06-24T21:31:03.862084+00:00
-8389,Which party will win the 2026 US Senate election in Louisiana?,33048,Republican,0.935,0.94,0.93,0.94,Open,https://www.predictit.org/markets/detail/8389,2026-06-24T21:31:03.862087+00:00
-8389,Which party will win the 2026 US Senate election in Louisiana?,33049,Democratic,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/8389,2026-06-24T21:31:03.862090+00:00
-8390,Which party will win the 2026 US Senate election in Arkansas?,33050,Republican,0.905,0.92,0.89,0.9,Open,https://www.predictit.org/markets/detail/8390,2026-06-24T21:31:03.862094+00:00
-8390,Which party will win the 2026 US Senate election in Arkansas?,33051,Democratic,0.085,0.11,0.06,0.08,Open,https://www.predictit.org/markets/detail/8390,2026-06-24T21:31:03.862099+00:00
-8391,Which party will win the 2026 US Senate election in Oklahoma?,33052,Republican,0.965,0.97,0.96,0.96,Open,https://www.predictit.org/markets/detail/8391,2026-06-24T21:31:03.862102+00:00
-8391,Which party will win the 2026 US Senate election in Oklahoma?,33053,Democratic,0.055,0.09,0.02,0.08,Open,https://www.predictit.org/markets/detail/8391,2026-06-24T21:31:03.862106+00:00
-8392,Which party will win the 2026 US Senate election in Illinois?,33055,Democratic,0.965,0.98,0.95,0.97,Open,https://www.predictit.org/markets/detail/8392,2026-06-24T21:31:03.862109+00:00
-8392,Which party will win the 2026 US Senate election in Illinois?,33054,Republican,0.03,0.04,0.02,0.03,Open,https://www.predictit.org/markets/detail/8392,2026-06-24T21:31:03.862112+00:00
-8393,Who will win the 2026 Louisiana Republican Senate nomination?,33061,Julia Letlow,0.83,0.86,0.8,0.85,Open,https://www.predictit.org/markets/detail/8393,2026-06-24T21:31:03.862115+00:00
-8393,Who will win the 2026 Louisiana Republican Senate nomination?,33058,John Fleming,0.155,0.19,0.12,0.39,Open,https://www.predictit.org/markets/detail/8393,2026-06-24T21:31:03.862119+00:00
-8395,Which party will win the 2026 US Senate election in Oregon?,33064,Democratic,0.96,0.97,0.95,0.96,Open,https://www.predictit.org/markets/detail/8395,2026-06-24T21:31:03.862134+00:00
-8395,Which party will win the 2026 US Senate election in Oregon?,33063,Republican,0.06,0.08,0.04,0.02,Open,https://www.predictit.org/markets/detail/8395,2026-06-24T21:31:03.862138+00:00
-8396,Which party will win the 2026 US Senate election in Kansas?,33065,Republican,0.83,0.86,0.8,0.8,Open,https://www.predictit.org/markets/detail/8396,2026-06-24T21:31:03.862141+00:00
-8396,Which party will win the 2026 US Senate election in Kansas?,33066,Democratic,0.22,0.24,0.2,0.23,Open,https://www.predictit.org/markets/detail/8396,2026-06-24T21:31:03.862144+00:00
-8397,Which party will win the 2026 US Senate election in New Mexico?,33068,Democratic,0.97,0.98,0.96,0.98,Open,https://www.predictit.org/markets/detail/8397,2026-06-24T21:31:03.862148+00:00
-8397,Which party will win the 2026 US Senate election in New Mexico?,33067,Republican,0.03,0.04,0.02,0.03,Open,https://www.predictit.org/markets/detail/8397,2026-06-24T21:31:03.862151+00:00
-8398,Which party will win the 2026 US Senate election in Colorado?,33070,Democratic,0.965,0.97,0.96,0.96,Open,https://www.predictit.org/markets/detail/8398,2026-06-24T21:31:03.862154+00:00
-8398,Which party will win the 2026 US Senate election in Colorado?,33069,Republican,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8398,2026-06-24T21:31:03.862157+00:00
-8399,Which party will win the 2026 US Senate election in Wyoming?,33071,Republican,0.97,0.98,0.96,0.97,Open,https://www.predictit.org/markets/detail/8399,2026-06-24T21:31:03.862160+00:00
-8399,Which party will win the 2026 US Senate election in Wyoming?,33072,Democratic,0.03,0.04,0.02,0.03,Open,https://www.predictit.org/markets/detail/8399,2026-06-24T21:31:03.862165+00:00
-8400,Which party will win the 2026 US Senate election in Idaho?,33073,Republican,0.97,0.98,0.96,0.97,Open,https://www.predictit.org/markets/detail/8400,2026-06-24T21:31:03.862169+00:00
-8400,Which party will win the 2026 US Senate election in Idaho?,33074,Democratic,0.03,0.04,0.02,0.02,Open,https://www.predictit.org/markets/detail/8400,2026-06-24T21:31:03.862172+00:00
-8401,Which party will win the 2026 election for governor of Connecticut?,33076,Democratic,0.955,0.97,0.94,0.96,Open,https://www.predictit.org/markets/detail/8401,2026-06-24T21:31:03.862175+00:00
-8401,Which party will win the 2026 election for governor of Connecticut?,33075,Republican,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8401,2026-06-24T21:31:03.862178+00:00
-8402,Which party will win the 2026 election for governor of Vermont?,33077,Republican,0.83,0.84,0.82,0.83,Open,https://www.predictit.org/markets/detail/8402,2026-06-24T21:31:03.862182+00:00
-8402,Which party will win the 2026 election for governor of Vermont?,33078,Democratic,0.15,0.17,0.13,0.17,Open,https://www.predictit.org/markets/detail/8402,2026-06-24T21:31:03.862185+00:00
-8403,Which party will win the 2026 election for governor of Massachusetts?,33080,Democratic,0.945,0.95,0.94,0.95,Open,https://www.predictit.org/markets/detail/8403,2026-06-24T21:31:03.862188+00:00
-8403,Which party will win the 2026 election for governor of Massachusetts?,33079,Republican,0.04,0.06,0.02,0.05,Open,https://www.predictit.org/markets/detail/8403,2026-06-24T21:31:03.862191+00:00
-8404,Which party will win the 2026 election for governor of Rhode Island?,33082,Democratic,0.905,0.97,0.84,0.81,Open,https://www.predictit.org/markets/detail/8404,2026-06-24T21:31:03.862196+00:00
-8407,Which party will win the 2026 US Senate election in Delaware?,33096,Democratic,0.96,0.97,0.95,0.96,Open,https://www.predictit.org/markets/detail/8407,2026-06-24T21:31:03.862204+00:00
-8410,Which party will win the 2026 election for governor of Maryland?,33100,Democratic,0.98,0.99,0.97,0.98,Open,https://www.predictit.org/markets/detail/8410,2026-06-24T21:31:03.862211+00:00
-8410,Which party will win the 2026 election for governor of Maryland?,33099,Republican,0.04,0.05,0.03,0.03,Open,https://www.predictit.org/markets/detail/8410,2026-06-24T21:31:03.862214+00:00
-8412,Which party will win the 2026 election for governor of Pennsylvania?,33111,Democratic,0.925,0.96,0.89,0.96,Open,https://www.predictit.org/markets/detail/8412,2026-06-24T21:31:03.862217+00:00
-8412,Which party will win the 2026 election for governor of Pennsylvania?,33110,Republican,0.08,0.1,0.06,0.06,Open,https://www.predictit.org/markets/detail/8412,2026-06-24T21:31:03.862220+00:00
-8413,Which party will win the 2026 election for governor of Florida?,33112,Republican,0.8,0.82,0.78,0.82,Open,https://www.predictit.org/markets/detail/8413,2026-06-24T21:31:03.862224+00:00
-8413,Which party will win the 2026 election for governor of Florida?,33113,Democratic,0.21,0.25,0.17,0.2,Open,https://www.predictit.org/markets/detail/8413,2026-06-24T21:31:03.862227+00:00
-8414,Will SCOTUS side with Trump on birthright citizenship?,33114,Will SCOTUS side with Trump on birthright citizenship?,0.08,0.09,0.07,0.09,Open,https://www.predictit.org/markets/detail/8414,2026-06-24T21:31:03.862230+00:00
-8416,Which party will win the 2026 election for governor of Georgia?,33120,Democratic,0.525,0.53,0.52,0.53,Open,https://www.predictit.org/markets/detail/8416,2026-06-24T21:31:03.862235+00:00
-8416,Which party will win the 2026 election for governor of Georgia?,33119,Republican,0.5,0.52,0.48,0.52,Open,https://www.predictit.org/markets/detail/8416,2026-06-24T21:31:03.862239+00:00
-8418,Which party will win the 2026 election for governor of Texas?,33123,Republican,0.915,0.93,0.9,0.9,Open,https://www.predictit.org/markets/detail/8418,2026-06-24T21:31:03.862242+00:00
-8418,Which party will win the 2026 election for governor of Texas?,33124,Democratic,0.105,0.13,0.08,0.13,Open,https://www.predictit.org/markets/detail/8418,2026-06-24T21:31:03.862247+00:00
-8419,Which party will win the 2026 election for governor of Nevada?,33126,Democratic,0.6,0.61,0.59,0.59,Open,https://www.predictit.org/markets/detail/8419,2026-06-24T21:31:03.862250+00:00
-8441,Which party will win the 2026 election for governor of Ohio?,33213,Democratic,0.52,0.54,0.5,0.53,Open,https://www.predictit.org/markets/detail/8441,2026-06-24T21:31:03.862259+00:00
-8441,Which party will win the 2026 election for governor of Ohio?,33212,Republican,0.505,0.51,0.5,0.51,Open,https://www.predictit.org/markets/detail/8441,2026-06-24T21:31:03.862264+00:00
-8442,Will the House pass any articles of impeachment by the end of 2026?,33214,Will the House pass any articles of impeachment by the end of 2026?,0.19,0.2,0.18,0.18,Open,https://www.predictit.org/markets/detail/8442,2026-06-24T21:31:03.862267+00:00
-8447,Will Missouri pass an anti-redistricting referendum in 2026?,33239,Will Missouri pass an anti-redistricting referendum in 2026?,0.57,0.59,0.55,0.6,Open,https://www.predictit.org/markets/detail/8447,2026-06-24T21:31:03.862309+00:00
-8448,Which party will win the 2026 election for governor of Alabama?,33240,Republican,0.935,0.95,0.92,0.93,Open,https://www.predictit.org/markets/detail/8448,2026-06-24T21:31:03.862312+00:00
-8448,Which party will win the 2026 election for governor of Alabama?,33241,Democratic,0.095,0.1,0.09,0.09,Open,https://www.predictit.org/markets/detail/8448,2026-06-24T21:31:03.862317+00:00
-8452,Who will win the 2026 Minnesota Republican Senate nomination?,33250,Michele Tafoya,0.895,0.94,0.85,0.82,Open,https://www.predictit.org/markets/detail/8452,2026-06-24T21:31:03.862323+00:00
-8452,Who will win the 2026 Minnesota Republican Senate nomination?,33247,Adam Schwarze,0.075,0.13,0.02,0.13,Open,https://www.predictit.org/markets/detail/8452,2026-06-24T21:31:03.862327+00:00
-8452,Who will win the 2026 Minnesota Republican Senate nomination?,33249,Royce White,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8452,2026-06-24T21:31:03.862330+00:00
-8452,Who will win the 2026 Minnesota Republican Senate nomination?,33248,Tom Weiler,0.02,0.03,0.01,0.02,Open,https://www.predictit.org/markets/detail/8452,2026-06-24T21:31:03.862333+00:00
-8457,Will Trump leave office early?,33280,Will Trump leave office early?,0.475,0.48,0.47,0.47,Open,https://www.predictit.org/markets/detail/8457,2026-06-24T21:31:03.862339+00:00
-8460,Which party will win the 2026 election for governor of Colorado?,33289,Democratic,0.935,0.97,0.9,0.97,Open,https://www.predictit.org/markets/detail/8460,2026-06-24T21:31:03.862342+00:00
-8460,Which party will win the 2026 election for governor of Colorado?,33288,Republican,0.065,0.1,0.03,0.12,Open,https://www.predictit.org/markets/detail/8460,2026-06-24T21:31:03.862345+00:00
-8461,When will the House impeach Trump again?,33290,Before 2027,0.06,0.07,0.05,0.07,Open,https://www.predictit.org/markets/detail/8461,2026-06-24T21:31:03.862350+00:00
-8461,When will the House impeach Trump again?,33293,1/1/27 -6/30/27,0.39,0.43,0.35,0.44,Open,https://www.predictit.org/markets/detail/8461,2026-06-24T21:31:03.862357+00:00
-8461,When will the House impeach Trump again?,33291,7/1/27-12/31/27,0.15,0.16,0.14,0.14,Open,https://www.predictit.org/markets/detail/8461,2026-06-24T21:31:03.862360+00:00
-8461,When will the House impeach Trump again?,33294,1/1/28 -6/30/28,0.075,0.08,0.07,0.07,Open,https://www.predictit.org/markets/detail/8461,2026-06-24T21:31:03.862363+00:00
-8461,When will the House impeach Trump again?,33292,7/1/28-1/20/29,0.035,0.04,0.03,0.05,Open,https://www.predictit.org/markets/detail/8461,2026-06-24T21:31:03.862366+00:00
-8461,When will the House impeach Trump again?,33311,Not by 1/20/29,0.295,0.34,0.25,0.34,Open,https://www.predictit.org/markets/detail/8461,2026-06-24T21:31:03.862369+00:00
-8462,Who will win the 2026 Colorado Democratic nomination for governor?,33295,Michael Bennet,0.725,0.73,0.72,0.73,Open,https://www.predictit.org/markets/detail/8462,2026-06-24T21:31:03.862373+00:00
-8462,Who will win the 2026 Colorado Democratic nomination for governor?,33296,Phil Weiser,0.275,0.28,0.27,0.16,Open,https://www.predictit.org/markets/detail/8462,2026-06-24T21:31:03.862376+00:00
-8463,Who will win the 2026 Colorado Republican nomination for governor?,33298,Scott Bottoms,0.04,0.05,0.03,0.03,Open,https://www.predictit.org/markets/detail/8463,2026-06-24T21:31:03.862386+00:00
-8465,Who will win the 2026 Wyoming Republican Senate nomination?,33325,Harriet Hageman,0.955,0.98,0.93,0.98,Open,https://www.predictit.org/markets/detail/8465,2026-06-24T21:31:03.862392+00:00
-8474,Which party will win the 2026 election for governor of New Mexico?,33335,Democratic,0.93,0.94,0.92,0.94,Open,https://www.predictit.org/markets/detail/8474,2026-06-24T21:31:03.862409+00:00
-8479,How many vetoes will Trump issue in 2026?,33361,0 vetoes,0.325,0.36,0.29,0.3,Open,https://www.predictit.org/markets/detail/8479,2026-06-24T21:31:03.862419+00:00
-8479,How many vetoes will Trump issue in 2026?,33362,1 veto,0.32,0.37,0.27,0.28,Open,https://www.predictit.org/markets/detail/8479,2026-06-24T21:31:03.862423+00:00
-8479,How many vetoes will Trump issue in 2026?,33360,2 vetoes,0.13,0.16,0.1,0.11,Open,https://www.predictit.org/markets/detail/8479,2026-06-24T21:31:03.862426+00:00
-8479,How many vetoes will Trump issue in 2026?,33359,3 vetoes,0.155,0.17,0.14,0.16,Open,https://www.predictit.org/markets/detail/8479,2026-06-24T21:31:03.862429+00:00
-8479,How many vetoes will Trump issue in 2026?,33358,4 or more  vetoes,0.165,0.17,0.16,0.16,Open,https://www.predictit.org/markets/detail/8479,2026-06-24T21:31:03.862434+00:00
-8483,Who will win the 2026 Minnesota Democratic nomination for governor?,33387,Amy Klobuchar,0.975,0.99,0.96,0.97,Open,https://www.predictit.org/markets/detail/8483,2026-06-24T21:31:03.862443+00:00
-8483,Who will win the 2026 Minnesota Democratic nomination for governor?,33388,Steve Simon,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8483,2026-06-24T21:31:03.862451+00:00
-8486,Will Trump visit Greenland in 2026?,33391,Will Trump visit Greenland in 2026?,0.13,0.14,0.12,0.06,Open,https://www.predictit.org/markets/detail/8486,2026-06-24T21:31:03.862458+00:00
-8488,Will any country announce that it is leaving NATO in 2026?,33394,Will any country announce that it is leaving NATO in 2026?,0.145,0.17,0.12,0.12,Open,https://www.predictit.org/markets/detail/8488,2026-06-24T21:31:03.862461+00:00
-8491,Will the US purchase and annex any land in Greenland in 2026?,33405,Will the US purchase and annex any land in Greenland in 2026?,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/8491,2026-06-24T21:31:03.862464+00:00
-8493,Will the US purchase Greenland in 2026?,33416,Will the US purchase Greenland in 2026?,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8493,2026-06-24T21:31:03.862468+00:00
-8494,Will Greenland hold an independence referendum in 2026?,33417,Will Greenland hold an independence referendum in 2026?,0.06,0.07,0.05,0.05,Open,https://www.predictit.org/markets/detail/8494,2026-06-24T21:31:03.862471+00:00
-8495,Who will win the 2026 Colombian presidential election?,33425,A. de la Espriella,0.93,0.99,0.87,0.99,Open,https://www.predictit.org/markets/detail/8495,2026-06-24T21:31:03.862474+00:00
-8515,Will SCOTUS strike down transgender sports bans?,33477,Will SCOTUS strike down transgender sports bans?,0.045,0.06,0.03,0.07,Open,https://www.predictit.org/markets/detail/8515,2026-06-24T21:31:03.862525+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33505,3 votes,0.175,0.21,0.14,0.2,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862533+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33506,4 votes,0.125,0.14,0.11,0.15,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862537+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33507,5 votes,0.09,0.14,0.04,0.15,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862540+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33501,6 votes,0.1,0.14,0.06,0.14,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862543+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33504,7 votes,0.06,0.09,0.03,0.11,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862546+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33500,8 votes,0.08,0.11,0.05,0.15,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862551+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33508,9 votes,0.065,0.08,0.05,0.05,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862554+00:00
-8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33509,10 or more votes,0.115,0.19,0.04,0.18,Open,https://www.predictit.org/markets/detail/8521,2026-06-24T21:31:03.862557+00:00
-8527,Will SCOTUS let Trump fire Lisa Cook?,33541,Will SCOTUS let Trump fire Lisa Cook?,0.05,0.08,0.02,0.03,Open,https://www.predictit.org/markets/detail/8527,2026-06-24T21:31:03.862561+00:00
-8533,Which of these 10 Asian leaders will leave office next?,33578,Recep Tayyip Erdoğan,0.225,0.3,0.15,0.15,Open,https://www.predictit.org/markets/detail/8533,2026-06-24T21:31:03.862572+00:00
-8533,Which of these 10 Asian leaders will leave office next?,33571,Sanae Takaichi,0.08,0.1,0.06,0.13,Open,https://www.predictit.org/markets/detail/8533,2026-06-24T21:31:03.862576+00:00
-8533,Which of these 10 Asian leaders will leave office next?,33570,Xi Jinping,0.065,0.09,0.04,0.04,Open,https://www.predictit.org/markets/detail/8533,2026-06-24T21:31:03.862579+00:00
-8533,Which of these 10 Asian leaders will leave office next?,33579,Kim Jong Un,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8533,2026-06-24T21:31:03.862586+00:00
-8533,Which of these 10 Asian leaders will leave office next?,33573,Narendra Modi,0.04,0.06,0.02,0.02,Open,https://www.predictit.org/markets/detail/8533,2026-06-24T21:31:03.862590+00:00
-8533,Which of these 10 Asian leaders will leave office next?,33575,M. b. Z. Al Nahyan,0.05,0.08,0.02,0.02,Open,https://www.predictit.org/markets/detail/8533,2026-06-24T21:31:03.862593+00:00
-8540,Will Stephen Miller leave office in 2026?,33611,Will Stephen Miller leave office in 2026?,0.27,0.28,0.26,0.26,Open,https://www.predictit.org/markets/detail/8540,2026-06-24T21:31:03.862596+00:00
-8542,Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?,33613,Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?,0.95,0.99,0.91,0.99,Open,https://www.predictit.org/markets/detail/8542,2026-06-24T21:31:03.862604+00:00
-8544,Who will win the 2026 Brazilian presidential election?,33625,Romeu Zema,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8544,2026-06-24T21:31:03.862613+00:00
-8549,Will Trump pardon Elon Musk in 2026?,33641,Will Trump pardon Elon Musk in 2026?,0.065,0.09,0.04,0.05,Open,https://www.predictit.org/markets/detail/8549,2026-06-24T21:31:03.862619+00:00
-8554,Will Kash Patel leave office before July?,33663,Will Kash Patel leave office before July?,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8554,2026-06-24T21:31:03.862622+00:00
-8559,Will Trump pardon Nicolás Maduro or commute his sentence in 2026?,33677,Will Trump pardon Nicolás Maduro or commute his sentence in 2026?,0.045,0.08,0.01,0.01,Open,https://www.predictit.org/markets/detail/8559,2026-06-24T21:31:03.862625+00:00
-8582,Will the Senate pass the SAVE Act before the Midterms?,33782,Will the Senate pass the SAVE Act before the Midterms?,0.165,0.17,0.16,0.17,Open,https://www.predictit.org/markets/detail/8582,2026-06-24T21:31:03.862635+00:00
-8587,Who will replace Christine Lagarde at the European Central Bank?,33820,P. Hernández de Cos,0.155,0.21,0.1,0.1,Open,https://www.predictit.org/markets/detail/8587,2026-06-24T21:31:03.862645+00:00
-8587,Who will replace Christine Lagarde at the European Central Bank?,33821,Klaas Knot,0.115,0.13,0.1,0.1,Open,https://www.predictit.org/markets/detail/8587,2026-06-24T21:31:03.862648+00:00
-8591,Will Prince Andrew testify publicly before Congress in 2026?,33827,Will Prince Andrew testify publicly before Congress in 2026?,0.055,0.09,0.02,0.03,Open,https://www.predictit.org/markets/detail/8591,2026-06-24T21:31:03.862656+00:00
-8600,What will be the balance of power in Congress after the 2026 election?,33867,"D House, R Senate",0.375,0.38,0.37,0.38,Open,https://www.predictit.org/markets/detail/8600,2026-06-24T21:31:03.862663+00:00
-8600,What will be the balance of power in Congress after the 2026 election?,33866,Dem. House & Senate,0.375,0.38,0.37,0.36,Open,https://www.predictit.org/markets/detail/8600,2026-06-24T21:31:03.862666+00:00
-8600,What will be the balance of power in Congress after the 2026 election?,33868,Rep. House & Senate,0.285,0.29,0.28,0.29,Open,https://www.predictit.org/markets/detail/8600,2026-06-24T21:31:03.862669+00:00
-8600,What will be the balance of power in Congress after the 2026 election?,33869,"R House, D Senate",0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8600,2026-06-24T21:31:03.862672+00:00
-8609,Who will be Prime Minister of the United Kingdom after Keir Starmer?,33902,Andy Burnham,0.97,0.98,0.96,0.96,Open,https://www.predictit.org/markets/detail/8609,2026-06-24T21:31:03.862676+00:00
-8609,Who will be Prime Minister of the United Kingdom after Keir Starmer?,33904,Nigel Farage,0.02,0.03,0.01,0.02,Open,https://www.predictit.org/markets/detail/8609,2026-06-24T21:31:03.862679+00:00
-8609,Who will be Prime Minister of the United Kingdom after Keir Starmer?,33900,Angela Rayner,0.03,0.05,0.01,0.01,Open,https://www.predictit.org/markets/detail/8609,2026-06-24T21:31:03.862682+00:00
-8618,Will Cuba's leader leave office by July 1?,33937,Will Cuba's leader leave office by July 1?,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8618,2026-06-24T21:31:03.862698+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34042,≤47 and ≤217,0.17,0.18,0.16,0.18,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862711+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34046,≤47 and 218-232,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862714+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34047,≤47 and ≥233,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862719+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34043,48-50 and ≤217,0.115,0.18,0.05,0.06,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862723+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34048,48-50 and 218-232,0.165,0.17,0.16,0.17,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862726+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34051,48-50 and 233-247,0.085,0.09,0.08,0.08,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862729+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34044,48-50 and ≥248 ,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862732+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34050,51-53 and ≤232,0.115,0.12,0.11,0.11,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862735+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34045,51-53 and 233-247,0.125,0.13,0.12,0.12,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862738+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34041,51-53 and ≥248 ,0.045,0.07,0.02,0.07,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862742+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34049,≥54 and ≤232,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862745+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34052,≥54 and 233-247,0.02,0.03,0.01,0.02,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862748+00:00
-8635,How many House and Senate seats will Dems control after the 2026 midterms?,34053,≥54 and ≥248,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8635,2026-06-24T21:31:03.862753+00:00
-8640,Will Rubio and Vance both announce a run for President before 2028?,34075,Will Rubio and Vance both announce a run for President before 2028?,0.43,0.45,0.41,0.45,Open,https://www.predictit.org/markets/detail/8640,2026-06-24T21:31:03.862756+00:00
-8643,Who will be the Prime Minister of Israel after the 2026 election?,34096,Benjamin Netanyahu,0.26,0.32,0.2,0.21,Open,https://www.predictit.org/markets/detail/8643,2026-06-24T21:31:03.862765+00:00
-8643,Who will be the Prime Minister of Israel after the 2026 election?,34102,Itamar Ben-Gvir,0.08,0.14,0.02,0.15,Open,https://www.predictit.org/markets/detail/8643,2026-06-24T21:31:03.862773+00:00
-8645,Who will win the 2026 Colorado Democratic Senate nomination?,34109,John Hickenlooper,0.88,0.92,0.84,0.84,Open,https://www.predictit.org/markets/detail/8645,2026-06-24T21:31:03.862793+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34163,Kamala Harris,0.1,0.14,0.06,0.16,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862805+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34168,Gretchen Whitmer,0.065,0.09,0.04,0.09,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862811+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34164,Pete Buttigieg,0.14,0.19,0.09,0.08,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862814+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34165,A. Ocasio-Cortez,0.055,0.09,0.02,0.02,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862822+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34169,Josh Shapiro,0.14,0.19,0.09,0.0,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862825+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34171,Jon Ossoff,0.125,0.19,0.06,0.0,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862828+00:00
-8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34172,Mark Kelly,0.13,0.2,0.06,0.0,Open,https://www.predictit.org/markets/detail/8656,2026-06-24T21:31:03.862832+00:00
-8659,Who will win the 2026 Rhode Island Democratic nomination for governor?,34187,Gina Raimondo,0.06,0.1,0.02,0.02,Open,https://www.predictit.org/markets/detail/8659,2026-06-24T21:31:03.862840+00:00
-8660,Will a law restricting sports trades on prediction markets be enacted in 2026?,34188,Will a law restricting sports trades on prediction markets be enacted in 2026?,0.075,0.1,0.05,0.05,Open,https://www.predictit.org/markets/detail/8660,2026-06-24T21:31:03.862844+00:00
-8668,How many of these Elizabeth Warren endorsees will win Senate primaries?,34241,0,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8668,2026-06-24T21:31:03.862847+00:00
-8668,How many of these Elizabeth Warren endorsees will win Senate primaries?,34243,1,0.195,0.2,0.19,0.19,Open,https://www.predictit.org/markets/detail/8668,2026-06-24T21:31:03.862852+00:00
-8668,How many of these Elizabeth Warren endorsees will win Senate primaries?,34242,3,0.115,0.15,0.08,0.15,Open,https://www.predictit.org/markets/detail/8668,2026-06-24T21:31:03.862859+00:00
-8679,Who will win the 2026 Florida Democratic Senate nomination?,34307,Alexander Vindman,0.975,0.98,0.97,0.97,Open,https://www.predictit.org/markets/detail/8679,2026-06-24T21:31:03.862876+00:00
-8679,Who will win the 2026 Florida Democratic Senate nomination?,34306,Alan Grayson,0.04,0.07,0.01,0.02,Open,https://www.predictit.org/markets/detail/8679,2026-06-24T21:31:03.862879+00:00
-8679,Who will win the 2026 Florida Democratic Senate nomination?,34305,Hector Mujica,0.035,0.06,0.01,0.01,Open,https://www.predictit.org/markets/detail/8679,2026-06-24T21:31:03.862884+00:00
-8693,Will Howard Lutnick leave office before July?,34373,Will Howard Lutnick leave office before July?,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8693,2026-06-24T21:31:03.862900+00:00
-8701,Will the US announce in 2026 it is closing a military base in Germany or Spain?,34429,Will the US announce in 2026 it is closing a military base in Germany or Spain?,0.225,0.23,0.22,0.22,Open,https://www.predictit.org/markets/detail/8701,2026-06-24T21:31:03.862906+00:00
-8702,Who will win in Dan Bilzerian's challenge to Randy Fine in the FL-06 House race?,34431,Dan Bilzerian,0.055,0.08,0.03,0.03,Open,https://www.predictit.org/markets/detail/8702,2026-06-24T21:31:03.862916+00:00
-8705,Will the Pope excommunicate JD Vance before 2028?,34442,Will the Pope excommunicate JD Vance before 2028?,0.09,0.1,0.08,0.08,Open,https://www.predictit.org/markets/detail/8705,2026-06-24T21:31:03.862921+00:00
-8763,Will the President sign a reconciliation bill by July 1?,34680,Will the President sign a reconciliation bill by July 1?,0.945,0.99,0.9,0.86,Open,https://www.predictit.org/markets/detail/8763,2026-06-24T21:31:03.862959+00:00
-8766,Who will win the next French presidential election?,34694,Marine Le Pen,0.11,0.12,0.1,0.12,Open,https://www.predictit.org/markets/detail/8766,2026-06-24T21:31:03.862971+00:00
-8766,Who will win the next French presidential election?,34697,Sébastien Lecornu,0.08,0.09,0.07,0.09,Open,https://www.predictit.org/markets/detail/8766,2026-06-24T21:31:03.862974+00:00
-8766,Who will win the next French presidential election?,34695,Bernard Cazeneuve,0.06,0.1,0.02,0.03,Open,https://www.predictit.org/markets/detail/8766,2026-06-24T21:31:03.862985+00:00
-8766,Who will win the next French presidential election?,34696,Gérald Darmanin,0.06,0.09,0.03,0.01,Open,https://www.predictit.org/markets/detail/8766,2026-06-24T21:31:03.862988+00:00
-8766,Who will win the next French presidential election?,34699,François Bayrou,0.055,0.09,0.02,0.01,Open,https://www.predictit.org/markets/detail/8766,2026-06-24T21:31:03.862991+00:00
-8783,Will Fetterman leave the Democratic Party by Sept. 30?,34761,Will Fetterman leave the Democratic Party by Sept. 30?,0.085,0.11,0.06,0.08,Open,https://www.predictit.org/markets/detail/8783,2026-06-24T21:31:03.863035+00:00
-8788,Which of these 10 European leaders will leave office next?,34798,Keir Starmer,0.965,0.98,0.95,0.97,Open,https://www.predictit.org/markets/detail/8788,2026-06-24T21:31:03.863042+00:00
-8788,Which of these 10 European leaders will leave office next?,34791,Volodymyr Zelenskyy,0.05,0.09,0.01,0.01,Open,https://www.predictit.org/markets/detail/8788,2026-06-24T21:31:03.863046+00:00
-8788,Which of these 10 European leaders will leave office next?,34794,Friedrich Merz,0.04,0.07,0.01,0.01,Open,https://www.predictit.org/markets/detail/8788,2026-06-24T21:31:03.863056+00:00
-8789,Will Keir Starmer remain British prime minister through June?,34801,Will Keir Starmer remain British prime minister through June?,0.985,0.99,0.98,0.99,Open,https://www.predictit.org/markets/detail/8789,2026-06-24T21:31:03.863073+00:00
-8799,Who will win the 2028 Democratic vice presidential nomination?,34824,Gretchen Whitmer,0.225,0.25,0.2,0.25,Open,https://www.predictit.org/markets/detail/8799,2026-06-24T21:31:03.863090+00:00
-8799,Who will win the 2028 Democratic vice presidential nomination?,34822,A. Ocasio-Cortez,0.11,0.16,0.06,0.09,Open,https://www.predictit.org/markets/detail/8799,2026-06-24T21:31:03.863093+00:00
-8799,Who will win the 2028 Democratic vice presidential nomination?,34825,Josh Shapiro,0.115,0.15,0.08,0.08,Open,https://www.predictit.org/markets/detail/8799,2026-06-24T21:31:03.863098+00:00
-8799,Who will win the 2028 Democratic vice presidential nomination?,34821,Pete Buttigieg,0.055,0.06,0.05,0.06,Open,https://www.predictit.org/markets/detail/8799,2026-06-24T21:31:03.863106+00:00
-8800,Who will win the 2028 Republican vice presidential nomination?,34838,Pete Hegseth,0.05,0.09,0.01,0.01,Open,https://www.predictit.org/markets/detail/8800,2026-06-24T21:31:03.863131+00:00
-8800,Who will win the 2028 Republican vice presidential nomination?,34834,Donald Trump Jr.,0.085,0.15,0.02,0.0,Open,https://www.predictit.org/markets/detail/8800,2026-06-24T21:31:03.863144+00:00
-8812,Who will be the next Senate-confirmed DNI?,34926,Aaron Lukas,0.055,0.09,0.02,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-24T21:31:03.863216+00:00
-8812,Who will be the next Senate-confirmed DNI?,34929,Robert O’Brien,0.05,0.08,0.02,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-24T21:31:03.863226+00:00
-8812,Who will be the next Senate-confirmed DNI?,34930,Chris Stewart,0.045,0.07,0.02,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-24T21:31:03.863229+00:00
-8812,Who will be the next Senate-confirmed DNI?,34978,Bill Pulte,0.04,0.07,0.01,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-24T21:31:03.863235+00:00
-8818,Will Trump's Anti-Weaponization Fund begin payouts this year?,34953,Will Trump's Anti-Weaponization Fund begin payouts this year?,0.09,0.15,0.03,0.03,Open,https://www.predictit.org/markets/detail/8818,2026-06-24T21:31:03.863241+00:00
-8822,Will Graham Platner drop out before July 14?,34968,Will Graham Platner drop out before July 14?,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8822,2026-06-24T21:31:03.863247+00:00
-8827,How many Yea votes will Todd Blanche receive in a confirmation vote by year-end?,35007,49 or fewer,0.45,0.49,0.41,0.41,Open,https://www.predictit.org/markets/detail/8827,2026-06-24T21:31:03.863251+00:00
-8827,How many Yea votes will Todd Blanche receive in a confirmation vote by year-end?,35013,54,0.055,0.1,0.01,0.02,Open,https://www.predictit.org/markets/detail/8827,2026-06-24T21:31:03.863282+00:00
-8828,What will be the margin in the Los Angeles mayoral primary?,35016,8.0%-8.5%,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8828,2026-06-24T21:31:03.863292+00:00
-8831,Will Kash Patel leave office in 2026?,35035,Will Kash Patel leave office in 2026?,0.47,0.49,0.45,0.49,Open,https://www.predictit.org/markets/detail/8831,2026-06-24T21:31:03.863326+00:00
-8842,"How many ""truths"" will Trump post from June 18 through June 24?",35076,201 to 220,0.05,0.08,0.02,0.1,Open,https://www.predictit.org/markets/detail/8842,2026-06-24T21:31:03.863359+00:00
-8842,"How many ""truths"" will Trump post from June 18 through June 24?",35079,221 to 240,0.035,0.06,0.01,0.02,Open,https://www.predictit.org/markets/detail/8842,2026-06-24T21:31:03.863362+00:00
-8844,Trump's DDHQ job approval rating on June 26?,35089,40.4% to 40.6%,0.105,0.18,0.03,0.2,Open,https://www.predictit.org/markets/detail/8844,2026-06-24T21:31:03.863384+00:00
-8844,Trump's DDHQ job approval rating on June 26?,35087,40.7% to 40.9%,0.085,0.13,0.04,0.15,Open,https://www.predictit.org/markets/detail/8844,2026-06-24T21:31:03.863388+00:00
-8844,Trump's DDHQ job approval rating on June 26?,35090,41.0% to 41.2%,0.105,0.18,0.03,0.04,Open,https://www.predictit.org/markets/detail/8844,2026-06-24T21:31:03.863391+00:00
-8844,Trump's DDHQ job approval rating on June 26?,35088,41.3% or higher,0.09,0.16,0.02,0.03,Open,https://www.predictit.org/markets/detail/8844,2026-06-24T21:31:03.863394+00:00
-8849,Which party will lead in RCP Congressional generic ballot polling for June 30?,35115,"Dem<3.5%, Tie or GOP",0.065,0.1,0.03,0.0,Open,https://www.predictit.org/markets/detail/8849,2026-06-24T21:31:03.875617+00:00
-8849,Which party will lead in RCP Congressional generic ballot polling for June 30?,35118,Democrats 3.5-%3.9%,0.06,0.1,0.02,0.0,Open,https://www.predictit.org/markets/detail/8849,2026-06-24T21:31:03.875631+00:00
-8849,Which party will lead in RCP Congressional generic ballot polling for June 30?,35117,Democrats 4.0-%4.4%,0.085,0.15,0.02,0.0,Open,https://www.predictit.org/markets/detail/8849,2026-06-24T21:31:03.875637+00:00
-8850,Who will be the next Cabinet member to leave office?,35122,Marco Rubio,0.03,0.04,0.02,0.04,Open,https://www.predictit.org/markets/detail/8850,2026-06-24T21:31:03.875660+00:00
-8850,Who will be the next Cabinet member to leave office?,35123,Scott Bessent,0.03,0.04,0.02,0.04,Open,https://www.predictit.org/markets/detail/8850,2026-06-24T21:31:03.875663+00:00
-8851,What will President Trump's RCP job approval rating be on July 1?,35146,42.0% or higher,0.02,0.03,0.01,0.0,Open,https://www.predictit.org/markets/detail/8851,2026-06-24T21:31:03.875742+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28361,192 or fewer,0.22,0.23,0.21,0.22,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227844+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28362,193 to 197,0.08,0.09,0.07,0.08,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227876+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28369,198 to 202,0.1,0.11,0.09,0.09,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227882+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28367,203 to 207,0.14,0.15,0.13,0.14,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227886+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28366,208 to 212,0.145,0.15,0.14,0.16,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227889+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28370,213 to 217,0.105,0.11,0.1,0.11,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227895+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28368,218 to 222,0.105,0.11,0.1,0.11,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227898+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28365,223 to 227,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227901+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28363,228 to 232,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227904+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28364,233 to 237,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227908+00:00
+7589,How many House seats will Republicans win in the 2026 midterm election?,28371,238 or more,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/7589,2026-06-25T04:41:00.227911+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31925,JD Vance,0.375,0.38,0.37,0.38,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227916+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31930,Marco Rubio,0.275,0.28,0.27,0.28,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227919+00:00
+8152,Who will win the 2028 Republican presidential nomination?,34115,Tucker Carlson,0.055,0.06,0.05,0.06,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227922+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31928,Donald Trump,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227926+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31929,Donald Trump Jr.,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227931+00:00
+8152,Who will win the 2028 Republican presidential nomination?,32069,Ron DeSantis,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227935+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31933,Brian Kemp,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227939+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31932,Glenn Youngkin,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227942+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31926,Tulsi Gabbard,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227945+00:00
+8152,Who will win the 2028 Republican presidential nomination?,31927,Ted Cruz,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227949+00:00
+8152,Who will win the 2028 Republican presidential nomination?,32829,M. Taylor Greene,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8152,2026-06-25T04:41:00.227957+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31937,Gavin Newsom,0.225,0.23,0.22,0.22,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227968+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,32160,Jon Ossoff,0.12,0.13,0.11,0.13,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227972+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31936,A. Ocasio-Cortez,0.115,0.12,0.11,0.11,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227975+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31934,Kamala Harris,0.095,0.1,0.09,0.09,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227978+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31940,Josh Shapiro,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227982+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31935,Pete Buttigieg,0.055,0.06,0.05,0.05,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227985+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31941,Andy Beshear,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227988+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,32387,Rahm Emanuel,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227992+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,33094,Mark Kelly,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227996+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31938,JB Pritzker,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.227999+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31942,Wes Moore,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.228003+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,33680,Ro Khanna,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.228006+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31939,Gretchen Whitmer,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.228009+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31943,Stephen A Smith,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.228012+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,31944,Cory Booker,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.228015+00:00
+8153,Who will win the 2028 Democratic presidential nomination?,32017,Ruben Gallego,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8153,2026-06-25T04:41:00.228018+00:00
+8155,Which party will control the Senate after the 2026 election?,31948,Republican,0.6,0.61,0.59,0.59,Open,https://www.predictit.org/markets/detail/8155,2026-06-25T04:41:00.228026+00:00
+8155,Which party will control the Senate after the 2026 election?,31947,Democratic,0.405,0.41,0.4,0.41,Open,https://www.predictit.org/markets/detail/8155,2026-06-25T04:41:00.228029+00:00
+8156,Which party will win the 2026 US Senate election in Georgia?,31950,Democratic,0.825,0.83,0.82,0.83,Open,https://www.predictit.org/markets/detail/8156,2026-06-25T04:41:00.228032+00:00
+8156,Which party will win the 2026 US Senate election in Georgia?,31949,Republican,0.17,0.18,0.16,0.15,Open,https://www.predictit.org/markets/detail/8156,2026-06-25T04:41:00.228036+00:00
+8157,Which party will win the House in the 2026 election?,31951,Democratic,0.725,0.73,0.72,0.73,Open,https://www.predictit.org/markets/detail/8157,2026-06-25T04:41:00.228040+00:00
+8157,Which party will win the House in the 2026 election?,31952,Republican,0.29,0.3,0.28,0.28,Open,https://www.predictit.org/markets/detail/8157,2026-06-25T04:41:00.228042+00:00
+8158,Which party will win the 2026 US Senate election in Michigan?,31954,Democratic,0.695,0.72,0.67,0.72,Open,https://www.predictit.org/markets/detail/8158,2026-06-25T04:41:00.228045+00:00
+8158,Which party will win the 2026 US Senate election in Michigan?,31953,Republican,0.315,0.33,0.3,0.32,Open,https://www.predictit.org/markets/detail/8158,2026-06-25T04:41:00.228048+00:00
+8159,Which party will win the 2026 US Senate election in Maine?,31956,Democratic,0.535,0.55,0.52,0.55,Open,https://www.predictit.org/markets/detail/8159,2026-06-25T04:41:00.228052+00:00
+8159,Which party will win the 2026 US Senate election in Maine?,31955,Republican,0.455,0.47,0.44,0.46,Open,https://www.predictit.org/markets/detail/8159,2026-06-25T04:41:00.228055+00:00
+8160,Which party will win the 2026 US Senate election in North Carolina?,31958,Democratic,0.83,0.84,0.82,0.82,Open,https://www.predictit.org/markets/detail/8160,2026-06-25T04:41:00.228060+00:00
+8160,Which party will win the 2026 US Senate election in North Carolina?,31957,Republican,0.185,0.19,0.18,0.18,Open,https://www.predictit.org/markets/detail/8160,2026-06-25T04:41:00.228063+00:00
+8161,Which party will win the 2026 US Senate election in New Hampshire?,31960,Democratic,0.795,0.84,0.75,0.84,Open,https://www.predictit.org/markets/detail/8161,2026-06-25T04:41:00.228066+00:00
+8161,Which party will win the 2026 US Senate election in New Hampshire?,31959,Republican,0.185,0.2,0.17,0.17,Open,https://www.predictit.org/markets/detail/8161,2026-06-25T04:41:00.228071+00:00
+8162,Which party will win the 2026 US Senate election in Minnesota?,31962,Democratic,0.865,0.89,0.84,0.85,Open,https://www.predictit.org/markets/detail/8162,2026-06-25T04:41:00.228074+00:00
+8162,Which party will win the 2026 US Senate election in Minnesota?,31961,Republican,0.13,0.14,0.12,0.14,Open,https://www.predictit.org/markets/detail/8162,2026-06-25T04:41:00.228078+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31964,47 or fewer,0.165,0.17,0.16,0.16,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228081+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31968,48,0.155,0.16,0.15,0.15,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228084+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31969,49,0.195,0.2,0.19,0.2,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228087+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31965,50,0.2,0.21,0.19,0.21,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228091+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31970,51,0.145,0.16,0.13,0.15,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228095+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31973,52,0.09,0.1,0.08,0.09,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228099+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31966,53,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228102+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31972,54,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228107+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31967,55,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228110+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31963,56,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228113+00:00
+8163,How many Senate seats will the GOP control after the 2026 midterms?,31971,57 or more,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8163,2026-06-25T04:41:00.228116+00:00
+8166,Who will win the 2026 election for governor of California?,31984,Xavier Becerra,0.915,0.92,0.91,0.91,Open,https://www.predictit.org/markets/detail/8166,2026-06-25T04:41:00.228119+00:00
+8166,Who will win the 2026 election for governor of California?,31986,Steve Hilton,0.08,0.09,0.07,0.08,Open,https://www.predictit.org/markets/detail/8166,2026-06-25T04:41:00.228122+00:00
+8167,Who will win the 2026 Michigan Democratic Senate nomination?,31990,Abdul El-Sayed,0.74,0.75,0.73,0.75,Open,https://www.predictit.org/markets/detail/8167,2026-06-25T04:41:00.228167+00:00
+8167,Who will win the 2026 Michigan Democratic Senate nomination?,31992,Haley Stevens,0.25,0.27,0.23,0.23,Open,https://www.predictit.org/markets/detail/8167,2026-06-25T04:41:00.228171+00:00
+8167,Who will win the 2026 Michigan Democratic Senate nomination?,31991,Mallory McMorrow,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8167,2026-06-25T04:41:00.228174+00:00
+8171,Who will win the 2028 US presidential election?,32018,JD Vance,0.225,0.23,0.22,0.23,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228184+00:00
+8171,Who will win the 2028 US presidential election?,32023,Gavin Newsom,0.175,0.18,0.17,0.17,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228188+00:00
+8171,Who will win the 2028 US presidential election?,32024,Marco Rubio,0.165,0.17,0.16,0.16,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228191+00:00
+8171,Who will win the 2028 US presidential election?,32019,A. Ocasio-Cortez,0.095,0.1,0.09,0.09,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228194+00:00
+8171,Who will win the 2028 US presidential election?,34386,Jon Ossoff,0.075,0.08,0.07,0.07,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228197+00:00
+8171,Who will win the 2028 US presidential election?,32020,Josh Shapiro,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228200+00:00
+8171,Who will win the 2028 US presidential election?,32021,Kamala Harris,0.055,0.06,0.05,0.05,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228205+00:00
+8171,Who will win the 2028 US presidential election?,32022,Pete Buttigieg,0.045,0.05,0.04,0.05,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228209+00:00
+8171,Who will win the 2028 US presidential election?,32026,Gretchen Whitmer,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228212+00:00
+8171,Who will win the 2028 US presidential election?,32066,Donald Trump,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228215+00:00
+8171,Who will win the 2028 US presidential election?,34444,Andy Beshear,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228218+00:00
+8171,Who will win the 2028 US presidential election?,32682,JB Pritzker,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8171,2026-06-25T04:41:00.228223+00:00
+8172,Which party will win the 2026 US Senate election in Nebraska?,32027,Republican,0.745,0.76,0.73,0.77,Open,https://www.predictit.org/markets/detail/8172,2026-06-25T04:41:00.228226+00:00
+8172,Which party will win the 2026 US Senate election in Nebraska?,32029,Independent,0.265,0.31,0.22,0.22,Open,https://www.predictit.org/markets/detail/8172,2026-06-25T04:41:00.228230+00:00
+8173,Which party will win the 2026 US Senate election in Texas?,32030,Republican (Paxton),0.625,0.63,0.62,0.63,Open,https://www.predictit.org/markets/detail/8173,2026-06-25T04:41:00.228237+00:00
+8173,Which party will win the 2026 US Senate election in Texas?,32031,Democrats (Talarico),0.375,0.38,0.37,0.37,Open,https://www.predictit.org/markets/detail/8173,2026-06-25T04:41:00.228240+00:00
+8174,Which party will win the 2026 US Senate election in Virginia?,32033,Democratic,0.96,0.98,0.94,0.98,Open,https://www.predictit.org/markets/detail/8174,2026-06-25T04:41:00.228243+00:00
+8174,Which party will win the 2026 US Senate election in Virginia?,32032,Republican,0.035,0.05,0.02,0.02,Open,https://www.predictit.org/markets/detail/8174,2026-06-25T04:41:00.228246+00:00
+8175,Which party will win the 2026 US Senate special election in Ohio?,32035,Democratic,0.535,0.55,0.52,0.56,Open,https://www.predictit.org/markets/detail/8175,2026-06-25T04:41:00.228250+00:00
+8175,Which party will win the 2026 US Senate special election in Ohio?,32034,Republican,0.455,0.46,0.45,0.46,Open,https://www.predictit.org/markets/detail/8175,2026-06-25T04:41:00.228253+00:00
+8177,Which party will win the 2026 US House election in Maine's 2nd District?,32045,Republican,0.635,0.69,0.58,0.61,Open,https://www.predictit.org/markets/detail/8177,2026-06-25T04:41:00.228256+00:00
+8177,Which party will win the 2026 US House election in Maine's 2nd District?,32046,Democratic,0.405,0.48,0.33,0.33,Open,https://www.predictit.org/markets/detail/8177,2026-06-25T04:41:00.228259+00:00
+8179,Who will win the 2026 Michigan Republican Senate nomination?,32056,Mike Rogers,0.975,0.98,0.97,0.97,Open,https://www.predictit.org/markets/detail/8179,2026-06-25T04:41:00.228264+00:00
+8181,Which party will win the 2028 US presidential election?,32068,Democratic,0.6,0.61,0.59,0.61,Open,https://www.predictit.org/markets/detail/8181,2026-06-25T04:41:00.228277+00:00
+8181,Which party will win the 2028 US presidential election?,32067,Republican,0.44,0.45,0.43,0.43,Open,https://www.predictit.org/markets/detail/8181,2026-06-25T04:41:00.228280+00:00
+8183,Which party will win the 2026 US House election in Nebraska's 2nd District?,32080,Democratic,0.89,0.93,0.85,0.92,Open,https://www.predictit.org/markets/detail/8183,2026-06-25T04:41:00.228283+00:00
+8183,Which party will win the 2026 US House election in Nebraska's 2nd District?,32079,Republican,0.115,0.15,0.08,0.1,Open,https://www.predictit.org/markets/detail/8183,2026-06-25T04:41:00.228286+00:00
+8184,Which party will win the 2026 US House race in North Carolina's 1st District?,32081,Republican,0.555,0.56,0.55,0.56,Open,https://www.predictit.org/markets/detail/8184,2026-06-25T04:41:00.228290+00:00
+8184,Which party will win the 2026 US House race in North Carolina's 1st District?,32082,Democratic,0.45,0.46,0.44,0.43,Open,https://www.predictit.org/markets/detail/8184,2026-06-25T04:41:00.228293+00:00
+8185,Which party will win the 2026 US House election in New Mexico's 2nd District?,32084,Democratic,0.87,0.88,0.86,0.79,Open,https://www.predictit.org/markets/detail/8185,2026-06-25T04:41:00.228296+00:00
+8185,Which party will win the 2026 US House election in New Mexico's 2nd District?,32083,Republican,0.125,0.14,0.11,0.21,Open,https://www.predictit.org/markets/detail/8185,2026-06-25T04:41:00.228299+00:00
+8186,Which party will win the 2026 US House election in New York's 4th District?,32085,Republican,0.17,0.19,0.15,0.19,Open,https://www.predictit.org/markets/detail/8186,2026-06-25T04:41:00.228308+00:00
+8188,Which party will win the 2026 US House election in Washington's 3rd District?,32090,Democratic,0.87,0.88,0.86,0.83,Open,https://www.predictit.org/markets/detail/8188,2026-06-25T04:41:00.228320+00:00
+8188,Which party will win the 2026 US House election in Washington's 3rd District?,32089,Republican,0.16,0.17,0.15,0.16,Open,https://www.predictit.org/markets/detail/8188,2026-06-25T04:41:00.228324+00:00
+8189,Which party will win the 2026 US House election in Arizona's 1st District?,32092,Democratic,0.79,0.85,0.73,0.8,Open,https://www.predictit.org/markets/detail/8189,2026-06-25T04:41:00.228327+00:00
+8189,Which party will win the 2026 US House election in Arizona's 1st District?,32091,Republican,0.17,0.2,0.14,0.15,Open,https://www.predictit.org/markets/detail/8189,2026-06-25T04:41:00.228330+00:00
+8190,Which party will win the 2026 US House election in Arizona's 6th District?,32093,Republican,0.08,0.1,0.06,0.06,Open,https://www.predictit.org/markets/detail/8190,2026-06-25T04:41:00.228335+00:00
+8192,Which party will win the 2026 US House election in Iowa's 1st District?,32098,Democratic,0.74,0.75,0.73,0.73,Open,https://www.predictit.org/markets/detail/8192,2026-06-25T04:41:00.228345+00:00
+8192,Which party will win the 2026 US House election in Iowa's 1st District?,32097,Republican,0.355,0.43,0.28,0.44,Open,https://www.predictit.org/markets/detail/8192,2026-06-25T04:41:00.228348+00:00
+8193,Which party will win the 2026 US House election in Michigan's 7th District?,32100,Democratic,0.765,0.77,0.76,0.76,Open,https://www.predictit.org/markets/detail/8193,2026-06-25T04:41:00.228351+00:00
+8193,Which party will win the 2026 US House election in Michigan's 7th District?,32099,Republican,0.205,0.21,0.2,0.21,Open,https://www.predictit.org/markets/detail/8193,2026-06-25T04:41:00.228354+00:00
+8194,Which party will win the 2026 US House election in Pennsylvania's 7th District?,32102,Democratic,0.775,0.84,0.71,0.83,Open,https://www.predictit.org/markets/detail/8194,2026-06-25T04:41:00.228357+00:00
+8194,Which party will win the 2026 US House election in Pennsylvania's 7th District?,32101,Republican,0.21,0.26,0.16,0.14,Open,https://www.predictit.org/markets/detail/8194,2026-06-25T04:41:00.228361+00:00
+8195,Which party will win the 2026 US House election in Pennsylvania's 10th District?,32103,Republican,0.14,0.2,0.08,0.2,Open,https://www.predictit.org/markets/detail/8195,2026-06-25T04:41:00.228366+00:00
+8202,Who will win the 2026 Arizona Republican nomination for governor?,32129,Andy Biggs,0.955,0.97,0.94,0.93,Open,https://www.predictit.org/markets/detail/8202,2026-06-25T04:41:00.228376+00:00
+8202,Who will win the 2026 Arizona Republican nomination for governor?,32532,David Schweikert,0.035,0.05,0.02,0.03,Open,https://www.predictit.org/markets/detail/8202,2026-06-25T04:41:00.228380+00:00
+8204,Who will win the 2026 Michigan Republican nomination for governor?,32135,John James,0.865,0.89,0.84,0.86,Open,https://www.predictit.org/markets/detail/8204,2026-06-25T04:41:00.228386+00:00
+8204,Who will win the 2026 Michigan Republican nomination for governor?,33627,Perry Johnson,0.12,0.17,0.07,0.06,Open,https://www.predictit.org/markets/detail/8204,2026-06-25T04:41:00.228390+00:00
+8204,Who will win the 2026 Michigan Republican nomination for governor?,32134,Mike Cox,0.03,0.04,0.02,0.02,Open,https://www.predictit.org/markets/detail/8204,2026-06-25T04:41:00.228392+00:00
+8206,Who will win the 2026 Michigan Democratic nomination for governor?,32145,Jocelyn Benson,0.96,0.98,0.94,0.94,Open,https://www.predictit.org/markets/detail/8206,2026-06-25T04:41:00.228422+00:00
+8206,Who will win the 2026 Michigan Democratic nomination for governor?,32146,Garlin Gilchrist,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8206,2026-06-25T04:41:00.228425+00:00
+8211,Which party will win the 2026 election for governor of Arizona?,32164,Democratic,0.74,0.79,0.69,0.7,Open,https://www.predictit.org/markets/detail/8211,2026-06-25T04:41:00.228429+00:00
+8211,Which party will win the 2026 election for governor of Arizona?,32163,Republican,0.25,0.31,0.19,0.3,Open,https://www.predictit.org/markets/detail/8211,2026-06-25T04:41:00.228434+00:00
+8212,Which party will win the 2026 election for governor of Michigan?,32166,Democratic,0.795,0.8,0.79,0.8,Open,https://www.predictit.org/markets/detail/8212,2026-06-25T04:41:00.228437+00:00
+8212,Which party will win the 2026 election for governor of Michigan?,32165,Republican,0.17,0.18,0.16,0.16,Open,https://www.predictit.org/markets/detail/8212,2026-06-25T04:41:00.228440+00:00
+8212,Which party will win the 2026 election for governor of Michigan?,32356,Independent,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8212,2026-06-25T04:41:00.228443+00:00
+8213,Which party will win the 2026 election for governor of Wisconsin?,32168,Democratic,0.785,0.81,0.76,0.76,Open,https://www.predictit.org/markets/detail/8213,2026-06-25T04:41:00.228448+00:00
+8213,Which party will win the 2026 election for governor of Wisconsin?,32167,Republican,0.22,0.24,0.2,0.24,Open,https://www.predictit.org/markets/detail/8213,2026-06-25T04:41:00.228451+00:00
+8214,Which party will win the 2026 election for governor of Kansas?,32169,Republican,0.72,0.79,0.65,0.64,Open,https://www.predictit.org/markets/detail/8214,2026-06-25T04:41:00.228455+00:00
+8215,Which party will win the 2026 election for governor of New York?,32172,Democratic,0.95,0.96,0.94,0.96,Open,https://www.predictit.org/markets/detail/8215,2026-06-25T04:41:00.228461+00:00
+8215,Which party will win the 2026 election for governor of New York?,32171,Republican,0.045,0.05,0.04,0.04,Open,https://www.predictit.org/markets/detail/8215,2026-06-25T04:41:00.228464+00:00
+8228,Which party will win the 2026 US Senate election in Florida?,32195,Republican,0.845,0.86,0.83,0.83,Open,https://www.predictit.org/markets/detail/8228,2026-06-25T04:41:00.228468+00:00
+8228,Which party will win the 2026 US Senate election in Florida?,32196,Democratic,0.175,0.18,0.17,0.17,Open,https://www.predictit.org/markets/detail/8228,2026-06-25T04:41:00.228472+00:00
+8243,Who will win the 2026 Minnesota Democratic Senate nomination?,32287,Peggy Flanagan,0.825,0.88,0.77,0.88,Open,https://www.predictit.org/markets/detail/8243,2026-06-25T04:41:00.228488+00:00
+8243,Who will win the 2026 Minnesota Democratic Senate nomination?,32286,Angie Craig,0.195,0.25,0.14,0.14,Open,https://www.predictit.org/markets/detail/8243,2026-06-25T04:41:00.228491+00:00
+8245,Who will win the 2026 election for governor of Alaska?,32302,Bernadette Wilson,0.265,0.29,0.24,0.24,Open,https://www.predictit.org/markets/detail/8245,2026-06-25T04:41:00.228497+00:00
+8245,Who will win the 2026 election for governor of Alaska?,32298,Click Bishop,0.07,0.08,0.06,0.08,Open,https://www.predictit.org/markets/detail/8245,2026-06-25T04:41:00.228500+00:00
+8245,Who will win the 2026 election for governor of Alaska?,32299,Nancy Dahlstrom,0.07,0.1,0.04,0.04,Open,https://www.predictit.org/markets/detail/8245,2026-06-25T04:41:00.228504+00:00
+8245,Who will win the 2026 election for governor of Alaska?,32312,Shelley Hughes,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8245,2026-06-25T04:41:00.228507+00:00
+8246,Who will be the next Supreme Court nominee?,32307,Andrew Oldham,0.23,0.28,0.18,0.17,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228515+00:00
+8246,Who will be the next Supreme Court nominee?,32303,James Ho,0.115,0.15,0.08,0.15,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228531+00:00
+8246,Who will be the next Supreme Court nominee?,32304,Amul Thapar,0.1,0.12,0.08,0.11,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228535+00:00
+8246,Who will be the next Supreme Court nominee?,32308,Aileen Cannon,0.065,0.09,0.04,0.09,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228540+00:00
+8246,Who will be the next Supreme Court nominee?,32309,Emil Bove,0.1,0.12,0.08,0.08,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228545+00:00
+8246,Who will be the next Supreme Court nominee?,32305,Neomi Rao,0.045,0.06,0.03,0.06,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228548+00:00
+8246,Who will be the next Supreme Court nominee?,32310,Mike Lee,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228551+00:00
+8246,Who will be the next Supreme Court nominee?,33695,Ted Cruz,0.09,0.15,0.03,0.04,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228554+00:00
+8246,Who will be the next Supreme Court nominee?,32306,Kyle Duncan,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8246,2026-06-25T04:41:00.228559+00:00
+8248,Who will win the 2026 Tennessee Republican nomination for governor?,32323,Marsha Blackburn,0.925,0.96,0.89,0.97,Open,https://www.predictit.org/markets/detail/8248,2026-06-25T04:41:00.228562+00:00
+8248,Who will win the 2026 Tennessee Republican nomination for governor?,32324,John Rose,0.06,0.09,0.03,0.09,Open,https://www.predictit.org/markets/detail/8248,2026-06-25T04:41:00.228566+00:00
+8271,Which party will win the 2026 US Senate election in Alaska?,32430,Democratic,0.575,0.6,0.55,0.55,Open,https://www.predictit.org/markets/detail/8271,2026-06-25T04:41:00.228570+00:00
+8271,Which party will win the 2026 US Senate election in Alaska?,32429,Republican,0.435,0.46,0.41,0.41,Open,https://www.predictit.org/markets/detail/8271,2026-06-25T04:41:00.228573+00:00
+8274,Which party will win the 2026 US Senate election in Iowa?,32442,Republican,0.625,0.63,0.62,0.62,Open,https://www.predictit.org/markets/detail/8274,2026-06-25T04:41:00.228580+00:00
+8274,Which party will win the 2026 US Senate election in Iowa?,32443,Democratic,0.39,0.4,0.38,0.39,Open,https://www.predictit.org/markets/detail/8274,2026-06-25T04:41:00.228583+00:00
+8278,Will Trump pardon Ghislaine Maxwell or commute her sentence before July 2026?,32456,Will Trump pardon Ghislaine Maxwell or commute her sentence before July 2026?,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8278,2026-06-25T04:41:00.228586+00:00
+8294,Who will win the 2026 Wisconsin Democratic nomination for governor?,32529,Sara Rodriguez,0.43,0.45,0.41,0.41,Open,https://www.predictit.org/markets/detail/8294,2026-06-25T04:41:00.228590+00:00
+8294,Who will win the 2026 Wisconsin Democratic nomination for governor?,32531,Kelda Roys,0.02,0.03,0.01,0.04,Open,https://www.predictit.org/markets/detail/8294,2026-06-25T04:41:00.228601+00:00
+8294,Who will win the 2026 Wisconsin Democratic nomination for governor?,32533,Missy Hughes,0.015,0.02,0.01,0.03,Open,https://www.predictit.org/markets/detail/8294,2026-06-25T04:41:00.228604+00:00
+8297,Which party will win the 2026 election for governor of Minnesota?,32554,Democratic,0.925,0.96,0.89,0.96,Open,https://www.predictit.org/markets/detail/8297,2026-06-25T04:41:00.228610+00:00
+8297,Which party will win the 2026 election for governor of Minnesota?,32553,Republican,0.075,0.09,0.06,0.06,Open,https://www.predictit.org/markets/detail/8297,2026-06-25T04:41:00.228614+00:00
+8298,Who will win the 2026 Minnesota Republican nomination for governor?,33168,Kendall Qualls,0.49,0.5,0.48,0.49,Open,https://www.predictit.org/markets/detail/8298,2026-06-25T04:41:00.228619+00:00
+8298,Who will win the 2026 Minnesota Republican nomination for governor?,32558,Mike Lindell,0.26,0.28,0.24,0.29,Open,https://www.predictit.org/markets/detail/8298,2026-06-25T04:41:00.228623+00:00
+8298,Who will win the 2026 Minnesota Republican nomination for governor?,32559,Lisa Demuth,0.265,0.28,0.25,0.25,Open,https://www.predictit.org/markets/detail/8298,2026-06-25T04:41:00.228626+00:00
+8345,Will Mike Johnson remain Speaker of the House through the 119th Congress?,32831,Will Mike Johnson remain Speaker of the House through the 119th Congress?,0.865,0.87,0.86,0.86,Open,https://www.predictit.org/markets/detail/8345,2026-06-25T04:41:00.228641+00:00
+8349,Will Chuck Schumer remain the Democratic Leader through the 119th Congress?,32854,Will Chuck Schumer remain the Democratic Leader through the 119th Congress?,0.895,0.9,0.89,0.9,Open,https://www.predictit.org/markets/detail/8349,2026-06-25T04:41:00.228644+00:00
+8351,Who will win the 2026 New Hampshire Republican Senate nomination?,32861,John Sununu,0.945,0.96,0.93,0.95,Open,https://www.predictit.org/markets/detail/8351,2026-06-25T04:41:00.228648+00:00
+8351,Who will win the 2026 New Hampshire Republican Senate nomination?,32860,Scott Brown,0.05,0.06,0.04,0.05,Open,https://www.predictit.org/markets/detail/8351,2026-06-25T04:41:00.228652+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32893,JD Vance,0.45,0.48,0.42,0.45,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228656+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32894,Marco Rubio,0.275,0.28,0.27,0.27,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228659+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32896,Brian Kemp,0.03,0.04,0.02,0.04,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228662+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32897,Ron DeSantis,0.04,0.05,0.03,0.04,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228665+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32898,M. Taylor Greene,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228668+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32913,Nikki Haley,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228672+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32895,Kristi Noem,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228675+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32912,Tulsi Gabbard,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228678+00:00
+8357,Who will win the 2028 Republican presidential primary in New Hampshire?,32914,Ted Cruz,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8357,2026-06-25T04:41:00.228682+00:00
+8359,Who will win the 2026 Massachusetts Democratic Senate nomination?,32909,Ed Markey,0.8,0.82,0.78,0.89,Open,https://www.predictit.org/markets/detail/8359,2026-06-25T04:41:00.228685+00:00
+8359,Who will win the 2026 Massachusetts Democratic Senate nomination?,32910,Seth Moulton,0.17,0.24,0.1,0.11,Open,https://www.predictit.org/markets/detail/8359,2026-06-25T04:41:00.228688+00:00
+8363,Which office will AOC announce a run for by the end of 2027?,32930,Senate,0.415,0.49,0.34,0.32,Open,https://www.predictit.org/markets/detail/8363,2026-06-25T04:41:00.228696+00:00
+8370,Who will be elected Los Angeles mayor in 2026?,32979,Karen Bass,0.585,0.6,0.57,0.6,Open,https://www.predictit.org/markets/detail/8370,2026-06-25T04:41:00.228700+00:00
+8370,Who will be elected Los Angeles mayor in 2026?,34085,Nithya Raman,0.395,0.4,0.39,0.4,Open,https://www.predictit.org/markets/detail/8370,2026-06-25T04:41:00.228703+00:00
+8370,Who will be elected Los Angeles mayor in 2026?,33938,Spencer Pratt,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8370,2026-06-25T04:41:00.228706+00:00
+8373,Who will win the 2026 Peruvian presidential election?,32988,Keiko Fujimori,0.98,0.99,0.97,0.99,Open,https://www.predictit.org/markets/detail/8373,2026-06-25T04:41:00.228726+00:00
+8374,Who will win the 2026 Florida Republican nomination for governor?,33000,Byron Donalds,0.95,0.96,0.94,0.97,Open,https://www.predictit.org/markets/detail/8374,2026-06-25T04:41:00.228776+00:00
+8374,Who will win the 2026 Florida Republican nomination for governor?,33002,James Fishback,0.065,0.07,0.06,0.06,Open,https://www.predictit.org/markets/detail/8374,2026-06-25T04:41:00.228779+00:00
+8375,Which party will win the 2026 US Senate election in South Carolina?,33005,Republican,0.865,0.88,0.85,0.87,Open,https://www.predictit.org/markets/detail/8375,2026-06-25T04:41:00.228790+00:00
+8375,Which party will win the 2026 US Senate election in South Carolina?,33006,Democratic,0.16,0.2,0.12,0.17,Open,https://www.predictit.org/markets/detail/8375,2026-06-25T04:41:00.228793+00:00
+8376,Which party will win the 2026 US Senate election in South Dakota?,33007,Republican,0.925,0.94,0.91,0.91,Open,https://www.predictit.org/markets/detail/8376,2026-06-25T04:41:00.228796+00:00
+8376,Which party will win the 2026 US Senate election in South Dakota?,33008,Democratic,0.06,0.09,0.03,0.09,Open,https://www.predictit.org/markets/detail/8376,2026-06-25T04:41:00.228799+00:00
+8377,Which party will win the 2026 US Senate election in Montana?,33009,Republican,0.86,0.9,0.82,0.88,Open,https://www.predictit.org/markets/detail/8377,2026-06-25T04:41:00.228804+00:00
+8377,Which party will win the 2026 US Senate election in Montana?,33519,Independent,0.16,0.2,0.12,0.11,Open,https://www.predictit.org/markets/detail/8377,2026-06-25T04:41:00.228807+00:00
+8377,Which party will win the 2026 US Senate election in Montana?,33010,Democratic,0.02,0.03,0.01,0.03,Open,https://www.predictit.org/markets/detail/8377,2026-06-25T04:41:00.228810+00:00
+8378,Which party will win the 2026 election for governor of Iowa?,33012,Democratic,0.695,0.74,0.65,0.65,Open,https://www.predictit.org/markets/detail/8378,2026-06-25T04:41:00.228814+00:00
+8378,Which party will win the 2026 election for governor of Iowa?,33011,Republican,0.335,0.38,0.29,0.36,Open,https://www.predictit.org/markets/detail/8378,2026-06-25T04:41:00.228817+00:00
+8381,Which party will win the 2026 US Senate election in Massachusetts?,33033,Democratic,0.965,0.97,0.96,0.95,Open,https://www.predictit.org/markets/detail/8381,2026-06-25T04:41:00.228820+00:00
+8381,Which party will win the 2026 US Senate election in Massachusetts?,33032,Republican,0.035,0.04,0.03,0.05,Open,https://www.predictit.org/markets/detail/8381,2026-06-25T04:41:00.228823+00:00
+8382,Which party will win the 2026 US Senate election in Rhode Island?,33035,Democratic,0.965,0.97,0.96,0.97,Open,https://www.predictit.org/markets/detail/8382,2026-06-25T04:41:00.228826+00:00
+8382,Which party will win the 2026 US Senate election in Rhode Island?,33034,Republican,0.035,0.05,0.02,0.03,Open,https://www.predictit.org/markets/detail/8382,2026-06-25T04:41:00.228829+00:00
+8383,Which party will win the 2026 US Senate election in New Jersey?,33037,Democratic,0.91,0.96,0.86,0.97,Open,https://www.predictit.org/markets/detail/8383,2026-06-25T04:41:00.228832+00:00
+8383,Which party will win the 2026 US Senate election in New Jersey?,33036,Republican,0.035,0.04,0.03,0.05,Open,https://www.predictit.org/markets/detail/8383,2026-06-25T04:41:00.228836+00:00
+8384,Which party will win the 2026 US Senate election in Alabama?,33038,Republican,0.965,0.98,0.95,0.97,Open,https://www.predictit.org/markets/detail/8384,2026-06-25T04:41:00.228840+00:00
+8384,Which party will win the 2026 US Senate election in Alabama?,33039,Democratic,0.02,0.03,0.01,0.03,Open,https://www.predictit.org/markets/detail/8384,2026-06-25T04:41:00.228843+00:00
+8385,Which party will win the 2026 US Senate election in Tennessee?,33040,Republican,0.935,0.95,0.92,0.95,Open,https://www.predictit.org/markets/detail/8385,2026-06-25T04:41:00.228846+00:00
+8385,Which party will win the 2026 US Senate election in Tennessee?,33041,Democratic,0.07,0.09,0.05,0.09,Open,https://www.predictit.org/markets/detail/8385,2026-06-25T04:41:00.228849+00:00
+8386,Which party will win the 2026 US Senate election in Kentucky?,33042,Republican,0.915,0.95,0.88,0.95,Open,https://www.predictit.org/markets/detail/8386,2026-06-25T04:41:00.228853+00:00
+8386,Which party will win the 2026 US Senate election in Kentucky?,33043,Democratic,0.065,0.08,0.05,0.06,Open,https://www.predictit.org/markets/detail/8386,2026-06-25T04:41:00.228856+00:00
+8387,Which party will win the 2026 US Senate election in West Virginia?,33044,Republican,0.965,0.98,0.95,0.95,Open,https://www.predictit.org/markets/detail/8387,2026-06-25T04:41:00.228859+00:00
+8387,Which party will win the 2026 US Senate election in West Virginia?,33045,Democratic,0.045,0.06,0.03,0.03,Open,https://www.predictit.org/markets/detail/8387,2026-06-25T04:41:00.228862+00:00
+8388,Which party will win the 2026 US Senate election in Mississippi?,33046,Republican,0.94,0.96,0.92,0.92,Open,https://www.predictit.org/markets/detail/8388,2026-06-25T04:41:00.228865+00:00
+8388,Which party will win the 2026 US Senate election in Mississippi?,33047,Democratic,0.085,0.1,0.07,0.07,Open,https://www.predictit.org/markets/detail/8388,2026-06-25T04:41:00.228871+00:00
+8389,Which party will win the 2026 US Senate election in Louisiana?,33048,Republican,0.935,0.94,0.93,0.94,Open,https://www.predictit.org/markets/detail/8389,2026-06-25T04:41:00.228874+00:00
+8389,Which party will win the 2026 US Senate election in Louisiana?,33049,Democratic,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/8389,2026-06-25T04:41:00.228878+00:00
+8390,Which party will win the 2026 US Senate election in Arkansas?,33050,Republican,0.905,0.92,0.89,0.9,Open,https://www.predictit.org/markets/detail/8390,2026-06-25T04:41:00.228882+00:00
+8390,Which party will win the 2026 US Senate election in Arkansas?,33051,Democratic,0.085,0.11,0.06,0.08,Open,https://www.predictit.org/markets/detail/8390,2026-06-25T04:41:00.228885+00:00
+8391,Which party will win the 2026 US Senate election in Oklahoma?,33052,Republican,0.965,0.97,0.96,0.96,Open,https://www.predictit.org/markets/detail/8391,2026-06-25T04:41:00.228888+00:00
+8391,Which party will win the 2026 US Senate election in Oklahoma?,33053,Democratic,0.055,0.09,0.02,0.08,Open,https://www.predictit.org/markets/detail/8391,2026-06-25T04:41:00.228890+00:00
+8392,Which party will win the 2026 US Senate election in Illinois?,33055,Democratic,0.965,0.98,0.95,0.97,Open,https://www.predictit.org/markets/detail/8392,2026-06-25T04:41:00.228894+00:00
+8392,Which party will win the 2026 US Senate election in Illinois?,33054,Republican,0.03,0.04,0.02,0.03,Open,https://www.predictit.org/markets/detail/8392,2026-06-25T04:41:00.228897+00:00
+8393,Who will win the 2026 Louisiana Republican Senate nomination?,33061,Julia Letlow,0.83,0.85,0.81,0.85,Open,https://www.predictit.org/markets/detail/8393,2026-06-25T04:41:00.228900+00:00
+8393,Who will win the 2026 Louisiana Republican Senate nomination?,33058,John Fleming,0.17,0.19,0.15,0.39,Open,https://www.predictit.org/markets/detail/8393,2026-06-25T04:41:00.228905+00:00
+8395,Which party will win the 2026 US Senate election in Oregon?,33064,Democratic,0.96,0.97,0.95,0.96,Open,https://www.predictit.org/markets/detail/8395,2026-06-25T04:41:00.228918+00:00
+8395,Which party will win the 2026 US Senate election in Oregon?,33063,Republican,0.06,0.08,0.04,0.02,Open,https://www.predictit.org/markets/detail/8395,2026-06-25T04:41:00.228921+00:00
+8396,Which party will win the 2026 US Senate election in Kansas?,33065,Republican,0.83,0.86,0.8,0.8,Open,https://www.predictit.org/markets/detail/8396,2026-06-25T04:41:00.228924+00:00
+8396,Which party will win the 2026 US Senate election in Kansas?,33066,Democratic,0.22,0.24,0.2,0.23,Open,https://www.predictit.org/markets/detail/8396,2026-06-25T04:41:00.228927+00:00
+8397,Which party will win the 2026 US Senate election in New Mexico?,33068,Democratic,0.97,0.98,0.96,0.98,Open,https://www.predictit.org/markets/detail/8397,2026-06-25T04:41:00.228931+00:00
+8397,Which party will win the 2026 US Senate election in New Mexico?,33067,Republican,0.03,0.04,0.02,0.03,Open,https://www.predictit.org/markets/detail/8397,2026-06-25T04:41:00.228935+00:00
+8398,Which party will win the 2026 US Senate election in Colorado?,33070,Democratic,0.965,0.97,0.96,0.96,Open,https://www.predictit.org/markets/detail/8398,2026-06-25T04:41:00.228938+00:00
+8398,Which party will win the 2026 US Senate election in Colorado?,33069,Republican,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8398,2026-06-25T04:41:00.228941+00:00
+8399,Which party will win the 2026 US Senate election in Wyoming?,33071,Republican,0.97,0.98,0.96,0.97,Open,https://www.predictit.org/markets/detail/8399,2026-06-25T04:41:00.228945+00:00
+8399,Which party will win the 2026 US Senate election in Wyoming?,33072,Democratic,0.03,0.04,0.02,0.03,Open,https://www.predictit.org/markets/detail/8399,2026-06-25T04:41:00.228948+00:00
+8400,Which party will win the 2026 US Senate election in Idaho?,33073,Republican,0.97,0.98,0.96,0.97,Open,https://www.predictit.org/markets/detail/8400,2026-06-25T04:41:00.228951+00:00
+8400,Which party will win the 2026 US Senate election in Idaho?,33074,Democratic,0.03,0.04,0.02,0.02,Open,https://www.predictit.org/markets/detail/8400,2026-06-25T04:41:00.228954+00:00
+8401,Which party will win the 2026 election for governor of Connecticut?,33076,Democratic,0.955,0.97,0.94,0.96,Open,https://www.predictit.org/markets/detail/8401,2026-06-25T04:41:00.228958+00:00
+8401,Which party will win the 2026 election for governor of Connecticut?,33075,Republican,0.035,0.04,0.03,0.03,Open,https://www.predictit.org/markets/detail/8401,2026-06-25T04:41:00.228961+00:00
+8402,Which party will win the 2026 election for governor of Vermont?,33077,Republican,0.83,0.84,0.82,0.83,Open,https://www.predictit.org/markets/detail/8402,2026-06-25T04:41:00.228964+00:00
+8402,Which party will win the 2026 election for governor of Vermont?,33078,Democratic,0.15,0.17,0.13,0.17,Open,https://www.predictit.org/markets/detail/8402,2026-06-25T04:41:00.228968+00:00
+8403,Which party will win the 2026 election for governor of Massachusetts?,33080,Democratic,0.945,0.95,0.94,0.95,Open,https://www.predictit.org/markets/detail/8403,2026-06-25T04:41:00.228971+00:00
+8403,Which party will win the 2026 election for governor of Massachusetts?,33079,Republican,0.04,0.06,0.02,0.05,Open,https://www.predictit.org/markets/detail/8403,2026-06-25T04:41:00.228974+00:00
+8404,Which party will win the 2026 election for governor of Rhode Island?,33082,Democratic,0.905,0.97,0.84,0.81,Open,https://www.predictit.org/markets/detail/8404,2026-06-25T04:41:00.228977+00:00
+8407,Which party will win the 2026 US Senate election in Delaware?,33096,Democratic,0.96,0.97,0.95,0.96,Open,https://www.predictit.org/markets/detail/8407,2026-06-25T04:41:00.228985+00:00
+8410,Which party will win the 2026 election for governor of Maryland?,33100,Democratic,0.98,0.99,0.97,0.98,Open,https://www.predictit.org/markets/detail/8410,2026-06-25T04:41:00.228990+00:00
+8410,Which party will win the 2026 election for governor of Maryland?,33099,Republican,0.04,0.05,0.03,0.03,Open,https://www.predictit.org/markets/detail/8410,2026-06-25T04:41:00.228993+00:00
+8412,Which party will win the 2026 election for governor of Pennsylvania?,33111,Democratic,0.925,0.96,0.89,0.96,Open,https://www.predictit.org/markets/detail/8412,2026-06-25T04:41:00.228996+00:00
+8412,Which party will win the 2026 election for governor of Pennsylvania?,33110,Republican,0.08,0.1,0.06,0.06,Open,https://www.predictit.org/markets/detail/8412,2026-06-25T04:41:00.229001+00:00
+8413,Which party will win the 2026 election for governor of Florida?,33112,Republican,0.81,0.84,0.78,0.81,Open,https://www.predictit.org/markets/detail/8413,2026-06-25T04:41:00.229004+00:00
+8413,Which party will win the 2026 election for governor of Florida?,33113,Democratic,0.21,0.24,0.18,0.2,Open,https://www.predictit.org/markets/detail/8413,2026-06-25T04:41:00.229006+00:00
+8414,Will SCOTUS side with Trump on birthright citizenship?,33114,Will SCOTUS side with Trump on birthright citizenship?,0.075,0.09,0.06,0.06,Open,https://www.predictit.org/markets/detail/8414,2026-06-25T04:41:00.229010+00:00
+8416,Which party will win the 2026 election for governor of Georgia?,33120,Democratic,0.525,0.53,0.52,0.53,Open,https://www.predictit.org/markets/detail/8416,2026-06-25T04:41:00.229014+00:00
+8416,Which party will win the 2026 election for governor of Georgia?,33119,Republican,0.5,0.52,0.48,0.52,Open,https://www.predictit.org/markets/detail/8416,2026-06-25T04:41:00.229017+00:00
+8418,Which party will win the 2026 election for governor of Texas?,33123,Republican,0.915,0.93,0.9,0.9,Open,https://www.predictit.org/markets/detail/8418,2026-06-25T04:41:00.229020+00:00
+8418,Which party will win the 2026 election for governor of Texas?,33124,Democratic,0.105,0.13,0.08,0.13,Open,https://www.predictit.org/markets/detail/8418,2026-06-25T04:41:00.229023+00:00
+8419,Which party will win the 2026 election for governor of Nevada?,33126,Democratic,0.6,0.61,0.59,0.59,Open,https://www.predictit.org/markets/detail/8419,2026-06-25T04:41:00.229026+00:00
+8441,Which party will win the 2026 election for governor of Ohio?,33213,Democratic,0.52,0.54,0.5,0.53,Open,https://www.predictit.org/markets/detail/8441,2026-06-25T04:41:00.229035+00:00
+8441,Which party will win the 2026 election for governor of Ohio?,33212,Republican,0.505,0.51,0.5,0.5,Open,https://www.predictit.org/markets/detail/8441,2026-06-25T04:41:00.229038+00:00
+8442,Will the House pass any articles of impeachment by the end of 2026?,33214,Will the House pass any articles of impeachment by the end of 2026?,0.19,0.2,0.18,0.18,Open,https://www.predictit.org/markets/detail/8442,2026-06-25T04:41:00.229041+00:00
+8447,Will Missouri pass an anti-redistricting referendum in 2026?,33239,Will Missouri pass an anti-redistricting referendum in 2026?,0.57,0.59,0.55,0.6,Open,https://www.predictit.org/markets/detail/8447,2026-06-25T04:41:00.229067+00:00
+8448,Which party will win the 2026 election for governor of Alabama?,33240,Republican,0.935,0.95,0.92,0.93,Open,https://www.predictit.org/markets/detail/8448,2026-06-25T04:41:00.229070+00:00
+8448,Which party will win the 2026 election for governor of Alabama?,33241,Democratic,0.095,0.1,0.09,0.09,Open,https://www.predictit.org/markets/detail/8448,2026-06-25T04:41:00.229073+00:00
+8452,Who will win the 2026 Minnesota Republican Senate nomination?,33250,Michele Tafoya,0.895,0.94,0.85,0.82,Open,https://www.predictit.org/markets/detail/8452,2026-06-25T04:41:00.229079+00:00
+8452,Who will win the 2026 Minnesota Republican Senate nomination?,33247,Adam Schwarze,0.075,0.13,0.02,0.13,Open,https://www.predictit.org/markets/detail/8452,2026-06-25T04:41:00.229082+00:00
+8452,Who will win the 2026 Minnesota Republican Senate nomination?,33249,Royce White,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8452,2026-06-25T04:41:00.229084+00:00
+8452,Who will win the 2026 Minnesota Republican Senate nomination?,33248,Tom Weiler,0.02,0.03,0.01,0.02,Open,https://www.predictit.org/markets/detail/8452,2026-06-25T04:41:00.229087+00:00
+8457,Will Trump leave office early?,33280,Will Trump leave office early?,0.46,0.47,0.45,0.45,Open,https://www.predictit.org/markets/detail/8457,2026-06-25T04:41:00.229094+00:00
+8460,Which party will win the 2026 election for governor of Colorado?,33289,Democratic,0.935,0.97,0.9,0.97,Open,https://www.predictit.org/markets/detail/8460,2026-06-25T04:41:00.229099+00:00
+8460,Which party will win the 2026 election for governor of Colorado?,33288,Republican,0.065,0.1,0.03,0.12,Open,https://www.predictit.org/markets/detail/8460,2026-06-25T04:41:00.229102+00:00
+8461,When will the House impeach Trump again?,33290,Before 2027,0.06,0.07,0.05,0.07,Open,https://www.predictit.org/markets/detail/8461,2026-06-25T04:41:00.229106+00:00
+8461,When will the House impeach Trump again?,33293,1/1/27 -6/30/27,0.39,0.43,0.35,0.44,Open,https://www.predictit.org/markets/detail/8461,2026-06-25T04:41:00.229110+00:00
+8461,When will the House impeach Trump again?,33291,7/1/27-12/31/27,0.15,0.16,0.14,0.14,Open,https://www.predictit.org/markets/detail/8461,2026-06-25T04:41:00.229113+00:00
+8461,When will the House impeach Trump again?,33294,1/1/28 -6/30/28,0.075,0.08,0.07,0.07,Open,https://www.predictit.org/markets/detail/8461,2026-06-25T04:41:00.229115+00:00
+8461,When will the House impeach Trump again?,33292,7/1/28-1/20/29,0.035,0.04,0.03,0.05,Open,https://www.predictit.org/markets/detail/8461,2026-06-25T04:41:00.229118+00:00
+8461,When will the House impeach Trump again?,33311,Not by 1/20/29,0.295,0.34,0.25,0.34,Open,https://www.predictit.org/markets/detail/8461,2026-06-25T04:41:00.229121+00:00
+8462,Who will win the 2026 Colorado Democratic nomination for governor?,33295,Michael Bennet,0.715,0.72,0.71,0.72,Open,https://www.predictit.org/markets/detail/8462,2026-06-25T04:41:00.229125+00:00
+8462,Who will win the 2026 Colorado Democratic nomination for governor?,33296,Phil Weiser,0.285,0.29,0.28,0.28,Open,https://www.predictit.org/markets/detail/8462,2026-06-25T04:41:00.229129+00:00
+8463,Who will win the 2026 Colorado Republican nomination for governor?,33298,Scott Bottoms,0.04,0.05,0.03,0.03,Open,https://www.predictit.org/markets/detail/8463,2026-06-25T04:41:00.229137+00:00
+8465,Who will win the 2026 Wyoming Republican Senate nomination?,33325,Harriet Hageman,0.955,0.98,0.93,0.98,Open,https://www.predictit.org/markets/detail/8465,2026-06-25T04:41:00.229144+00:00
+8474,Which party will win the 2026 election for governor of New Mexico?,33335,Democratic,0.93,0.94,0.92,0.94,Open,https://www.predictit.org/markets/detail/8474,2026-06-25T04:41:00.229162+00:00
+8479,How many vetoes will Trump issue in 2026?,33361,0 vetoes,0.325,0.36,0.29,0.3,Open,https://www.predictit.org/markets/detail/8479,2026-06-25T04:41:00.229171+00:00
+8479,How many vetoes will Trump issue in 2026?,33362,1 veto,0.32,0.37,0.27,0.28,Open,https://www.predictit.org/markets/detail/8479,2026-06-25T04:41:00.229174+00:00
+8479,How many vetoes will Trump issue in 2026?,33360,2 vetoes,0.13,0.16,0.1,0.11,Open,https://www.predictit.org/markets/detail/8479,2026-06-25T04:41:00.229177+00:00
+8479,How many vetoes will Trump issue in 2026?,33359,3 vetoes,0.155,0.17,0.14,0.16,Open,https://www.predictit.org/markets/detail/8479,2026-06-25T04:41:00.229180+00:00
+8479,How many vetoes will Trump issue in 2026?,33358,4 or more  vetoes,0.165,0.17,0.16,0.16,Open,https://www.predictit.org/markets/detail/8479,2026-06-25T04:41:00.229183+00:00
+8483,Who will win the 2026 Minnesota Democratic nomination for governor?,33387,Amy Klobuchar,0.975,0.99,0.96,0.97,Open,https://www.predictit.org/markets/detail/8483,2026-06-25T04:41:00.229193+00:00
+8483,Who will win the 2026 Minnesota Democratic nomination for governor?,33388,Steve Simon,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8483,2026-06-25T04:41:00.229199+00:00
+8486,Will Trump visit Greenland in 2026?,33391,Will Trump visit Greenland in 2026?,0.13,0.14,0.12,0.06,Open,https://www.predictit.org/markets/detail/8486,2026-06-25T04:41:00.229205+00:00
+8488,Will any country announce that it is leaving NATO in 2026?,33394,Will any country announce that it is leaving NATO in 2026?,0.135,0.15,0.12,0.12,Open,https://www.predictit.org/markets/detail/8488,2026-06-25T04:41:00.229208+00:00
+8491,Will the US purchase and annex any land in Greenland in 2026?,33405,Will the US purchase and annex any land in Greenland in 2026?,0.065,0.07,0.06,0.07,Open,https://www.predictit.org/markets/detail/8491,2026-06-25T04:41:00.229213+00:00
+8493,Will the US purchase Greenland in 2026?,33416,Will the US purchase Greenland in 2026?,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8493,2026-06-25T04:41:00.229216+00:00
+8494,Will Greenland hold an independence referendum in 2026?,33417,Will Greenland hold an independence referendum in 2026?,0.06,0.07,0.05,0.05,Open,https://www.predictit.org/markets/detail/8494,2026-06-25T04:41:00.229220+00:00
+8515,Will SCOTUS strike down transgender sports bans?,33477,Will SCOTUS strike down transgender sports bans?,0.065,0.07,0.06,0.06,Open,https://www.predictit.org/markets/detail/8515,2026-06-25T04:41:00.229235+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33505,3 votes,0.175,0.21,0.14,0.2,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229243+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33506,4 votes,0.125,0.14,0.11,0.15,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229247+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33507,5 votes,0.09,0.14,0.04,0.15,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229251+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33501,6 votes,0.1,0.14,0.06,0.14,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229254+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33504,7 votes,0.06,0.09,0.03,0.11,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229257+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33500,8 votes,0.08,0.11,0.05,0.15,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229260+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33508,9 votes,0.065,0.08,0.05,0.05,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229263+00:00
+8521,How many tie-breaking Senate votes will JD Vance cast in 2026?,33509,10 or more votes,0.115,0.19,0.04,0.18,Open,https://www.predictit.org/markets/detail/8521,2026-06-25T04:41:00.229267+00:00
+8527,Will SCOTUS let Trump fire Lisa Cook?,33541,Will SCOTUS let Trump fire Lisa Cook?,0.045,0.07,0.02,0.02,Open,https://www.predictit.org/markets/detail/8527,2026-06-25T04:41:00.229271+00:00
+8533,Which of these 10 Asian leaders will leave office next?,33578,Recep Tayyip Erdoğan,0.225,0.3,0.15,0.15,Open,https://www.predictit.org/markets/detail/8533,2026-06-25T04:41:00.229287+00:00
+8533,Which of these 10 Asian leaders will leave office next?,33571,Sanae Takaichi,0.08,0.1,0.06,0.13,Open,https://www.predictit.org/markets/detail/8533,2026-06-25T04:41:00.229290+00:00
+8533,Which of these 10 Asian leaders will leave office next?,33570,Xi Jinping,0.065,0.09,0.04,0.04,Open,https://www.predictit.org/markets/detail/8533,2026-06-25T04:41:00.229293+00:00
+8533,Which of these 10 Asian leaders will leave office next?,33579,Kim Jong Un,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8533,2026-06-25T04:41:00.229299+00:00
+8533,Which of these 10 Asian leaders will leave office next?,33573,Narendra Modi,0.04,0.06,0.02,0.02,Open,https://www.predictit.org/markets/detail/8533,2026-06-25T04:41:00.229302+00:00
+8533,Which of these 10 Asian leaders will leave office next?,33575,M. b. Z. Al Nahyan,0.05,0.08,0.02,0.02,Open,https://www.predictit.org/markets/detail/8533,2026-06-25T04:41:00.229305+00:00
+8540,Will Stephen Miller leave office in 2026?,33611,Will Stephen Miller leave office in 2026?,0.27,0.28,0.26,0.26,Open,https://www.predictit.org/markets/detail/8540,2026-06-25T04:41:00.229308+00:00
+8542,Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?,33613,Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?,0.96,0.99,0.93,0.99,Open,https://www.predictit.org/markets/detail/8542,2026-06-25T04:41:00.229314+00:00
+8544,Who will win the 2026 Brazilian presidential election?,33625,Romeu Zema,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8544,2026-06-25T04:41:00.229324+00:00
+8549,Will Trump pardon Elon Musk in 2026?,33641,Will Trump pardon Elon Musk in 2026?,0.065,0.09,0.04,0.05,Open,https://www.predictit.org/markets/detail/8549,2026-06-25T04:41:00.229327+00:00
+8554,Will Kash Patel leave office before July?,33663,Will Kash Patel leave office before July?,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8554,2026-06-25T04:41:00.229330+00:00
+8559,Will Trump pardon Nicolás Maduro or commute his sentence in 2026?,33677,Will Trump pardon Nicolás Maduro or commute his sentence in 2026?,0.045,0.08,0.01,0.01,Open,https://www.predictit.org/markets/detail/8559,2026-06-25T04:41:00.229333+00:00
+8582,Will the Senate pass the SAVE Act before the Midterms?,33782,Will the Senate pass the SAVE Act before the Midterms?,0.165,0.17,0.16,0.17,Open,https://www.predictit.org/markets/detail/8582,2026-06-25T04:41:00.229343+00:00
+8587,Who will replace Christine Lagarde at the European Central Bank?,33820,P. Hernández de Cos,0.155,0.21,0.1,0.1,Open,https://www.predictit.org/markets/detail/8587,2026-06-25T04:41:00.229353+00:00
+8587,Who will replace Christine Lagarde at the European Central Bank?,33821,Klaas Knot,0.115,0.13,0.1,0.1,Open,https://www.predictit.org/markets/detail/8587,2026-06-25T04:41:00.229356+00:00
+8591,Will Prince Andrew testify publicly before Congress in 2026?,33827,Will Prince Andrew testify publicly before Congress in 2026?,0.055,0.09,0.02,0.03,Open,https://www.predictit.org/markets/detail/8591,2026-06-25T04:41:00.229361+00:00
+8600,What will be the balance of power in Congress after the 2026 election?,33867,"D House, R Senate",0.375,0.38,0.37,0.38,Open,https://www.predictit.org/markets/detail/8600,2026-06-25T04:41:00.229367+00:00
+8600,What will be the balance of power in Congress after the 2026 election?,33866,Dem. House & Senate,0.375,0.39,0.36,0.37,Open,https://www.predictit.org/markets/detail/8600,2026-06-25T04:41:00.229370+00:00
+8600,What will be the balance of power in Congress after the 2026 election?,33868,Rep. House & Senate,0.285,0.29,0.28,0.29,Open,https://www.predictit.org/markets/detail/8600,2026-06-25T04:41:00.229372+00:00
+8600,What will be the balance of power in Congress after the 2026 election?,33869,"R House, D Senate",0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8600,2026-06-25T04:41:00.229375+00:00
+8609,Who will be Prime Minister of the United Kingdom after Keir Starmer?,33902,Andy Burnham,0.975,0.98,0.97,0.96,Open,https://www.predictit.org/markets/detail/8609,2026-06-25T04:41:00.229380+00:00
+8609,Who will be Prime Minister of the United Kingdom after Keir Starmer?,33904,Nigel Farage,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8609,2026-06-25T04:41:00.229383+00:00
+8609,Who will be Prime Minister of the United Kingdom after Keir Starmer?,33900,Angela Rayner,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8609,2026-06-25T04:41:00.229385+00:00
+8618,Will Cuba's leader leave office by July 1?,33937,Will Cuba's leader leave office by July 1?,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8618,2026-06-25T04:41:00.229395+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34042,≤47 and ≤217,0.17,0.18,0.16,0.18,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229407+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34046,≤47 and 218-232,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229410+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34047,≤47 and ≥233,0.025,0.03,0.02,0.03,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229415+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34043,48-50 and ≤217,0.115,0.18,0.05,0.06,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229418+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34048,48-50 and 218-232,0.165,0.17,0.16,0.17,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229421+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34051,48-50 and 233-247,0.085,0.09,0.08,0.08,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229424+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34044,48-50 and ≥248 ,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229426+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34050,51-53 and ≤232,0.115,0.12,0.11,0.11,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229431+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34045,51-53 and 233-247,0.125,0.13,0.12,0.12,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229434+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34041,51-53 and ≥248 ,0.045,0.07,0.02,0.07,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229436+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34049,≥54 and ≤232,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229440+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34052,≥54 and 233-247,0.02,0.03,0.01,0.02,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229443+00:00
+8635,How many House and Senate seats will Dems control after the 2026 midterms?,34053,≥54 and ≥248,0.025,0.03,0.02,0.02,Open,https://www.predictit.org/markets/detail/8635,2026-06-25T04:41:00.229446+00:00
+8640,Will Rubio and Vance both announce a run for President before 2028?,34075,Will Rubio and Vance both announce a run for President before 2028?,0.43,0.45,0.41,0.45,Open,https://www.predictit.org/markets/detail/8640,2026-06-25T04:41:00.229449+00:00
+8643,Who will be the Prime Minister of Israel after the 2026 election?,34096,Benjamin Netanyahu,0.255,0.31,0.2,0.21,Open,https://www.predictit.org/markets/detail/8643,2026-06-25T04:41:00.229457+00:00
+8643,Who will be the Prime Minister of Israel after the 2026 election?,34102,Itamar Ben-Gvir,0.08,0.14,0.02,0.15,Open,https://www.predictit.org/markets/detail/8643,2026-06-25T04:41:00.229463+00:00
+8645,Who will win the 2026 Colorado Democratic Senate nomination?,34109,John Hickenlooper,0.905,0.97,0.84,0.84,Open,https://www.predictit.org/markets/detail/8645,2026-06-25T04:41:00.229477+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34166,Gavin Newsom,0.42,0.46,0.38,0.38,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229487+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34164,Pete Buttigieg,0.22,0.25,0.19,0.19,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229490+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34163,Kamala Harris,0.1,0.14,0.06,0.16,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229493+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34168,Gretchen Whitmer,0.065,0.09,0.04,0.09,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229500+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34165,A. Ocasio-Cortez,0.055,0.09,0.02,0.02,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229505+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34169,Josh Shapiro,0.14,0.19,0.09,0.0,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229508+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34171,Jon Ossoff,0.125,0.19,0.06,0.0,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229510+00:00
+8656,Which of these Democratic candidates will announce a 2028 POTUS run first?,34172,Mark Kelly,0.13,0.2,0.06,0.0,Open,https://www.predictit.org/markets/detail/8656,2026-06-25T04:41:00.229513+00:00
+8659,Who will win the 2026 Rhode Island Democratic nomination for governor?,34187,Gina Raimondo,0.06,0.1,0.02,0.02,Open,https://www.predictit.org/markets/detail/8659,2026-06-25T04:41:00.229533+00:00
+8660,Will a law restricting sports trades on prediction markets be enacted in 2026?,34188,Will a law restricting sports trades on prediction markets be enacted in 2026?,0.075,0.1,0.05,0.05,Open,https://www.predictit.org/markets/detail/8660,2026-06-25T04:41:00.229537+00:00
+8668,How many of these Elizabeth Warren endorsees will win Senate primaries?,34241,0,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8668,2026-06-25T04:41:00.229540+00:00
+8668,How many of these Elizabeth Warren endorsees will win Senate primaries?,34243,1,0.195,0.2,0.19,0.19,Open,https://www.predictit.org/markets/detail/8668,2026-06-25T04:41:00.229543+00:00
+8668,How many of these Elizabeth Warren endorsees will win Senate primaries?,34242,3,0.115,0.15,0.08,0.15,Open,https://www.predictit.org/markets/detail/8668,2026-06-25T04:41:00.229550+00:00
+8679,Who will win the 2026 Florida Democratic Senate nomination?,34307,Alexander Vindman,0.975,0.98,0.97,0.97,Open,https://www.predictit.org/markets/detail/8679,2026-06-25T04:41:00.229567+00:00
+8679,Who will win the 2026 Florida Democratic Senate nomination?,34305,Hector Mujica,0.03,0.05,0.01,0.01,Open,https://www.predictit.org/markets/detail/8679,2026-06-25T04:41:00.229570+00:00
+8679,Who will win the 2026 Florida Democratic Senate nomination?,34306,Alan Grayson,0.035,0.06,0.01,0.01,Open,https://www.predictit.org/markets/detail/8679,2026-06-25T04:41:00.229573+00:00
+8693,Will Howard Lutnick leave office before July?,34373,Will Howard Lutnick leave office before July?,0.015,0.02,0.01,0.01,Open,https://www.predictit.org/markets/detail/8693,2026-06-25T04:41:00.229579+00:00
+8701,Will the US announce in 2026 it is closing a military base in Germany or Spain?,34429,Will the US announce in 2026 it is closing a military base in Germany or Spain?,0.225,0.23,0.22,0.22,Open,https://www.predictit.org/markets/detail/8701,2026-06-25T04:41:00.229585+00:00
+8702,Who will win in Dan Bilzerian's challenge to Randy Fine in the FL-06 House race?,34431,Dan Bilzerian,0.05,0.07,0.03,0.03,Open,https://www.predictit.org/markets/detail/8702,2026-06-25T04:41:00.229592+00:00
+8705,Will the Pope excommunicate JD Vance before 2028?,34442,Will the Pope excommunicate JD Vance before 2028?,0.09,0.1,0.08,0.1,Open,https://www.predictit.org/markets/detail/8705,2026-06-25T04:41:00.229595+00:00
+8763,Will the President sign a reconciliation bill by July 1?,34680,Will the President sign a reconciliation bill by July 1?,0.945,0.99,0.9,0.86,Open,https://www.predictit.org/markets/detail/8763,2026-06-25T04:41:00.229664+00:00
+8766,Who will win the next French presidential election?,34694,Marine Le Pen,0.11,0.12,0.1,0.12,Open,https://www.predictit.org/markets/detail/8766,2026-06-25T04:41:00.229674+00:00
+8766,Who will win the next French presidential election?,34697,Sébastien Lecornu,0.08,0.09,0.07,0.09,Open,https://www.predictit.org/markets/detail/8766,2026-06-25T04:41:00.229677+00:00
+8766,Who will win the next French presidential election?,34695,Bernard Cazeneuve,0.06,0.1,0.02,0.03,Open,https://www.predictit.org/markets/detail/8766,2026-06-25T04:41:00.229686+00:00
+8766,Who will win the next French presidential election?,34696,Gérald Darmanin,0.06,0.09,0.03,0.01,Open,https://www.predictit.org/markets/detail/8766,2026-06-25T04:41:00.229689+00:00
+8766,Who will win the next French presidential election?,34699,François Bayrou,0.055,0.09,0.02,0.01,Open,https://www.predictit.org/markets/detail/8766,2026-06-25T04:41:00.229692+00:00
+8783,Will Fetterman leave the Democratic Party by Sept. 30?,34761,Will Fetterman leave the Democratic Party by Sept. 30?,0.085,0.11,0.06,0.08,Open,https://www.predictit.org/markets/detail/8783,2026-06-25T04:41:00.229733+00:00
+8788,Which of these 10 European leaders will leave office next?,34798,Keir Starmer,0.965,0.98,0.95,0.97,Open,https://www.predictit.org/markets/detail/8788,2026-06-25T04:41:00.229738+00:00
+8788,Which of these 10 European leaders will leave office next?,34791,Volodymyr Zelenskyy,0.05,0.09,0.01,0.01,Open,https://www.predictit.org/markets/detail/8788,2026-06-25T04:41:00.229743+00:00
+8788,Which of these 10 European leaders will leave office next?,34794,Friedrich Merz,0.04,0.07,0.01,0.01,Open,https://www.predictit.org/markets/detail/8788,2026-06-25T04:41:00.229752+00:00
+8799,Who will win the 2028 Democratic vice presidential nomination?,34824,Gretchen Whitmer,0.225,0.25,0.2,0.25,Open,https://www.predictit.org/markets/detail/8799,2026-06-25T04:41:00.229783+00:00
+8799,Who will win the 2028 Democratic vice presidential nomination?,34822,A. Ocasio-Cortez,0.11,0.16,0.06,0.09,Open,https://www.predictit.org/markets/detail/8799,2026-06-25T04:41:00.229786+00:00
+8799,Who will win the 2028 Democratic vice presidential nomination?,34825,Josh Shapiro,0.115,0.15,0.08,0.08,Open,https://www.predictit.org/markets/detail/8799,2026-06-25T04:41:00.229789+00:00
+8799,Who will win the 2028 Democratic vice presidential nomination?,34821,Pete Buttigieg,0.055,0.06,0.05,0.06,Open,https://www.predictit.org/markets/detail/8799,2026-06-25T04:41:00.229792+00:00
+8800,Who will win the 2028 Republican vice presidential nomination?,34838,Pete Hegseth,0.05,0.09,0.01,0.01,Open,https://www.predictit.org/markets/detail/8800,2026-06-25T04:41:00.229813+00:00
+8800,Who will win the 2028 Republican vice presidential nomination?,34834,Donald Trump Jr.,0.085,0.15,0.02,0.0,Open,https://www.predictit.org/markets/detail/8800,2026-06-25T04:41:00.229827+00:00
+8812,Who will be the next Senate-confirmed DNI?,34926,Aaron Lukas,0.055,0.09,0.02,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-25T04:41:00.229891+00:00
+8812,Who will be the next Senate-confirmed DNI?,34929,Robert O’Brien,0.05,0.08,0.02,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-25T04:41:00.229899+00:00
+8812,Who will be the next Senate-confirmed DNI?,34930,Chris Stewart,0.045,0.07,0.02,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-25T04:41:00.229901+00:00
+8812,Who will be the next Senate-confirmed DNI?,34978,Bill Pulte,0.04,0.07,0.01,0.0,Open,https://www.predictit.org/markets/detail/8812,2026-06-25T04:41:00.229913+00:00
+8818,Will Trump's Anti-Weaponization Fund begin payouts this year?,34953,Will Trump's Anti-Weaponization Fund begin payouts this year?,0.09,0.15,0.03,0.03,Open,https://www.predictit.org/markets/detail/8818,2026-06-25T04:41:00.229918+00:00
+8822,Will Graham Platner drop out before July 14?,34968,Will Graham Platner drop out before July 14?,0.035,0.04,0.03,0.04,Open,https://www.predictit.org/markets/detail/8822,2026-06-25T04:41:00.229924+00:00
+8827,How many Yea votes will Todd Blanche receive in a confirmation vote by year-end?,35007,49 or fewer,0.47,0.49,0.45,0.41,Open,https://www.predictit.org/markets/detail/8827,2026-06-25T04:41:00.229927+00:00
+8827,How many Yea votes will Todd Blanche receive in a confirmation vote by year-end?,35013,54,0.055,0.1,0.01,0.02,Open,https://www.predictit.org/markets/detail/8827,2026-06-25T04:41:00.229943+00:00
+8828,What will be the margin in the Los Angeles mayoral primary?,35016,8.0%-8.5%,0.015,0.02,0.01,0.02,Open,https://www.predictit.org/markets/detail/8828,2026-06-25T04:41:00.229953+00:00
+8831,Will Kash Patel leave office in 2026?,35035,Will Kash Patel leave office in 2026?,0.47,0.49,0.45,0.49,Open,https://www.predictit.org/markets/detail/8831,2026-06-25T04:41:00.229982+00:00
+8844,Trump's DDHQ job approval rating on June 26?,35086,40.1% to 40.3%,0.165,0.23,0.1,0.23,Open,https://www.predictit.org/markets/detail/8844,2026-06-25T04:41:00.230026+00:00
+8844,Trump's DDHQ job approval rating on June 26?,35089,40.4% to 40.6%,0.11,0.17,0.05,0.17,Open,https://www.predictit.org/markets/detail/8844,2026-06-25T04:41:00.230028+00:00
+8844,Trump's DDHQ job approval rating on June 26?,35087,40.7% to 40.9%,0.085,0.12,0.05,0.12,Open,https://www.predictit.org/markets/detail/8844,2026-06-25T04:41:00.230031+00:00
+8844,Trump's DDHQ job approval rating on June 26?,35090,41.0% to 41.2%,0.09,0.16,0.02,0.02,Open,https://www.predictit.org/markets/detail/8844,2026-06-25T04:41:00.230034+00:00
+8849,Which party will lead in RCP Congressional generic ballot polling for June 30?,35115,"Dem<3.5%, Tie or GOP",0.05,0.07,0.03,0.0,Open,https://www.predictit.org/markets/detail/8849,2026-06-25T04:41:00.230068+00:00
+8849,Which party will lead in RCP Congressional generic ballot polling for June 30?,35118,Democrats 3.5-%3.9%,0.05,0.08,0.02,0.0,Open,https://www.predictit.org/markets/detail/8849,2026-06-25T04:41:00.230071+00:00
+8849,Which party will lead in RCP Congressional generic ballot polling for June 30?,35117,Democrats 4.0-%4.4%,0.08,0.14,0.02,0.0,Open,https://www.predictit.org/markets/detail/8849,2026-06-25T04:41:00.230074+00:00
+8850,Who will be the next Cabinet member to leave office?,35122,Marco Rubio,0.03,0.04,0.02,0.04,Open,https://www.predictit.org/markets/detail/8850,2026-06-25T04:41:00.230092+00:00
+8850,Who will be the next Cabinet member to leave office?,35123,Scott Bessent,0.03,0.04,0.02,0.04,Open,https://www.predictit.org/markets/detail/8850,2026-06-25T04:41:00.230095+00:00
