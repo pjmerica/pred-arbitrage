@@ -156,6 +156,26 @@ Lines are post-fixes from this audit.
 Ordered by leverage. Items 1-3 are blocking-quality issues; the rest
 are improvements.
 
+### 0. (deferred 2026-06-27) Range-bucket matcher for monthly settle markets
+
+Polymarket has bucket-settle markets (`Will Crude Oil settle at $70-$77
+in June?`) and Kalshi has dense above-strike ladders for the same
+settle date (`Oil Price (WTI) on Jun 30, 2026? — Above $X`). The
+**actionable arb is 3-leg**: buy Polymarket `$A-$B`, buy Kalshi NO on
+`Above $A`, buy Kalshi YES on `Above $B`. All 3 legs are needed to
+pay $1 in every state of the world.
+
+Current pair schema is 1 Kalshi market + 1 Polymarket market —
+doesn't model 3-leg arbs. User decision 2026-06-27 (after seeing real
+22pp gap on `cl-settle-jun-2026` $70-$77 bucket): defer. Threshold
+matcher (7cedd68) already surfaces 1-vs-1 crypto/oil `reach $X` arbs
+which were the bigger immediate win.
+
+To unblock when revisited: extend `matched_pairs.csv` with optional
+`market_id_c` column, add a 3-leg basket-cost path in
+`compute_arb()`, and add a third platform column in the dashboard.
+~2-3 hours.
+
 ### 1. Rewrite Polymarket scraper to use `clob.polymarket.com/markets`
 
 **Why**: gamma's `/events?offset=N` is hard-capped at offset=2000.
