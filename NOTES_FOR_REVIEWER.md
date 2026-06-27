@@ -32,11 +32,12 @@ Outputs `docs/arb_data.js`, which a single-page dashboard
 
 ## The minimum mental model
 
-Three platforms, three scrapers, two matching paths (fuzzy text +
-race_id-based for elections), one scanner that computes arbs from the
-matched pairs. The scanner runs **twice** around a depth-fetch step
-because the first pass emits a list of "interesting" markets whose
-live orderbooks the second pass joins back in.
+Three platforms, three scrapers, three matching paths (race_id-based
+for elections, threshold-comparison for crypto/commodities, fuzzy text
+for everything else), one scanner that computes arbs from the matched
+pairs. The scanner runs **twice** around a depth-fetch step because
+the first pass emits a list of "interesting" markets whose live
+orderbooks the second pass joins back in.
 
 ```
                                                         ┌─→ docs/arb_data.js → dashboard
@@ -268,7 +269,7 @@ High-impact:
 
 4. Read `HANDOFF.md` top to bottom. Architecture + every gotcha.
 5. Read `scripts/arb_scanner.py:compute_arb` (the math).
-6. Read `scripts/matcher.py:match_fuzzy` (the matching).
+6. Read `scripts/matcher.py:match_fuzzy` + `match_threshold_pairs` (the matching).
 
 ## If you have a half-day
 

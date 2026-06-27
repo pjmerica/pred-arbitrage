@@ -22,7 +22,7 @@ Pipeline order (`run_all.py`):
 3. `scripts/freshen_polymarket.py` → overwrites bid/ask/midpoint with live CLOB data
 4. `scrapers/predictit.py` → `data/raw/predictit_markets.csv`
 5. `scrapers/house_incumbents.py` → `data/processed/house_incumbents.json`
-6. `scripts/matcher.py` → `data/processed/matched_pairs.csv` (fuzzy cross-platform)
+6. `scripts/matcher.py` → `data/processed/matched_pairs.csv` (political race_id + Kalshi↔Polymarket price-threshold + fuzzy cross-platform)
 7. `scripts/elections.py` → `data/processed/election_pairs.csv` (US-2026 race_id-based)
 8. `scripts/arb_scanner.py` (pass 1) → `data/processed/depth_targets.csv` + first `docs/arb_data.js`
 9. `scripts/fetch_depth.py` → `data/raw/orderbook_depth.csv` (YES + NO orderbooks for matched pairs)

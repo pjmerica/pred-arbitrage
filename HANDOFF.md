@@ -61,7 +61,7 @@ intentional. See polling-agg's HANDOFF for why.
 
 ### Matching
 
-The matcher (`scripts/matcher.py`) has two parallel paths:
+The matcher (`scripts/matcher.py`) has three parallel paths:
 
 **`match_political`** — race_id-based, like polling-agg's general-election
 path. Picks the highest-OI market per race+platform and crosses them.
@@ -69,11 +69,33 @@ Includes the cross-flip safety check for 3-way races (the
 `safe_rep`-style logic) but implemented inside the matcher rather than
 the scanner.
 
+**`match_threshold_pairs`** — Kalshi↔Polymarket only. Parses
+`(asset, direction, strike, month)` tuples from price-threshold titles
+(Kalshi "How high will BTC get in 2026? — Above $X" vs Polymarket
+"Will Bitcoin reach $X by December 31, 2026?") and pairs markets
+sharing `(asset, direction, month)` within strike tolerance — 2% for
+crypto/precious metals, $1.50 for commodities (oil, gas). Closest-
+strike-only rule prevents one Polymarket strike spawning N near-strike
+Kalshi duplicates. Covers patterns fuzzy can't reach because the
+phrasing differs too much for `token_sort_ratio` to score:
+  - Kalshi: `how high`/`how low` + `or above`/`or below`
+  - Polymarket: `hit (HIGH/LOW)`, `reach`, `dip to`
+  - Month: full name, 3-letter abbrev, or year-end synonyms
+    (`in 2026`, `by December 31, 2026`, `this year`) bucketed to `dec`.
+Settled assets: BTC, ETH, SOL, XRP, BNB, HYPE, OIL/WTI, BRENT, GOLD,
+SILVER, COPPER, NATGAS. Bypass: add the asset slug to `_PRICE_ASSETS`.
+
 **`match_fuzzy`** — uses `rapidfuzz` text similarity within
 category groups. The category groups (`CATEGORY_GROUPS` dict in
 matcher.py) restrict matching to within sports / politics / crypto /
 finance / etc. so a "Lakers win NBA" market doesn't match a "Trump
 wins election" market just because their fuzzy scores are nonzero.
+
+Per-category fuzzy thresholds live in `PER_CATEGORY_THRESHOLD`:
+crypto 72, finance/science/companies 74, sports/culture 80, politics
+88 (default). Lower threshold = more matches in that group but more
+noise too; politics stays high because candidate-vs-party false
+positives are expensive.
 
 Both paths pass through a long chain of guards before emitting a
 pair. In order:

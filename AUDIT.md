@@ -23,10 +23,13 @@ These are choices that affect how the rest of the audit reads. Don't
   pred-arbitrage scrapes every active market on Kalshi / Polymarket /
   PredictIt and runs cross-platform arb matching across the whole
   universe (sports, entertainment, crypto, politics, weather).
-- **Two matching paths.** `match_political` joins on canonical
-  `race_id`; `match_fuzzy` uses `rapidfuzz` text similarity within
-  category groups (`CATEGORY_GROUPS` in `scripts/matcher.py`). Most of
-  the file is the 10+ guard chain that prevents false fuzzy pairs.
+- **Three matching paths.** `match_political` joins on canonical
+  `race_id`; `match_threshold_pairs` parses
+  `(asset, direction, strike, month)` from price-threshold titles
+  (Kalshi↔Polymarket only, crypto + commodities); `match_fuzzy` uses
+  `rapidfuzz` text similarity within category groups (with per-category
+  thresholds in `PER_CATEGORY_THRESHOLD`). Most of the file is the
+  10+ guard chain that prevents false fuzzy pairs.
 - **The scanner runs twice around `fetch_depth`** — same as polling-agg.
   Pass 1 emits `depth_targets.csv`, fetch_depth populates orderbooks,
   pass 2 joins depth and recomputes suspicion flags.
@@ -57,7 +60,7 @@ Lines are post-fixes from this audit.
 
 | File | LOC | Status | Notes |
 |---|---|---|---|
-| `matcher.py` | ~750 | **live, hot** | Two matching paths plus 10+ guards on the fuzzy path. Each guard tracks a specific historical false-pair (candidate-name, sub-bet type, year overlap, threshold buckets, office role, demographic, date anchors, rank, month/day anchor, subject extraction). **Don't loosen any guard without running `tools/deep_check.py` first.** |
+| `matcher.py` | ~900 | **live, hot** | Three matching paths (political race_id, threshold-comparison Kalshi↔Polymarket for crypto/commodities, fuzzy text within category groups with `PER_CATEGORY_THRESHOLD` overrides) plus 10+ guards on the fuzzy path. Each guard tracks a specific historical false-pair (candidate-name, sub-bet type, year overlap, threshold buckets, office role, demographic, date anchors, rank, month/day anchor, subject extraction). **Don't loosen any guard without running `tools/deep_check.py` first.** |
 | `arb_scanner.py` | ~355 | **live, healthy** | 4% combined fees after the audit (was 6%). Conditional scrutiny import — `except Exception: _scrutinize = None` is acceptable (the scanner runs fine without it). Calls `scripts.scrutiny.scrutinize` for >30pp pairs. |
 | `fetch_depth.py` | ~185 | **live, healthy** | Uses `DEFAULT_HEADERS`. `_http_json` swallows exceptions and returns None — caller handles None. |
 | `scrutiny.py` | ~195 | **live, healthy** | Uses `DEFAULT_HEADERS`. 7-day cache; SequenceMatcher similarity scoring. PredictIt rule fetch is a no-op (no public endpoint). |
