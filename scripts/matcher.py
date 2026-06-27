@@ -784,6 +784,153 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
     return pd.DataFrame(pairs)
 
 
+# ── Threshold-comparison matcher (crypto/commodities) ──────────────────────
+# Both Kalshi and Polymarket publish "will <asset> hit/reach $X by <date>"
+# style markets. The semantics are identical but titles differ enough that
+# fuzzy matching misses them. This matcher parses (asset, direction,
+# strike, settlement_month) from each title, then pairs Kalshi+Polymarket
+# markets sharing the (asset, direction, month) tuple with strikes within
+# tolerance. Tolerance is 2% of strike for high-priced assets (crypto,
+# precious metals) and $1.50 for commodities (oil, gas).
+
+_PRICE_ASSETS = {
+    'bitcoin': 'BTC',  'btc': 'BTC',
+    'ethereum': 'ETH', 'eth': 'ETH',
+    'solana': 'SOL',   'sol': 'SOL',
+    'xrp': 'XRP', 'bnb': 'BNB', 'hype': 'HYPE',
+    'oil': 'OIL', 'wti': 'OIL', 'crude': 'OIL', 'brent': 'BRENT',
+    'gold': 'GOLD', 'silver': 'SILVER', 'copper': 'COPPER',
+    'natural gas': 'NATGAS', 'nat gas': 'NATGAS',
+}
+_MONTHS_FULL = ['january','february','march','april','may','june',
+                'july','august','september','october','november','december']
+# Assets where strike tolerance is percentage-based rather than absolute.
+_PERCENT_TOL_ASSETS = {'BTC','ETH','SOL','XRP','BNB','HYPE','GOLD','SILVER','COPPER'}
+
+
+def _extract_threshold_key(text: str, src: str):
+    """Parse (asset, direction, strike, month) from a price-threshold title.
+    Returns None for titles that don't match the threshold pattern."""
+    if not text or pd.isna(text):
+        return None
+    t = str(text).lower()
+    if src == 'kalshi':
+        if 'how high' in t or 'or above' in t: direction = 'above'
+        elif 'how low' in t or 'or below' in t: direction = 'below'
+        else: return None
+    else:  # polymarket
+        if 'hit' in t:
+            if '(high)' in t: direction = 'above'
+            elif '(low)' in t: direction = 'below'
+            else: return None
+        elif 'reach' in t: direction = 'above'
+        elif 'dip to' in t: direction = 'below'
+        else: return None
+    asset = next((v for k, v in _PRICE_ASSETS.items() if k in t), None)
+    if not asset:
+        return None
+    # Strike: prefer $-prefixed, else any number after the em-dash
+    m = re.search(r'\$\s*([\d,]+(?:\.\d+)?)', text)
+    if not m:
+        m = re.search(r'[—–\-]\s*\$?\s*([\d,]+(?:\.\d+)?)', text)
+    if not m:
+        return None
+    try:
+        strike = float(m.group(1).replace(',', ''))
+    except ValueError:
+        return None
+    # Month bucket. Try full names first then 3-letter abbreviations.
+    month = None
+    for mo in _MONTHS_FULL:
+        if mo in t:
+            month = mo[:3]
+            break
+        if mo[:3] in t:
+            month = mo[:3]
+            break
+    # Year-end synonyms ("in 2026", "this year", "by December 31, 2026")
+    # all bucket to 'dec' so they cross-match.
+    if not month and (
+        'in 2026' in t or 'in 2027' in t or 'this year' in t
+        or 'by 2026' in t or 'by 2027' in t
+        or 'december 31, 2026' in t or 'december 31, 2027' in t
+    ):
+        month = 'dec'
+    if not month:
+        return None
+    return (asset, direction, strike, month)
+
+
+def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
+    """Match Kalshi vs Polymarket price-threshold markets (e.g. 'will BTC
+    reach $X by date'). Skips PredictIt — no price-threshold markets
+    there. Same row schema as match_fuzzy so the union is uniform."""
+    from collections import defaultdict
+    pairs = []
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']
+    p = dfs['polymarket']
+    if k.empty or p.empty:
+        return pd.DataFrame()
+
+    # Index each platform by (asset, direction, month).
+    k_idx = defaultdict(list)
+    p_idx = defaultdict(list)
+    for _, r in k.iterrows():
+        key = _extract_threshold_key(r.get('question', ''), 'kalshi')
+        if key:
+            k_idx[(key[0], key[1], key[3])].append((key[2], r))
+    for _, r in p.iterrows():
+        key = _extract_threshold_key(r.get('question', ''), 'polymarket')
+        if key:
+            p_idx[(key[0], key[1], key[3])].append((key[2], r))
+
+    print(f"  Threshold-keyed: kalshi={sum(len(v) for v in k_idx.values())}, "
+          f"polymarket={sum(len(v) for v in p_idx.values())}")
+
+    matched = 0
+    for group_key in set(k_idx) & set(p_idx):
+        asset, direction, month = group_key
+        use_pct = asset in _PERCENT_TOL_ASSETS
+        # For each Polymarket strike, find the SINGLE closest Kalshi strike
+        # within tolerance. Polymarket-first because their strike list is
+        # typically smaller and uses clean round numbers.
+        for p_strike, p_row in p_idx[group_key]:
+            tolerance = max(2.0, abs(p_strike) * 0.02) if use_pct else 1.5
+            best = None
+            for k_strike, k_row in k_idx[group_key]:
+                d = abs(k_strike - p_strike)
+                if d <= tolerance and (best is None or d < best[0]):
+                    best = (d, k_strike, k_row)
+            if not best:
+                continue
+            _, k_strike, k_row = best
+            pairs.append({
+                "match_type": "threshold",
+                "race_id": None,
+                "platform_a": "kalshi",
+                "platform_b": "polymarket",
+                "question_a": k_row.get("question", ""),
+                "question_b": p_row.get("question", ""),
+                "market_id_a": k_row.get("market_id", ""),
+                "market_id_b": p_row.get("market_id", ""),
+                "implied_prob_a": k_row.get("implied_prob"),
+                "implied_prob_b": p_row.get("implied_prob"),
+                "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+                "category": k_row.get("category", ""),
+                "url_a": k_row.get("url", ""),
+                "url_b": p_row.get("url", ""),
+                "volume_a": k_row.get("volume"),
+                "volume_b": p_row.get("volume"),
+                "fuzzy_score": 100,  # exact-key match in our taxonomy
+            })
+            matched += 1
+
+    print(f"  Threshold pairs matched: {matched}")
+    return pd.DataFrame(pairs)
+
+
 def run():
     PROCESSED.mkdir(parents=True, exist_ok=True)
 
@@ -799,18 +946,22 @@ def run():
     political = match_political(dfs)
     print(f"  Political pairs: {len(political)}")
 
+    print("\nMatching price-threshold markets (crypto / commodities)...")
+    threshold = match_threshold_pairs(dfs)
+    print(f"  Threshold pairs: {len(threshold)}")
+
     print("\nFuzzy-matching non-political markets...")
     fuzzy = match_fuzzy(dfs)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
-    all_pairs = pd.concat([political, fuzzy], ignore_index=True)
+    all_pairs = pd.concat([political, threshold, fuzzy], ignore_index=True)
     # Remove duplicates (same market pair, different direction)
     all_pairs = all_pairs.drop_duplicates(subset=["platform_a", "platform_b", "market_id_a", "market_id_b"])
 
     out = PROCESSED / "matched_pairs.csv"
     all_pairs.to_csv(out, index=False)
     print(f"\nTotal matched pairs: {len(all_pairs)} -> {out}")
-    print(f"  Political: {len(political)}, Fuzzy: {len(fuzzy)}")
+    print(f"  Political: {len(political)}, Threshold: {len(threshold)}, Fuzzy: {len(fuzzy)}")
 
 
 if __name__ == "__main__":
