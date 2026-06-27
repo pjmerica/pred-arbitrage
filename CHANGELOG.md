@@ -17,6 +17,10 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 (nothing pending)
 
+## 2026-06-27
+
+- *(pending push)* matcher: per-category fuzzy thresholds + dashboard 30d-settle default — user asked why arb opportunities are all long-dated election stuff and not faster-settling markets. Investigation: we scrape 37K Kalshi + 6K Polymarket markets across 15+ categories but only 152 pairs make it through matching, almost all elections. Root cause: a single FUZZY_THRESHOLD=88 (set tight to avoid candidate-vs-party false positives in elections) was filtering out non-political pairs where the same event is phrased very differently across platforms ("How high will BTC get in June?" vs "Will Bitcoin hit $150k by June 30?"). Changes: (1) `scripts/matcher.py` adds PER_CATEGORY_THRESHOLD overrides — crypto 72, finance/science/companies 74, sports 80, etc. politics stays at 88. (2) `docs/index.html` Settle Within filter now defaults to 30 days (was Any time) and gets 3/14/180-day options for finer slicing. Local test: matched pairs jumped 152 → 280, surfacing real overlaps: Ballon d'Or candidates (10+ matches), Ronaldo's next club, OpenAI/Anthropic IPO order, Fed rate cut, album releases, Starship launch counts. Bucket-edge false positives (e.g. Kalshi "5 launches" pair to Polymarket "5-6 launches") still possible — flagged as future scrutiny guard. Category-specific matchers (price-level crypto, oil ladder, deadline questions) intentionally deferred until we see what threshold lowering alone surfaces in production.
+
 ---
 
 ## 2026-06-24

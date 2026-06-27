@@ -25,6 +25,28 @@ PROCESSED = ROOT / "data" / "processed"
 FUZZY_THRESHOLD = 88   # token_sort_ratio score — raised to reduce candidate-vs-party false positives
 MAX_CANDIDATES = 3     # fuzzy candidates to check per market
 
+# Per-category threshold overrides. Defaults to FUZZY_THRESHOLD when a
+# category isn't listed. Lower values let more pairs through; we use
+# lower thresholds for non-political categories where false positives
+# are cheaper (no candidate-vs-party confusion) and where the same
+# event tends to be phrased differently across platforms (e.g. Kalshi
+# "How high will BTC get in June" vs Polymarket "Will Bitcoin hit
+# $150k by June 30"). Scrutiny + the year-overlap guard still apply.
+PER_CATEGORY_THRESHOLD = {
+    "crypto":      72,
+    "finance":     74,
+    "other":       74,   # Kalshi 'Commodities' lands here
+    "science":     74,
+    "companies":   74,
+    "world":       74,
+    "climate":     76,
+    "health":      76,
+    "esports":     78,
+    "sports":      80,   # huge volume; keep tight
+    "culture":     80,
+    "politics":    FUZZY_THRESHOLD,  # unchanged
+}
+
 # ── race_id inference (US 2026 elections) ────────────────────────────────────
 
 STATE_NAME_TO_ABBREV = {
@@ -419,6 +441,11 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
 
                 a_norms = a["title_norm"].fillna("").tolist()
                 b_norms = b["title_norm"].fillna("").tolist()
+                # Per-category threshold (defaults to FUZZY_THRESHOLD).
+                # Non-political categories get a looser threshold because
+                # the same event is often phrased differently and the
+                # false-positive cost is lower than for elections.
+                threshold = PER_CATEGORY_THRESHOLD.get(group, FUZZY_THRESHOLD)
 
                 # Vectorized pairwise scoring. Score matrix shape (len_a, len_b).
                 score_matrix = fuzz_process.cdist(
@@ -436,7 +463,7 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                     row_scores = score_matrix[ai]
                     # Top candidates above threshold
                     top_idx = np.argsort(-row_scores)[:MAX_CANDIDATES]
-                    results = [(b_norms[j], float(row_scores[j]), j) for j in top_idx if row_scores[j] >= FUZZY_THRESHOLD]
+                    results = [(b_norms[j], float(row_scores[j]), j) for j in top_idx if row_scores[j] >= threshold]
 
                     for norm_b_match, score, idx in results:
                         row_b = b.iloc[idx]
