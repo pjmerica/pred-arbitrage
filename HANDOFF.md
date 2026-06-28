@@ -61,7 +61,7 @@ intentional. See polling-agg's HANDOFF for why.
 
 ### Matching
 
-The matcher (`scripts/matcher.py`) has four parallel paths:
+The matcher (`scripts/matcher.py`) has five parallel paths:
 
 **`match_political`** — race_id-based, like polling-agg's general-election
 path. Picks the highest-OI market per race+platform and crosses them.
@@ -93,6 +93,16 @@ can't bridge the styling difference. Currently covers:
   - FIFA World Cup — keys on `(event, country)`.
 Add new tournaments by writing a `(_kalshi_X_key, _poly_X_key)`
 extractor pair and appending to `EXTRACTORS` list inside the function.
+
+**`match_primary_nominee`** — Kalshi↔Polymarket only. Exact-key
+matcher for US 2026 primary nominee questions. Polymarket says
+`Will <person> be the <party> nominee for <race>?`; Kalshi says
+`<state> <party> <office> nominee? — <person>` or
+`<XX-NN> <party> nominee? — <person>`. Both extracted to
+`(race_id, party_3char, person)` tuples. race_id is OFFICE-aware
+(SEN/GOV/district) so the same name in different races doesn't
+collide. Politics fuzzy threshold of 88 misses these (scores are
+87-90). 100+ pairs across August-September 2026 primaries.
 
 **`match_fuzzy`** — uses `rapidfuzz` text similarity within
 category groups. The category groups (`CATEGORY_GROUPS` dict in

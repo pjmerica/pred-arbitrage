@@ -942,6 +942,25 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
 # bridge ('US Open Men's Singles Winner' vs "Men's US Open"). Dedicated
 # extractors give 100% precision when they match.
 
+def _strip_diacritics(s: str) -> str:
+    """Normalize a name so 'Iga Świątek' matches 'Iga Swiatek' and
+    'felix auger-aliassime' matches 'felix auger aliassime'.
+
+    Polymarket keeps the diacritics ('Świątek', 'João Fonseca'),
+    Kalshi drops them. Kalshi keeps the hyphens ('Auger-Aliassime'),
+    Polymarket sometimes drops them. NFD + strip combining marks +
+    normalize hyphens to spaces + collapse whitespace handles both."""
+    import unicodedata
+    if not s:
+        return s
+    s = ''.join(
+        c for c in unicodedata.normalize('NFD', s)
+        if unicodedata.category(c) != 'Mn'
+    )
+    s = s.replace('-', ' ').replace('—', ' ').replace('–', ' ')
+    return re.sub(r'\s+', ' ', s).strip()
+
+
 def _kalshi_tennis_key(title):
     if not isinstance(title, str):
         return None
@@ -951,9 +970,9 @@ def _kalshi_tennis_key(title):
     )
     if not m:
         return None
-    tournament = m.group(1).strip().lower()
+    tournament = _strip_diacritics(m.group(1).strip().lower())
     gender = m.group(2).lower()
-    player = m.group(3).strip().lower()
+    player = _strip_diacritics(m.group(3).strip().lower())
     return (tournament, gender, player)
 
 
@@ -969,10 +988,161 @@ def _poly_tennis_key(question):
     )
     if not m:
         return None
-    player = m.group(1).strip().lower()
+    player = _strip_diacritics(m.group(1).strip().lower())
     gender = m.group(2).lower()
-    tournament = re.sub(r'\s+winner\s*$', '', m.group(3).strip(), flags=re.IGNORECASE).lower()
+    tournament = _strip_diacritics(
+        re.sub(r'\s+winner\s*$', '', m.group(3).strip(), flags=re.IGNORECASE).lower()
+    )
     return (tournament, gender, player)
+
+
+# ── Primary nominee matcher (US elections) ─────────────────────────────────
+# Polymarket has hundreds of "Will <person> be the <party> nominee for
+# <race>?" markets for 2026 primaries, settling August/September 2026.
+# Kalshi has matching "<state> <party> Senate nominee? — <person>" and
+# "<state>-<dist> <party> nominee? — <person>" markets. Fuzzy scores
+# 87-90 which is just below politics threshold (88). Dedicated matcher
+# keys on (race_id, party, person) — race_id prevents false matches
+# (e.g. Sharice Davids Kansas Senate vs Sharice Davids KS-03 House).
+
+_STATE_NAME_TO_ABBR = {
+    'alabama':'AL','alaska':'AK','arizona':'AZ','arkansas':'AR',
+    'california':'CA','colorado':'CO','connecticut':'CT','delaware':'DE',
+    'florida':'FL','georgia':'GA','hawaii':'HI','idaho':'ID',
+    'illinois':'IL','indiana':'IN','iowa':'IA','kansas':'KS',
+    'kentucky':'KY','louisiana':'LA','maine':'ME','maryland':'MD',
+    'massachusetts':'MA','michigan':'MI','minnesota':'MN','mississippi':'MS',
+    'missouri':'MO','montana':'MT','nebraska':'NE','nevada':'NV',
+    'new hampshire':'NH','new jersey':'NJ','new mexico':'NM','new york':'NY',
+    'north carolina':'NC','north dakota':'ND','ohio':'OH','oklahoma':'OK',
+    'oregon':'OR','pennsylvania':'PA','rhode island':'RI','south carolina':'SC',
+    'south dakota':'SD','tennessee':'TN','texas':'TX','utah':'UT',
+    'vermont':'VT','virginia':'VA','washington':'WA','west virginia':'WV',
+    'wisconsin':'WI','wyoming':'WY',
+}
+
+
+def _norm_person(s):
+    """Lowercase, strip diacritics, normalize separators. For name
+    comparison only — don't apply to race_ids since they need hyphens."""
+    import unicodedata
+    if not s:
+        return s
+    s = ''.join(c for c in unicodedata.normalize('NFD', s)
+                if unicodedata.category(c) != 'Mn')
+    s = s.replace('-', ' ').replace('—', ' ').replace('–', ' ')
+    return re.sub(r'\s+', ' ', s).strip().lower()
+
+
+def _kalshi_nominee_key(title):
+    """Return (race_id, party_3char, person) or None."""
+    if not isinstance(title, str):
+        return None
+    # Pattern A: '<State> <Party> <Senate|Governor> nominee? — <Person>'
+    m = re.match(
+        r'^(.+?)\s+(Democratic|Republican)\s+(Senate|Governor|Gubernatorial)\s+nominee\??\s*[—\-]\s*(.+?)$',
+        title, re.IGNORECASE,
+    )
+    if m:
+        state = m.group(1).strip().lower()
+        party = m.group(2).lower()[:3]
+        office = m.group(3).lower()
+        abbr = _STATE_NAME_TO_ABBR.get(state)
+        if not abbr:
+            return None
+        race = f"{abbr}-{'SEN' if office == 'senate' else 'GOV'}"
+        return (race, party, _norm_person(m.group(4)))
+    # Pattern B: '<XX>-<NN> <Party> nominee? — <Person>'
+    m = re.match(
+        r'^([A-Z]{2})-(\d+)\s+(Democratic|Republican)\s+nominee\??\s*[—\-]\s*(.+?)$',
+        title, re.IGNORECASE,
+    )
+    if m:
+        race = f"{m.group(1).upper()}-{int(m.group(2)):02d}"
+        party = m.group(3).lower()[:3]
+        return (race, party, _norm_person(m.group(4)))
+    return None
+
+
+def _poly_nominee_key(question):
+    """Return (race_id, party_3char, person) or None."""
+    if not isinstance(question, str):
+        return None
+    m = re.match(
+        r'^Will\s+(.+?)\s+be\s+the\s+(Democratic|Republican)\s+nominee\s+for\s+(.+?)\??$',
+        question, re.IGNORECASE,
+    )
+    if not m:
+        return None
+    person = _norm_person(m.group(1))
+    party = m.group(2).lower()[:3]
+    race_str = m.group(3).strip()
+    # 'Senate in <State>'
+    rm = re.match(r'^Senate\s+in\s+(.+?)$', race_str, re.IGNORECASE)
+    if rm:
+        abbr = _STATE_NAME_TO_ABBR.get(rm.group(1).strip().lower())
+        if not abbr:
+            return None
+        return (f"{abbr}-SEN", party, person)
+    # '<State> Governor'
+    rm = re.match(r'^(.+?)\s+(Governor|Gubernatorial)$', race_str, re.IGNORECASE)
+    if rm:
+        abbr = _STATE_NAME_TO_ABBR.get(rm.group(1).strip().lower())
+        if not abbr:
+            return None
+        return (f"{abbr}-GOV", party, person)
+    # '<XX>-<NN>'
+    rm = re.match(r'^([A-Z]{2})-(\d+)$', race_str, re.IGNORECASE)
+    if rm:
+        return (f"{rm.group(1).upper()}-{int(rm.group(2)):02d}", party, person)
+    return None
+
+
+def match_primary_nominee(dfs: dict) -> pd.DataFrame:
+    """Match Kalshi vs Polymarket 2026 primary nominee markets on
+    (race_id, party, person) tuples. Skips fuzzy — exact-key only.
+    Race_id includes office + state + district so same name in
+    different races (Sharice Davids Senate vs KS-03 House) doesn't
+    collide."""
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']; p = dfs['polymarket']
+    if k.empty or p.empty:
+        return pd.DataFrame()
+    k_idx, p_idx = {}, {}
+    for _, r in k.iterrows():
+        key = _kalshi_nominee_key(r.get('question', ''))
+        if key:
+            k_idx[key] = r
+    for _, r in p.iterrows():
+        key = _poly_nominee_key(r.get('question', ''))
+        if key:
+            p_idx[key] = r
+    overlap = set(k_idx) & set(p_idx)
+    print(f"  nominee: kalshi={len(k_idx)}, polymarket={len(p_idx)}, overlap={len(overlap)}")
+    pairs = []
+    for key in overlap:
+        k_row = k_idx[key]; p_row = p_idx[key]
+        pairs.append({
+            "match_type": "primary-nominee",
+            "race_id": key[0],
+            "platform_a": "kalshi",
+            "platform_b": "polymarket",
+            "question_a": k_row.get("question", ""),
+            "question_b": p_row.get("question", ""),
+            "market_id_a": k_row.get("market_id", ""),
+            "market_id_b": p_row.get("market_id", ""),
+            "implied_prob_a": k_row.get("implied_prob"),
+            "implied_prob_b": p_row.get("implied_prob"),
+            "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+            "category": k_row.get("category", ""),
+            "url_a": k_row.get("url", ""),
+            "url_b": p_row.get("url", ""),
+            "volume_a": k_row.get("volume"),
+            "volume_b": p_row.get("volume"),
+            "fuzzy_score": 100,
+        })
+    return pd.DataFrame(pairs)
 
 
 def _kalshi_worldcup_key(title):
@@ -984,7 +1154,7 @@ def _kalshi_worldcup_key(title):
     )
     if not m:
         return None
-    return ('fifa-world-cup', m.group(1).strip().lower())
+    return ('fifa-world-cup', _strip_diacritics(m.group(1).strip().lower()))
 
 
 def _poly_worldcup_key(question):
@@ -996,7 +1166,7 @@ def _poly_worldcup_key(question):
     )
     if not m:
         return None
-    return ('fifa-world-cup', m.group(1).strip().lower())
+    return ('fifa-world-cup', _strip_diacritics(m.group(1).strip().lower()))
 
 
 def match_tournament_winner(dfs: dict) -> pd.DataFrame:
@@ -1077,18 +1247,22 @@ def run():
     tournament = match_tournament_winner(dfs)
     print(f"  Tournament pairs: {len(tournament)}")
 
+    print("\nMatching primary nominee markets (US 2026)...")
+    nominee = match_primary_nominee(dfs)
+    print(f"  Primary nominee pairs: {len(nominee)}")
+
     print("\nFuzzy-matching non-political markets...")
     fuzzy = match_fuzzy(dfs)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
-    all_pairs = pd.concat([political, threshold, tournament, fuzzy], ignore_index=True)
+    all_pairs = pd.concat([political, threshold, tournament, nominee, fuzzy], ignore_index=True)
     # Remove duplicates (same market pair, different direction)
     all_pairs = all_pairs.drop_duplicates(subset=["platform_a", "platform_b", "market_id_a", "market_id_b"])
 
     out = PROCESSED / "matched_pairs.csv"
     all_pairs.to_csv(out, index=False)
     print(f"\nTotal matched pairs: {len(all_pairs)} -> {out}")
-    print(f"  Political: {len(political)}, Threshold: {len(threshold)}, Tournament: {len(tournament)}, Fuzzy: {len(fuzzy)}")
+    print(f"  Political: {len(political)}, Threshold: {len(threshold)}, Tournament: {len(tournament)}, Nominee: {len(nominee)}, Fuzzy: {len(fuzzy)}")
 
 
 if __name__ == "__main__":
