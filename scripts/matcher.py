@@ -931,6 +931,129 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
     return pd.DataFrame(pairs)
 
 
+# ── Tournament-winner matcher ──────────────────────────────────────────────
+# Tennis Kalshi:  "Wimbledon Men's Singles Winner — Jannik Sinner"
+# Tennis Poly:    "Will Jannik Sinner be the 2026 Men's Wimbledon Winner?"
+# Soccer Kalshi:  "2026 FIFA World Cup Winner — Mexico"
+# Soccer Poly:    "Will Spain win the 2026 FIFA World Cup?"
+# Same (event_class, gender_or_country, contestant) → match. Fuzzy alone
+# can't reliably catch these — tennis scores 76-78 (below sports threshold
+# 80), and the naming styles are too divergent for token_sort_ratio to
+# bridge ('US Open Men's Singles Winner' vs "Men's US Open"). Dedicated
+# extractors give 100% precision when they match.
+
+def _kalshi_tennis_key(title):
+    if not isinstance(title, str):
+        return None
+    m = re.match(
+        r'^(.+?)\s+(Men|Women)(?:\'s)?\s+Singles\s+Winner\s*[—\-]\s*(.+)$',
+        title,
+    )
+    if not m:
+        return None
+    tournament = m.group(1).strip().lower()
+    gender = m.group(2).lower()
+    player = m.group(3).strip().lower()
+    return (tournament, gender, player)
+
+
+def _poly_tennis_key(question):
+    if not isinstance(question, str):
+        return None
+    # Two phrasings: "Will X win the 2026 Men's Y?" and "Will X be the
+    # 2026 Men's Y Winner?". Strip the optional "winner" suffix in the
+    # tournament group below.
+    m = re.search(
+        r'^Will\s+(.+?)\s+(?:win|be)\s+(?:the\s+)?(?:2026\s+)?(Men|Women)(?:\'s)?\s+(.+?)\??$',
+        question, re.IGNORECASE,
+    )
+    if not m:
+        return None
+    player = m.group(1).strip().lower()
+    gender = m.group(2).lower()
+    tournament = re.sub(r'\s+winner\s*$', '', m.group(3).strip(), flags=re.IGNORECASE).lower()
+    return (tournament, gender, player)
+
+
+def _kalshi_worldcup_key(title):
+    if not isinstance(title, str):
+        return None
+    m = re.match(
+        r'^(?:20\d{2}\s+)?FIFA World Cup Winner\s*[—\-]\s*(.+?)$',
+        title, re.IGNORECASE,
+    )
+    if not m:
+        return None
+    return ('fifa-world-cup', m.group(1).strip().lower())
+
+
+def _poly_worldcup_key(question):
+    if not isinstance(question, str):
+        return None
+    m = re.match(
+        r'^Will\s+(.+?)\s+win\s+(?:the\s+)?(?:20\d{2}\s+)?FIFA World Cup\??$',
+        question, re.IGNORECASE,
+    )
+    if not m:
+        return None
+    return ('fifa-world-cup', m.group(1).strip().lower())
+
+
+def match_tournament_winner(dfs: dict) -> pd.DataFrame:
+    """Match Kalshi vs Polymarket tournament-winner markets on
+    extracted-key tuples (skips fuzzy — keys are precise enough). Covers
+    tennis Grand Slams (with gender) and the FIFA World Cup (without).
+    Add new tournaments by writing a (_kalshi_X_key, _poly_X_key) pair
+    of extractors and appending to EXTRACTORS below."""
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']; p = dfs['polymarket']
+    if k.empty or p.empty:
+        return pd.DataFrame()
+
+    EXTRACTORS = [
+        ("tennis", _kalshi_tennis_key, _poly_tennis_key),
+        ("worldcup", _kalshi_worldcup_key, _poly_worldcup_key),
+    ]
+
+    pairs = []
+    for tag, k_extract, p_extract in EXTRACTORS:
+        k_idx, p_idx = {}, {}
+        for _, r in k.iterrows():
+            key = k_extract(r.get('question', ''))
+            if key:
+                k_idx[key] = r
+        for _, r in p.iterrows():
+            key = p_extract(r.get('question', ''))
+            if key:
+                p_idx[key] = r
+        overlap = set(k_idx) & set(p_idx)
+        print(f"  {tag}: kalshi={len(k_idx)}, polymarket={len(p_idx)}, overlap={len(overlap)}")
+        for key in overlap:
+            k_row = k_idx[key]; p_row = p_idx[key]
+            pairs.append({
+                "match_type": f"tournament-{tag}",
+                "race_id": None,
+                "platform_a": "kalshi",
+                "platform_b": "polymarket",
+                "question_a": k_row.get("question", ""),
+                "question_b": p_row.get("question", ""),
+                "market_id_a": k_row.get("market_id", ""),
+                "market_id_b": p_row.get("market_id", ""),
+                "implied_prob_a": k_row.get("implied_prob"),
+                "implied_prob_b": p_row.get("implied_prob"),
+                "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+                "category": k_row.get("category", ""),
+                "url_a": k_row.get("url", ""),
+                "url_b": p_row.get("url", ""),
+                "volume_a": k_row.get("volume"),
+                "volume_b": p_row.get("volume"),
+                "fuzzy_score": 100,
+            })
+    print(f"  Tournament pairs matched: {len(pairs)}")
+    return pd.DataFrame(pairs)
+
+
 def run():
     PROCESSED.mkdir(parents=True, exist_ok=True)
 
@@ -950,18 +1073,22 @@ def run():
     threshold = match_threshold_pairs(dfs)
     print(f"  Threshold pairs: {len(threshold)}")
 
+    print("\nMatching tournament-winner markets (tennis, World Cup)...")
+    tournament = match_tournament_winner(dfs)
+    print(f"  Tournament pairs: {len(tournament)}")
+
     print("\nFuzzy-matching non-political markets...")
     fuzzy = match_fuzzy(dfs)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
-    all_pairs = pd.concat([political, threshold, fuzzy], ignore_index=True)
+    all_pairs = pd.concat([political, threshold, tournament, fuzzy], ignore_index=True)
     # Remove duplicates (same market pair, different direction)
     all_pairs = all_pairs.drop_duplicates(subset=["platform_a", "platform_b", "market_id_a", "market_id_b"])
 
     out = PROCESSED / "matched_pairs.csv"
     all_pairs.to_csv(out, index=False)
     print(f"\nTotal matched pairs: {len(all_pairs)} -> {out}")
-    print(f"  Political: {len(political)}, Threshold: {len(threshold)}, Fuzzy: {len(fuzzy)}")
+    print(f"  Political: {len(political)}, Threshold: {len(threshold)}, Tournament: {len(tournament)}, Fuzzy: {len(fuzzy)}")
 
 
 if __name__ == "__main__":

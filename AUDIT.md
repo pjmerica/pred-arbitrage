@@ -23,13 +23,15 @@ These are choices that affect how the rest of the audit reads. Don't
   pred-arbitrage scrapes every active market on Kalshi / Polymarket /
   PredictIt and runs cross-platform arb matching across the whole
   universe (sports, entertainment, crypto, politics, weather).
-- **Three matching paths.** `match_political` joins on canonical
+- **Four matching paths.** `match_political` joins on canonical
   `race_id`; `match_threshold_pairs` parses
   `(asset, direction, strike, month)` from price-threshold titles
-  (Kalshi↔Polymarket only, crypto + commodities); `match_fuzzy` uses
-  `rapidfuzz` text similarity within category groups (with per-category
-  thresholds in `PER_CATEGORY_THRESHOLD`). Most of the file is the
-  10+ guard chain that prevents false fuzzy pairs.
+  (Kalshi↔Polymarket only, crypto + commodities);
+  `match_tournament_winner` does exact-key matching for tennis Grand
+  Slams + FIFA World Cup; `match_fuzzy` uses `rapidfuzz` text
+  similarity within category groups (with per-category thresholds in
+  `PER_CATEGORY_THRESHOLD`). Most of the file is the 10+ guard chain
+  that prevents false fuzzy pairs.
 - **The scanner runs twice around `fetch_depth`** — same as polling-agg.
   Pass 1 emits `depth_targets.csv`, fetch_depth populates orderbooks,
   pass 2 joins depth and recomputes suspicion flags.
