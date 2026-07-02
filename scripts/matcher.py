@@ -1251,8 +1251,34 @@ def run():
     nominee = match_primary_nominee(dfs)
     print(f"  Primary nominee pairs: {len(nominee)}")
 
+    # Before running fuzzy, exclude markets that a stricter matcher has
+    # already claimed. Otherwise fuzzy can pair the same Kalshi market
+    # against a wrong Polymarket market (e.g. Kalshi "2026 FIFA World Cup
+    # Winner - Argentina" got fuzzy-matched to Polymarket "Will Argentina
+    # reach the 2026 FIFA World Cup final?" — token_sort_ratio 81 — even
+    # though the tournament matcher already correctly paired it to the
+    # matching Polymarket "win" market). The wrong-subject dedup at the
+    # end of run() doesn't help because it keys on (market_id_a,
+    # market_id_b) which is DIFFERENT between the two matches.
+    prior = pd.concat([political, threshold, tournament, nominee], ignore_index=True) \
+        if any(len(x) for x in [political, threshold, tournament, nominee]) else pd.DataFrame()
+    claimed_by_platform = {}
+    if not prior.empty:
+        for _, r in prior.iterrows():
+            claimed_by_platform.setdefault(r['platform_a'], set()).add(str(r['market_id_a']))
+            claimed_by_platform.setdefault(r['platform_b'], set()).add(str(r['market_id_b']))
+        dfs_for_fuzzy = {}
+        for plat, df in dfs.items():
+            claimed = claimed_by_platform.get(plat, set())
+            if claimed and 'market_id' in df.columns:
+                dfs_for_fuzzy[plat] = df[~df['market_id'].astype(str).isin(claimed)].copy()
+            else:
+                dfs_for_fuzzy[plat] = df
+    else:
+        dfs_for_fuzzy = dfs
+
     print("\nFuzzy-matching non-political markets...")
-    fuzzy = match_fuzzy(dfs)
+    fuzzy = match_fuzzy(dfs_for_fuzzy)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
     all_pairs = pd.concat([political, threshold, tournament, nominee, fuzzy], ignore_index=True)
