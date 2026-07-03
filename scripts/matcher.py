@@ -737,6 +737,137 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         # isn't applicable).
                         def _tokens(s):
                             return re.findall(r"[A-Za-z0-9]+", s.lower())
+
+                        # Key-noun / qualifier guard. Fuzzy scores
+                        # 'release a new album' vs 'release a new song'
+                        # at 83 — high enough to cross sports/culture
+                        # thresholds — because token_sort_ratio ignores
+                        # the ONE token that flips the meaning. Same for
+                        # 'Fed rate cut' vs 'Fed emergency rate cut',
+                        # 'Trump pardon' with vs without a year window,
+                        # 'IPO first' as candidate vs binary. Each of
+                        # these token sets is asymmetric: one side has a
+                        # keyword the other doesn't, and that keyword
+                        # changes what the market resolves on. Drop if:
+                        #   - one side contains any of these keywords
+                        #   - AND the other side doesn't
+                        # Keywords chosen from actual false-pairs found
+                        # 2026-06-28.
+                        set_a = set(_tokens(q_a))
+                        set_b = set(_tokens(q_b))
+                        DIVERGING_KEYWORDS = {
+                            # Album / song / EP / mixtape are distinct
+                            # releases; markets track them separately.
+                            "album", "song", "single", "ep", "mixtape",
+                            # 'Emergency' rate cut is a distinct Fed
+                            # action from an ordinary rate cut.
+                            "emergency",
+                            # 'First' / 'first-to' framing changes
+                            # candidate markets (Kalshi 'A or B — A')
+                            # into binaries (Polymarket 'A or B' YES for
+                            # either).
+                            "first",
+                            # Semi/final/quarter-final ≠ tournament winner.
+                            "final", "finalist", "semifinal", "semifinals",
+                            "quarterfinal", "quarterfinals",
+                            # Trade / buyout / merger are different
+                            # corporate events from IPO / acquisition.
+                            "merger", "buyout", "acquired", "traded",
+                        }
+                        one_side_only = (set_a & DIVERGING_KEYWORDS) ^ (set_b & DIVERGING_KEYWORDS)
+                        if one_side_only:
+                            continue
+
+                        # Settle-date drift guard. If both platforms
+                        # report a settle date and they're more than
+                        # 180 days apart, the resolution windows are
+                        # different enough that the markets probably
+                        # aren't asking the same thing (Kalshi 'Who
+                        # will Trump pardon?' closes 2029-01-21 —
+                        # end of Trump's term — vs Polymarket
+                        # 'Will Trump pardon Elon Musk in 2026?'
+                        # closing 2026-12-31; same subject, different
+                        # window, non-tradeable as a pair).
+                        try:
+                            sd_a = str(row_a.get("settle_date", "") or "")[:10]
+                            sd_b = str(row_b.get("settle_date", "") or "")[:10]
+                            if len(sd_a) == 10 and len(sd_b) == 10:
+                                from datetime import date as _date
+                                da = _date.fromisoformat(sd_a)
+                                db = _date.fromisoformat(sd_b)
+                                if abs((da - db).days) > 180:
+                                    continue
+                        except (ValueError, TypeError):
+                            pass  # unparseable dates fall through
+
+                        # Year-token asymmetry guard. If one side's title
+                        # mentions a specific year and the other side
+                        # doesn't mention ANY year, the resolution window
+                        # is different (Kalshi 'Who will Trump pardon?'
+                        # has no year token but closes 2029; PredictIt
+                        # 'Will Trump pardon Elon Musk in 2026?' is
+                        # explicitly bounded). Same problem as the
+                        # settle-date drift guard above, but works when
+                        # one side has no settle_date (PredictIt often
+                        # doesn't).
+                        years_a = set(re.findall(r"\b(20\d{2})\b", q_a))
+                        years_b = set(re.findall(r"\b(20\d{2})\b", q_b))
+                        if years_a and not years_b:
+                            continue
+                        if years_b and not years_a:
+                            continue
+
+                        # Candidate-vs-binary subject guard. Kalshi's
+                        # "candidate-style" markets put the subject
+                        # AFTER an em-dash ('Who will recognize Palestine
+                        # before 2027? — Italy'). Polymarket puts the
+                        # subject INSIDE the question ('Will Israel
+                        # recognize Palestine before 2027?'). If the
+                        # subject after the em-dash doesn't share ANY
+                        # significant token with the other side's title,
+                        # the markets are about different subjects.
+                        # Applies in both directions since either
+                        # platform can carry the candidate-style
+                        # phrasing.
+                        _SUBJ_STOP = {'the','and','for','with','from','over','usa','uk'}
+                        _subject_mismatch = False
+                        for candidate_q, other_q in [(q_a, q_b), (q_b, q_a)]:
+                            sep = '—' if '—' in candidate_q else (' - ' if ' - ' in candidate_q else None)
+                            if not sep:
+                                continue
+                            subject = candidate_q.rsplit(sep, 1)[-1].strip()
+                            if len(subject) < 3:
+                                continue
+                            subject_tokens = {t for t in _tokens(subject)
+                                              if len(t) >= 3 and t not in _SUBJ_STOP}
+                            if not subject_tokens:
+                                continue
+                            if not (subject_tokens & set(_tokens(other_q))):
+                                _subject_mismatch = True
+                                break
+                        if _subject_mismatch:
+                            continue
+
+                        # Range-vs-point count guard. Kalshi 'How many
+                        # ... — 5' vs Polymarket 'Will 5-6 ... successfully
+                        # reach' are different resolution rules (Polymarket
+                        # bucket covers 5-or-6; Kalshi contract covers
+                        # exactly 5). Detect: one side has an "N-M" range
+                        # (or "N or more", "N to M") and the other has
+                        # just a single integer.
+                        _has_range_a = bool(re.search(r'\b\d+\s*[-–—]\s*\d+\b|\b\d+\s+or\s+more\b|\b\d+\s+to\s+\d+\b', q_a))
+                        _has_range_b = bool(re.search(r'\b\d+\s*[-–—]\s*\d+\b|\b\d+\s+or\s+more\b|\b\d+\s+to\s+\d+\b', q_b))
+                        if _has_range_a != _has_range_b:
+                            # One side is a range, other is a point.
+                            # Only enforce when the pair looks like a
+                            # "counting" market (mentions 'how many'
+                            # or 'launches' or similar) — otherwise
+                            # legit matches like 'FL-19' district codes
+                            # would false-trip.
+                            combined_q = (q_a + ' ' + q_b).lower()
+                            if any(kw in combined_q for kw in ['how many','launches','deliver','vehicles','contracts']):
+                                continue
+
                         ta = _tokens(q_a)
                         tb = _tokens(q_b)
                         common = 0
