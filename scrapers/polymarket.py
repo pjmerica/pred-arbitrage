@@ -96,8 +96,22 @@ def extract_category(tags):
     return labels[0] if labels else ""
 
 
+# Each pass is a differently-ORDERED view of /events; every ordered query
+# gets its own 2000-offset window, so N passes cover up to N×2000 distinct
+# events (deduped by id). Passes are chosen so the windows land on the
+# events that matter for arb hunting. All order params verified live
+# 2026-07-04.
+SCRAPE_PASSES = [
+    ("oldest (default)", {}),                                        # legacy window — long-running events
+    ("newest listings", {"order": "id", "ascending": "false"}),      # everything listed recently
+    ("most active 24h", {"order": "volume24hr", "ascending": "false"}),
+    ("deepest books",   {"order": "liquidity", "ascending": "false"}),
+    ("ending soonest",  {"order": "endDate", "ascending": "true"}),  # soonest-settling props
+]
+
+
 def fetch_all_events():
-    """Paginate active events from Polymarket /events?offset=N.
+    """Fetch active events via MULTIPLE ordered passes of /events?offset=N.
 
     History (chronological, painful):
 
@@ -109,73 +123,83 @@ def fetch_all_events():
     2. Switched to /events/keyset. Probed 2026-06-21 evening: the
        endpoint returns a `next_cursor` but PASSING IT BACK DOESN'T
        ADVANCE — every page after the first returns the exact same 100
-       events. Tested with cursor / next_cursor / page_token / after /
-       pagination_cursor as the parameter name; none worked. Bug on
-       Polymarket's side (or undocumented param name). Net result: with
-       keyset we'd silently scrape the same 100 events forever.
+       events. Bug on Polymarket's side. With keyset we'd silently
+       scrape the same 100 events forever.
 
-    3. Reverted to /events?offset=N capped at 2000. We get up to ~2000
-       active events with this; the universe of really-active markets
-       is around that anyway after the dead-prop filter. Polymarket's
-       full universe of ~55k markets lives at clob.polymarket.com/markets
-       (which DOES paginate properly), but that endpoint has a different
-       field shape — rewrite tracked in AUDIT.md as the proper fix.
+    3. Reverted to /events?offset=N capped at 2000. **This had a much
+       worse consequence than we realized at the time (found in the
+       2026-07-03 polling-agg audit): the default sort is id ASCENDING =
+       oldest first, so the single capped window only ever contained the
+       ~2000 OLDEST active events. Every market listed after that window
+       filled was INVISIBLE to this scraper — and new listings are
+       exactly where fresh mispricings live.**
 
-    Defensive: skip persistently-failing pages but stop on 3 consecutive
-    skips or after the 2000-offset cap.
+    4. Fix (2026-07-04): the `order` param IS honored, and each ordered
+       query gets its own 2000-offset window. We now run the passes in
+       SCRAPE_PASSES (oldest / newest / most-active / deepest /
+       ending-soonest) and dedup by event id. ~5x the request count
+       (~100 requests, still ~1 min) for coverage of every window that
+       matters. The clob.polymarket.com/markets full-universe rewrite in
+       AUDIT.md remains the eventual proper fix.
+
+    Defensive: skip persistently-failing pages but stop a pass on 3
+    consecutive skips or at the 2000-offset cap.
     """
     all_events = []
     seen_event_ids = set()
-    offset = 0
-    page = 0
-    consecutive_failures = 0
     OFFSET_CAP = 2000  # Polymarket hard cap; > 2000 returns HTTP 422
     MAX_RETRIES_PER_PAGE = 3
-    while offset < OFFSET_CAP:
-        params = {
-            "limit": PAGE_SIZE,
-            "active": "true",
-            "closed": "false",
-            "offset": offset,
-        }
-        data = None
-        for attempt in range(MAX_RETRIES_PER_PAGE):
-            try:
-                data = get("/events", params)
+
+    for pass_name, order_params in SCRAPE_PASSES:
+        offset = 0
+        page = 0
+        pass_new = 0
+        consecutive_failures = 0
+        while offset < OFFSET_CAP:
+            params = {
+                "limit": PAGE_SIZE,
+                "active": "true",
+                "closed": "false",
+                "offset": offset,
+                **order_params,
+            }
+            data = None
+            for attempt in range(MAX_RETRIES_PER_PAGE):
+                try:
+                    data = get("/events", params)
+                    break
+                except Exception as e:
+                    if attempt < MAX_RETRIES_PER_PAGE - 1:
+                        wait = 2 * (attempt + 1)
+                        print(f"  Page (pass={pass_name}, offset={offset}) failed ({e}); retrying in {wait}s...")
+                        time.sleep(wait)
+                    else:
+                        print(f"  Page (pass={pass_name}, offset={offset}) failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); skipping")
+            if data is None:
+                consecutive_failures += 1
+                if consecutive_failures >= 3:
+                    print(f"  3 consecutive failed pages — stopping pass '{pass_name}' at offset {offset}")
+                    break
+                offset += PAGE_SIZE
+                page += 1
+                continue
+
+            consecutive_failures = 0
+            events = data if isinstance(data, list) else []
+            if not events:
                 break
-            except Exception as e:
-                if attempt < MAX_RETRIES_PER_PAGE - 1:
-                    wait = 2 * (attempt + 1)
-                    print(f"  Page (offset={offset}) failed ({e}); retrying in {wait}s...")
-                    time.sleep(wait)
-                else:
-                    print(f"  Page (offset={offset}) failed after {MAX_RETRIES_PER_PAGE} attempts ({e}); skipping")
-        if data is None:
-            consecutive_failures += 1
-            if consecutive_failures >= 3:
-                print(f"  3 consecutive failed pages — stopping at offset {offset}")
+            new_events = [e for e in events if e.get("id") not in seen_event_ids]
+            for e in new_events:
+                seen_event_ids.add(e.get("id"))
+            all_events.extend(new_events)
+            pass_new += len(new_events)
+            page += 1
+            if len(events) < PAGE_SIZE:
                 break
             offset += PAGE_SIZE
-            page += 1
-            continue
+            time.sleep(0.05)
+        print(f"  pass '{pass_name}': +{pass_new} new events (total {len(all_events)})")
 
-        consecutive_failures = 0
-        events = data if isinstance(data, list) else []
-        if not events:
-            break
-        new_events = [e for e in events if e.get("id") not in seen_event_ids]
-        for e in new_events:
-            seen_event_ids.add(e.get("id"))
-        all_events.extend(new_events)
-        page += 1
-        if page % 5 == 0:
-            print(f"  Fetched {len(all_events)} events so far (offset {offset})...")
-        if len(events) < PAGE_SIZE:
-            break
-        offset += PAGE_SIZE
-        time.sleep(0.05)
-    if offset >= OFFSET_CAP:
-        print(f"  Hit OFFSET_CAP={OFFSET_CAP} (Polymarket's hard limit). Switch to clob.polymarket.com/markets to get the rest — see AUDIT.md.")
     return all_events
 
 
@@ -271,6 +295,16 @@ def parse_market(event, market):
     # ERC-1155 IDs needed for CLOB orderbook lookups.
     raw_tokens = market.get("clobTokenIds")
     yes_token = no_token = None
+    # True Yes/No binary market? Team-vs-team moneylines (KBO, MLB, T20 …)
+    # have outcomes like ["Doosan Bears","Kiwoom Heroes"] — their "yes"/"no"
+    # tokens below are just tokens[0]/tokens[1], NOT complements of a Yes/No
+    # question. A YES+NO basket built against such a market is a double bet
+    # on one team, not a hedge. The matcher must not feed these to the
+    # fuzzy path (2026-07-04; found via fake 13-15% KBO "guaranteed" arbs).
+    outcomes_binary = bool(
+        outcomes and len(outcomes) == 2
+        and sorted(str(o).lower() for o in outcomes) == ["no", "yes"]
+    )
     try:
         tokens = json.loads(raw_tokens) if isinstance(raw_tokens, str) else raw_tokens
         if isinstance(tokens, list) and len(tokens) >= 2 and outcomes and len(outcomes) >= 2:
@@ -296,6 +330,7 @@ def parse_market(event, market):
         "yes_token_id": yes_token,
         "no_token_id": no_token,
         "question": market.get("question", event.get("title", "")),
+        "outcomes_binary": outcomes_binary,
         "category": category,
         "end_date": str(market.get("endDate", event.get("endDate", "")))[:10],
         "implied_prob": round(implied_prob, 4) if implied_prob is not None else None,

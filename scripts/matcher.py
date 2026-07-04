@@ -418,10 +418,28 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
     pairs = []
     platform_names = list(dfs.keys())
 
+    def _binary_only(df, platform):
+        """Drop Polymarket markets whose outcomes aren't Yes/No.
+
+        Team-vs-team moneylines (KBO / MLB / T20 / NBA …) have outcomes
+        like ["Doosan Bears","Kiwoom Heroes"]; their scraped yes/no tokens
+        are just tokens[0]/[1], so a YES+NO basket against them is a
+        double bet on one team, not a hedge. The 2026-07-04 coverage
+        expansion surfaced dozens of these as fake 10-15% "guaranteed"
+        arbs before this filter.
+        """
+        if platform != "polymarket" or "outcomes_binary" not in df.columns:
+            return df
+        before = len(df)
+        out = df[df["outcomes_binary"] == True].copy()  # noqa: E712 (NaN-safe)
+        if before != len(out):
+            print(f"    ({platform}: excluded {before - len(out)} non-Yes/No markets from fuzzy input)")
+        return out
+
     for i, pa in enumerate(platform_names):
         for pb in platform_names[i+1:]:
-            a_full = dfs[pa][dfs[pa]["race_id"].isna()].copy()
-            b_full = dfs[pb][dfs[pb]["race_id"].isna()].copy()
+            a_full = _binary_only(dfs[pa][dfs[pa]["race_id"].isna()].copy(), pa)
+            b_full = _binary_only(dfs[pb][dfs[pb]["race_id"].isna()].copy(), pb)
 
             if a_full.empty or b_full.empty:
                 continue
@@ -475,6 +493,33 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         years_b = set(re.findall(r"\b(20\d{2})\b", str(row_b.get("question", ""))))
                         if years_a and years_b and not years_a.intersection(years_b):
                             continue
+
+                        # Subject-flip guard (2026-07-04): when BOTH sides
+                        # name a specific subject, they must agree. Kalshi
+                        # "Canada vs Morocco: First Team to Score — Morocco"
+                        # was fuzzy-pairing to Polymarket "Canada to score
+                        # first vs. Morocco?" — OPPOSITE outcomes that score
+                        # high on token_sort_ratio because both titles carry
+                        # both team names. Kalshi subject = post-em-dash;
+                        # Polymarket subject = leading noun phrase before
+                        # "to score/win/…". Token overlap required.
+                        qa_str = str(row_a.get("question", ""))
+                        qb_str = str(row_b.get("question", ""))
+                        m_dash = re.search(r"[—–]\s*([^—–?]+?)\s*\??\s*$", qa_str)
+                        m_lead = re.match(r"^([A-Za-z0-9 .'\-]{2,40}?)\s+to\s+(?:score|win|beat|advance|qualify|lead)\b",
+                                          qb_str, re.IGNORECASE)
+                        if not (m_dash and m_lead):
+                            # Try the reverse orientation (Polymarket as side a)
+                            m_dash = re.search(r"[—–]\s*([^—–?]+?)\s*\??\s*$", qb_str)
+                            m_lead = re.match(r"^([A-Za-z0-9 .'\-]{2,40}?)\s+to\s+(?:score|win|beat|advance|qualify|lead)\b",
+                                              qa_str, re.IGNORECASE)
+                        if m_dash and m_lead:
+                            subj_dash = set(re.findall(r"[a-z0-9']+", m_dash.group(1).lower()))
+                            subj_lead = set(re.findall(r"[a-z0-9']+", m_lead.group(1).lower()))
+                            subj_lead -= {"the", "a", "an"}
+                            subj_dash -= {"the", "a", "an"}
+                            if subj_dash and subj_lead and not (subj_dash & subj_lead):
+                                continue
 
                         # Drop candidate-vs-party mismatches
                         qa_type = political_contract_type(str(row_a.get("question", "")))
@@ -773,6 +818,18 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                             # Trade / buyout / merger are different
                             # corporate events from IPO / acquisition.
                             "merger", "buyout", "acquired", "traded",
+                            # 'End in a draw' is a different outcome from
+                            # a team winning — Kalshi moneyline "— Team"
+                            # fuzzy-paired to PM "end in a draw?" at 82
+                            # (fake 7% arb, 2026-07-04).
+                            "draw",
+                            # 'Global' vs 'US' Netflix charts are
+                            # different rankings that often disagree —
+                            # "#2 Global Netflix Movie" fuzzy-paired to
+                            # "#2 US Netflix movie" at 82-85 (fake 3-4%
+                            # arbs, 2026-07-04). 'global' alone suffices:
+                            # the US-chart title is the one lacking it.
+                            "global",
                         }
                         one_side_only = (set_a & DIVERGING_KEYWORDS) ^ (set_b & DIVERGING_KEYWORDS)
                         if one_side_only:
@@ -989,7 +1046,27 @@ def _extract_threshold_key(text: str, src: str):
         month = 'dec'
     if not month:
         return None
-    return (asset, direction, strike, month)
+    # Day-of-month anchor (2026-07-04): month-only matching paired Kalshi
+    # "BTC price on Jul 10 at 5pm" with Polymarket "reach $64,000 on
+    # July 4?" — same month, different days, fake 12.5% arb. If a
+    # "<month> <day>" mention exists, it becomes part of the key; a
+    # point-in-time daily market (has day) never matches a month/year
+    # bucket (day=None). Exception: "december 31" year-end phrasing is
+    # the same as the year bucket — normalize it to None.
+    day = None
+    m_day = re.search(r'\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\b', t)
+    if m_day:
+        day = int(m_day.group(2))
+        if month == 'dec' and day == 31:
+            day = None
+    # Touch vs level semantics (2026-07-04): Kalshi "BTC price on Jul 4
+    # at 5pm — $63,750 or above" settles on the price AT a timestamp;
+    # Polymarket "reach $64,000 on July 4" settles if the price TOUCHES
+    # the strike at any point. Touch-in-morning + fall-by-5pm loses both
+    # legs of the basket (fake 11.6% arb). "how high/low will X get" and
+    # reach/dip/hit are all touch; "price on/at <time>" is level.
+    kind = 'level' if re.search(r'\bprice (?:on|at)\b', t) else 'touch'
+    return (asset, direction, strike, month, day, kind)
 
 
 def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
@@ -1011,18 +1088,18 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
     for _, r in k.iterrows():
         key = _extract_threshold_key(r.get('question', ''), 'kalshi')
         if key:
-            k_idx[(key[0], key[1], key[3])].append((key[2], r))
+            k_idx[(key[0], key[1], key[3], key[4], key[5])].append((key[2], r))
     for _, r in p.iterrows():
         key = _extract_threshold_key(r.get('question', ''), 'polymarket')
         if key:
-            p_idx[(key[0], key[1], key[3])].append((key[2], r))
+            p_idx[(key[0], key[1], key[3], key[4], key[5])].append((key[2], r))
 
     print(f"  Threshold-keyed: kalshi={sum(len(v) for v in k_idx.values())}, "
           f"polymarket={sum(len(v) for v in p_idx.values())}")
 
     matched = 0
     for group_key in set(k_idx) & set(p_idx):
-        asset, direction, month = group_key
+        asset, direction, month, _day, _kind = group_key
         use_pct = asset in _PERCENT_TOL_ASSETS
         # For each Polymarket strike, find the SINGLE closest Kalshi strike
         # within tolerance. Polymarket-first because their strike list is

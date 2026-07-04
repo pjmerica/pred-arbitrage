@@ -556,12 +556,47 @@ def run():
                 if k_no:
                     no_b_bid = k_no[0] if k_no[0] and 0 < k_no[0] < 1 else None
                     no_b_ask = k_no[1] if k_no[1] and 0 < k_no[1] < 1 else None
+            # Live override for Kalshi NO quotes (2026-07-04): the CSV
+            # lookup above is hours old; on fast-moving markets (Netflix
+            # weekly charts) a live YES ask paired with a stale NO ask
+            # produced crossed baskets (fake 17% arb: YES 74c + NO 7c).
+            # Kalshi's book is unified, so live NO derives exactly from
+            # the live YES book fetched by fetch_depth moments ago.
+            if row.get("platform_a") == "kalshi" and la_bid is not None:
+                no_a_ask = round(1 - la_bid, 4)
+                if la_ask is not None:
+                    no_a_bid = round(1 - la_ask, 4)
+            if row.get("platform_b") == "kalshi" and lb_bid is not None:
+                no_b_ask = round(1 - lb_bid, 4)
+                if lb_ask is not None:
+                    no_b_bid = round(1 - lb_ask, 4)
+            # CRITICAL (2026-07-04): the political matcher flips side B's
+            # DISPLAY probability for opposite-party pairs (question_b gets
+            # a "[flipped]" prefix), but B's REAL quotes still belong to the
+            # UNDERLYING market (e.g. the Dem contract). The tradeable
+            # equivalent of "YES flipped-B" is "NO underlying-B" — so the
+            # YES and NO quotes must be swapped or the basket buys the SAME
+            # outcome on both platforms and labels a double-bet "guaranteed"
+            # (the fake 85% Wyoming Senate arb: YES-GOP on Kalshi at 96c +
+            # YES-Dem on Polymarket at 5.9c treated as a hedge).
+            #
+            # ORDER MATTERS: this must run BEFORE the PredictIt synthetic
+            # spread below. Real book quotes are in UNDERLYING space (swap
+            # them); PredictIt's synthetic quotes are built from the
+            # already-flipped display prob pb — they're in FLIPPED space
+            # and must NOT be swapped (first version of this fix swapped
+            # them and turned every safe-red-state PredictIt pair into a
+            # fake 45-72% "guaranteed" arb: "NO Dem" priced at 8c that
+            # really costs ~95c).
+            if str(row.get("question_b", "")).startswith("[flipped]"):
+                lb_bid, lb_ask, no_b_bid, no_b_ask = no_b_bid, no_b_ask, lb_bid, lb_ask
             # PredictIt has no public live orderbook — synthesize a +/-5pp
             # spread around the midpoint so the math doesn't treat the
             # midpoint as both bid AND ask (which produces fake arbs at
             # any wide cross-platform gap). Real fix is to flow PredictIt's
             # bestBuyYes/bestSellYes through as actual bid/ask — tracked
-            # in AUDIT.md to-do.
+            # in AUDIT.md to-do. (Runs AFTER the flipped swap on purpose —
+            # pb is already in flipped space for [flipped] pairs.)
             PREDICTIT_HALF_SPREAD = 0.05
             if row.get("platform_a") == "predictit" and la_bid is None and la_ask is None:
                 la_bid = max(0.01, pa - PREDICTIT_HALF_SPREAD)

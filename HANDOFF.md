@@ -249,10 +249,14 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
 
 ### Polymarket pagination — current state and gotchas
 
-**TL;DR**: we use `gamma-api.polymarket.com/events?offset=N` capped at
-2000. The "real" fix lives at `clob.polymarket.com/markets` (paginates
-properly to ~55k markets) but uses a different field shape and needs a
-parser rewrite — tracked in AUDIT.md.
+**TL;DR (updated 2026-07-04)**: we run FIVE differently-ordered passes of
+`gamma-api.polymarket.com/events?offset=N` (each ordered query gets its
+own 2000-offset window): default/oldest, `order=id&ascending=false`
+(newest listings), `order=volume24hr` desc, `order=liquidity` desc, and
+`order=endDate` asc (soonest-settling). Deduped by event id. First run:
+6,942 events / 19,259 markets saved vs 2,000 / 6,122 under the old single
+window. The "real" fix is still `clob.polymarket.com/markets` (paginates
+properly to ~55k markets) but needs a parser rewrite — tracked in AUDIT.md.
 
 History (chronological, painful — keep this so the next person doesn't
 re-tread it):
@@ -272,13 +276,22 @@ re-tread it):
    matched pairs / 1 guaranteed arb. Likely a Polymarket-side bug or
    undocumented parameter we haven't found.
 
-3. **Current**: reverted to `/events?offset=N` capped at 2000. We lose
-   visibility into markets past offset 2000, but at least we have a
-   working pipeline producing 200+ pairs. `fetch_all_events()` in
-   `scrapers/polymarket.py` carries a long docstring with this
-   history; don't rip it out.
+3. **2026-06-21 → 2026-07-04**: reverted to `/events?offset=N` capped at
+   2000. What we didn't realize until the 2026-07-03 polling-agg audit:
+   the DEFAULT sort is id ascending = OLDEST first, so the single capped
+   window only ever contained the ~2000 oldest active events. **Every
+   market listed after mid-June was invisible to the scraper** — and new
+   listings are where fresh mispricings live.
 
-4. **The real fix (tracked in AUDIT.md as next-handoff work)**:
+4. **Current (2026-07-04)**: the `order` param IS honored and each
+   ordered query gets its own 2000-offset window. `SCRAPE_PASSES` in
+   `scrapers/polymarket.py` runs five ordered passes (oldest / newest /
+   most-active-24h / deepest-liquidity / ending-soonest) and dedups by
+   event id. ~100 requests, ~1 min. If a pass's "new events" count drops
+   to ~0 while total active events keeps growing, the universe outgrew
+   the five windows — time for the clob rewrite below.
+
+5. **The eventual proper fix (tracked in AUDIT.md as next-handoff work)**:
    `clob.polymarket.com/markets` returns 1000 markets per page with a
    working `next_cursor` (base64-encoded offset that actually advances).
    Probed it: walked 60 pages = 55,343 unique markets. Has a
@@ -683,6 +696,23 @@ public volume field and the counterparty was often below $500.
   scripts (see "When something looks fishy" below). Each guard exists
   because of a specific historical false-pair.
 - **Pair markets across category groups.** Even if the text matches.
+- **Remove the flipped-pair quote swap in arb_scanner** (search
+  `[flipped]` in scripts/arb_scanner.py). The political matcher flips
+  side B's DISPLAY prob for opposite-party pairs, but B's tradeable
+  quotes still belong to the underlying market — without the swap, the
+  basket buys the SAME outcome on both platforms and labels a
+  double-bet "guaranteed" (the fake 85% Wyoming Senate arb,
+  2026-07-04).
+- **Feed non-Yes/No Polymarket markets into the fuzzy matcher.** Team
+  moneylines (outcomes = two team names) have yes/no tokens that are
+  just tokens[0]/[1]; YES+NO baskets against them are double bets. The
+  `outcomes_binary` column + `_binary_only()` filter enforce this
+  (2026-07-04; fake 10-15% KBO/MLB/T20 arbs).
+- **Trust a subject-flipped fuzzy pair.** "First to Score — Morocco" vs
+  "Canada to score first" scores high on token_sort_ratio because both
+  titles carry both team names. The subject-flip guard in match_fuzzy
+  drops these; if a new template family leaks through, extend the
+  guard's verb list before anything else.
 
 ---
 

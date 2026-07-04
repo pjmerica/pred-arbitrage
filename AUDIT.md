@@ -181,6 +181,15 @@ To unblock when revisited: extend `matched_pairs.csv` with optional
 
 ### 1. Rewrite Polymarket scraper to use `clob.polymarket.com/markets`
 
+**Urgency downgraded 2026-07-04**: the five-pass ordered gamma scrape
+(`SCRAPE_PASSES` in scrapers/polymarket.py) now covers ~6,900 events /
+~19k filtered markets including all NEW listings (the old single window
+was stuck on the 2000 OLDEST events — every market listed after mid-June
+was invisible). The clob rewrite is still the eventual complete fix.
+**Monitoring trigger**: if the "newest listings" pass's new-event count
+approaches its full 2000 window with no overlap, the universe outgrew
+five windows — do this rewrite then.
+
 **Why**: gamma's `/events?offset=N` is hard-capped at offset=2000.
 `/events/keyset` is broken (cursor doesn't advance). The CLOB endpoint
 paginates properly and returns the full ~55k market universe.
