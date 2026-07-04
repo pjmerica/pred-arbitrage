@@ -190,9 +190,10 @@ tr.suspicious-row td { opacity: 0.6; }
     <li><strong>Price-gap</strong> — Markets disagree in implied probability, but the Yes + No basket costs ≥ $1 even with zero fees. No risk-free basket exists. You could still bet directionally (buy on the cheap side, optionally short the expensive side) but profit isn't locked in — the underlying outcome still has to happen the way you bet.</li>
     <li><strong>One-sided</strong> — Real bid/ask wasn't available on at least one leg (typical for PredictIt — no public orderbook). Prices are inferred and the classification isn't reliable; treat as directional only.</li>
   </ul>
+  <strong>Two price layers — a 0.0pp gap can still be a real arb.</strong> Raw/Net Gap compare <em>display</em> prices (Kalshi's last trade, Polymarket's midpoint) — the headline numbers each platform's own UI shows. The Type label and Guar. Return come from the <em>live order books</em> (the K-Yes/K-No/Po-Yes/Po-No columns — what you'd actually pay right now). When a book moves without a trade printing (common on quiet markets), the display gap stays near zero while a real Buy-Yes + Buy-No basket opens up: e.g. Kalshi last trade 8¢ but its book bidding 30¢, vs Polymarket asking 9¢ → 0.0pp "gap", genuine 17% locked return. Trust the Type + Guar. Return columns for arbs; the gap columns tell you what the platforms' front pages think.
   <strong>Net gap</strong> subtracts estimated round-trip fees (Kalshi ~2%, Polymarket ~2%, PredictIt ~12%).
   <strong>Stake ratio</strong> = how to split your bankroll so both legs pay out equally (guaranteed only).
-  Sorted by guaranteed first, then soonest settlement date. <strong>Suspicious</strong> = gap &gt;40pp, likely a data or matching artifact — hidden by default.
+  Sorted by guaranteed first (highest locked return first), then soonest settlement date. <strong>Suspicious</strong> = gap &gt;40pp, likely a data or matching artifact — hidden by default.
 </div>
 
 <div class="table-wrap">
@@ -203,8 +204,6 @@ tr.suspicious-row td { opacity: 0.6; }
         <th data-col="question_a">Market</th>
         <th data-col="category">Category</th>
         <th data-col="settle_date">Settles</th>
-        <th data-col="implied_prob_a">Prob A</th>
-        <th data-col="implied_prob_b">Prob B</th>
         <!-- Per-platform fillable ASK columns. Cell shows '—' when the
              pair doesn't include that platform OR when we couldn't fetch
              the real bid/ask (typical for PredictIt). -->
@@ -367,7 +366,11 @@ function sorted(rows) {
     // Always float guaranteed to top when sorting by default
     if (sortCol === 'arb_type') {
       if (a.arb_type !== b.arb_type) return a.arb_type === 'guaranteed' ? -1 : 1;
-      // Within guaranteed: sort by settle_date asc
+      // Within guaranteed: highest locked return first. Ranking by
+      // display gap buried book-driven arbs (stale last trade = 0.0pp
+      // gap but a real 17% basket). Tie-break: soonest settlement.
+      const ra = a.guaranteed_return_pct ?? -1, rb = b.guaranteed_return_pct ?? -1;
+      if (ra !== rb) return rb - ra;
       const da = a.settle_date || '9999', db = b.settle_date || '9999';
       return da < db ? -1 : da > db ? 1 : 0;
     }
@@ -395,7 +398,7 @@ function render() {
   const tbody = document.getElementById('arb-body');
 
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="18" class="empty">No pairs match filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="16" class="empty">No pairs match filters</td></tr>`;
     return;
   }
 
@@ -425,14 +428,12 @@ function render() {
       ? `<span class="badge-suspicious" title="${reasons.join(' · ').replace(/"/g,'&quot;')}" style="cursor:help">⚠ verify</span>`
       : '';
 
-    const probA = r.implied_prob_a != null ? (r.implied_prob_a * 100).toFixed(1) + '%' : '—';
-    const probB = r.implied_prob_b != null ? (r.implied_prob_b * 100).toFixed(1) + '%' : '—';
-
     // Per-platform YES/NO fillable ASK cells. Only the two platforms
     // in this pair have prices; the third shows '—'. We use ASK (what
     // you'd pay to buy) because that's the price the arb math runs on
-    // and the actually-tradeable number. Midpoint = (bid+ask)/2 lives
-    // in implied_prob_a/b columns to the left of these.
+    // and the actually-tradeable number. (Display midpoints/last-trade
+    // still feed the Raw/Net Gap columns; the Prob A/B columns that
+    // showed them directly were removed 2026-07-04.)
     //
     // PredictIt rarely has real fetched bid/ask (no public orderbook),
     // so its cells are usually '—' even when PredictIt IS in the pair.
@@ -490,8 +491,6 @@ function render() {
       </td>
       <td style="color:#64748b;font-size:0.76rem">${r.category||''}</td>
       <td>${settleStr}</td>
-      <td style="color:#94a3b8">${probA}</td>
-      <td style="color:#94a3b8">${probB}</td>
       <td style="text-align:right">${kYes}</td>
       <td style="text-align:right">${kNo}</td>
       <td style="text-align:right">${poYes}</td>
