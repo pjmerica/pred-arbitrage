@@ -316,6 +316,31 @@ def run():
     # the dashboard K-No column) needs an "I actually fetched this"
     # signal rather than "I inferred it". Reading from the CSV
     # provides that signal cleanly.
+    # PredictIt real-quote lookup (2026-07-05). bestBuyYes/bestSellYes/
+    # bestBuyNo are real fillable top-of-book quotes; keyed by contract_id
+    # (which the matcher stores as market_id for predictit rows). Replaces
+    # the synthetic ±5pp spread hack — synthetic quotes were passing
+    # compute_arb's "real leg" check and could label a PI-leg basket
+    # guaranteed off invented prices.
+    predictit_lookup = {}
+    pi_csv = ROOT / "data" / "raw" / "predictit_markets.csv"
+    if pi_csv.exists():
+        try:
+            pidf = pd.read_csv(pi_csv)
+            if "best_buy_yes" in pidf.columns:
+                for _, r in pidf.dropna(subset=["contract_id"]).iterrows():
+                    def _q(v):
+                        v = pd.to_numeric(v, errors="coerce")
+                        return float(v) if pd.notna(v) and 0 < v < 1 else None
+                    predictit_lookup[str(int(r["contract_id"]))] = (
+                        _q(r.get("best_sell_yes")),   # bid (sell YES)
+                        _q(r.get("best_buy_yes")),    # ask (buy YES)
+                        _q(r.get("best_sell_no")),    # NO bid
+                        _q(r.get("best_buy_no")),     # NO ask
+                    )
+        except Exception as e:
+            print(f"  WARN: predictit quote lookup failed: {e}")
+
     kalshi_no_lookup = {}
     kalshi_csv = ROOT / "data" / "raw" / "kalshi_markets.csv"
     if kalshi_csv.exists():
@@ -570,6 +595,17 @@ def run():
                 no_b_ask = round(1 - lb_bid, 4)
                 if lb_ask is not None:
                     no_b_bid = round(1 - lb_ask, 4)
+            # PredictIt REAL quotes (2026-07-05). Injected here, BEFORE the
+            # flipped swap below, because these are underlying-market
+            # quotes like Kalshi's/Polymarket's.
+            if row.get("platform_a") == "predictit" and la_bid is None and la_ask is None:
+                q = predictit_lookup.get(str(row.get("market_id_a", "")))
+                if q:
+                    la_bid, la_ask, no_a_bid, no_a_ask = q
+            if row.get("platform_b") == "predictit" and lb_bid is None and lb_ask is None:
+                q = predictit_lookup.get(str(row.get("market_id_b", "")))
+                if q:
+                    lb_bid, lb_ask, no_b_bid, no_b_ask = q
             # CRITICAL (2026-07-04): the political matcher flips side B's
             # DISPLAY probability for opposite-party pairs (question_b gets
             # a "[flipped]" prefix), but B's REAL quotes still belong to the
@@ -590,20 +626,12 @@ def run():
             # really costs ~95c).
             if str(row.get("question_b", "")).startswith("[flipped]"):
                 lb_bid, lb_ask, no_b_bid, no_b_ask = no_b_bid, no_b_ask, lb_bid, lb_ask
-            # PredictIt has no public live orderbook — synthesize a +/-5pp
-            # spread around the midpoint so the math doesn't treat the
-            # midpoint as both bid AND ask (which produces fake arbs at
-            # any wide cross-platform gap). Real fix is to flow PredictIt's
-            # bestBuyYes/bestSellYes through as actual bid/ask — tracked
-            # in AUDIT.md to-do. (Runs AFTER the flipped swap on purpose —
-            # pb is already in flipped space for [flipped] pairs.)
-            PREDICTIT_HALF_SPREAD = 0.05
-            if row.get("platform_a") == "predictit" and la_bid is None and la_ask is None:
-                la_bid = max(0.01, pa - PREDICTIT_HALF_SPREAD)
-                la_ask = min(0.99, pa + PREDICTIT_HALF_SPREAD)
-            if row.get("platform_b") == "predictit" and lb_bid is None and lb_ask is None:
-                lb_bid = max(0.01, pb - PREDICTIT_HALF_SPREAD)
-                lb_ask = min(0.99, pb + PREDICTIT_HALF_SPREAD)
+            # Synthetic ±5pp PredictIt spread REMOVED 2026-07-05: real
+            # bestBuyYes/SellYes/BuyNo quotes now flow in above. When a
+            # contract is missing from the lookup, its legs stay None and
+            # compute_arb classifies the pair one-sided (can't be
+            # guaranteed) — honest, unlike synthetic quotes which passed
+            # the "real leg" check.
             arb = compute_arb(
                 pa, pb, fa, fb,
                 bid_a=la_bid, ask_a=la_ask,

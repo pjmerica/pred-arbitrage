@@ -89,6 +89,11 @@ def parse_contract(market, contract):
         "implied_prob": round(implied_prob, 4) if implied_prob is not None else None,
         "best_buy_yes": buy_yes,
         "best_sell_yes": sell_yes,
+        # Real NO-side quotes (2026-07-05): PredictIt YES and NO are
+        # separately quoted books; bestBuyNo is a real fillable NO ask.
+        # These replace the arb scanner's synthetic ±5pp spread hack.
+        "best_buy_no": contract.get("bestBuyNoCost"),
+        "best_sell_no": contract.get("bestSellNoCost"),
         "last_trade_price": last,
         "status": market.get("status", ""),
         "url": f"https://www.predictit.org/markets/detail/{market_id}",
