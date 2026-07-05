@@ -17,6 +17,10 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 (nothing pending)
 
+## 2026-07-05
+
+- `[a43b249]` predictit: real bestBuyNo/SellNo quotes replace synthetic spread — the scanner's synthetic ±5pp PredictIt spread passed compute_arb's "real leg" presence check, so PI-leg baskets could be labeled guaranteed off invented prices. Scraper now captures bestBuyYes/SellYes/BuyNo/SellNo (real top-of-book quotes; PI YES and NO are separately quoted books); scanner injects them via contract_id lookup BEFORE the flipped-pair swap; synthetic block deleted — missing contracts degrade to one-sided instead of fabricating quotes. Validation: 0 PI-leg guaranteed (real PI YES+NO asks sum >$1 today), one-sided count 2 → 118 from honest reclassification.
+
 ## 2026-07-04
 
 - `[2c469aa]` dashboard: rank guaranteed by locked return, drop Prob A/B, two-layer explainer — user saw the Sexyy Red 17% guaranteed arb showing "0.0pp net gap / not profitable" and asked why. Cause: gap columns compare DISPLAY prices (Kalshi last trade 8¢ vs Polymarket mid 8¢) while the basket math runs on live books (Kalshi book had moved to 30/31¢ without a trade printing) — correct but confusing, and the default sort ranked guaranteed rows by settle date so book-driven arbs sank. Guaranteed rows now sort by guaranteed_return_pct desc (tie-break soonest settle); a new explainer paragraph documents the two price layers with that exact example; Prob A/Prob B columns removed per user (display prices still feed Raw/Net Gap; the fillable K/Po/Pr Yes-No ask columns remain).
