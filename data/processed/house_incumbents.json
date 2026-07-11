@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-10T15:15:29.502047+00:00",
+  "fetched_at": "2026-07-11T03:54:10.535811+00:00",
   "members": [
     {
       "race_id": "2026-H-AK-01",
@@ -110,8 +110,8 @@
       "incumbent_name": "David Schweikert",
       "incumbent_party": "R",
       "bioguide_id": "S001183",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-AZ-02",
@@ -142,8 +142,8 @@
       "incumbent_name": "Andy Biggs",
       "incumbent_party": "R",
       "bioguide_id": "B001302",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-AZ-06",
@@ -158,8 +158,8 @@
       "incumbent_name": "Adelita S. Grijalva",
       "incumbent_party": "D",
       "bioguide_id": "G000606",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-AZ-08",
@@ -262,8 +262,8 @@
       "incumbent_name": "Nancy Pelosi",
       "incumbent_party": "D",
       "bioguide_id": "P000197",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-CA-12",
@@ -374,8 +374,8 @@
       "incumbent_name": "Julia Brownley",
       "incumbent_party": "D",
       "bioguide_id": "B001285",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-CA-27",
@@ -502,8 +502,8 @@
       "incumbent_name": "Robert Garcia",
       "incumbent_party": "D",
       "bioguide_id": "G000598",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-CA-43",
@@ -550,8 +550,8 @@
       "incumbent_name": "Darrell Issa",
       "incumbent_party": "R",
       "bioguide_id": "I000056",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-CA-49",
@@ -718,8 +718,8 @@
       "incumbent_name": "Neal P. Dunn",
       "incumbent_party": "R",
       "bioguide_id": "D000628",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-FL-03",
@@ -830,8 +830,8 @@
       "incumbent_name": "Vern Buchanan",
       "incumbent_party": "R",
       "bioguide_id": "B001260",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-FL-17",
@@ -854,8 +854,8 @@
       "incumbent_name": "Byron Donalds",
       "incumbent_party": "R",
       "bioguide_id": "D000032",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-FL-21",
@@ -886,8 +886,8 @@
       "incumbent_name": "Frederica S. Wilson",
       "incumbent_party": "D",
       "bioguide_id": "W000808",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-FL-25",
@@ -1006,8 +1006,8 @@
       "incumbent_name": "Barry Loudermilk",
       "incumbent_party": "R",
       "bioguide_id": "L000583",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-GA-12",
@@ -1062,8 +1062,8 @@
       "incumbent_name": "Ashley Hinson",
       "incumbent_party": "R",
       "bioguide_id": "H001091",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-IA-03",
@@ -1078,8 +1078,8 @@
       "incumbent_name": "Randy Feenstra",
       "incumbent_party": "R",
       "bioguide_id": "F000446",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-ID-01",
@@ -1150,24 +1150,24 @@
       "incumbent_name": "Danny K. Davis",
       "incumbent_party": "D",
       "bioguide_id": "D000096",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-IL-08",
       "incumbent_name": "Raja Krishnamoorthi",
       "incumbent_party": "D",
       "bioguide_id": "K000391",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-IL-09",
       "incumbent_name": "Janice D. Schakowsky",
       "incumbent_party": "D",
       "bioguide_id": "S001145",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-IL-10",
@@ -1382,8 +1382,8 @@
       "incumbent_name": "Andy Barr",
       "incumbent_party": "R",
       "bioguide_id": "B001282",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-LA-01",
@@ -1398,8 +1398,8 @@
       "incumbent_name": "Troy A. Carter",
       "incumbent_party": "D",
       "bioguide_id": "C001125",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-LA-03",
@@ -1422,8 +1422,8 @@
       "incumbent_name": "Julia Letlow",
       "incumbent_party": "R",
       "bioguide_id": "L000595",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-LA-06",
@@ -1478,8 +1478,8 @@
       "incumbent_name": "Seth Moulton",
       "incumbent_party": "D",
       "bioguide_id": "M001196",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MA-07",
@@ -1542,8 +1542,8 @@
       "incumbent_name": "Steny H. Hoyer",
       "incumbent_party": "D",
       "bioguide_id": "H000874",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MD-06",
@@ -1582,8 +1582,8 @@
       "incumbent_name": "Jared F. Golden",
       "incumbent_party": "D",
       "bioguide_id": "G000592",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MI-01",
@@ -1670,8 +1670,8 @@
       "incumbent_name": "Haley M. Stevens",
       "incumbent_party": "D",
       "bioguide_id": "S001215",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MI-12",
@@ -1702,8 +1702,8 @@
       "incumbent_name": "Angie Craig",
       "incumbent_party": "D",
       "bioguide_id": "C001119",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MN-03",
@@ -1798,8 +1798,8 @@
       "incumbent_name": "Sam Graves",
       "incumbent_party": "R",
       "bioguide_id": "G000546",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MO-07",
@@ -1830,8 +1830,8 @@
       "incumbent_name": "Trent Kelly",
       "incumbent_party": "R",
       "bioguide_id": "K000388",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MS-02",
@@ -1862,8 +1862,8 @@
       "incumbent_name": "Ryan K. Zinke",
       "incumbent_party": "R",
       "bioguide_id": "Z000018",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-MT-02",
@@ -2006,8 +2006,8 @@
       "incumbent_name": "Don Bacon",
       "incumbent_party": "R",
       "bioguide_id": "B001298",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-NE-03",
@@ -2022,8 +2022,8 @@
       "incumbent_name": "Chris Pappas",
       "incumbent_party": "D",
       "bioguide_id": "P000614",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-NH-02",
@@ -2126,8 +2126,8 @@
       "incumbent_name": "Bonnie Watson Coleman",
       "incumbent_party": "D",
       "bioguide_id": "W000822",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-NM-01",
@@ -2166,8 +2166,8 @@
       "incumbent_name": "Mark E. Amodei",
       "incumbent_party": "R",
       "bioguide_id": "A000369",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-NV-03",
@@ -2278,8 +2278,8 @@
       "incumbent_name": "Jerrold Nadler",
       "incumbent_party": "D",
       "bioguide_id": "N000002",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-NY-13",
@@ -2350,8 +2350,8 @@
       "incumbent_name": "Elise M. Stefanik",
       "incumbent_party": "R",
       "bioguide_id": "S001196",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-NY-22",
@@ -2470,8 +2470,8 @@
       "incumbent_name": "Michael R. Turner",
       "incumbent_party": "R",
       "bioguide_id": "T000463",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-OH-11",
@@ -2518,8 +2518,8 @@
       "incumbent_name": "Kevin Hern",
       "incumbent_party": "R",
       "bioguide_id": "H001082",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-OK-02",
@@ -2622,8 +2622,8 @@
       "incumbent_name": "Dwight Evans",
       "incumbent_party": "D",
       "bioguide_id": "E000296",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-PA-04",
@@ -2766,8 +2766,8 @@
       "incumbent_name": "Nancy Mace",
       "incumbent_party": "R",
       "bioguide_id": "M000194",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-SC-02",
@@ -2798,8 +2798,8 @@
       "incumbent_name": "Ralph Norman",
       "incumbent_party": "R",
       "bioguide_id": "N000190",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-SC-06",
@@ -2822,8 +2822,8 @@
       "incumbent_name": "Dusty Johnson",
       "incumbent_party": "R",
       "bioguide_id": "J000301",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TN-01",
@@ -2870,8 +2870,8 @@
       "incumbent_name": "John W. Rose",
       "incumbent_party": "R",
       "bioguide_id": "R000612",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TN-07",
@@ -2958,8 +2958,8 @@
       "incumbent_name": "Morgan Luttrell",
       "incumbent_party": "R",
       "bioguide_id": "L000603",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-09",
@@ -2974,8 +2974,8 @@
       "incumbent_name": "Michael T. McCaul",
       "incumbent_party": "R",
       "bioguide_id": "M001157",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-11",
@@ -3046,8 +3046,8 @@
       "incumbent_name": "Jodey C. Arrington",
       "incumbent_party": "R",
       "bioguide_id": "A000375",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-20",
@@ -3062,16 +3062,16 @@
       "incumbent_name": "Chip Roy",
       "incumbent_party": "R",
       "bioguide_id": "R000614",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-22",
       "incumbent_name": "Troy E. Nehls",
       "incumbent_party": "R",
       "bioguide_id": "N000026",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-24",
@@ -3126,8 +3126,8 @@
       "incumbent_name": "Jasmine Crockett",
       "incumbent_party": "D",
       "bioguide_id": "C001130",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-31",
@@ -3150,8 +3150,8 @@
       "incumbent_name": "Marc A. Veasey",
       "incumbent_party": "D",
       "bioguide_id": "V000131",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-34",
@@ -3182,8 +3182,8 @@
       "incumbent_name": "Lloyd Doggett",
       "incumbent_party": "D",
       "bioguide_id": "D000399",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-TX-38",
@@ -3222,8 +3222,8 @@
       "incumbent_name": "Burgess Owens",
       "incumbent_party": "R",
       "bioguide_id": "O000086",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-VA-01",
@@ -3358,8 +3358,8 @@
       "incumbent_name": "Dan Newhouse",
       "incumbent_party": "R",
       "bioguide_id": "N000189",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-WA-05",
@@ -3462,8 +3462,8 @@
       "incumbent_name": "Thomas P. Tiffany",
       "incumbent_party": "R",
       "bioguide_id": "T000165",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     },
     {
       "race_id": "2026-H-WI-08",
@@ -3494,8 +3494,8 @@
       "incumbent_name": "Harriet M. Hageman",
       "incumbent_party": "R",
       "bioguide_id": "H001096",
-      "open_seat": false,
-      "open_reason": ""
+      "open_seat": true,
+      "open_reason": "retiring"
     }
   ]
 }
