@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-09-03T04:54:35.791289+00:00",
+  "fetched_at": "2026-09-03T16:40:38.190992+00:00",
   "members": [
     {
       "race_id": "2026-H-AK-01",
@@ -278,6 +278,14 @@
       "incumbent_name": "Adam Gray",
       "incumbent_party": "D",
       "bioguide_id": "G000605",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-CA-14",
+      "incumbent_name": "Aisha Wahab",
+      "incumbent_party": "D",
+      "bioguide_id": "W000832",
       "open_seat": false,
       "open_reason": ""
     },
@@ -1020,7 +1028,7 @@
     {
       "race_id": "2026-H-GA-13",
       "incumbent_name": "Everton Blair Jr.",
-      "incumbent_party": "I",
+      "incumbent_party": "D",
       "bioguide_id": "B001328",
       "open_seat": false,
       "open_reason": ""
