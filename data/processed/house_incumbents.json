@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-09-02T16:52:28.495411+00:00",
+  "fetched_at": "2026-09-03T04:54:35.791289+00:00",
   "members": [
     {
       "race_id": "2026-H-AK-01",
@@ -1014,6 +1014,14 @@
       "incumbent_name": "Rick W. Allen",
       "incumbent_party": "R",
       "bioguide_id": "A000372",
+      "open_seat": false,
+      "open_reason": ""
+    },
+    {
+      "race_id": "2026-H-GA-13",
+      "incumbent_name": "Everton Blair Jr.",
+      "incumbent_party": "I",
+      "bioguide_id": "B001328",
       "open_seat": false,
       "open_reason": ""
     },
