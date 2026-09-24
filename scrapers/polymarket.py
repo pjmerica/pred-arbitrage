@@ -337,7 +337,16 @@ def parse_market(event, market):
         "implied_prob": round(implied_prob, 4) if implied_prob is not None else None,
         "best_bid": market.get("bestBid"),
         "best_ask": market.get("bestAsk"),
-        "liquidity": event.get("liquidity"),
+        # Per-MARKET liquidity (2026-09-23). This used to be the event's
+        # total, copied onto every market in it — so a dead strike inside a
+        # $370k XRP ladder "had" $370k, the <$200 filter below never fired
+        # for it, and elections.py's "most liquid Dem-win market" pick was
+        # a tie across every market in an event. liquidityNum is missing
+        # only on markets with no live book (sampled 150/3452, 0 live), so
+        # missing → 0 is safe.
+        "liquidity": (market.get("liquidityNum") if market is not event
+                      else event.get("liquidity")) or 0,
+        "event_liquidity": event.get("liquidity"),
         "volume": market.get("volume"),
         "event_slug": event_slug,
         "market_slug": market_slug,
@@ -357,6 +366,11 @@ def run():
         markets = event.get("markets", [])
         if markets:
             for m in markets:
+                # Resolved/closed markets stay nested inside still-active
+                # events (e.g. a ladder strike that already hit). Skip them
+                # explicitly instead of relying on the spread filter.
+                if m.get("closed") or m.get("active") is False:
+                    continue
                 rows.append(parse_market(event, m))
         else:
             # Event with no nested markets — treat event itself as a market
@@ -389,7 +403,7 @@ def run():
 
     # Drop unrealistic markets:
     #   1. Liquidity < $200 — basically no real trading
-    #   2. Spread (bestAsk - bestBid) > 30pp — only one-sided standing
+    #   2. Spread (bestAsk - bestBid) > 20pp — only one-sided standing
     #      orders, no two-sided market. Pairing these against active
     #      Kalshi markets produces fake 80%+ "guaranteed" arbs against
     #      a $0.97 sell order that nothing would actually fill (e.g.
@@ -400,7 +414,7 @@ def run():
     has_two_sided = bb.notna() & ba.notna() & ((ba - bb) <= 0.20)
     before = len(df)
     df = df[(liq >= 200) & has_two_sided]
-    print(f"  Dropped {before - len(df)} markets (liquidity<$200 or spread>30pp)")
+    print(f"  Dropped {before - len(df)} markets (market liquidity<$200 or spread>20pp)")
 
     df.to_csv(out, index=False)
     print(f"Saved {len(df)} markets to {out}")

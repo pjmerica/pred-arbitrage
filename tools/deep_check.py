@@ -30,7 +30,11 @@ ARB_PATH = Path(__file__).parent.parent / "docs" / "arb_data.js"
 KALSHI_OB = "https://api.elections.kalshi.com/trade-api/v2/markets/{t}/orderbook?depth=50"
 POLY_OB   = "https://clob.polymarket.com/book?token_id={t}"
 HEADERS   = {"User-Agent": "Mozilla/5.0 (deep-audit)", "Accept": "application/json"}
-FEES      = {"kalshi": 0.03, "polymarket": 0.03, "predictit": 0.12}
+# Single source of truth — this was a stale local copy at 3% (the scanner
+# moved to 2% in June), which graded every 2-3% arb as GONE.
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.arb_scanner import FEES
 
 TOP_N = 50
 

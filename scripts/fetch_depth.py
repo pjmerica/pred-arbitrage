@@ -96,6 +96,11 @@ def _kalshi_yes_book(ticker: str) -> dict:
     if out["best_bid"] is not None:
         floor = out["best_bid"] - NEAR_PP
         out["depth_bid_at_1pp"] = round(sum(s for p, s in yes_bids if p >= floor - 1e-9), 2)
+        # Buying NO on Kalshi fills against resting YES bids, so NO-side
+        # depth is the YES-bid stack (the arb scanner needs this for
+        # baskets whose Kalshi leg is NO — most of them).
+        out["max_no_buy_size_at_3pp_edge"] = round(
+            sum(s for p, s in yes_bids if p >= out["best_bid"] - EDGE_PP - 1e-9), 2)
 
     if out["best_ask"] is not None:
         no_bid_floor_near = (1 - out["best_ask"]) - NEAR_PP

@@ -222,3 +222,38 @@ def test_compute_arb_reports_yes_leg():
 ])
 def test_exact_score_orientation(a, b, same):
     assert (incompatibility(a, b) is None) is same
+
+
+# ── stake sizing must hedge (2026-09-23) ───────────────────────────────────
+
+def test_stakes_buy_equal_contracts_on_both_legs():
+    """YES 3.5c on B + NO 90c on A. The old inverse-odds split put $96 on
+    the 3.5c leg — 2,750 vs 4 contracts, not a hedge."""
+    r = compute_arb(0.9, 0.035, 0.02, 0.0,
+                    bid_a=0.09, ask_a=0.10, bid_b=0.03, ask_b=0.035,
+                    no_bid_a=0.89, no_ask_a=0.90, no_bid_b=0.96, no_ask_b=0.97)
+    assert r["arb_type"] == "guaranteed" and r["yes_leg"] == "b"
+    contracts_a = r["stake_a_dollars"] / 0.90    # NO on A
+    contracts_b = r["stake_b_dollars"] / 0.035   # YES on B
+    assert abs(contracts_a - contracts_b) / contracts_a < 0.01
+    assert abs(r["stake_a_dollars"] + r["stake_b_dollars"] - 100) < 0.02
+    # profit on $100: 100/0.935 baskets * (1 - 0.935 - 0.02) net each
+    assert abs(r["profit_dollars"] - 100 * 0.045 / 0.935) < 0.01
+
+
+def test_election_fallback_stakes_hedge():
+    from scripts.elections import _compute_arb_math
+    # Dem 40c on A, Rep 55c on B (each platform partitions to ~1).
+    r = _compute_arb_math(0.40, 0.46, 0.59, 0.55, 0.02, 0.0)
+    assert r["arb_type"] == "guaranteed"
+    assert abs(r["stake_a_dollars"] / 0.40 - r["stake_b_dollars"] / 0.55) < 0.1
+
+
+@pytest.mark.parametrize("a,b,same", [
+    # Kalshi ≥ Cat 2 vs Polymarket exactly Cat 2 (99.5¢ vs 0.5¢)
+    ("Hurricane Polo category? — Category 2 or above", "Will Hurricane Polo peak at Category 2?", False),
+    # Cat 5 is the top of the scale: ≥5 == exactly 5
+    ("Hurricane Polo category? — Category 5 or above", "Will Hurricane Polo peak at Category 5?", True),
+])
+def test_bound_or_above_vs_exact(a, b, same):
+    assert (incompatibility(a, b) is None) is same

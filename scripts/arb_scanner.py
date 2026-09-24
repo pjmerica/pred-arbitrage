@@ -215,24 +215,31 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
     #   4. Else → one-sided (data missing/inferred on both directions)
     if best_post_fee is not None and best_post_fee["is_real"]:
         best = best_post_fee
-        inv_yes = 1 / best["pay_yes"]
-        inv_no = 1 / best["pay_no"]
-        total_inv = inv_yes + inv_no
-        s_yes = inv_yes / total_inv
-        s_no = inv_no / total_inv
+        # A hedge holds the SAME NUMBER of contracts on both legs, so the
+        # dollars on each leg are proportional to that leg's PRICE. The
+        # old inverse-odds split (1/price) was exactly backwards: for
+        # "YES 3.5c + NO 90c" it said $96 on the 3.5c leg and $4 on the
+        # 90c leg — 2,750 vs 4 contracts, a ~$92 loss in the likely
+        # outcome (fixed 2026-09-23).
+        cost = best["pay_yes"] + best["pay_no"]
+        s_yes = best["pay_yes"] / cost
+        s_no = best["pay_no"] / cost
         if best["lab_yes"] == "{pa}":
             sA, sB = s_yes, s_no
         else:
             sA, sB = s_no, s_yes
+        # Return on capital: $100 buys 100/cost baskets, each netting
+        # best["net"] after fees → profit = 100 * net / cost.
+        ret = best["net"] / cost
         result.update({
             "yes_leg": "a" if best["lab_yes"] == "{pa}" else "b",
             "arb_type": "guaranteed",
-            "guaranteed_return_pct": round(best["net"] * 100, 2),
+            "guaranteed_return_pct": round(ret * 100, 2),
             "stake_a_pct": round(sA * 100, 1),
             "stake_b_pct": round(sB * 100, 1),
             "stake_a_dollars": round(sA * 100, 2),
             "stake_b_dollars": round(sB * 100, 2),
-            "profit_dollars": round(best["net"] * 100, 2),
+            "profit_dollars": round(ret * 100, 2),
             "action": (f"Buy Yes on {best['lab_yes']} at {best['pay_yes']*100:.1f}c "
                        f"+ Buy No on {best['lab_no']} at {best['pay_no']*100:.1f}c"),
         })
@@ -242,7 +249,8 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         result.update({
             "yes_leg": "a" if best["lab_yes"] == "{pa}" else "b",
             "arb_type": "pre-fee",
-            "guaranteed_return_pct": round(best["net"] * 100, 2),  # negative
+            # negative; same return-on-capital basis as guaranteed
+            "guaranteed_return_pct": round(best["net"] / (best["pay_yes"] + best["pay_no"]) * 100, 2),
             "action": (f"Buy Yes on {best['lab_yes']} at {best['pay_yes']*100:.1f}c "
                        f"+ Buy No on {best['lab_no']} at {best['pay_no']*100:.1f}c "
                        f"(pre-fee gross {best['gross']*100:.2f}%, fees eat it)"),
@@ -523,7 +531,11 @@ def run():
         if "side" not in depth.columns:
             depth["side"] = "yes"
         depth_cols = ["best_bid", "best_ask", "best_bid_size", "best_ask_size",
-                      "depth_bid_at_1pp", "depth_ask_at_1pp", "max_buy_size_at_3pp_edge"]
+                      "depth_bid_at_1pp", "depth_ask_at_1pp", "max_buy_size_at_3pp_edge",
+                      "max_no_buy_size_at_3pp_edge"]
+        for c in depth_cols:  # older depth CSVs lack the newer columns
+            if c not in depth.columns:
+                depth[c] = np.nan
         result["market_id_a"] = result["market_id_a"].astype(str)
         result["market_id_b"] = result["market_id_b"].astype(str)
 
@@ -709,6 +721,39 @@ def run():
         if before != len(result):
             print(f"Dropped {before - len(result)} pairs with one-sided orderbook (no bid - can't exit)")
 
+        # Leg-appropriate liquidity (2026-09-23). "Tradeable" used to show
+        # YES-buy depth on both legs, but most baskets buy NO on one leg,
+        # where YES depth is irrelevant. For each leg, pick the book the
+        # basket actually trades:
+        #   YES leg            -> YES asks
+        #   NO leg, Kalshi     -> resting YES bids (buying NO fills them)
+        #   NO leg, Polymarket -> the separate NO token's asks
+        # basket_size = contracts fillable at the quoted top-of-book price
+        # on BOTH legs — the size the quoted return actually holds for.
+        def _num(v):
+            return float(v) if v is not None and pd.notna(v) else None
+
+        def _leg(row, side):
+            leg = row.get("yes_leg")
+            buys_no = leg in ("a", "b") and leg != side
+            plat = row.get(f"platform_{side}")
+            if not buys_no:
+                return (_num(row.get(f"depth_{side}_max_buy_size_at_3pp_edge")),
+                        _num(row.get(f"depth_{side}_best_ask_size")))
+            if plat == "kalshi":
+                return (_num(row.get(f"depth_{side}_max_no_buy_size_at_3pp_edge")),
+                        _num(row.get(f"depth_{side}_best_bid_size")))
+            return (_num(row.get(f"depth_no_{side}_max_buy_size_at_3pp_edge")),
+                    _num(row.get(f"depth_no_{side}_best_ask_size")))
+
+        legs_a = result.apply(lambda r: _leg(r, "a"), axis=1)
+        legs_b = result.apply(lambda r: _leg(r, "b"), axis=1)
+        result["depth_a_max_at_3pp"] = [x[0] for x in legs_a]
+        result["depth_b_max_at_3pp"] = [x[0] for x in legs_b]
+        result["basket_size"] = [
+            min(ta[1], tb[1]) if ta[1] is not None and tb[1] is not None and r in ("a", "b") else None
+            for ta, tb, r in zip(legs_a, legs_b, result["yes_leg"])]
+
         # Compute suspicion_reasons. >20pp gap, wide depth spread, thin
         # depth all warrant manual verification. (one_sided is no longer
         # a suspicion code — pairs that fail it are dropped above.)
@@ -751,7 +796,13 @@ def run():
             drop_mask = result["_scrut"].apply(lambda s: bool(s) and s.get("action") == "drop")
             n_drop = int(drop_mask.sum())
             if n_drop:
-                print(f"Dropped {n_drop} pairs after rules-text scrutiny (criteria_score < {50})")
+                print(f"Dropped {n_drop} pairs after rules-text scrutiny (criteria_score < {50}):")
+                # Log each drop so a wrongly dropped real arb is auditable
+                # in the CI log instead of silently vanishing.
+                for _, d in result[drop_mask].iterrows():
+                    s = d["_scrut"]
+                    print(f"  - [{s.get('reason')} score={s.get('criteria_score')}] "
+                          f"{str(d.get('question_a'))[:70]!r} <-> {str(d.get('question_b'))[:70]!r}")
             result = result[~drop_mask].copy()
             # Append warn reason + score for the survivors
             def merge_scrut(row):
@@ -794,7 +845,10 @@ def run():
         if ma is None or mb is None:
             return False
         settled = lambda m: m >= 0.93 or m <= 0.07
-        return (settled(ma) != settled(mb)) and abs(ma - mb) >= 0.20
+        # Also: both settled but in OPPOSITE directions (Kalshi "Polo
+        # Category 2 or above" 99.5¢ vs Polymarket "peak at Category 2"
+        # 0.5¢) — the strongest possible sign the rules differ.
+        return ((settled(ma) != settled(mb)) and abs(ma - mb) >= 0.20)             or abs(ma - mb) >= 0.86
 
     one_sided_settle = result.apply(_settled_one_side, axis=1).astype(bool) \
         if len(result) else pd.Series(dtype=bool)
@@ -823,7 +877,10 @@ def run():
     unverified = (((result["arb_type"] == "guaranteed")
                    & ~result["match_type"].isin(VERIFIED_MATCH_TYPES))
                   | ((result["arb_type"] == "guaranteed") & one_sided_settle)
-                  | ((result["arb_type"] == "guaranteed") & risky_direction))
+                  | ((result["arb_type"] == "guaranteed") & risky_direction)
+                  # rules text looked different (scrutiny now warns, not drops)
+                  | ((result["arb_type"] == "guaranteed") & result["suspicion_reasons"].apply(
+                      lambda rs: isinstance(rs, list) and any(str(x).startswith("criteria_warn") for x in rs))))
     if unverified.any():
         result.loc[unverified, "arb_type"] = "unverified"
         result.loc[unverified, "action"] = (

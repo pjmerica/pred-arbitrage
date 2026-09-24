@@ -538,25 +538,26 @@ def _compute_arb_math(prob_a, prob_b, prob_a_rep, prob_b_rep, fee_a, fee_b):
     if net_return <= 0:
         return result
 
+    # Equal contracts on both legs → dollars proportional to each leg's
+    # price (the old (1-p)/(2-p-q) split did not hedge). Return is on
+    # capital: net per basket / basket cost. Same math as
+    # arb_scanner.compute_arb, which re-prices these rows from live books.
+    ret = net_return / best_cost
     result["arb_type"] = "guaranteed"
-    result["guaranteed_return_pct"] = round(net_return * 100, 2)
+    result["guaranteed_return_pct"] = round(ret * 100, 2)
     if cost1 <= cost2:
-        denom = 2 - prob_a - rep_b
-        sA = (1 - rep_b) / denom if denom > 0 else 0.5
-        sB = (1 - prob_a) / denom if denom > 0 else 0.5
+        sA, sB = prob_a / cost1, rep_b / cost1
         result["stake_note"] = (f"Buy Dem on A ({round(sA*100,1)}% of bankroll) "
                                 f"+ Buy Rep on B ({round(sB*100,1)}%)")
     else:
-        denom = 2 - prob_b - rep_a
-        sB = (1 - rep_a) / denom if denom > 0 else 0.5
-        sA = (1 - prob_b) / denom if denom > 0 else 0.5
+        sB, sA = prob_b / cost2, rep_a / cost2
         result["stake_note"] = (f"Buy Rep on A ({round(sA*100,1)}% of bankroll) "
                                 f"+ Buy Dem on B ({round(sB*100,1)}%)")
     result["stake_a_pct"] = round(sA * 100, 1)
     result["stake_b_pct"] = round(sB * 100, 1)
     result["stake_a_dollars"] = round(sA * 100, 2)
     result["stake_b_dollars"] = round(sB * 100, 2)
-    result["profit_dollars"] = round(net_return * 100, 2)
+    result["profit_dollars"] = round(ret * 100, 2)
     return result
 
 

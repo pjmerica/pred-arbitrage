@@ -81,6 +81,15 @@ def division(title) -> str | None:
     return None
 
 
+def _bound(title) -> str | None:
+    t = fold(title)
+    if re.search(r"\bor (?:above|higher|more|greater|stronger)\b|\bat least\b", t):
+        return "gte"
+    if re.search(r"\bpeak (?:at|as)\b|\bexactly\b", t):
+        return "eq"
+    return None
+
+
 def _category(title) -> str | None:
     m = re.search(r"\bcategory\s*(\d)\b", fold(title))
     return m.group(1) if m else None
@@ -221,6 +230,12 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
     ca, cb = _category(a), _category(b)
     if ca != cb:
         return f"category {ca} vs {cb}"
+    # "Category 2 or above" (≥) vs "peak at Category 2" (exactly): Kalshi
+    # 99.5¢ vs Polymarket 0.5¢ once Polo passed Cat 2. Equal only at the
+    # top of a scale (Cat 5).
+    ba, bb = _bound(a), _bound(b)
+    if ba and bb and ba != bb and ca != "5":
+        return f"bound {ba} vs {bb}"
     sa, sb = score(a), score(b)
     if (sa is None) != (sb is None):
         return "score vs non-score"

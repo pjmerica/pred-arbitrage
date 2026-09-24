@@ -204,8 +204,14 @@ def scrutinize(pairs, threshold_pp=30):
             out[key] = {"criteria_score": None, "action": "warn", "reason": "rules_unavailable"}
             continue
         score = similarity(ra, rb)
+        # Low similarity WARNS, never drops (2026-09-23). Kalshi and
+        # Polymarket write rules in unrelated boilerplate, so identical
+        # questions score 5-13 ("SOL below $50", "Mbappé top 3") — the drop
+        # was effectively "hide every pair with a >30pp gap", which hid
+        # exactly the pairs worth a human look. Warned pairs are marked
+        # suspicious (hidden by default, downgraded from guaranteed).
         if score < HARD_THRESHOLD:
-            out[key] = {"criteria_score": score, "action": "drop", "reason": "criteria_mismatch"}
+            out[key] = {"criteria_score": score, "action": "warn", "reason": "criteria_mismatch"}
         elif score < SOFT_THRESHOLD:
             out[key] = {"criteria_score": score, "action": "warn", "reason": "criteria_warn"}
         else:
