@@ -59,7 +59,7 @@ from utils.election_shapes import is_derivative, party_win_side
 
 # ── URL helpers ───────────────────────────────────────────────────────────────
 
-def kalshi_url(series_ticker, market_ticker=None):
+def kalshi_url(series_ticker, market_ticker=None, event_ticker=None):
     """Build a Kalshi market URL that lands on the SPECIFIC event, not
     just the series. Kalshi market_tickers are shaped as
     `{series}-{event_specifier}-{market_specifier}` (e.g. KXNHPRIMARY-
@@ -75,6 +75,11 @@ def kalshi_url(series_ticker, market_ticker=None):
     if pd.isna(series_ticker) or not series_ticker:
         return None
     series_lc = str(series_ticker).lower()
+    # Prefer the API's own event_ticker: trimming the market ticker is a
+    # guess that breaks on tickers like KXNOBELPEACE-27-CPJ, whose event is
+    # KXNOBELPEACE-26 (verified via /markets/{ticker} 2026-09-24).
+    if event_ticker is not None and not pd.isna(event_ticker) and str(event_ticker):
+        return f"https://kalshi.com/markets/{series_lc}/{str(event_ticker).lower()}"
     if market_ticker and not pd.isna(market_ticker):
         # event_ticker = market_ticker with the trailing market segment
         # stripped. "KXNHPRIMARY-01R26-HNOV" -> "KXNHPRIMARY-01R26".
@@ -346,7 +351,10 @@ def _load_kalshi_general():
     # House race for AZ-2?") — the constructed one names the candidate
     # ("AZ-02 House winner? — Jonathan Nez") and hides that it's a party leg.
     df["_disp_title"] = title_for_match
-    cols = ["implied_prob", "open_interest", "volume", "series_ticker", "market_ticker", "_disp_title"]
+    if "event_ticker" not in df.columns:
+        df["event_ticker"] = None
+    cols = ["implied_prob", "open_interest", "volume", "series_ticker", "market_ticker", "_disp_title",
+            "event_ticker"]
     if "market_ticker" not in df.columns:
         df["market_ticker"] = None
 
@@ -358,7 +366,7 @@ def _load_kalshi_general():
     dem = dem.rename(columns={
         "implied_prob": "kalshi_dem", "open_interest": "kalshi_oi",
         "volume": "kalshi_volume", "series_ticker": "kalshi_series_ticker",
-        "market_ticker": "kalshi_dem_ticker", "_disp_title": "kalshi_dem_title",
+        "market_ticker": "kalshi_dem_ticker", "_disp_title": "kalshi_dem_title", "event_ticker": "kalshi_event_ticker",
     })
     rep = df[rep_mask].groupby("race_id").apply(best, include_groups=False).reset_index()
     rep = rep.rename(columns={
@@ -370,14 +378,16 @@ def _load_kalshi_general():
     # one side from 1 - other_side was ripped out in polling-agg
     # 2026-06-18; inferred prices aren't tradeable.
     merged = dem[["race_id", "kalshi_dem", "kalshi_oi", "kalshi_volume",
-                  "kalshi_series_ticker", "kalshi_dem_ticker", "kalshi_dem_title"]].merge(
+                  "kalshi_series_ticker", "kalshi_dem_ticker", "kalshi_dem_title",
+                  "kalshi_event_ticker"]].merge(
         rep[["race_id", "kalshi_rep", "kalshi_rep_ticker"]], on="race_id", how="inner"
     )
     # Pass the dem market_ticker so kalshi_url() can derive the event
     # ticker and build the two-segment URL (lands on the right event,
     # not just the series page — see kalshi_url docstring).
     merged["kalshi_url"] = merged.apply(
-        lambda r: kalshi_url(r.get("kalshi_series_ticker"), r.get("kalshi_dem_ticker")),
+        lambda r: kalshi_url(r.get("kalshi_series_ticker"), r.get("kalshi_dem_ticker"),
+                             r.get("kalshi_event_ticker")),
         axis=1,
     )
     return merged
@@ -608,7 +618,7 @@ def _load_general_candidates():
                 "candidate_last": last, "candidate_first": _first_initial(name),
                 "candidate_name": name, "platform": "kalshi",
                 "prob": float(r["implied_prob"]),
-                "url": kalshi_url(r.get("series_ticker"), r.get("market_ticker")),
+                "url": kalshi_url(r.get("series_ticker"), r.get("market_ticker"), r.get("event_ticker")),
                 "volume": pd.to_numeric(r.get("volume"), errors="coerce"),
                 "oi": pd.to_numeric(r.get("open_interest"), errors="coerce"),
                 "market_id": r.get("market_ticker"),
@@ -731,7 +741,7 @@ def _load_primary_candidates():
                 "candidate_first": _first_initial(name),
                 "candidate_name": name, "platform": "kalshi",
                 "prob": float(r["implied_prob"]),
-                "url": kalshi_url(r.get("series_ticker"), r.get("market_ticker")),
+                "url": kalshi_url(r.get("series_ticker"), r.get("market_ticker"), r.get("event_ticker")),
                 "volume": pd.to_numeric(r.get("volume"), errors="coerce"),
                 "oi": pd.to_numeric(r.get("open_interest"), errors="coerce"),
                 "market_id": r.get("market_ticker"),
