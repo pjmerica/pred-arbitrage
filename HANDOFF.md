@@ -1,6 +1,6 @@
 # Handoff — Pred Arbitrage
 
-**Last updated:** 2026-06-21
+**Last updated:** 2026-09-24
 **Status:** Live dashboard at https://pjmerica.github.io/pred-arbitrage/.
 GitHub Actions runs the full pipeline twice daily (12:30 + 00:30 UTC) and
 pushes refreshed `docs/arb_data.js` back to master.
@@ -14,6 +14,22 @@ whole universe — sports, entertainment, crypto, politics, weather, etc.
 If you're picking this up cold, read this top-to-bottom once. Most of
 the architectural decisions here mirror polling-agg; the "Gotchas"
 section captures the differences and what's specific to this side.
+
+> ## Read first: 2026-09-23/24 matching overhaul
+>
+> The board had drifted for 2.5 months: about 59 of 69 "guaranteed" arbs paired two different questions, and links opened the wrong prop. **[MATCHING_REVIEW.md](MATCHING_REVIEW.md)** has the diagnosis, the history, and the long-term plan. [CHANGELOG.md](CHANGELOG.md) (2026-09-23/24) has every fix. The model you need:
+>
+> - **Only structured match types can be `guaranteed`** (`VERIFIED_MATCH_TYPES` in `scripts/arb_scanner.py`: threshold, tournament-*, primary-nominee, general). Fuzzy and political baskets show as `unverified`: the math is visible, but they are never labelled locked profit.
+> - **Fuzzy pairs must pass `utils/proposition.py incompatibility()`.** Both sides must agree on placement (win / 2nd / top-N / finalist / qualify / last), period, division, fixture teams and date, day-vs-window, storm category, "or above" vs "exactly", exact score and full person name. **When a new fake class appears, add a field there, not another one-off guard in `match_fuzzy`.**
+> - **Election party legs go through `utils/election_shapes.py`** (identical copy in polling-agg). It is an allowlist, not a substring match, which keeps out margin buckets, "within 5%", "closest race" and combos.
+> - **The scanner downgrades guaranteed → unverified** when:
+>   - one leg is effectively settled (`settled_one_side`);
+>   - the rules text looks different (scrutiny now warns and never drops);
+>   - a crypto basket buys YES on Kalshi (`basis_risk_direction`: Kalshi trimmed mean vs Polymarket's Binance wick);
+>   - the return is above 15% (`implausible_return`).
+> - **Stakes are proportional to price** (equal contracts on both legs). The old inverse-odds split was backwards. Return and profit are per $ staked.
+> - **Links:** Polymarket uses `/event/{event}/{market}` (`utils/links.py`). Kalshi uses `/markets/{series}/{event}`, from the API's `event_ticker`.
+> - **`tests/test_matching_regressions.py`** (65 cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
 
 ---
 
@@ -73,8 +89,10 @@ the scanner.
 `(asset, direction, strike, month)` tuples from price-threshold titles
 (Kalshi "How high will BTC get in 2026? — Above $X" vs Polymarket
 "Will Bitcoin reach $X by December 31, 2026?") and pairs markets
-sharing `(asset, direction, month)` within strike tolerance — 2% for
-crypto/precious metals, $1.50 for commodities (oil, gas). Closest-
+sharing `(asset, direction, month, day, touch|level)` within strike
+tolerance 0.1% (min 1¢) for every asset — just enough for Kalshi's
+"$149,999.99" vs "$150,000". It was 2% / $1.50 until 2026-09-23, which
+paired adjacent ladder rungs (XRP $3.00 vs $3.20, ETH $3,250 vs $3,300). Closest-
 strike-only rule prevents one Polymarket strike spawning N near-strike
 Kalshi duplicates. Covers patterns fuzzy can't reach because the
 phrasing differs too much for `token_sort_ratio` to score:
@@ -206,8 +224,10 @@ Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
 
 1. Scraper-time filters drop wide-spread / low-liquidity markets at the
    source.
-   - Polymarket: liquidity < $200 OR spread > 30pp gets dropped at
-     scrape time. The earlier 8pp-spread-drop was reverted on
+   - Polymarket: per-MARKET liquidity (`liquidityNum`) < $200 OR spread
+     > 20pp gets dropped at scrape time. Until 2026-09-24 `liquidity` was the
+     EVENT total copied to every market, so this filter rarely fired.
+     The earlier 8pp-spread-drop was reverted on
      2026-06-21 — once `freshen_polymarket.py` rewrites every
      gamma snapshot with a live CLOB midpoint right after the scrape,
      the 8pp filter became unnecessary defensive code that was
@@ -691,6 +711,18 @@ public volume field and the counterparty was often below $500.
 ## Do not
 
 - **Add Claude as co-author on commits.** Plain commits only.
+  (Note: the 2026-09-23/24 session commits carried a Co-Authored-By line
+  by mistake — don't copy that.)
+- **Match fuzzy pairs on title similarity alone.** Every new market type
+  (margin buckets, 2nd-place, 2nd-half props, finalists) scored 80+ while
+  asking a different question. Gate through `utils/proposition.py`.
+- **Pick an election leg because the title mentions a party.** Use
+  `utils/election_shapes.party_win_side`.
+- **Size stakes by inverse price** — dollars ∝ price (equal contracts).
+- **Let scrutiny DROP on low rules-text similarity.** Cross-venue
+  boilerplate makes identical questions score 5-13; it warns now.
+- **Label a crypto threshold basket guaranteed when it buys YES on
+  Kalshi.** Kalshi = CF trimmed mean, Polymarket = any Binance wick.
 - **Revert Kalshi to v1.**
 - **Loosen the matcher guards** without verifying with the deep audit
   scripts (see "When something looks fishy" below). Each guard exists
@@ -757,6 +789,11 @@ In rough order:
 ---
 
 ## Open work / known issues
+
+- **See MATCHING_REVIEW.md §6** for the long-term matching plan. Still open:
+  - a curated series map / review queue;
+  - a rules-text window-start parser;
+  - docs consolidation (this file, AUDIT, NOTES_FOR_REVIEWER and SCRAPER_NOTES overlap heavily).
 
 - **Node 20 deprecation** in GitHub Actions — bumping
   `actions/checkout` and `actions/setup-python` to their Node-24-

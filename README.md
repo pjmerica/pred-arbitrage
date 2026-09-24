@@ -27,10 +27,14 @@ Four tabs, filtered by row category:
 - **Other** — everything else (entertainment, crypto, weather, policy,
   etc).
 
-Each pair includes raw gap / net gap after fees / guaranteed-return %
-where applicable / tradeable depth / a `⚠ verify` badge listing all
-warnings (wide gap, wide live spread, one-sided book, thin depth,
-resolution-criteria mismatch).
+Each pair includes:
+
+- both legs' exact questions, each linked to that exact market;
+- raw gap and net gap after fees;
+- the Yes/No basket, with a hedged $100 split and the max stake at the quoted prices;
+- a `⚠ verify` badge listing every warning.
+
+Only pairs matched on structured keys (same crypto strike and window, same tournament and player, same race and party) can be **Guaranteed**. Pairs matched on similar titles show as **Unverified**, as does any basket above a 15% return.
 
 ## How it works
 
@@ -39,11 +43,14 @@ A GitHub Actions workflow runs twice daily (**12:30 + 00:30 UTC** —
 [polling-agg-2026](https://github.com/pjmerica/polling-agg-2026) so the
 two repos don't hit the same APIs simultaneously). Each run:
 
+0. Runs `tests/` (regression cases for every past fake-arb incident);
+   a failure stops the refresh before anything is published.
 1. Scrapes Kalshi (v2 trade-api), Polymarket (gamma), PredictIt (full API).
-2. Runs a fuzzy text matcher across all three platforms, restricted to
-   within category groups. Several guards strip false matches
-   (candidate-name mismatch, sub-bet type mismatch, threshold-bucket
-   mismatch, etc.).
+2. Runs structured matchers (crypto thresholds, tournaments, primary
+   nominees, political race_id) and a fuzzy text matcher within category
+   groups. Fuzzy pairs must also agree on an outcome signature
+   (`utils/proposition.py`: placement, period, division, teams, date,
+   score, person...).
 3. Runs `scripts/elections.py` — the US-2026 election-specific arb
    builder ported from polling-agg-2026. Matches party-level Dem/Rep
    markets on canonical race_id, plus per-candidate general and primary
@@ -53,14 +60,17 @@ two repos don't hit the same APIs simultaneously). Each run:
    are acceptable today and may be deduplicated later).
 4. Computes cross-platform price gaps. For any pair > 30pp gap, fetches
    each market's resolution rules and runs a text similarity check
-   (`scripts/scrutiny.py`): pairs scoring under 50 are dropped entirely,
-   50–75 are kept but tagged `criteria_warn`, ≥75 pass clean.
+   (`scripts/scrutiny.py`): pairs scoring under 75 are tagged
+   `criteria_warn` and can't be Guaranteed (low scores warn instead of
+   dropping, since 2026-09-24). Manual excludes in
+   `data/processed/excluded_pairs.json` are dropped.
 5. Tags every row with `category_bucket ∈ {Elections, Sports, Other}`
    so the dashboard tabs can filter without re-parsing the raw category.
 6. Fetches live orderbook depth for matched pairs and re-runs the
    scanner to surface top-of-book size and "tradeable" depth within 1pp
    and 3pp of the best ask.
-7. Commits the refreshed `docs/arb_data.js` back to master.
+7. Commits the refreshed `docs/arb_data.js` back to master and lists
+   every guaranteed/unverified row in the Actions job summary.
 
 GitHub Pages auto-redeploys from `/docs`. Cron is best-effort — actual
 fire time can lag 5–30 min.

@@ -11,6 +11,16 @@ This is a working document. As issues get fixed, move them out of the
 **To-do** section at the bottom and into the **Done** section, with the
 commit hash so we can find what changed.
 
+> **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:
+> - the matching overhaul (structured-only `guaranteed`, `unverified` tier, `utils/proposition.py` outcome signature, `utils/election_shapes.py` allowlist);
+> - the stake-split fix (dollars ∝ price);
+> - deep links;
+> - scrutiny warning instead of dropping;
+> - the 15% implausible-return cap;
+> - `tests/` in CI.
+>
+> Where they conflict, CHANGELOG 2026-09-23/24 wins.
+
 ---
 
 ## Major design decisions (not bugs — for context)
@@ -63,7 +73,7 @@ Lines are post-fixes from this audit.
 
 | File | LOC | Status | Notes |
 |---|---|---|---|
-| `matcher.py` | ~900 | **live, hot** | Three matching paths (political race_id, threshold-comparison Kalshi↔Polymarket for crypto/commodities, fuzzy text within category groups with `PER_CATEGORY_THRESHOLD` overrides) plus 10+ guards on the fuzzy path. Each guard tracks a specific historical false-pair (candidate-name, sub-bet type, year overlap, threshold buckets, office role, demographic, date anchors, rank, month/day anchor, subject extraction). **Don't loosen any guard without running `tools/deep_check.py` first.** |
+| `matcher.py` | ~900 | **live, hot** | Three matching paths (political race_id, threshold-comparison Kalshi↔Polymarket for crypto/commodities, fuzzy text within category groups with `PER_CATEGORY_THRESHOLD` overrides) plus 10+ guards on the fuzzy path, plus (2026-09-23) tournament, primary-nominee and the `utils/proposition.py` outcome-signature gate. Each guard tracks a specific historical false-pair (candidate-name, sub-bet type, year overlap, threshold buckets, office role, demographic, date anchors, rank, month/day anchor, subject extraction). **Don't loosen any guard without running `tools/deep_check.py` first.** |
 | `arb_scanner.py` | ~355 | **live, healthy** | 4% combined fees after the audit (was 6%). Conditional scrutiny import — `except Exception: _scrutinize = None` is acceptable (the scanner runs fine without it). Calls `scripts.scrutiny.scrutinize` for >30pp pairs. |
 | `fetch_depth.py` | ~185 | **live, healthy** | Uses `DEFAULT_HEADERS`. `_http_json` swallows exceptions and returns None — caller handles None. |
 | `scrutiny.py` | ~195 | **live, healthy** | Uses `DEFAULT_HEADERS`. 7-day cache; SequenceMatcher similarity scoring. PredictIt rule fetch is a no-op (no public endpoint). |
@@ -142,7 +152,7 @@ Lines are post-fixes from this audit.
    `_guard_sub_bet_type`, etc.) would help readability.
 2. **`tools/deep_check.py:basket_at_slippage` is 60 lines with 4 nested
    loops.** Split into helpers if extending.
-3. **No tests anywhere.** Cron is the only safety net.
+3. ~~**No tests anywhere.**~~ **Done 2026-09-23:** `tests/test_matching_regressions.py` (65 cases, one per fake-arb incident) runs in CI before the pipeline.
 
 ### Security surface
 

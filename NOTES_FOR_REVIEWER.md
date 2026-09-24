@@ -10,6 +10,16 @@ excluded).
 cron at 12:30 and 00:30 UTC. Most recent manual run as of writing:
 [GitHub Actions](https://github.com/pjmerica/pred-arbitrage/actions).
 
+> **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:
+> - the matching overhaul (structured-only `guaranteed`, `unverified` tier, `utils/proposition.py` outcome signature, `utils/election_shapes.py` allowlist);
+> - the stake-split fix (dollars ∝ price);
+> - deep links;
+> - scrutiny warning instead of dropping;
+> - the 15% implausible-return cap;
+> - `tests/` in CI.
+>
+> Where they conflict, CHANGELOG 2026-09-23/24 wins.
+
 This is a working personal project, not a production system. Owner is
 the only user; no auth, no PII, no user-provided input flows through
 the pipeline. Failure modes are bounded: at worst the live dashboard

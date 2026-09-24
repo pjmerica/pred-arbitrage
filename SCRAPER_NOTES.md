@@ -10,6 +10,16 @@ of being forgotten between sessions and re-discovered weeks later. The
 goal: a new person reading the codebase shouldn't need to re-probe any
 of these.
 
+> **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:
+> - the matching overhaul (structured-only `guaranteed`, `unverified` tier, `utils/proposition.py` outcome signature, `utils/election_shapes.py` allowlist);
+> - the stake-split fix (dollars ∝ price);
+> - deep links;
+> - scrutiny warning instead of dropping;
+> - the 15% implausible-return cap;
+> - `tests/` in CI.
+>
+> Where they conflict, CHANGELOG 2026-09-23/24 wins.
+
 **Last meaningful update:** 2026-06-22.
 
 ---
@@ -450,3 +460,37 @@ Suggested format for new entries:
 
 **The lesson**: the generalizable thing the next person should know.
 ```
+
+---
+
+## Quirks found 2026-09-23/24
+
+- **Polymarket `liquidity` on the EVENT object is the event total.**
+  Per-market liquidity is `liquidityNum` on each nested market. It is
+  missing only on markets with no live book (150 of 3,452 sampled, 0 of
+  them live). The scraper now uses the per-market value.
+- **Polymarket deep links:** `polymarket.com/event/{event_slug}/{market_slug}`
+  opens the exact market; the page's `og:title` is the question (verified
+  live). An unknown market slug falls back to the generic site title.
+  Sports game pages are titled "{Team} vs. {Team} Odds & Predictions"
+  even when deep-linked to a sub-market.
+- **Closed markets stay nested inside active events** (e.g. a ladder rung
+  that already hit). Skip `closed`/`active == False` markets explicitly.
+- **Kalshi `event_ticker` is not always the market ticker minus its last
+  segment:** `KXNOBELPEACE-27-CPJ` belongs to event `KXNOBELPEACE-26`.
+  Build links from the API's `event_ticker` field.
+- **Kalshi series tickers can name the wrong state:** event
+  `SENATELA-26` is titled "Kentucky Senate winner?" (Andy Barr / Charles
+  Booker). A ticker-derived race_id must agree with the state named in the
+  title.
+- **Kalshi vs Polymarket crypto thresholds settle on different data:**
+  Kalshi on a CF Benchmarks trimmed mean (spikes filtered), Polymarket on
+  any Binance 1-minute candle high/low. Polymarket YES is strictly easier
+  to trigger.
+- **Polymarket lists derivative election markets under the same race**
+  (margin-of-victory buckets, "within 5%", "closest race",
+  governor+Senate combos). Never pick a party leg by substring.
+- **Kalshi correct-score titles are winner-first** ("Poland wins 2-0");
+  **Polymarket's are fixture-order** ("Poland 0 - 2 Bosnia" is a Bosnia
+  win).
+
