@@ -126,7 +126,26 @@ def _load_kalshi_normalized() -> pd.DataFrame:
         df["market_ticker"] = df["ticker"]
     if "race_id" not in df.columns:
         df["race_id"] = df["market_title"].apply(_race_id_from_title)
+    else:
+        # The scraper derives race_id from the series ticker; re-check it
+        # against the state named in the title (see race_id_agrees_with_title).
+        titles = df.get("raw_market_title", df["market_title"]).fillna("").astype(str)
+        ok = [race_id_agrees_with_title(rid, t) for rid, t in zip(df["race_id"], titles)]
+        df.loc[[not x for x in ok], "race_id"] = None
     return df
+
+
+def race_id_agrees_with_title(race_id, title) -> bool:
+    """False when a ticker-derived race_id names a different state than
+    the market's own title. Kalshi event SENATELA-26 is titled "Kentucky
+    Senate winner? — Andy Barr" (their ticker is wrong), so ticker-derived
+    2026-SEN-LA paired Kentucky prices against Polymarket's Louisiana
+    market. Titles with no parseable state are given the benefit of the
+    doubt."""
+    if not isinstance(race_id, str) or not race_id:
+        return True
+    state, _, _ = _extract_state_office(title)
+    return state is None or race_id.split("-")[2] == state
 
 
 def _load_polymarket_normalized() -> pd.DataFrame:

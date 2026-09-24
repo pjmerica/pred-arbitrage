@@ -24,7 +24,9 @@ DERIVATIVE_RE = re.compile(
     r"|\bdifference between\b|\bhow many\b"
     # Combos / comparisons: "Democrats sweep the Senate and Governor",
     # "perform best among these tossup races".
-    r"|\bsweep\b|\bcombo\b|\bamong\b|\bperform\b|\bboth\b",
+    r"|\bsweep\b|\bcombo\b|\bamong\b|\bperform\b|\bboth\b"
+    # Sub-state results: "which counties will Steve Hilton win? — Orange".
+    r"|\bcount(?:y|ies)\b|\bdistricts?\b\s+will",
     re.IGNORECASE,
 )
 

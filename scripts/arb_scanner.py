@@ -154,6 +154,8 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         "stake_b_dollars": None,
         "profit_dollars": None,
         "action": "",
+        # Which leg the basket buys YES on ('a'/'b'); None when no basket.
+        "yes_leg": None,
         # Audit fields so the dashboard can show "fillable price" not just midpoint
         "fillable_ask_a": round(ask_a, 4),
         "fillable_ask_b": round(ask_b, 4),
@@ -223,6 +225,7 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         else:
             sA, sB = s_no, s_yes
         result.update({
+            "yes_leg": "a" if best["lab_yes"] == "{pa}" else "b",
             "arb_type": "guaranteed",
             "guaranteed_return_pct": round(best["net"] * 100, 2),
             "stake_a_pct": round(sA * 100, 1),
@@ -237,6 +240,7 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         # Basket cost < $1 pre-fee but fees eat the gap, with real prices.
         best = best_pre_fee
         result.update({
+            "yes_leg": "a" if best["lab_yes"] == "{pa}" else "b",
             "arb_type": "pre-fee",
             "guaranteed_return_pct": round(best["net"] * 100, 2),  # negative
             "action": (f"Buy Yes on {best['lab_yes']} at {best['pay_yes']*100:.1f}c "
@@ -757,8 +761,56 @@ def run():
     # Fuzzy / political pairs keep their math but show as 'unverified'
     # until a structured matcher or curated series map vouches for them
     # (MATCHING_REVIEW.md §6).
-    unverified = ((result["arb_type"] == "guaranteed")
-                  & ~result["match_type"].isin(VERIFIED_MATCH_TYPES))
+    # Settled-on-one-side check, applied to EVERY match type: if one leg's
+    # live book says the outcome is effectively decided (mid ≥93¢ or ≤7¢)
+    # while the other is still uncertain, the platforms' rules almost
+    # certainly differ (different window start, definition, or source).
+    # Kalshi "Taylor Swift new album in 2026" counts EPs/singles from Jan 1
+    # and sat at 98¢; Polymarket counts albums "between market creation
+    # and Dec 31" and sat at 55¢ — a fake 34% locked return.
+    def _mid(row, side):
+        if row.get(f"yes_{side}_real"):
+            b, a = row.get(f"fillable_bid_{side}"), row.get(f"fillable_ask_{side}")
+            if pd.notna(b) and pd.notna(a):
+                return (float(b) + float(a)) / 2
+        v = row.get(f"implied_prob_{side}")
+        return float(v) if pd.notna(v) else None
+
+    def _settled_one_side(row):
+        ma, mb = _mid(row, "a"), _mid(row, "b")
+        if ma is None or mb is None:
+            return False
+        settled = lambda m: m >= 0.93 or m <= 0.07
+        return (settled(ma) != settled(mb)) and abs(ma - mb) >= 0.20
+
+    one_sided_settle = result.apply(_settled_one_side, axis=1).astype(bool) \
+        if len(result) else pd.Series(dtype=bool)
+    if "suspicion_reasons" not in result.columns:  # no depth file this run
+        result["suspicion_reasons"] = [[] for _ in range(len(result))]
+    if one_sided_settle.any():
+        result.loc[one_sided_settle, "suspicion_reasons"] = result.loc[one_sided_settle, "suspicion_reasons"].apply(
+            lambda rs: list(rs) + ["settled_one_side"] if isinstance(rs, list) else ["settled_one_side"])
+        result.loc[one_sided_settle, "suspicious"] = True
+
+    # Threshold basis risk. Kalshi crypto thresholds settle on a CF
+    # Benchmarks trimmed mean (spikes filtered); Polymarket's on ANY Binance
+    # 1-minute candle high/low. Polymarket YES is therefore strictly easier
+    # to trigger, so YES-Polymarket + NO-Kalshi is a true hedge (a wick can
+    # even pay both legs) but YES-Kalshi + NO-Polymarket loses BOTH legs
+    # when a wick crosses the strike and the trimmed mean doesn't.
+    def _yes_platform(row):
+        leg = row.get("yes_leg")
+        return row.get(f"platform_{leg}") if leg in ("a", "b") else None
+    risky_direction = ((result["match_type"] == "threshold")
+                       & (result.apply(_yes_platform, axis=1) == "kalshi"))
+    if risky_direction.any():
+        result.loc[risky_direction, "suspicion_reasons"] = result.loc[risky_direction, "suspicion_reasons"].apply(
+            lambda rs: list(rs) + ["basis_risk_direction"])
+
+    unverified = (((result["arb_type"] == "guaranteed")
+                   & ~result["match_type"].isin(VERIFIED_MATCH_TYPES))
+                  | ((result["arb_type"] == "guaranteed") & one_sided_settle)
+                  | ((result["arb_type"] == "guaranteed") & risky_direction))
     if unverified.any():
         result.loc[unverified, "arb_type"] = "unverified"
         result.loc[unverified, "action"] = (

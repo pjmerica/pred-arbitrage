@@ -23,6 +23,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 from utils.links import polymarket_url
 from utils.election_shapes import is_derivative, party_win_side
+from utils.proposition import incompatibility, kalshi_game_date, slug_game_date
 RAW = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
@@ -217,6 +218,8 @@ def load_kalshi():
     df["race_id"] = df["title"].apply(infer_race_id)
     # Use close_date as settle_date
     df["settle_date"] = df["close_date"].astype(str)
+    # Fixture date for game markets (close_date is game + ~3 days).
+    df["game_date"] = df["ticker"].map(kalshi_game_date)
     return df.rename(columns={"ticker": "market_id", "title": "question"})
 
 
@@ -235,6 +238,7 @@ def load_polymarket():
     df["title_norm"] = df["question"].apply(normalise)
     df["race_id"] = df["question"].apply(infer_race_id)
     df["settle_date"] = df["end_date"].astype(str)
+    df["game_date"] = df["event_slug"].map(slug_game_date) if "event_slug" in df.columns else None
     # Rebuild from slugs so even a CSV scraped before the deep-link fix
     # links to the exact market rather than the multi-market event page.
     if "event_slug" in df.columns:
@@ -515,6 +519,18 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                     for norm_b_match, score, idx in results:
                         row_b = b.iloc[idx]
                         if row_a.get("market_id") == row_b.get("market_id"):
+                            continue
+
+                        # Outcome-signature gate (2026-09-23): reject when
+                        # the titles disagree on placement, period,
+                        # division, fixture teams/date, day-vs-window,
+                        # storm category or the named person — see
+                        # utils/proposition.py. This single check covers
+                        # every fake-pair class in MATCHING_REVIEW.md that
+                        # the per-incident guards below missed.
+                        if incompatibility(str(row_a.get("question", "")),
+                                           str(row_b.get("question", "")),
+                                           row_a.get("game_date"), row_b.get("game_date")):
                             continue
 
                         # Drop if deadline years don't overlap
@@ -1007,8 +1023,9 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
 # fuzzy matching misses them. This matcher parses (asset, direction,
 # strike, settlement_month) from each title, then pairs Kalshi+Polymarket
 # markets sharing the (asset, direction, month) tuple with strikes within
-# tolerance. Tolerance is 2% of strike for high-priced assets (crypto,
-# precious metals) and $1.50 for commodities (oil, gas).
+# tolerance. Tolerance is 0.1% of strike (min 1¢) — just enough for
+# Kalshi's "$149,999.99" vs Polymarket's "$150,000"; anything wider spans
+# real ladder rungs and pairs different questions.
 
 _PRICE_ASSETS = {
     'bitcoin': 'BTC',  'btc': 'BTC',
@@ -1021,8 +1038,6 @@ _PRICE_ASSETS = {
 }
 _MONTHS_FULL = ['january','february','march','april','may','june',
                 'july','august','september','october','november','december']
-# Assets where strike tolerance is percentage-based rather than absolute.
-_PERCENT_TOL_ASSETS = {'BTC','ETH','SOL','XRP','BNB','HYPE','GOLD','SILVER','COPPER'}
 
 
 def _extract_threshold_key(text: str, src: str):
@@ -1129,7 +1144,6 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
     matched = 0
     for group_key in set(k_idx) & set(p_idx):
         asset, direction, month, _day, _kind = group_key
-        use_pct = asset in _PERCENT_TOL_ASSETS
         # For each Polymarket strike, find the SINGLE closest Kalshi strike
         # within tolerance. Polymarket-first because their strike list is
         # typically smaller and uses clean round numbers.
@@ -1144,7 +1158,13 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
             # producing 8 fake guaranteed arbs that topped the board at
             # 13.6% — the two legs are genuinely different questions.
             # Floor is now relative, so it scales down with the strike.
-            tolerance = max(abs(p_strike) * 0.02, 0.01) if use_pct else 1.5
+            # 2026-09-23: 2% was still wider than real ladder steps — ETH
+            # "$3,250" paired with PM "$3,300" AND "$3,200" (1.5% apart).
+            # The only drift to absorb is Kalshi's cent-below convention
+            # ("$149,999.99" == "$150,000"), so 0.1% (min 1¢) suffices.
+            # Applies to commodities too: the old flat $1.50 oil window
+            # spanned adjacent $1 WTI rungs.
+            tolerance = max(abs(p_strike) * 0.001, 0.01)
             best = None
             for k_strike, k_row in k_idx[group_key]:
                 d = abs(k_strike - p_strike)

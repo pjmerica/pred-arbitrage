@@ -429,6 +429,8 @@ function render() {
     const reasonText = {
       wide_gap: '>20pp raw gap', wide_spread_a: 'wide spread on A', wide_spread_b: 'wide spread on B',
       thin_depth_a: '<20 contracts tradeable on A', thin_depth_b: '<20 contracts tradeable on B',
+      basis_risk_direction: 'basket buys YES on Kalshi (trimmed-mean index) + NO on Polymarket (any Binance wick) — both legs lose if a wick crosses the strike but the index does not',
+      settled_one_side: 'one market is effectively settled while the other is not — resolution rules probably differ (window, definition or source)',
     };
     const reasons = (r.suspicion_reasons || []).map(k => {
       if (typeof k === 'string' && k.startsWith('criteria_warn')) {

@@ -4,6 +4,16 @@
 **Scope:** every script in the pipeline, the full commit history (221 commits, 2026-04-13 → 2026-07-31), and the uncommitted working tree.
 
 > **Status (2026-09-23, same day):** P0 items 1–5 are implemented. Same-data result: guaranteed 69 → 5, all equal-strike crypto pairs; 33 rows moved to `unverified`; 0 margin/combo election legs; Polymarket links open the exact market. §2–§5 describe the board *before* the fix. P1 and P2 remain open, except a first slice of #13 (`tests/test_matching_regressions.py`, run in CI). See CHANGELOG 2026-09-23.
+>
+> **Second pass (same day):** audited every pair type on the post-fix board. Fixes:
+> - `utils/proposition.py` outcome-signature gate on fuzzy pairs. This is the first piece of #6: fields are placement, period, division, teams, fixture date, day-vs-window, storm category, exact score and person.
+> - Exact-strike threshold tolerance.
+> - Kalshi ticker/title state cross-check (Kalshi's `SENATELA-26` is the Kentucky race).
+> - Settled-one-side and crypto basis-risk checks in the scanner.
+>
+> New findings for §6:
+> - **Crypto thresholds are not identical questions.** Kalshi resolves on a CF Benchmarks trimmed mean, Polymarket on any Binance 1-minute wick. Only YES-Polymarket + NO-Kalshi is hedged; this is now enforced.
+> - **Window-start differences are common** (Polymarket "between market creation and …" vs Kalshi calendar year). The settled-one-side check catches the extreme cases. A rules-text parser for window start is still P1 #10.
 
 ---
 

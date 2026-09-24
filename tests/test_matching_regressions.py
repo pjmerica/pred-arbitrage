@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 from utils.election_shapes import party_win_side
 from utils.links import polymarket_url
 from scripts.matcher import match_political, match_threshold_pairs, political_contract_type
+from scripts.elections import race_id_agrees_with_title
 
 
 # ── election party-win allowlist (2026-09-23) ──────────────────────────────
@@ -90,6 +91,33 @@ def test_threshold_requires_near_equal_strike():
     assert list(out["market_id_b"]) == ["p30"]
 
 
+def test_threshold_rejects_adjacent_rung():
+    """ETH $3,250 paired with both $3,300 and $3,200 under a 2% window."""
+    k = _mk([{"market_id": "k", "question": "How high will ETH get in September? — Above $3,250.00",
+              "implied_prob": 0.3, "category": "Crypto"}], "kalshi")
+    p = _mk([{"market_id": "p1", "question": "Will Ethereum reach $3,300 in September?",
+              "implied_prob": 0.2, "category": "Crypto"},
+             {"market_id": "p2", "question": "Will Ethereum reach $3,200 in September?",
+              "implied_prob": 0.4, "category": "Crypto"}], "polymarket")
+    assert match_threshold_pairs({"kalshi": k, "polymarket": p}).empty
+
+
+def test_county_market_is_not_candidate_win():
+    assert political_contract_type(
+        "California Governor: which counties will Steve Hilton win? — Orange") == "derivative"
+
+
+@pytest.mark.parametrize("race_id,title,ok", [
+    # Kalshi SENATELA-26 is actually the Kentucky race (their ticker bug)
+    ("2026-SEN-LA", "Will Republicans win the Senate race in Kentucky?", False),
+    ("2026-SEN-LA", "Will Republicans win the Senate race in Louisiana?", True),
+    ("2026-H-AZ-02", "Will Democratic win the House race for AZ-2?", True),
+    ("2026-H-AZ-02", "Some title with no state", True),
+])
+def test_ticker_race_id_must_agree_with_title(race_id, title, ok):
+    assert race_id_agrees_with_title(race_id, title) is ok
+
+
 def test_threshold_keeps_rounding_drift():
     k = _mk([{"market_id": "k", "question": "How high will Bitcoin get in 2026? — Above $199,999.99",
               "implied_prob": 0.1, "category": "Crypto"}], "kalshi")
@@ -106,3 +134,91 @@ def test_polymarket_url_deep_links_market():
     assert polymarket_url("single", "single") == "https://polymarket.com/event/single"
     assert polymarket_url("ev", float("nan")) == "https://polymarket.com/event/ev"
     assert polymarket_url(None, None) is None
+
+
+# ── outcome-signature gate for fuzzy pairs (2026-09-23) ────────────────────
+
+from utils.proposition import incompatibility, kalshi_game_date, slug_game_date
+
+
+@pytest.mark.parametrize("a,b", [
+    ("Big Brother Season 28 — 2nd place — Taylor Brown", "Will Taylor Brown win Big Brother season 28?"),
+    ("Big Brother Season 28 — 2nd place — Dee Valladares", "Will Dee Valladares come in third-place on Big Brother season 28?"),
+    ("Dancing with the Stars Season 35 — Top 3 Finishers — Julia Stiles", "Will Julia Stiles win Dancing With the Stars: Season 35?"),
+    ("Barcelona vs Paris FC: BTTS — Both Teams To Score", "FC Barcelona vs. Paris FC: Both Teams to Score in Second Half"),
+    ("Austria vs Israel: BTTS — Both Teams To Score", "Australia vs. Brazil: Both Teams to Score"),
+    ("Republic of Korea vs Ecuador: BTTS — Both Teams To Score", "Israel vs. Republic of Ireland: Both Teams to Score"),
+    ("Northern Ireland vs Hungary: BTTS — Both Teams To Score", "Georgia vs. Northern Ireland: Both Teams to Score"),
+    ("46th FIDE Chess Olympiad Women's Tournament Winner — China", "Will China win the 46th FIDE Chess Olympiad Open Tournament?"),
+    ("League Phase Top Finisher — Real Madrid", "Will Real Madrid finish last in UCL league phase?"),
+    ("2028 UEFA Euros Qualifiers — Northern Ireland", "Will Northern Ireland win the UEFA EURO 2028?"),
+    ("How high will XRP get in September? — Above $1.70", "Will the price of XRP be above $1.70 on September 25?"),
+    ("Time's Person of the Year for 2026 — Mojtaba Khamenei", "Will Ali Khamenei be TIME Person of the Year 2026?"),
+    ("Will a hurricane make landfall in Hawaii in 2026? — Before 2027", "Will any Category 5 hurricane make landfall in the US in before 2027?"),
+])
+def test_signature_rejects_different_outcomes(a, b):
+    assert incompatibility(a, b) is not None
+
+
+@pytest.mark.parametrize("a,b", [
+    ("Big Brother Season 28 — Winner — Taylor Brown", "Will Taylor Brown win Big Brother season 28?"),
+    ("Big Brother Season 28 — 3rd place  — Dee Valladares", "Will Dee Valladares come in third-place on Big Brother season 28?"),
+    ("Ballon d'Or 2026: Top 3 Finishers — Lamine Yamal", "Will Lamine Yamal finish in the top 3 of the 2026 Ballon d'Or?"),
+    ("Republic of Korea vs Ecuador: First Half BTTS — 1st Half: Both Teams To Score", "Korea Republic vs. Ecuador: Both Teams to Score in First Half"),
+    ("New York RB vs Saint Louis: BTTS — Both Teams To Score", "New York Red Bulls vs. St. Louis City SC: Both Teams to Score"),
+    ("Gibraltar vs Sao Tome and Principe: BTTS — Both Teams To Score", "Gibraltar vs. São Tomé e Príncipe: Both Teams to Score"),
+    ("Toronto vs Baltimore: Extra Innings — Game goes to extra innings", "Will the game go to extra innings?: Toronto Blue Jays vs. Baltimore Orioles"),
+    ("Hurricane Polo category? — Category 5 or above", "Will Hurricane Polo peak at Category 5?"),
+    ("Bulgarian presidential election winner? — Vasil Terziev", "Will Vassil Terziev win the next Bulgarian presidential election?"),
+    ("2028 Democratic presidential nominee — Alexandria Ocasio-Cortez", "Will Alexandria Ocasio-Cortez win the 2028 Democratic presidential nomination?"),
+    ("How high will XRP get in 2026? — Above $3.00", "Will XRP reach $3.00 by December 31, 2026?"),
+    ("Lightweight Title Holder on Dec 31, 2026? — Arman Tsarukyan", "Will Arman Tsarukyan be the UFC Lightweight Champion on December 31, 2026?"),
+    ("Who will recognize Palestine before 2027? — USA", "Will the US recognize Palestine before 2027?"),
+])
+def test_signature_keeps_same_outcome(a, b):
+    assert incompatibility(a, b) is None
+
+
+def test_same_matchup_different_day_rejected():
+    """MLB series repeat the matchup on consecutive days."""
+    a = "Toronto vs Baltimore: Extra Innings — Game goes to extra innings"
+    b = "Will the game go to extra innings?: Toronto Blue Jays vs. Baltimore Orioles"
+    ga = kalshi_game_date("KXMLBEXTRAS-26SEP232210TORBAL-EXTRAS")
+    gb = slug_game_date("mlb-tor-bal-2026-09-22")
+    assert (ga, gb) == ("2026-09-23", "2026-09-22")
+    assert incompatibility(a, b, ga, gb) == "game date 2026-09-23 vs 2026-09-22"
+    assert incompatibility(a, b, ga, "2026-09-23") is None
+    assert incompatibility(a, b, float("nan"), None) is None
+
+
+# ── basket direction (threshold basis risk, 2026-09-23) ────────────────────
+
+from scripts.arb_scanner import compute_arb
+
+
+def test_compute_arb_reports_yes_leg():
+    # A cheap YES on B + cheap NO on A → basket buys YES on leg b.
+    r = compute_arb(0.8, 0.1, 0.02, 0.02,
+                    bid_a=0.80, ask_a=0.81, bid_b=0.10, ask_b=0.12,
+                    no_bid_a=0.18, no_ask_a=0.19, no_bid_b=0.88, no_ask_b=0.90)
+    assert r["arb_type"] == "guaranteed" and r["yes_leg"] == "b"
+    r = compute_arb(0.5, 0.5, 0.02, 0.02,
+                    bid_a=0.49, ask_a=0.51, bid_b=0.49, ask_b=0.51,
+                    no_bid_a=0.49, no_ask_a=0.51, no_bid_b=0.49, no_ask_b=0.51)
+    assert r["arb_type"] == "price-gap" and r["yes_leg"] is None
+
+
+@pytest.mark.parametrize("a,b,same", [
+    ("Poland vs Bosnia and Herzegovina: Correct Score — Poland wins 2-0",
+     "Exact Score: Poland 0 - 2 Bosnia and Herzegovina?", False),   # opposite winner
+    ("Poland vs Bosnia and Herzegovina: Correct Score — Poland wins 2-0",
+     "Exact Score: Poland 2 - 0 Bosnia and Herzegovina?", True),
+    ("Poland vs Bosnia and Herzegovina: Correct Score — Bosnia and Herzegovina wins 1-0",
+     "Exact Score: Poland 0 - 1 Bosnia and Herzegovina?", True),
+    ("Poland vs Bosnia and Herzegovina: Correct Score — Draw 1-1",
+     "Exact Score: Poland 1 - 1 Bosnia and Herzegovina?", True),
+    ("Poland vs Bosnia and Herzegovina: Correct Score — Poland wins 1-0",
+     "Poland vs. Bosnia and Herzegovina: Both Teams to Score", False),
+])
+def test_exact_score_orientation(a, b, same):
+    assert (incompatibility(a, b) is None) is same
