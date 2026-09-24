@@ -5,5 +5,12 @@
     "platform_b": "polymarket",
     "market_id_b": "102936224134271070189104847090829839924697394514566827387181305960175107677216",
     "note": "Kalshi requires formal signed agreement with specific nuclear restrictions AND sanctions relief; Polymarket accepts any publicly announced mutual agreement. Criteria materially differ."
+  },
+  {
+    "platform_a": "kalshi",
+    "market_id_a": "KXALBUMRELEASE-26-TAY",
+    "platform_b": "polymarket",
+    "market_id_b": "91774859589548653382801677705415403838216229407441218465771201445466775179462",
+    "note": "Kalshi counts any new original material (singles, EPs) released during 2026; Polymarket counts a mostly-new album released between market creation and Dec 31. Kalshi ~98c (something already qualifying) vs Polymarket ~55c. Rules read and compared 2026-09-23."
   }
 ]

@@ -49,6 +49,12 @@ def position(title) -> str | None:
         return "qualify"
     if re.search(r"\b(?:finish(?:es)?|place[sd]?|come in)\s+last\b|\blast place\b", t):
         return "last"
+    # "Dancing with the Stars — Finalists — X" vs "Will X win DWTS?" scored
+    # 134% fake returns (2026-09-24): reaching the final ≠ winning it.
+    if re.search(r"\bsemi ?finalists?\b|\bsemi ?finals?\b", t):
+        return "semifinal"
+    if re.search(r"\bfinalists?\b|\b(?:reach|make|advance to)\b.{0,40}?\bfinals?\b", t):
+        return "finalist"
     m = re.search(r"\btop\s+(\d+)\b", t)
     if m:
         return f"top{m.group(1)}"

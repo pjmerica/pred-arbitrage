@@ -40,6 +40,13 @@ FEES = {
 }
 
 
+# Sanity cap on a "guaranteed" return (return on capital, after fees).
+# Every guaranteed row above ~15% found in the 2026-09-23/24 audits was a
+# mismatched pair (margin bucket vs winner, 2nd place vs win, crossed
+# strikes); the verified real ones were 0-5%. Above the cap a row is shown
+# as 'unverified' — math kept, but never labelled locked profit.
+MAX_PLAUSIBLE_RETURN_PCT = 15.0
+
 # Match types whose pairing is established by structured keys (asset +
 # strike + window, tournament + contestant, race + party/person), not by
 # title similarity. Only these can be labelled 'guaranteed'.
@@ -273,6 +280,27 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
         result["action"] = "Inferred prices — fetch real bid/ask to classify"
 
     return result
+
+
+def _write_job_summary(result):
+    """In GitHub Actions, list every guaranteed / unverified row in the run's
+    job summary so each refresh shows what it published without opening
+    the dashboard (the unattended Jul-Sep drift went unnoticed for weeks)."""
+    import os
+    path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not path:
+        return
+    rows = result[result["arb_type"].isin(["guaranteed", "unverified"])]
+    lines = [f"### pred-arb: {int((result['arb_type'] == 'guaranteed').sum())} guaranteed, "
+             f"{int((result['arb_type'] == 'unverified').sum())} unverified of {len(result)} pairs", "",
+             "| type | return % | match | leg A | leg B | reasons |", "|---|---|---|---|---|---|"]
+    for _, r in rows.sort_values("guaranteed_return_pct", ascending=False).iterrows():
+        esc = lambda v: str(v or "").replace("|", "/")[:80]
+        lines.append(f"| {r['arb_type']} | {r.get('guaranteed_return_pct')} | {r.get('match_type')} | "
+                     f"{esc(r.get('question_a'))} | {esc(r.get('question_b'))} | "
+                     f"{esc(','.join(r.get('suspicion_reasons') or []))} |")
+    with open(path, "a", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
 
 
 def _assert_scrape_freshness():
@@ -874,8 +902,15 @@ def run():
         result.loc[risky_direction, "suspicion_reasons"] = result.loc[risky_direction, "suspicion_reasons"].apply(
             lambda rs: list(rs) + ["basis_risk_direction"])
 
+    implausible = (result["arb_type"] == "guaranteed") & (
+        pd.to_numeric(result["guaranteed_return_pct"], errors="coerce") > MAX_PLAUSIBLE_RETURN_PCT)
+    if implausible.any():
+        result.loc[implausible, "suspicion_reasons"] = result.loc[implausible, "suspicion_reasons"].apply(
+            lambda rs: list(rs) + ["implausible_return"])
+        result.loc[implausible, "suspicious"] = True
     unverified = (((result["arb_type"] == "guaranteed")
                    & ~result["match_type"].isin(VERIFIED_MATCH_TYPES))
+                  | implausible
                   | ((result["arb_type"] == "guaranteed") & one_sided_settle)
                   | ((result["arb_type"] == "guaranteed") & risky_direction)
                   # rules text looked different (scrutiny now warns, not drops)
@@ -935,6 +970,7 @@ def run():
         return v
 
     records = [{k: clean(v) for k, v in row.items()} for row in result.to_dict(orient="records")]
+    _write_job_summary(result)
 
     out = ROOT / "docs" / "arb_data.js"
     out.parent.mkdir(parents=True, exist_ok=True)

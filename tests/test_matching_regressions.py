@@ -152,6 +152,8 @@ from utils.proposition import incompatibility, kalshi_game_date, slug_game_date
     ("46th FIDE Chess Olympiad Women's Tournament Winner — China", "Will China win the 46th FIDE Chess Olympiad Open Tournament?"),
     ("League Phase Top Finisher — Real Madrid", "Will Real Madrid finish last in UCL league phase?"),
     ("2028 UEFA Euros Qualifiers — Northern Ireland", "Will Northern Ireland win the UEFA EURO 2028?"),
+    ("Dancing with the Stars Season 35 — Finalists — Maura Higgins", "Will Maura Higgins win Dancing With the Stars: Season 35?"),
+    ("2026 FIFA World Cup Winner — Argentina", "Will Argentina reach the 2026 FIFA World Cup final?"),
     ("How high will XRP get in September? — Above $1.70", "Will the price of XRP be above $1.70 on September 25?"),
     ("Time's Person of the Year for 2026 — Mojtaba Khamenei", "Will Ali Khamenei be TIME Person of the Year 2026?"),
     ("Will a hurricane make landfall in Hawaii in 2026? — Before 2027", "Will any Category 5 hurricane make landfall in the US in before 2027?"),

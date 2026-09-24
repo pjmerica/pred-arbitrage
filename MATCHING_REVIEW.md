@@ -23,6 +23,13 @@
 > - "Or above" vs "exactly" bound field in the signature.
 > - `deep_check.py` fee table fixed.
 >
+> **Fourth pass (2026-09-24):**
+> - Every link on both dashboards was checked live. Polymarket pages carry the leg's exact question, except sports games, which open the game with the sub-market selected. Every Kalshi link pins the leg's event.
+> - A 15% implausible-return cap now applies (guaranteed → unverified).
+> - CI job summary lists what each refresh published.
+> - Finalist/semifinalist placement added, after new DWTS "Finalists" markets appeared.
+> - polling-agg-2026 got the same fixes: its 3 live "guaranteed" arbs (56–81%) were margin buckets. See its CHANGELOG.
+>
 > Live verification with `tools/deep_check.py` on the top 50: 0 WRONG_PAIR. The crypto guaranteed arbs are real but small (about $5–$30 capacity at quoted prices), and they close within minutes.
 
 ---
