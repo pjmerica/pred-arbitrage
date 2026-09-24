@@ -440,6 +440,19 @@ def run():
                 elec = elec[list(result.columns)]
                 result = pd.concat([result, elec], ignore_index=True)
                 print(f"Appended {len(elec)} election pairs from election_pairs.csv")
+                # match_political and elections.py both emit the same
+                # PredictIt<->Polymarket party contracts (23 duplicate rows
+                # 2026-09-23). Keep the elections.py ('general') row — it's
+                # the verified path — and drop the political duplicate.
+                def _pair_key(r):
+                    return frozenset([(r["platform_a"], str(r["market_id_a"])),
+                                      (r["platform_b"], str(r["market_id_b"]))])
+                keys = result.apply(_pair_key, axis=1)
+                general_keys = set(keys[result["match_type"] == "general"])
+                dup = (result["match_type"] == "political") & keys.isin(general_keys)
+                if dup.any():
+                    result = result[~dup].reset_index(drop=True)
+                    print(f"Dropped {int(dup.sum())} political rows duplicated by elections.py")
         except pd.errors.EmptyDataError:
             print("election_pairs.csv is empty — skipping append")
     else:
