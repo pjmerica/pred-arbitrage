@@ -16,7 +16,7 @@
 > - **Window-start differences are common** (Polymarket "between market creation and …" vs Kalshi calendar year). The settled-one-side check catches the extreme cases. A rules-text parser for window start is still P1 #10.
 >
 > **Third pass (2026-09-24):** covered the arb math, order-book fetch, scrapers, scrutiny and dashboard.
-> - **The recommended bet split was backwards.** It put $96 on the 3.5¢ leg and $4 on the 90¢ leg, which is not a hedge. It now holds equal contracts on both legs. **polling-agg-2026 has the same bug** (`scripts/arb_scanner.py`, inverse-odds split) and is not fixed yet.
+> - **The recommended bet split was backwards.** It put $96 on the 3.5¢ leg and $4 on the 90¢ leg, which is not a hedge. It now holds equal contracts on both legs. **polling-agg-2026 has the same bug** (`scripts/arb_scanner.py`, inverse-odds split); fixed there on 2026-09-24 as well.
 > - Per-leg liquidity, plus a "max $ at these prices" capacity figure on the dashboard.
 > - Per-market Polymarket liquidity (it was the event total).
 > - Scrutiny warns instead of silently dropping.
