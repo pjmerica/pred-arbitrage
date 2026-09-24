@@ -40,6 +40,18 @@ FEES = {
 }
 
 
+# Match types whose pairing is established by structured keys (asset +
+# strike + window, tournament + contestant, race + party/person), not by
+# title similarity. Only these can be labelled 'guaranteed'.
+VERIFIED_MATCH_TYPES = {
+    "threshold",
+    "tournament-tennis",
+    "tournament-worldcup",
+    "primary-nominee",
+    "general",   # elections.py party-win legs (allowlisted titles)
+}
+
+
 def compute_arb(prob_a, prob_b, fee_a, fee_b,
                 bid_a=None, ask_a=None, bid_b=None, ask_b=None,
                 no_bid_a=None, no_ask_a=None, no_bid_b=None, no_ask_b=None):
@@ -735,6 +747,24 @@ def run():
             result["criteria_score"] = result["_scrut"].apply(lambda s: s.get("criteria_score") if s else None)
             result["suspicious"] = result["suspicion_reasons"].apply(lambda rs: len(rs) > 0)
             result = result.drop(columns=["_scrut"])
+
+    # Only structured matchers may label a pair guaranteed. A basket is
+    # only risk-free if both legs resolve on the SAME event, and title
+    # similarity can't establish that: on 2026-09-23 ~85% of guaranteed
+    # rows were different questions ("2nd place" vs "win", "BTTS" vs
+    # "BTTS in 2nd half", "wins" vs "wins by 0-3%"), and the bigger the
+    # mismatch the bigger the fake return, so they topped the board.
+    # Fuzzy / political pairs keep their math but show as 'unverified'
+    # until a structured matcher or curated series map vouches for them
+    # (MATCHING_REVIEW.md §6).
+    unverified = ((result["arb_type"] == "guaranteed")
+                  & ~result["match_type"].isin(VERIFIED_MATCH_TYPES))
+    if unverified.any():
+        result.loc[unverified, "arb_type"] = "unverified"
+        result.loc[unverified, "action"] = (
+            "UNVERIFIED MATCH — confirm both legs resolve on the same event. "
+            + result.loc[unverified, "action"].fillna(""))
+        print(f"Downgraded {int(unverified.sum())} guaranteed -> unverified (match type not structurally verified)")
 
     # Drop pairs whose settle_date is in the past. Upstream APIs sometimes
     # keep already-resolved markets in their "active" feed for a few days

@@ -46,6 +46,9 @@ tr.guaranteed:hover td { background: rgba(52,211,153,0.05); }
 .badge-prefee     { display: inline-block; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; font-weight: 600; }
 .badge-pricegap   { display: inline-block; background: rgba(148,163,184,0.12); color: #94a3b8; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; }
 .badge-onesided   { display: inline-block; background: rgba(148,163,184,0.08); color: #64748b; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; font-style: italic; }
+.badge-unverified { display: inline-block; background: rgba(251,146,60,0.15); color: #fb923c; border-radius: 4px; padding: 2px 7px; font-size: 0.65rem; font-weight: 600; cursor: help; }
+.leg      { color: #94a3b8; font-size: 0.74rem; line-height: 1.35; margin-top: 3px; }
+.leg .leg-q { color: #cbd5e1; }
 .badge-political  { display: inline-block; background: rgba(167,139,250,0.12); color: #a78bfa; border-radius: 4px; padding: 2px 5px; font-size: 0.62rem; margin-left: 4px; }
 .badge-fuzzy      { display: inline-block; background: rgba(96,165,250,0.1); color: #60a5fa; border-radius: 4px; padding: 2px 5px; font-size: 0.62rem; margin-left: 4px; }
 .badge-suspicious { display: inline-block; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 4px; padding: 2px 5px; font-size: 0.62rem; margin-left: 4px; }
@@ -117,6 +120,7 @@ tr.suspicious-row td { opacity: 0.6; }
     <select id="f-type">
       <option value="ALL">All</option>
       <option value="guaranteed">Guaranteed (locked profit)</option>
+      <option value="unverified">Unverified match (check legs)</option>
       <option value="pre-fee">Pre-fee (fees eat the gap)</option>
       <option value="price-gap">Price-gap (no arb possible)</option>
       <option value="one-sided">One-sided (data incomplete)</option>
@@ -183,9 +187,10 @@ tr.suspicious-row td { opacity: 0.6; }
 </div>
 
 <div class="explainer">
-  Every pair gets one of four <strong>Type</strong> labels based on real fillable bid/ask prices on each platform:
+  Every pair gets one of five <strong>Type</strong> labels based on real fillable bid/ask prices on each platform:
   <ul style="margin: 6px 0 6px 18px; padding: 0;">
     <li><strong>Guaranteed</strong> — Buy Yes on one platform + Buy No on the other. Total cost &lt; $1 AFTER fees = locked profit regardless of outcome.</li>
+    <li><strong>Unverified match</strong> — The basket math says locked profit, but the two markets were paired by title similarity, not by a structured check (same asset + strike + date, same tournament + player, same race + party). Often they're different questions ("2nd place" vs "win", "full match" vs "2nd half"), and then both legs can lose. Open both links and confirm they resolve on the same event before trading.</li>
     <li><strong>Pre-fee</strong> — The Yes + No basket costs &lt; $1 before fees but fees eat the gap. Could become a real arb if the platforms drop fees or if your effective fees are lower than our estimate.</li>
     <li><strong>Price-gap</strong> — Markets disagree in implied probability, but the Yes + No basket costs ≥ $1 even with zero fees. No risk-free basket exists. You could still bet directionally (buy on the cheap side, optionally short the expensive side) but profit isn't locked in — the underlying outcome still has to happen the way you bet.</li>
     <li><strong>One-sided</strong> — Real bid/ask wasn't available on at least one leg (typical for PredictIt — no public orderbook). Prices are inferred and the classification isn't reliable; treat as directional only.</li>
@@ -322,6 +327,7 @@ function filtered() {
     // that "browse mode" behavior when the Sports tab is active.
     if (currentTab === 'sports') return true;
     if (fType === 'guaranteed' && r.arb_type !== 'guaranteed') return false;
+    if (fType === 'unverified' && r.arb_type !== 'unverified') return false;
     if (fType === 'pre-fee'    && r.arb_type !== 'pre-fee')    return false;
     if (fType === 'price-gap'  && r.arb_type !== 'price-gap')  return false;
     if (fType === 'one-sided'  && r.arb_type !== 'one-sided')  return false;
@@ -365,7 +371,8 @@ function sorted(rows) {
   return [...rows].sort((a, b) => {
     // Always float guaranteed to top when sorting by default
     if (sortCol === 'arb_type') {
-      if (a.arb_type !== b.arb_type) return a.arb_type === 'guaranteed' ? -1 : 1;
+      const rank = t => t === 'guaranteed' ? 0 : t === 'unverified' ? 1 : 2;
+      if (rank(a.arb_type) !== rank(b.arb_type)) return rank(a.arb_type) - rank(b.arb_type);
       // Within guaranteed: highest locked return first. Ranking by
       // display gap buried book-driven arbs (stale last trade = 0.0pp
       // gap but a real 17% basket). Tie-break: soonest settlement.
@@ -381,6 +388,11 @@ function sorted(rows) {
 }
 
 // ── render ─────────────────────────────────────────────────────────────────
+// Market titles are platform-supplied text — escape before inserting.
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function platHtml(name, url) {
   const cls = name || '';
   const link = url ? `<a href="${url}" target="_blank" rel="noopener" class="link-btn ${cls}">↗</a>` : '';
@@ -406,13 +418,14 @@ function render() {
     const isGuaranteed = r.arb_type === 'guaranteed';
     const typeBadge =
       r.arb_type === 'guaranteed' ? `<span class="badge-guaranteed">★ Guaranteed</span>` :
+      r.arb_type === 'unverified' ? `<span class="badge-unverified" title="Basket math shows locked profit, but these markets were matched by title similarity — confirm both legs resolve on the same event">? Unverified match</span>` :
       r.arb_type === 'pre-fee'    ? `<span class="badge-prefee" title="Yes+No basket costs <$1 pre-fee but fees eat the gap">Pre-fee</span>` :
       r.arb_type === 'price-gap'  ? `<span class="badge-pricegap" title="Markets disagree but no risk-free basket exists">Price-gap</span>` :
       r.arb_type === 'one-sided'  ? `<span class="badge-onesided" title="Real bid/ask unavailable on at least one leg — classification uncertain">One-sided</span>` :
       `<span class="badge-onesided">${r.arb_type || '?'}</span>`;
-    const matchBadge = r.match_type === 'political'
-      ? `<span class="badge-political">Race ID</span>`
-      : `<span class="badge-fuzzy">${r.fuzzy_score}%</span>`;
+    const matchBadge = r.match_type === 'fuzzy'
+      ? `<span class="badge-fuzzy" title="Title similarity score">${r.fuzzy_score}%</span>`
+      : `<span class="badge-political" title="Matched on structured keys">${esc(r.match_type || '')}</span>`;
     const reasonText = {
       wide_gap: '>20pp raw gap', wide_spread_a: 'wide spread on A', wide_spread_b: 'wide spread on B',
       thin_depth_a: '<20 contracts tradeable on A', thin_depth_b: '<20 contracts tradeable on B',
@@ -471,10 +484,11 @@ function render() {
       ? '<span style="color:#4a5568;font-size:0.7rem">—</span>'
       : `<span style="font-size:0.7rem"><span style="${sizeCls(da)}">${fmtSize(da)}</span> <span style="color:#4a5568">/</span> <span style="${sizeCls(db)}">${fmtSize(db)}</span></span>`;
 
-    const retCell = isGuaranteed && r.guaranteed_return_pct != null
-      ? `<span class="ret-val">${r.guaranteed_return_pct.toFixed(1)}% <span style="color:#64748b;font-size:0.7rem">(+$${r.profit_dollars != null ? r.profit_dollars.toFixed(2) : '—'} / $100)</span></span>` : '—';
+    const showBasket = isGuaranteed || r.arb_type === 'unverified';
+    const retCell = showBasket && r.guaranteed_return_pct != null
+      ? `<span class="ret-val"${isGuaranteed ? '' : ' style="color:#fb923c" title="Only real if both legs are the same question"'}>${r.guaranteed_return_pct.toFixed(1)}% <span style="color:#64748b;font-size:0.7rem">(+$${r.profit_dollars != null ? r.profit_dollars.toFixed(2) : '—'} / $100)</span></span>` : '—';
 
-    const stakeCell = isGuaranteed && r.stake_a_dollars != null
+    const stakeCell = showBasket && r.stake_a_dollars != null
       ? `<span class="stake">${platHtml(r.platform_a, null)} <strong>$${r.stake_a_dollars.toFixed(2)}</strong><br>${platHtml(r.platform_b, null)} <strong>$${r.stake_b_dollars.toFixed(2)}</strong></span>` : '—';
 
     const days = daysUntil(r.settle_date);
@@ -485,9 +499,8 @@ function render() {
     return `<tr class="${isGuaranteed ? 'guaranteed' : ''}${r.suspicious ? ' suspicious-row' : ''}">
       <td>${typeBadge}${suspBadge}</td>
       <td class="q-cell">
-        <div class="q-main">${(r.question_a||'').slice(0, 100)}${(r.question_a||'').length > 100 ? '…' : ''}</div>
-        <div class="q-sub">${platHtml(r.platform_a, r.url_a)} vs ${platHtml(r.platform_b, r.url_b)}</div>
-        ${r.question_b && r.question_b !== r.question_a ? `<div class="q-sub" style="color:#4a5568;font-size:0.68rem" title="${r.question_b}">${r.platform_b}: ${(r.question_b||'').slice(0,80)}…</div>` : ''}
+        <div class="leg">${platHtml(r.platform_a, r.url_a)} <span class="leg-q">${esc(r.question_a)}</span></div>
+        <div class="leg">${platHtml(r.platform_b, r.url_b)} <span class="leg-q">${esc(r.question_b)}</span></div>
       </td>
       <td style="color:#64748b;font-size:0.76rem">${r.category||''}</td>
       <td>${settleStr}</td>

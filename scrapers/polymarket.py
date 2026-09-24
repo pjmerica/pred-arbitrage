@@ -29,6 +29,7 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 from utils.http_headers import DEFAULT_HEADERS
+from utils.links import polymarket_url
 
 RAW = ROOT / "data" / "raw"
 BASE = "https://gamma-api.polymarket.com"
@@ -321,8 +322,8 @@ def parse_market(event, market):
     category = extract_category(event.get("tags") or [])
     event_slug = event.get("slug", "") or ""
     market_slug = market.get("slug", "") or ""
-    url_slug = event_slug or market_slug
-    url = f"https://polymarket.com/event/{url_slug}" if url_slug else None
+    # Deep link to the exact market, not the multi-market event page.
+    url = polymarket_url(event_slug, market_slug)
 
     return {
         "condition_id": condition_id,

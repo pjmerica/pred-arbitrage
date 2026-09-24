@@ -13,12 +13,16 @@ implied probs, settlement dates, and match metadata.
 """
 
 import re
+import sys
 import pandas as pd
 from pathlib import Path
 from rapidfuzz import fuzz, process as fuzz_process
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+from utils.links import polymarket_url
+from utils.election_shapes import is_derivative, party_win_side
 RAW = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
@@ -116,15 +120,19 @@ def party_side(question: str) -> str | None:
     For party_winner contracts, return which party the question is asking about
     winning ('dem', 'rep', or None if unclear).
     """
+    # Old substring version matched "red" inside "hundred" and "dem " in
+    # any sentence, and happily sided margin-of-victory buckets.
+    side = party_win_side(question)
+    if side:
+        return side
     q = question.lower()
-    dem_words = ["democrat", "democratic", "dem ", "blue"]
-    rep_words = ["republican", "gop", "rep ", "red"]
-    is_dem = any(w in q for w in dem_words)
-    is_rep = any(w in q for w in rep_words)
-    if is_dem and not is_rep:
-        return "dem"
-    if is_rep and not is_dem:
-        return "rep"
+    if "which party" in q and not is_derivative(question):
+        # PredictIt: "Which party will win ...? — Republican"
+        tail = re.split(r"[—–]", q)[-1]
+        if "democrat" in tail:
+            return "dem"
+        if "republican" in tail:
+            return "rep"
     return None
 
 
@@ -137,20 +145,22 @@ def political_contract_type(question: str) -> str:
       'party_winner'   — "Which party will win X?" or "Will Democrats/Republicans win X?"
       'candidate'      — "Will [Name] win/be nominee for X?"
       'primary'        — "Who will win the Republican/Democratic primary/nomination?"
-      'other'
+      'derivative'     — margin / closeness / round markets ("win by 0%-3%",
+                         "within 5%", "closest race") — never matched
+      'other'          — unrecognised; never matched
     """
     q = question.lower()
+
+    if is_derivative(question):
+        return "derivative"
 
     # Primary / nomination questions
     if any(k in q for k in ["nomination", "nominee", "primary", "republican nominee",
                              "democratic nominee", "gop nominee"]):
         return "primary"
 
-    # Party-winner questions
-    if any(k in q for k in ["which party will win", "which party wins",
-                             "will the republican", "will the democrat",
-                             "will republicans win", "will democrats win",
-                             "republican party", "democratic party"]):
+    # Party-winner questions (allowlist — see utils/election_shapes.py)
+    if party_side(question):
         return "party_winner"
 
     # General winner (e.g. "Who will win the 2026 Senate election in X?")
@@ -225,6 +235,11 @@ def load_polymarket():
     df["title_norm"] = df["question"].apply(normalise)
     df["race_id"] = df["question"].apply(infer_race_id)
     df["settle_date"] = df["end_date"].astype(str)
+    # Rebuild from slugs so even a CSV scraped before the deep-link fix
+    # links to the exact market rather than the multi-market event page.
+    if "event_slug" in df.columns:
+        df["url"] = [polymarket_url(e, m) for e, m in
+                     zip(df["event_slug"], df.get("market_slug", pd.Series(index=df.index)))]
     # Use yes_token_id as market_id so fetch_depth can query CLOB orderbook
     # directly. Fall back to condition_id for rows missing token ids.
     df["market_id"] = df["yes_token_id"].where(
@@ -260,6 +275,20 @@ def match_political(dfs: dict) -> pd.DataFrame:
         for pb in platform_names[i+1:]:
             a = dfs[pa][dfs[pa]["race_id"].notna()].copy()
             b = dfs[pb][dfs[pb]["race_id"].notna()].copy()
+            # Only party-winner / candidate markets are matchable. Filter
+            # BEFORE picking the best market per race: otherwise the
+            # highest-liquidity market wins regardless of what it asks,
+            # and since mid-2026 that's a Polymarket margin-of-victory
+            # bucket (8 fake guaranteed arbs, 2026-09-23). 'other' is
+            # dropped too — other↔other used to pass the type-equality
+            # check below and paired "Kansas Senate winner — Hamilton"
+            # with "Will the Kansas race be within 5%?".
+            MATCHABLE = ("party_winner", "candidate")
+            a = a[a["question"].astype(str).map(political_contract_type).isin(MATCHABLE)]
+            b = b[b["question"].astype(str).map(political_contract_type).isin(MATCHABLE)]
+            if a.empty or b.empty:
+                continue
+            filtered = {pa: a, pb: b}
 
             # For each race_id present on both, pick highest open_interest/liquidity market
             def best_prob(g):
@@ -338,8 +367,8 @@ def match_political(dfs: dict) -> pd.DataFrame:
                             if dem_p is None or rep_p is None or pd.isna(dem_p) or pd.isna(rep_p):
                                 return None
                             return float(dem_p) + float(rep_p)
-                        sum_a = party_sum(dfs[pa], r["race_id"])
-                        sum_b = party_sum(dfs[pb], r["race_id"])
+                        sum_a = party_sum(filtered[pa], r["race_id"])
+                        sum_b = party_sum(filtered[pb], r["race_id"])
                         if sum_a is None or sum_b is None or sum_a < 0.97 or sum_b < 0.97:
                             # Race has meaningful third-party probability —
                             # cross-flipped basket isn't a true arb.
@@ -1105,7 +1134,17 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
         # within tolerance. Polymarket-first because their strike list is
         # typically smaller and uses clean round numbers.
         for p_strike, p_row in p_idx[group_key]:
-            tolerance = max(2.0, abs(p_strike) * 0.02) if use_pct else 1.5
+            # Percentage tolerance absorbs rounding drift between the two
+            # platforms' strike ladders (Kalshi "$1,250.00" vs Polymarket
+            # "$1,250"). The old floor was max(2.0, …) — an absolute $2
+            # window, which is wider than the ENTIRE strike ladder for a
+            # low-priced asset. XRP trades ~$2-4 with $0.20 ladder steps,
+            # so Kalshi "above $2.00" matched Polymarket "reach $4.00"
+            # (distance $2.00 <= tolerance $2.00) and every rung between,
+            # producing 8 fake guaranteed arbs that topped the board at
+            # 13.6% — the two legs are genuinely different questions.
+            # Floor is now relative, so it scales down with the strike.
+            tolerance = max(abs(p_strike) * 0.02, 0.01) if use_pct else 1.5
             best = None
             for k_strike, k_row in k_idx[group_key]:
                 d = abs(k_strike - p_strike)
