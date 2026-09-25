@@ -357,3 +357,15 @@ def test_tiny_baskets_are_not_guaranteed():
                     no_bid_a=0.98, no_ask_a=0.982, no_bid_b=0.972, no_ask_b=0.973,
                     leg_fees=("kalshi", kalshi_spec(1), "polymarket", polymarket_spec(0.04)))
     assert r["arb_type"] == "pre-fee"
+
+
+def test_series_map_ignores_trailing_slug_ids():
+    """Anchored patterns must match Polymarket's id-suffixed slugs (approved
+    families were landing in the review queue, 2026-09-25)."""
+    fams = load_series_map()
+    for ser, slug in (("KXCHESSOLYMPIAD", "46th-fide-chess-olympiad-open-tournament-winner-20260716211453703"),
+                      ("KXBIGBROTHER", "big-brother-season-28-winner-20260708173711844"),
+                      ("KXNCAAFUNDEFEATED", "ncaa-football-team-to-have-an-undefeated-season-202608042024"),
+                      ("KXNETFLIXRANKSHOW", "what-will-be-the-top-us-netflix-show-this-week-20260929"),
+                      ("KXESTPRES", "next-president-of-estonia-20260727225811942")):
+        assert series_status(fams, ser, slug)[0] == "approved", slug

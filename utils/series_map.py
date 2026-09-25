@@ -33,8 +33,13 @@ def load(path=MAP_PATH):
 def status(families, kalshi_series, pm_event_slug, today=None):
     """('approved'|'rejected'|'unreviewed', entry-or-None)."""
     today = today or date.today().isoformat()
+    # Polymarket appends numeric ids to many slugs
+    # ("big-brother-season-28-winner-20260708173711844"); match the pattern
+    # against the id-stripped slug too, so anchored patterns still apply.
+    raw = str(pm_event_slug or "")
+    candidates = (raw, re.sub(r"-\d{6,}$", "", raw))
     for e in families:
-        if e.get("kalshi_series") == kalshi_series and e["_rx"].search(str(pm_event_slug or "")):
+        if e.get("kalshi_series") == kalshi_series and any(e["_rx"].search(c) for c in candidates):
             if e.get("status") == "approved" and e.get("review_by") and today > e["review_by"]:
                 return "unreviewed", e          # approval lapsed — re-read the rules
             return e.get("status", "unreviewed"), e

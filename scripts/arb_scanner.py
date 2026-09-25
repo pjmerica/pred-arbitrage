@@ -21,6 +21,7 @@ Output: docs/arb_data.js
 import pandas as pd
 import numpy as np
 import json
+import re
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -982,6 +983,11 @@ def run():
     for idx in result.index[_kp]:
         ser = _k_series.get(str(result.at[idx, "market_id_a"]))
         slug = _pm_slug.get(str(result.at[idx, "market_id_b"]))
+        if not slug:
+            # Fall back to the event slug inside the pair's own deep link
+            # (polymarket.com/event/{event_slug}/{market_slug}).
+            _m = re.search(r"polymarket\.com/event/([^/?#]+)", str(result.at[idx, "url_b"] or ""))
+            slug = _m.group(1) if _m else None
         st, _e = _map_status(_fams, ser, slug)
         result.at[idx, "series_status"] = st
         if st == "unreviewed":
@@ -1006,8 +1012,12 @@ def run():
                       example_a=("question_a", "first"), example_b=("question_b", "first"),
                       url_a=("url_a", "first"), url_b=("url_b", "first"))
                  .reset_index().sort_values(["baskets", "pairs"], ascending=False))
-        grp.to_csv(PROCESSED / "series_review.csv", index=False)
-        print(f"Review queue: {len(grp)} unreviewed series families -> data/processed/series_review.csv")
+    else:
+        grp = pd.DataFrame(columns=["kalshi_series", "polymarket_family", "pairs", "baskets",
+                                    "best_return_pct", "example_a", "example_b", "url_a", "url_b"])
+    # Always rewrite: an empty queue must replace a stale file, not keep it.
+    grp.to_csv(PROCESSED / "series_review.csv", index=False)
+    print(f"Review queue: {len(grp)} unreviewed series families -> data/processed/series_review.csv")
 
     # Window containment (2026-09-24): a basket is a hedge only if the YES
     # leg's resolution window contains the NO leg's. Kalshi "Hawaii

@@ -319,6 +319,33 @@ def fetch_series_fees():
             for s in data.get("series", []) if s.get("ticker")}
 
 
+def fetch_event_fee_overrides():
+    """{event_ticker: (fee_type, fee_multiplier)} for event-level fee
+    overrides already in effect (GET /events/fee_changes; public; ~255
+    scheduled rows on 2026-09-25, mostly switching at game start). A null
+    override means 'cleared' -> fall back to the series fee."""
+    now = datetime.now(timezone.utc).isoformat()
+    latest, cursor = {}, None
+    for _ in range(50):
+        params = {"limit": 1000}
+        if cursor:
+            params["cursor"] = cursor
+        try:
+            data = get("/events/fee_changes", params)
+        except Exception as e:
+            print(f"  WARN: event fee overrides unavailable ({e})")
+            break
+        rows = data.get("event_fee_changes", [])
+        for r in rows:
+            ts = r.get("scheduled_ts") or ""
+            if ts and ts <= now and ts >= latest.get(r["event_ticker"], ("",))[0]:
+                latest[r["event_ticker"]] = (ts, r.get("fee_type_override"), r.get("fee_multiplier_override"))
+        cursor = data.get("cursor")
+        if not cursor or not rows:
+            break
+    return {ev: (ft, fm) for ev, (_, ft, fm) in latest.items() if ft is not None and fm is not None}
+
+
 def run():
     RAW.mkdir(parents=True, exist_ok=True)
 
@@ -326,7 +353,8 @@ def run():
     events = fetch_all_events_with_markets()
     print(f"  Total events: {len(events)}")
     series_fees = fetch_series_fees()
-    print(f"  Series fee schedules: {len(series_fees)}")
+    event_fees = fetch_event_fee_overrides()
+    print(f"  Series fee schedules: {len(series_fees)}; active event overrides: {len(event_fees)}")
 
     rows = []
     seen_tickers = set()
@@ -347,7 +375,7 @@ def run():
             continue
         for market in event.get("markets") or []:
             row = parse_market(event, market)
-            ft, fm = series_fees.get(row.get("series_ticker"), (None, None))
+            ft, fm = event_fees.get(row.get("event_ticker")) or                 series_fees.get(row.get("series_ticker"), (None, None))
             row["fee_type"], row["fee_multiplier"] = ft, fm
             # Drop already-closed markets.
             cd = (row.get("close_date") or "")[:10]

@@ -382,6 +382,49 @@
    "status": "rejected",
    "rules_read": "2026-09-24",
    "note": "Polymarket collapses a JOINT prize to a single winner and has special clauses for Trump/Zelenskyy/Netanyahu/Putin/Musk; joint prizes are common."
+  },
+  {
+   "kalshi_series": "KXNWSLBTTS",
+   "polymarket_event_slug_regex": "^nwsl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). NWSL."
+  },
+  {
+   "kalshi_series": "KXCANPLBTTS",
+   "polymarket_event_slug_regex": "^canpl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Canadian Premier League."
+  },
+  {
+   "kalshi_series": "KXMLS1HBTTS",
+   "polymarket_event_slug_regex": "^mls-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in the first half incl. first-half stoppage time only. MLS."
+  },
+  {
+   "kalshi_series": "KXUSL1HBTTS",
+   "polymarket_event_slug_regex": "^uslc-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in the first half incl. first-half stoppage time only. USL Championship."
+  },
+  {
+   "kalshi_series": "KXBRASILEIROB1HBTTS",
+   "polymarket_event_slug_regex": "^bra2-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in the first half incl. first-half stoppage time only. Brasileirao Serie B."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKMOVIEGLOBAL",
+   "polymarket_event_slug_regex": "^what-will-be-the-top-global-netflix-movie-this-week$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: #1 GLOBAL movie on the stated Tuesday chart.",
+   "caveat": "Tie rules differ; rare."
   }
  ]
 }
