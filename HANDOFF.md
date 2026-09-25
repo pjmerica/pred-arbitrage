@@ -32,6 +32,7 @@ section captures the differences and what's specific to this side.
 > - **Fees are real per leg** (`utils/fees.py`, 2026-09-24): Kalshi 0.07·multiplier·P(1−P) (multiplier per series from `/series`), Polymarket rate·p(1−p) (rate per market from `feeSchedule`), PredictIt 10% of profit + 5% withdrawal, plus a 0.5¢ per-basket margin. Unknown parameters fall back to the flat 2% / 12%. `FEES` in `arb_scanner.py` now only feeds the display-level Net gap.
 > - **Window containment** (`utils/rules_window.py`): the basket must buy YES on the leg whose resolution window contains the other's (`window_mismatch`).
 > - **Series map** (`data/series_map.json`): hand-reviewed Kalshi series ↔ Polymarket event families. Approved families may be guaranteed, rejected ones are dropped, and unreviewed ones go to `data/processed/series_review.csv`. **To add a family, read both rules texts in full** and record the note and any caveat (ties, deadlines, extra time). Use `review_by` for approvals that should lapse.
+> - **`tools/dash_smoke.js`** runs the dashboard JS against the fresh data (every tab/filter/sort, via `tools/dash_exercise.js`) after the pipeline and BEFORE the commit step; a runtime exception fails the run so the live page is never broken by data.
 > - **`tests/test_matching_regressions.py`** (73+ cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
 
 ---
