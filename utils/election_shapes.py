@@ -26,7 +26,16 @@ DERIVATIVE_RE = re.compile(
     # "perform best among these tossup races".
     r"|\bsweep\b|\bcombo\b|\bamong\b|\bperform\b|\bboth\b"
     # Sub-state results: "which counties will Steve Hilton win? — Orange".
-    r"|\bcount(?:y|ies)\b|\bdistricts?\b\s+will",
+    r"|\bcount(?:y|ies)\b|\bdistricts?\b\s+will"
+    # 2026-09-25: other offices share the state + "governor"/"senate"
+    # words and got the governor/Senate race id ("Will the Democratic
+    # Party candidate win the 2026 Vermont Lieutenant Governor election?"
+    # -> 2026-GOV-VT; state legislature -> SEN/H).
+    r"|\blieutenant\b|\blt\.?\s+gov|\battorney general\b|\bsecretary of state\b"
+    r"|\bstate\s+(?:senate|house|legislature|assembly)\b|\bmayor"
+    # Multi-race lists: "Will Democrats win the Texas, Michigan, and Maine
+    # Senate seats?" was a plain SEN-MI Dem-win leg.
+    r"|\b(?:seats|races|elections|governorships)\b",
     re.IGNORECASE,
 )
 
@@ -43,6 +52,20 @@ PARTY_WIN_RE = re.compile(
 
 
 _PARTY_WORD_RE = re.compile(r"\b(?:democrat\w*|republican\w*|gop)\b", re.IGNORECASE)
+
+# Full state names, longest first so "west virginia" is one match rather
+# than also "virginia".
+_STATES = sorted([
+    "alabama", "alaska", "arizona", "arkansas", "california", "colorado",
+    "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho",
+    "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", "maine",
+    "maryland", "massachusetts", "michigan", "minnesota", "mississippi",
+    "missouri", "montana", "nebraska", "nevada", "new hampshire", "new jersey",
+    "new mexico", "new york", "north carolina", "north dakota", "ohio",
+    "oklahoma", "oregon", "pennsylvania", "rhode island", "south carolina",
+    "south dakota", "tennessee", "texas", "utah", "vermont", "virginia",
+    "washington", "west virginia", "wisconsin", "wyoming"], key=len, reverse=True)
+_STATE_RE = re.compile(r"\b(" + "|".join(_STATES) + r")\b")
 
 
 def is_derivative(title) -> bool:
@@ -61,5 +84,8 @@ def party_win_side(title) -> str | None:
     # election and Republicans win the Alaska Senate election?" starts
     # like a party-win title but is a two-race combo (fake 43% arb).
     if len(_PARTY_WORD_RE.findall(title)) != 1:
+        return None
+    # A single race names at most one state (2026-09-25).
+    if len(set(_STATE_RE.findall(title.lower()))) > 1:
         return None
     return "dem" if m.group(1).lower().startswith("d") else "rep"

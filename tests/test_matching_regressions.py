@@ -431,3 +431,20 @@ def test_kalshi_kxhouse_series_race_id():
     assert infer_race_id_from_ticker("KXHOUSETX32", "KXHOUSETX32-26") == "2026-H-TX-32"
     assert infer_race_id_from_ticker("KXHOUSEWA8", "KXHOUSEWA8-26") == "2026-H-WA-08"
     assert infer_race_id_from_ticker("KXHOUSETX32", "KXHOUSETX32-28") is None
+
+
+# 2026-09-25: other offices and multi-state combos are not party-win legs.
+@pytest.mark.parametrize("title", [
+    "Will the Democratic Party candidate win the 2026 Vermont Lieutenant Governor election?",
+    "Will the Democratic party win the Lt. Gov race in Alabama?",
+    "Will the Democratic party win the Attorney General race in Arizona?",
+    "Will the Democrats win the Arizona Secretary of State race in 2026?",
+    "Will Democrats win the Texas, Michigan, and Maine Senate seats?",
+    "Will Democrats win the governorships of Pennsylvania, Michigan, Wisconsin, Georgia, Arizona, AND Nevada?",
+])
+def test_party_win_rejects_other_offices_and_combos(title):
+    assert party_win_side(title) is None
+
+
+def test_party_win_west_virginia_is_one_state():
+    assert party_win_side("Will the Democrats win the West Virginia Senate race in 2026?") == "dem"

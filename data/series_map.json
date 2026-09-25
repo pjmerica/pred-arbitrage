@@ -433,6 +433,66 @@
    "rules_read": "2026-09-25",
    "note": "Both: #1 GLOBAL movie on the stated Tuesday chart.",
    "caveat": "Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXENGNLBTTS",
+   "polymarket_event_slug_regex": "^enl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). English National League."
+  },
+  {
+   "kalshi_series": "KXJ2LEAGUEBTTS",
+   "polymarket_event_slug_regex": "^ja2-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). J2 League."
+  },
+  {
+   "kalshi_series": "KXURYPDBTTS",
+   "polymarket_event_slug_regex": "^uru1-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Uruguay Primera Division."
+  },
+  {
+   "kalshi_series": "KXINTLFRIENDLYBTTS",
+   "polymarket_event_slug_regex": "^fif-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). International friendlies (BTTS is symmetric, so home/away listing order does not matter).",
+   "caveat": "Friendlies are occasionally abandoned or shortened; Polymarket then uses the official score, Kalshi's full rules govern."
+  },
+  {
+   "kalshi_series": "KXEFLL11HBTTS",
+   "polymarket_event_slug_regex": "^el1-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: first half + first-half stoppage only. EFL League One."
+  },
+  {
+   "kalshi_series": "KXTALLAHASSEEMAYOR",
+   "polymarket_event_slug_regex": "^tallahassee-mayoral-election-winner$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: winner of the 2026 Tallahassee FL mayoral election (incl. Nov 3 runoff).",
+   "caveat": "Kalshi: wins the election; Polymarket: becomes mayor as a result of it."
+  },
+  {
+   "kalshi_series": "KXBALLONDORAWARD",
+   "polymarket_event_slug_regex": "^womens-ballon-dor-winner-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: 2026 Women's Ballon d'Or winner (France Football; ceremony Oct 26).",
+   "caveat": "Ties: Kalshi splits $1; Polymarket follows the official naming. No award by Dec 31: Polymarket Other, Kalshi all No."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKMOVIERUNNERUP",
+   "polymarket_event_slug_regex": "^what-will-be-the-2-us-netflix-movie-this-week$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: #2 on the Netflix US Top 10 published the stated Tuesday (week ending Sunday).",
+   "caveat": "Tie rules differ; rare."
   }
  ]
 }

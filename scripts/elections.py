@@ -486,7 +486,14 @@ def _load_polymarket_general():
         return g.loc[liq.idxmax()]
 
     if not dem.empty:
-        dem = dem.groupby("race_id").apply(best_liq, include_groups=False).reset_index()
+        # Every allowlisted Dem market, not just the most liquid (2026-09-25).
+        # Polymarket lists the same "Democratic candidate wins" question under
+        # both the winner event and the margin-of-victory event (110 races);
+        # they resolve identically but trade apart (AR-Gov 2.7c vs 0.25c).
+        # Picking one by liquidity flipped between runs, so a real basket
+        # appeared and vanished. Each becomes its own pair; the Rep leg below
+        # only feeds the three-way-race partition check.
+        dem = dem.drop_duplicates(subset=["race_id", "yes_token_id", "_url"])
         dem = dem.rename(columns={
             "implied_prob": "pm_dem", "liquidity": "pm_liq",
             "volume": "pm_volume", "_url": "pm_url",
