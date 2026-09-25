@@ -1,0 +1,71 @@
+name: Re-price (2-hourly)
+
+# Fast loop between the twice-daily full refreshes (refresh.yml). Keeps the
+# last full run's matched pairs and re-fetches ONLY their order books
+# (~800 markets, ~1,200 requests, ~6 min — fetched one at a time to stay under Kalshi's ~20 req/s) plus PredictIt's quotes
+# (1 request), then recomputes the board. Real arbs open and close within
+# minutes-to-hours; the full scrape re-prices all ~31k Polymarket markets
+# (~32,700 requests) and only runs twice a day.
+#
+# Load: 12 runs/day x ~1,200 requests ~= 15k/day, well inside Polymarket's
+# 1,500 req/10s /book limit (throttles, doesn't ban) and Kalshi's ~20 req/s
+# basic read tier. :50 on odd hours keeps clear of polling-agg's market
+# refresh (:30 on odd hours) and this repo's full runs (00:30 / 12:30 UTC).
+
+on:
+  schedule:
+    - cron: '50 1-23/2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: pred-arb-data        # shared with refresh.yml: queue, never race
+  cancel-in-progress: false
+
+jobs:
+  reprice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - run: pip install -r requirements.txt pytest
+
+      - name: Matching regression tests
+        run: python -m pytest tests -q
+
+      # Needs data/processed/matched_pairs.csv from the last full refresh
+      # (tracked). The scanner's freshness guard allows the full-scrape
+      # CSVs up to 26h in this mode: if full refreshes stop for a day,
+      # re-pricing stops too rather than pricing a stale universe.
+      - name: Re-price matched pairs
+        run: python -u run_all.py --reprice
+
+      - name: Dashboard smoke test
+        run: node tools/dash_smoke.js docs tools/dash_exercise.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/raw/predictit_markets.csv \
+            data/raw/orderbook_depth.csv \
+            data/processed/series_review.csv \
+            docs/arb_data.js
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "reprice: $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3; do
+              if git push; then break; fi
+              echo "Push rejected, rebasing on origin/master (attempt $i)…"
+              git pull --rebase origin master
+            done
+          fi

@@ -258,18 +258,23 @@ const PLAT_COLORS = { kalshi: '#34d399', polymarket: '#a78bfa', predictit: '#f87
 // ── init ───────────────────────────────────────────────────────────────────
 function init() {
   if (ARB.updated_at) {
+    // Two clocks (2026-09-25): prices are re-checked every ~2h against live
+    // order books (updated_at); the market universe / pairs are rebuilt by
+    // the twice-daily full scrape (markets_scraped_at).
+    const ago = t => {
+      const h = (Date.now() - new Date(t).getTime()) / 3600000;
+      return h < 1 ? `${Math.max(1, Math.round(h * 60))}m ago` : h < 48 ? `${Math.round(h)}h ago` : `${Math.round(h / 24)}d ago`;
+    };
     const d = new Date(ARB.updated_at);
-    const ageDays = (Date.now() - d.getTime()) / 86400000;
-    const color = ageDays < 2 ? '#34d399' : ageDays < 7 ? '#facc15' : '#f87171';
-    const rel = ageDays < 1
-      ? `${Math.round(ageDays * 24)}h ago`
-      : `${Math.round(ageDays)}d ago`;
+    const ageH = (Date.now() - d.getTime()) / 3600000;
+    const color = ageH < 4 ? '#34d399' : ageH < 24 ? '#facc15' : '#f87171';
     const abs = d.toLocaleString('en-US', {
       month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
     });
     document.getElementById('updated').innerHTML =
-      `<span style="color:${color};font-weight:600">● Updated ${rel}</span>` +
-      `<span style="color:#64748b"> (${abs})</span>`;
+      `<span style="color:${color};font-weight:600">● Prices checked ${ago(ARB.updated_at)}</span>` +
+      `<span style="color:#64748b"> (${abs})</span>` +
+      (ARB.markets_scraped_at ? `<span style="color:#64748b"> · markets scraped ${ago(ARB.markets_scraped_at)}</span>` : '');
   }
 
   // Populate category filter

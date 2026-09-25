@@ -8,6 +8,12 @@ on:
     - cron: '30 0 * * *'    # 20:30 ET (evening)
   workflow_dispatch:
 
+# Full refresh and the 2-hourly re-price (reprice.yml) share one queue so
+# they never race each other's commit.
+concurrency:
+  group: pred-arb-data
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -56,6 +62,7 @@ jobs:
             data/processed/house_incumbents.json \
             data/processed/election_pairs.csv \
             data/processed/series_review.csv \
+            data/processed/matched_pairs.csv \
             docs/arb_data.js
           if git diff --cached --quiet; then
             echo "No changes."

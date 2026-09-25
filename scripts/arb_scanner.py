@@ -331,6 +331,14 @@ def _write_job_summary(result):
         f.write("\n".join(lines) + "\n")
 
 
+def _markets_scraped_at():
+    """fetched_at of the Kalshi CSV = when the last full scrape ran."""
+    try:
+        return str(pd.read_csv(ROOT / "data" / "raw" / "kalshi_markets.csv", nrows=1)["fetched_at"].iloc[0])
+    except Exception:
+        return None
+
+
 def _assert_scrape_freshness():
     """Fail loudly if any platform's raw CSV is more than MAX_AGE_HOURS old.
 
@@ -343,6 +351,16 @@ def _assert_scrape_freshness():
     when the inputs are actually fresh.
     """
     MAX_AGE_HOURS = 12
+    # Re-price mode (run_all.py --reprice, every 2h): the Kalshi/Polymarket
+    # CSVs are the last FULL scrape — they supply the pair list and display
+    # prices, while the basket math uses live books fetched this run. Allow
+    # them 26h (two missed full runs = stop publishing); PredictIt is
+    # re-scraped every re-price so it keeps the 12h limit.
+    import os as _os
+    reprice = _os.environ.get("PRED_ARB_REPRICE") == "1"
+    limits = {"kalshi_markets.csv": 26 if reprice else MAX_AGE_HOURS,
+              "polymarket_markets.csv": 26 if reprice else MAX_AGE_HOURS,
+              "predictit_markets.csv": MAX_AGE_HOURS}
     raw = ROOT / "data" / "raw"
     issues = []
     for name in ("kalshi_markets.csv", "polymarket_markets.csv", "predictit_markets.csv"):
@@ -363,8 +381,8 @@ def _assert_scrape_freshness():
             issues.append(f"{name}: unparseable fetched_at")
             continue
         age_h = (datetime.now(timezone.utc) - ts.to_pydatetime()).total_seconds() / 3600
-        if age_h > MAX_AGE_HOURS:
-            issues.append(f"{name}: stale by {age_h:.1f}h (max {MAX_AGE_HOURS}h)")
+        if age_h > limits[name]:
+            issues.append(f"{name}: stale by {age_h:.1f}h (max {limits[name]}h)")
     if issues:
         print("FRESHNESS CHECK FAILED - refusing to write arb_data.js:")
         for issue in issues:
@@ -1143,7 +1161,12 @@ def run():
     with open(out, "w", encoding="utf-8") as f:
         f.write("const ARB = ")
         json.dump({
+            # updated_at = when these PRICES were checked (every run, incl.
+            # the 2-hourly re-price). markets_scraped_at = when the market
+            # universe / pairs were last rebuilt by a full refresh.
             "updated_at": datetime.now(timezone.utc).isoformat(),
+            "markets_scraped_at": _markets_scraped_at(),
+            "mode": "reprice" if __import__("os").environ.get("PRED_ARB_REPRICE") == "1" else "full",
             "fees": FEES,
             "total": len(records),
             "guaranteed_count": len(guaranteed),

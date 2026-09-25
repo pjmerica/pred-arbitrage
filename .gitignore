@@ -19,6 +19,7 @@ data/processed/*
 # into arb_scanner. Useful to inspect committed.
 !data/processed/election_pairs.csv
 !data/processed/series_review.csv
+!data/processed/matched_pairs.csv
 __pycache__/
 *.pyc
 .env

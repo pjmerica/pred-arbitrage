@@ -1,4 +1,15 @@
-"""Run all scrapers, matcher, and arb scanner with orderbook depth."""
+"""Run all scrapers, matcher, and arb scanner with orderbook depth.
+
+Modes:
+  py run_all.py            full refresh: scrape every market, re-match,
+                           price (~32,700 API requests, ~15 min). CI: 2x/day.
+  py run_all.py --reprice  fast re-price (2026-09-25): keep the last full
+                           run's matched pairs, re-fetch ONLY their order
+                           books and PredictIt's quotes, recompute the board
+                           (~1,200 requests, ~6 min). CI: every 2h (reprice.yml). Catches
+                           arbs that open/close between full scrapes without
+                           re-pricing all ~31k Polymarket markets.
+"""
 import subprocess
 import sys
 from pathlib import Path
@@ -31,6 +42,20 @@ steps = [
     ("Fetch orderbook depth", [sys.executable, "scripts/fetch_depth.py"]),
     ("Arb scanner (pass 2)",  [sys.executable, "scripts/arb_scanner.py"]),
 ]
+
+REPRICE_STEPS = [
+    ("PredictIt scraper",     [sys.executable, "scrapers/predictit.py"]),   # 1 request
+    ("Arb scanner (pass 1)",  [sys.executable, "scripts/arb_scanner.py"]),  # emits depth_targets.csv
+    ("Fetch orderbook depth", [sys.executable, "scripts/fetch_depth.py"]),  # matched markets only
+    ("Arb scanner (pass 2)",  [sys.executable, "scripts/arb_scanner.py"]),
+]
+
+import os
+if "--reprice" in sys.argv:
+    steps = REPRICE_STEPS
+    # Tells arb_scanner the Kalshi/Polymarket CSVs are the last FULL run's
+    # (pair list + display prices); the basket math uses the live books.
+    os.environ["PRED_ARB_REPRICE"] = "1"
 
 for name, cmd in steps:
     print(f"\n{'='*60}\n{name}\n{'='*60}", flush=True)
