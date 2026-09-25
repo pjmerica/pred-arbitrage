@@ -16,6 +16,14 @@
    "note": "Both: Google Year in Search 2026 Global 'People' top 5."
   },
   {
+   "kalshi_series": "KXTOPALBUMSPOTIFY",
+   "polymarket_event_slug_regex": "^top-spotify-album-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: #1 album on Spotify Wrapped 2026 global top albums.",
+   "caveat": "Kalshi closes Dec 31; Polymarket waits to Jan 31, 2027 then resolves Other. Wrapped publishes early December."
+  },
+  {
    "kalshi_series": "KXTIME",
    "polymarket_event_slug_regex": "^time-person-of-the-year-2026$",
    "status": "approved",

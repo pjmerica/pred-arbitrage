@@ -104,6 +104,13 @@ def infer_race_id_from_ticker(ticker: str, event_ticker: str = "", title: str = 
     if m and m.group(1) in STATE_ABBREVS:
         return f"2026-H-{m.group(1)}-{m.group(2).zfill(2)}"
 
+    # KXHOUSE{ST}{D} e.g. KXHOUSETX32 (2026-09-25: newer House series use
+    # the KX prefix; without this branch 11 House races had no race_id and
+    # never paired — polling-agg's scraper already had it).
+    m = re.match(r"KXHOUSE([A-Z]{2})(\d+)$", t)
+    if m and m.group(1) in STATE_ABBREVS:
+        return f"2026-H-{m.group(1)}-{m.group(2).zfill(2)}"
+
     # SENATEPARTY{ST}[S]
     m = re.match(r"SENATEPARTY[-_]?([A-Z]{2})(S?)$", t)
     if m and m.group(1) in STATE_ABBREVS:

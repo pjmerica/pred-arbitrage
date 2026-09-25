@@ -24,6 +24,7 @@ sys.path.insert(0, str(ROOT))
 from utils.links import polymarket_url
 from utils.election_shapes import is_derivative, party_win_side
 from utils.proposition import incompatibility, kalshi_game_date, slug_game_date
+from scripts.elections import special_senate, title_is_2026_us_race
 RAW = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
@@ -78,6 +79,14 @@ NON_ELECTION = {"nhl", "nba", "nfl", "mlb", "premier league", "stanley cup",
 
 
 def infer_race_id(title: str) -> str | None:
+    # Other cycles (2027/2028 markets), Baja California, and the FL/OH
+    # special-only Senate races: see scripts/elections.py.
+    if not title_is_2026_us_race(title):
+        return None
+    return special_senate(_infer_race_id(title))
+
+
+def _infer_race_id(title: str) -> str | None:
     q = title.lower()
     if any(k in q for k in NON_ELECTION):
         return None

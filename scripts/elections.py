@@ -179,8 +179,43 @@ def _race_id_from_title(title: str) -> str | None:
     """Derive canonical race_id (e.g. 2026-SEN-OH) from a market title.
     Returns None when the title doesn't reference a 2026 federal race.
     Used to fill in pred-arb scraper output, which doesn't pre-tag rows."""
+    if not title_is_2026_us_race(title):
+        return None
     state, office, district = _extract_state_office(title)
-    return _race_id_from(state, office, district)
+    return special_senate(_race_id_from(state, office, district))
+
+
+# 2026-09-25. FL and OH hold only SPECIAL Senate elections in 2026 (Rubio
+# and Vance vacancies; their regular seats are up in 2028), and Kalshi's
+# series say so (SENATEFLS / SENATEOHS -> 2026-SEN-FL-S). Polymarket's and
+# PredictIt's "Florida Senate race in 2026" are the same special, so title
+# ids must carry -S too, or the three platforms never pair (the FL-S and
+# OH-S baskets polling-agg lists were missing here).
+SPECIAL_ONLY_SENATE_2026 = {"FL", "OH"}
+
+
+def special_senate(race_id):
+    if isinstance(race_id, str) and race_id.startswith("2026-SEN-") \
+            and race_id.split("-")[2] in SPECIAL_ONLY_SENATE_2026 and not race_id.endswith("-S"):
+        return race_id + "-S"
+    return race_id
+
+
+_OTHER_CYCLE = re.compile(r"\b20(?:2[7-9]|[3-9]\d)\b")
+
+
+def title_is_2026_us_race(title) -> bool:
+    """False for titles that can't be a 2026 US race even though they name a
+    US state and an office: a different cycle ("Florida Senate winner?
+    (2028)", "2027 Kentucky governor") or Mexico's Baja California. Both used
+    to get 2026 ids (2028 markets keyed as 2026-SEN-FL, Baja California's
+    2027 governor race as 2026-GOV-CA)."""
+    if not isinstance(title, str):
+        return False
+    t = title.lower()
+    if "baja california" in t:
+        return False
+    return "2026" in t or not _OTHER_CYCLE.search(t)
 
 
 # ── state / office / candidate parsing ────────────────────────────────────────

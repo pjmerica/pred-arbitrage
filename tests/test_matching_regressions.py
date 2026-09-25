@@ -404,3 +404,30 @@ def test_threshold_december_only_is_not_year():
 def test_threshold_month_word_boundary():
     # "market" is not March; no month and no year phrase -> no key.
     assert _extract_threshold_key("Will the Bitcoin market reach $200,000?", "polymarket") is None
+
+
+# 2026-09-25: race ids from titles. FL/OH hold only SPECIAL Senate races in
+# 2026 (Kalshi: SENATEFLS/SENATEOHS -> -S), other cycles and Mexico's Baja
+# California must get no 2026 id, and KXHOUSE{ST}{D} series need a branch.
+from scripts.matcher import infer_race_id
+from scripts.elections import _race_id_from_title
+from scrapers.kalshi import infer_race_id_from_ticker
+
+
+@pytest.mark.parametrize("title, rid", [
+    ("Will the Democrats win the Florida Senate race in 2026?", "2026-SEN-FL-S"),
+    ("Which party will win the 2026 US Senate special election in Ohio?", "2026-SEN-OH-S"),
+    ("Will the Democrats win the Maine Senate race in 2026?", "2026-SEN-ME"),
+    ("Florida Senate winner? (2028) — Democratic party", None),
+    ("Kentucky governor winner? (2027) — Republican", None),
+    ("Will Juan Carlos Hank win the 2027 Baja California Governor Election?", None),
+])
+def test_title_race_ids(title, rid):
+    assert infer_race_id(title) == rid
+    assert _race_id_from_title(title) == rid
+
+
+def test_kalshi_kxhouse_series_race_id():
+    assert infer_race_id_from_ticker("KXHOUSETX32", "KXHOUSETX32-26") == "2026-H-TX-32"
+    assert infer_race_id_from_ticker("KXHOUSEWA8", "KXHOUSEWA8-26") == "2026-H-WA-08"
+    assert infer_race_id_from_ticker("KXHOUSETX32", "KXHOUSETX32-28") is None
