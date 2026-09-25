@@ -1069,10 +1069,25 @@ def run():
                       lambda rs: isinstance(rs, list) and any(str(x).startswith("criteria_warn") for x in rs))))
     if unverified.any():
         result.loc[unverified, "arb_type"] = "unverified"
+        # Say WHY — "unverified match" was misleading for a correctly matched
+        # pair downgraded for basis risk or an implausible return.
+        def _why(rs):
+            rs = rs if isinstance(rs, list) else []
+            if "basis_risk_direction" in rs:
+                return "BASIS RISK — YES on Kalshi (trimmed-mean index) + NO on Polymarket (any Binance wick) loses both legs if a wick crosses the strike but the index doesn't. "
+            if "window_mismatch" in rs:
+                return "WINDOW MISMATCH — YES is on the narrower resolution window; an event in the gap loses both legs. "
+            if "settled_one_side" in rs:
+                return "ONE SIDE SETTLED — one market is effectively decided and the other isn't; the rules probably differ. "
+            if any(str(x).startswith("criteria_warn") for x in rs):
+                return "RULES TEXT DIFFERS — read both markets' rules before trading. "
+            if "implausible_return" in rs:
+                return "CHECK BY HAND — return above 15%; past cases this large were different questions. "
+            return "UNVERIFIED MATCH — confirm both legs resolve on the same event. "
         result.loc[unverified, "action"] = (
-            "UNVERIFIED MATCH — confirm both legs resolve on the same event. "
+            result.loc[unverified, "suspicion_reasons"].apply(_why)
             + result.loc[unverified, "action"].fillna(""))
-        print(f"Downgraded {int(unverified.sum())} guaranteed -> unverified (match type not structurally verified)")
+        print(f"Downgraded {int(unverified.sum())} guaranteed -> unverified")
 
     # Drop pairs whose settle_date is in the past. Upstream APIs sometimes
     # keep already-resolved markets in their "active" feed for a few days

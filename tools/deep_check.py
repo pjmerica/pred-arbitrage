@@ -35,6 +35,12 @@ HEADERS   = {"User-Agent": "Mozilla/5.0 (deep-audit)", "Accept": "application/js
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).parent.parent))
 from scripts.arb_scanner import FEES
+from utils.fees import leg_fee, kalshi_spec, polymarket_spec, predictit_spec, FEE_SAFETY_MARGIN
+
+# Real per-leg fee formulas (utils/fees.py) at the WORST rate each platform
+# charges (Kalshi multiplier 1, Polymarket crypto 7%), so this verifier errs
+# toward "not an arb" rather than one API call per market.
+FEE_SPECS = {"kalshi": kalshi_spec(1), "polymarket": polymarket_spec(0.07), "predictit": predictit_spec()}
 
 TOP_N = 50
 
@@ -141,7 +147,8 @@ def basket_at_slippage(yes_asks_combined, no_asks_combined, slip_pp, fees):
                 continue
             cost_per_unit = yes_avg + no_avg
             gross = 1 - cost_per_unit
-            fee = fees.get(yp, 0.05) + fees.get(np, 0.05)
+            fee = (leg_fee(yp, FEE_SPECS.get(yp), yes_avg) + leg_fee(np, FEE_SPECS.get(np), no_avg)
+                   + FEE_SAFETY_MARGIN)
             net = gross - fee
             if best is None or net * max_size > best["edge_dollars"]:
                 best = {
