@@ -28,7 +28,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      # A queued run is pinned to the commit that existed when it was
+      # TRIGGERED; check out the latest master instead so a re-price queued
+      # behind a full refresh uses that refresh's matched_pairs.csv.
       - uses: actions/checkout@v4
+        with:
+          ref: master
 
       - uses: actions/setup-python@v5
         with:
@@ -64,8 +69,15 @@ jobs:
           else
             git commit -m "reprice: $(date -u +%Y-%m-%dT%H:%MZ)"
             for i in 1 2 3; do
-              if git push; then break; fi
+              if git push; then exit 0; fi
               echo "Push rejected, rebasing on origin/master (attempt $i)…"
-              git pull --rebase origin master
+              if ! git pull --rebase origin master; then
+                # A newer run already committed these generated files. Its
+                # data is at least as fresh as ours: abort cleanly, skip.
+                git rebase --abort
+                echo "Newer data landed on master during this run; skipping this push."
+                exit 0
+              fi
             done
+            echo "Push failed after 3 attempts"; exit 1
           fi

@@ -162,8 +162,9 @@ def run(targets_csv: Path = None, out_csv: Path = None, delay: float = 0.1):
     targets_csv = targets_csv or (PROCESSED / "depth_targets.csv")
     out_csv = out_csv or (RAW / "orderbook_depth.csv")
     if not targets_csv.exists():
-        print(f"No targets file at {targets_csv}. Run arb_scanner.py first to emit it.")
-        return
+        # Fail loudly (see arb_scanner): a missing target list means pass 1
+        # didn't run, and exiting 0 hid that from CI.
+        raise SystemExit(f"No targets file at {targets_csv}. Run arb_scanner.py first to emit it.")
 
     targets = pd.read_csv(targets_csv, dtype={"market_id": str, "no_market_id": str})
     targets = targets[targets["platform"].isin(["kalshi", "polymarket"])].copy()

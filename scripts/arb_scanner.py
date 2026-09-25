@@ -398,8 +398,10 @@ def run():
 
     pairs_path = PROCESSED / "matched_pairs.csv"
     if not pairs_path.exists():
-        print("No matched_pairs.csv found — run scripts/matcher.py first")
-        return
+        # Fail loudly: silently returning let a CI re-price "succeed" while
+        # publishing nothing (2026-09-25 — it had checked out a commit
+        # without matched_pairs.csv). Exit non-zero so the run shows red.
+        raise SystemExit("No matched_pairs.csv found — run scripts/matcher.py (full refresh) first")
 
     # Polymarket market_ids are 78-digit token ids — must read as str or
     # pandas corrupts them to float (scientific notation), breaking depth lookup.
