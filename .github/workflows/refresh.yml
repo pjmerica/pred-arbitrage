@@ -32,6 +32,12 @@ jobs:
       - name: Run full pipeline
         run: python -u run_all.py
 
+      # Run the dashboard's JS against the freshly generated data in a DOM
+      # stub; if the page would throw, fail BEFORE committing so the live
+      # site keeps its last good snapshot.
+      - name: Dashboard smoke test
+        run: node tools/dash_smoke.js docs tools/dash_exercise.js
+
       - name: Commit and push if changed
         run: |
           git config user.name  "github-actions[bot]"
