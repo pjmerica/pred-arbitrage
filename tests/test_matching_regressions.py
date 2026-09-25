@@ -448,3 +448,23 @@ def test_party_win_rejects_other_offices_and_combos(title):
 
 def test_party_win_west_virginia_is_one_state():
     assert party_win_side("Will the Democrats win the West Virginia Senate race in 2026?") == "dem"
+
+
+# 2026-09-25: first team to score. Opposite teams passed the matcher's
+# subject guard on the shared token "FC"; "Neither team to score first"
+# (0-0) paired with a named team at 50-74% "returns".
+@pytest.mark.parametrize("a, b, bad", [
+    ("Charlotte FC vs Chicago Fire: First Team to Score — Charlotte FC", "Chicago Fire FC to score first vs. Charlotte FC?", True),
+    ("Charlotte FC vs Chicago Fire: First Team to Score — Chicago Fire", "Chicago Fire FC to score first vs. Charlotte FC?", False),
+    ("Los Angeles Galaxy vs Colorado Rapids: First Team to Score — Los Angeles Galaxy",
+     "Los Angeles Galaxy vs. Colorado Rapids SC: Neither team to score first?", True),
+    ("Los Angeles Galaxy vs Colorado Rapids: First Team to Score — No Goal",
+     "Los Angeles Galaxy vs. Colorado Rapids SC: Neither team to score first?", False),
+    ("New York City FC vs New York Red Bulls: First Team to Score — New York City FC",
+     "New York Red Bulls to score first vs. New York City FC?", True),
+    ("Manchester City vs Manchester United: First Team to Score — Manchester United",
+     "Manchester United to score first vs. Manchester City?", False),
+    ("Tigres UANL vs Club Puebla: First Team to Score — Tigres UANL", "Tigres de la UANL to score first vs. Club Puebla?", False),
+])
+def test_first_team_to_score(a, b, bad):
+    assert (incompatibility(a, b) is not None) == bad

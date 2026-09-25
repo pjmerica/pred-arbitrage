@@ -111,6 +111,46 @@ SCRAPE_PASSES = [
 ]
 
 
+SKIP_EVENT_TAGS = {"Up or Down"}   # 5-60 min crypto candles: settle before any board refresh
+
+
+def fetch_all_events_keyset():
+    """Every active event via /events/keyset (2026-09-25).
+
+    The ordered /events passes below reach at most 5 x 2000 overlapping
+    events; on 2026-09-25 that was 5,336 of 19,193 active events (28%),
+    missing ~163k open markets (US Open winner, college football, MLS
+    "more markets", German mayoral races...). The keyset cursor bug from
+    June is fixed: 39 pages of 500 returned 19,193 distinct events in
+    95 s. Guarded anyway: a page with no new ids, or any HTTP failure,
+    returns None and the caller falls back to the ordered passes.
+    """
+    events, seen, cursor = [], set(), None
+    while True:
+        params = {"limit": 500, "active": "true", "closed": "false"}
+        if cursor:
+            params["after_cursor"] = cursor
+        try:
+            data = get("/events/keyset", params)
+        except Exception as e:
+            print(f"  keyset page failed ({e}); falling back to ordered passes")
+            return None
+        page = (data or {}).get("events") or []
+        new = [e for e in page if e.get("id") not in seen]
+        if page and not new:
+            print("  keyset cursor did not advance; falling back to ordered passes")
+            return None
+        for e in new:
+            seen.add(e.get("id"))
+        events.extend(new)
+        cursor = (data or {}).get("next_cursor")
+        if not cursor or not page:
+            break
+        if len(events) % 5000 < 500:
+            print(f"  keyset: {len(events)} events so far...")
+    return events
+
+
 def fetch_all_events():
     """Fetch active events via MULTIPLE ordered passes of /events?offset=N.
 
@@ -373,11 +413,16 @@ def parse_market(event, market):
 def run():
     RAW.mkdir(parents=True, exist_ok=True)
     print("Fetching all Polymarket active events...")
-    events = fetch_all_events()
+    events = fetch_all_events_keyset()
+    if events is None:
+        events = fetch_all_events()
     print(f"  Total events fetched: {len(events)}")
 
     rows = []
     for event in events:
+        tags = {t.get("label") for t in (event.get("tags") or []) if isinstance(t, dict)}
+        if tags & SKIP_EVENT_TAGS:
+            continue
         markets = event.get("markets", [])
         if markets:
             for m in markets:

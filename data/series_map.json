@@ -493,6 +493,79 @@
    "rules_read": "2026-09-25",
    "note": "Both: #2 on the Netflix US Top 10 published the stated Tuesday (week ending Sunday).",
    "caveat": "Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXMLSFTTS",
+   "polymarket_event_slug_regex": "^mls-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. MLS regular season.",
+   "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. MLS Cup playoffs (from late Oct) have extra time.",
+   "review_by": "2026-10-18"
+  },
+  {
+   "kalshi_series": "KXLIGAMXFTTS",
+   "polymarket_event_slug_regex": "^mex-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. Liga MX.",
+   "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. The Liga MX final can go to extra time.",
+   "review_by": "2026-11-30"
+  },
+  {
+   "kalshi_series": "KXUEFANLFTTS",
+   "polymarket_event_slug_regex": "^unl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. UEFA Nations League.",
+   "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. League phase ends mid-November.",
+   "review_by": "2026-11-18"
+  },
+  {
+   "kalshi_series": "KXBRASILEIROCBTTS",
+   "polymarket_event_slug_regex": "^bra3-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Brasileiro Serie C."
+  },
+  {
+   "kalshi_series": "KXTITLEDTUESDAY",
+   "polymarket_event_slug_regex": "^titled-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: winner of the stated Chess.com Titled Tuesday; a player who does not play resolves No on both.",
+   "caveat": "Declared co-winners: Polymarket pays the alphabetically first name; Chess.com normally breaks ties."
+  },
+  {
+   "kalshi_series": "KXHURCAT",
+   "polymarket_event_slug_regex": "^what-category-will-hurricane-.+-reach",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Kalshi: max sustained winds >= threshold (Cat 5 = 157 mph); Polymarket: peak Saffir-Simpson category in an NHC advisory. Equal only for the Cat 5 rung; lower rungs ('or above' vs 'peak at') are blocked by the bound check in utils/proposition.py.",
+   "caveat": "Kalshi's window ends Dec 1."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKSHOWRUNNERUP",
+   "polymarket_event_slug_regex": "^what-will-be-the-2-us-netflix-show-this-week$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: #2 on the Netflix US Top 10 TV published the stated Tuesday (week ending Sunday).",
+   "caveat": "Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXSAXANHSNAP",
+   "polymarket_event_slug_regex": "^saxony-anhalt-snap-election-called-in-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: a snap Landtag election formally called before Jan 1, 2027.",
+   "caveat": "Kalshi 'officially calls' (Bloomberg/Reuters/MDR/Volksstimme reporting); Polymarket spells out dissolution or formal scheduling."
+  },
+  {
+   "kalshi_series": "KXNVIDIAGROQFINE",
+   "polymarket_event_slug_regex": "^doj-fines-nvidia-over-groq-deal-in-2026$",
+   "status": "rejected",
+   "rules_read": "2026-09-25",
+   "note": "Polymarket also counts disgorgement and any amended/replacement arrangement; Kalshi only a fine or monetary penalty on the Dec 24, 2025 deal. Disgorgement alone: Polymarket YES, Kalshi NO."
   }
  ]
 }

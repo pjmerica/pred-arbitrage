@@ -210,9 +210,16 @@ the same 100 events. Production run with keyset paginated 100,000
 "events" that were 1,000 duplicates of the first page — yielded only
 46 matched pairs / 1 guaranteed arb.
 
-We're currently stuck with `?offset=N` capped at 2000. The real fix
-is to switch to `clob.polymarket.com/markets` (different field shape,
-needs `parse_market` rewritten).
+**Update 2026-09-25: keyset works; the parameter is `after_cursor`**
+(not one of the five names tried in June). `GET
+/events/keyset?limit=500&active=true&closed=false&after_cursor=<next_cursor>`
+returned 19,193 distinct active events in 39 pages / 95 s, each with
+nested markets in the same shape `parse_market` already reads. The
+ordered offset passes had reached only 5,336 of them (28%), missing
+~163k open markets (43k after the liquidity/spread filters, vs 35k
+before). `scrapers/polymarket.py` now uses keyset first and falls back
+to the offset passes if a page fails or the cursor stops advancing.
+Events tagged "Up or Down" (5-60 minute crypto candles) are skipped.
 
 ### Gamma is stale — always freshen
 
@@ -223,9 +230,13 @@ Palestine market had gamma bb=0.16/ba=0.34 (18pp spread) shipped as a
 0.16/0.24 (8pp), real midpoint 20¢ → real arb was 6pp not 20pp.
 
 `scripts/freshen_polymarket.py` re-fetches the live CLOB for every
-Polymarket market in parallel right after the gamma scrape (~5 min,
-16 worker threads). Overwrites bid/ask/midpoint before the matcher
-runs.
+Polymarket market right after the gamma scrape and overwrites
+bid/ask/midpoint before the matcher runs. Since 2026-09-25 it uses
+`POST clob.polymarket.com/books` with 500 `{"token_id": ...}` per
+request (500 in, 500 books out; tokens without a book are simply
+absent, like a 404 on `/book`): 43k markets in 87 requests / 14 s,
+down from 462 s one-by-one. A failed batch falls back to per-token
+GETs.
 
 ### CLOB orderbook quirk — bids/asks NOT sorted best-first
 

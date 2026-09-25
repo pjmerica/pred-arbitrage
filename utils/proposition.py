@@ -257,7 +257,64 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
         return "day vs window"
     if person_mismatch(a, b):
         return "person differs"
+    fa, fb = first_scorer(a), first_scorer(b)
+    if (fa is None) != (fb is None):
+        return "first-to-score vs other market"
+    if fa and fb:
+        if (fa[0] == "none") != (fb[0] == "none"):
+            return "first scorer: neither vs a team"
+        if fa[0] not in ("none", "?") and fb[0] not in ("none", "?") and fb[1]:
+            if _club_sim(fa[0], fb[0]) <= _club_sim(fa[0], fb[1]):
+                return "first scorer: different team"
     return None
+
+
+# ── first team to score (2026-09-25) ──────────────────────────────────────
+# Kalshi "Charlotte FC vs Chicago Fire: First Team to Score — Charlotte FC"
+# paired with Polymarket "Chicago Fire FC to score first vs. Charlotte FC?"
+# (the matcher's subject guard passed on the shared token "FC"), and with
+# "...: Neither team to score first?" (the 0-0 outcome) at 50-74% "returns".
+
+_FTS_RE = re.compile(r"first team to score|to score first|score first", re.IGNORECASE)
+_NO_SCORER_RE = re.compile(r"\bneither\b|\bno goals?\b|\bno team\b", re.IGNORECASE)
+# Suffix/filler words only. "city"/"united" stay: they are what tells
+# Manchester City from Manchester United, NYCFC from the Red Bulls.
+_CLUB_WORDS = {"fc", "sc", "cf", "afc", "cd", "ac", "club", "de", "la", "the", "fk", "sk"}
+
+
+def first_scorer(title):
+    """None if not a first-to-score market; ('none', None) for the no-goal
+    outcome; (subject, opponent) otherwise; ('?', None) if unparsed."""
+    t = str(title or "")
+    if not _FTS_RE.search(t):
+        return None
+    if _NO_SCORER_RE.search(t):
+        return ("none", None)
+    m = re.match(r"^\s*(?:will\s+)?(.+?)\s+score first\s+vs\.?\s+(.+?)\s*\??\s*$", t, re.IGNORECASE) \
+        or re.match(r"^\s*(?:will\s+)?(.+?)\s+to score first\s+vs\.?\s+(.+?)\s*\??\s*$", t, re.IGNORECASE)
+    if m:
+        subj = re.sub(r"\s+to$", "", m.group(1).strip(), flags=re.IGNORECASE)
+        return (subj, m.group(2))
+    m = re.match(r"^\s*(.+?)\s+vs\.?\s+(.+?):.*first team to score.*?[—–-]\s*(.+?)\s*$", t, re.IGNORECASE)
+    if m:
+        home, away, subj = m.group(1), m.group(2), m.group(3)
+        opp = away if _club_sim(subj, home) >= _club_sim(subj, away) else home
+        return (subj, opp)
+    return ("?", None)
+
+
+def _club_norm(name):
+    s = unicodedata.normalize("NFKD", str(name or "")).encode("ascii", "ignore").decode().lower()
+    s = s.replace(".", "")
+    toks = [w for w in re.findall(r"[a-z0-9]+", s) if w not in _CLUB_WORDS]
+    return " ".join(toks) or s
+
+
+def _club_sim(x, y):
+    """(token-set, plain) similarity; the plain ratio breaks token-set ties
+    (derbies where one name's tokens are a subset of the other's)."""
+    a, b = _club_norm(x), _club_norm(y)
+    return (fuzz.token_set_ratio(a, b), fuzz.ratio(a, b))
 
 
 _KALSHI_DATE = re.compile(r"-(\d{2})(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(\d{2})")

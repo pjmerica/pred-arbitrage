@@ -91,7 +91,32 @@ def fetch_book(token_id: str):
         return (None, None, None)
     except Exception:
         return (None, None, None)
+    return _parse_book(data)
 
+
+CLOB_BOOKS_URL = "https://clob.polymarket.com/books"
+BATCH_SIZE = 500   # verified 2026-09-25: 500 tokens in, 500 books out
+
+
+def fetch_books_batch(token_ids):
+    """{token_id: (best_bid, best_ask, last)} for up to BATCH_SIZE tokens in
+    ONE request (POST /books). Tokens the CLOB doesn't return are absent,
+    the same as a 404 on /book. Returns None if the request itself fails,
+    so the caller can fall back to per-token GETs for that chunk."""
+    body = json.dumps([{"token_id": t} for t in token_ids]).encode()
+    req = urllib.request.Request(CLOB_BOOKS_URL, data=body, method="POST",
+                                 headers={**DEFAULT_HEADERS, "Content-Type": "application/json"})
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                books = json.loads(r.read())
+            return {str(b.get("asset_id")): _parse_book(b) for b in books or []}
+        except Exception:
+            time.sleep(2 * (attempt + 1))
+    return None
+
+
+def _parse_book(data):
     # CLOB book shape: {"bids": [{"price": "0.16", "size": "..."}, ...],
     #                   "asks": [{"price": "0.24", "size": "..."}, ...],
     #                   "last_trade_price": "0.18"}
@@ -156,13 +181,40 @@ def run():
     n_missing = 0
     n_no_token = 0
 
+    # Batched (2026-09-25): POST /books takes 500 tokens per request, so
+    # ~45k markets is ~90 requests instead of ~45k (the per-token loop took
+    # 462 s after the keyset scrape grew the universe). A chunk whose batch
+    # call fails falls back to the per-token loop below.
+    idx_by_tok = {}
+    for i, tok in enumerate(tokens):
+        if tok:
+            idx_by_tok.setdefault(tok, []).append(i)
+        else:
+            n_no_token += 1
+    uniq = list(idx_by_tok)
+    fallback = []
+    chunks = [uniq[k:k + BATCH_SIZE] for k in range(0, len(uniq), BATCH_SIZE)]
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for chunk, got in zip(chunks, pool.map(fetch_books_batch, chunks)):
+            if got is None:
+                fallback.extend(chunk)
+                continue
+            for tok in chunk:
+                bb, ba, last = got.get(tok, (None, None, None))
+                for i in idx_by_tok[tok]:
+                    if bb is None and ba is None:
+                        n_missing += 1
+                    else:
+                        fresh_bb[i], fresh_ba[i], fresh_last[i] = bb, ba, last
+                        n_ok += 1
+    print(f"  batched: {len(chunks)} requests, ok={n_ok}, missing={n_missing}, "
+          f"fallback tokens={len(fallback)} ({time.time() - t0:.0f}s)")
+
     with ThreadPoolExecutor(max_workers=NUM_WORKERS) as pool:
         futures = {}
-        for i, tok in enumerate(tokens):
-            if not tok:
-                n_no_token += 1
-                continue
-            futures[pool.submit(fetch_book, tok)] = i
+        for tok in fallback:
+            for i in idx_by_tok[tok]:
+                futures[pool.submit(fetch_book, tok)] = i
 
         for fut in as_completed(futures):
             i = futures[fut]
