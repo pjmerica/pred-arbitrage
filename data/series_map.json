@@ -1,0 +1,387 @@
+{
+ "_about": "Hand-reviewed Kalshi series <-> Polymarket event families for title-similarity (fuzzy) pairs. approved = rules read side by side and they resolve on the same event, so the pair may be labelled guaranteed (all other checks still apply). rejected = different questions; the pair is dropped. Anything not listed is 'unreviewed': shown as unverified and listed in data/processed/series_review.csv. review_by = approval lapses to unreviewed after this date. To add a family: read BOTH rules texts in full, then add an entry with a note saying why they match. See MATCHING_REVIEW.md.",
+ "families": [
+  {
+   "kalshi_series": "KXFRPRESBALLOT",
+   "polymarket_event_slug_regex": "^2027-french-presidential-election-who-will-be-on-the-ballot$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: on the official first-round candidate list (Conseil constitutionnel); Kalshi by Jun 30 2027."
+  },
+  {
+   "kalshi_series": "KXRANKLISTGOOGLESEARCHTOP5",
+   "polymarket_event_slug_regex": "^top-5-most-searched-people-on-google-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: Google Year in Search 2026 Global 'People' top 5."
+  },
+  {
+   "kalshi_series": "KXTIME",
+   "polymarket_event_slug_regex": "^time-person-of-the-year-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: explicitly named; multiple named persons all count; cover-association rule for groups/concepts."
+  },
+  {
+   "kalshi_series": "KXDANCINGWITHTHESTARS",
+   "polymarket_event_slug_regex": "^who-will-win-dancing-with-the-stars-season-\\d+$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official winner of the season (winner markets only; placement/finalist markets are other series).",
+   "caveat": "Tie handling differs (Kalshi splits $1 between joint winners; Polymarket pays the first-listed/alphabetical name). A tie breaks the hedge. Rare for this event."
+  },
+  {
+   "kalshi_series": "KXBIGBROTHER",
+   "polymarket_event_slug_regex": "^big-brother-season-\\d+-winner$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: officially declared winner of the season.",
+   "caveat": "Tie handling differs (Kalshi splits $1 between joint winners; Polymarket pays the first-listed/alphabetical name). A tie breaks the hedge. Rare for this event."
+  },
+  {
+   "kalshi_series": "KXBALLONDOR",
+   "polymarket_event_slug_regex": "^ballon-dor-winner-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: 2026 Ballon d'Or winner (France Football)."
+  },
+  {
+   "kalshi_series": "KXBALLONDORRANK",
+   "polymarket_event_slug_regex": "^ballon-dor-top-[35]-finish-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official final men's ranking top 3 / top 5 (signature gate keeps top-3 vs top-5 apart).",
+   "caveat": "Tie handling differs (Kalshi splits $1 between joint winners; Polymarket pays the first-listed/alphabetical name). A tie breaks the hedge. Rare for this event."
+  },
+  {
+   "kalshi_series": "KXCHESSOLYMPIAD",
+   "polymarket_event_slug_regex": "^46th-fide-chess-olympiad-open-tournament-winner$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: winner of the OPEN tournament (Women's is a different Kalshi event; signature gate enforces division)."
+  },
+  {
+   "kalshi_series": "KXCHNSL",
+   "polymarket_event_slug_regex": "^2026-soccer-chinese-super-league-winner$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: 2026 CSL champion."
+  },
+  {
+   "kalshi_series": "KXCONMEBOLLIB",
+   "polymarket_event_slug_regex": "^2026-soccer-copa-libertadores-winner$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: 2026 Copa Libertadores champion."
+  },
+  {
+   "kalshi_series": "KXNCAAFUNDEFEATED",
+   "polymarket_event_slug_regex": "^ncaa-football-team-to-have-an-undefeated-season$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: regular season only; conference championship/bowl/CFP excluded."
+  },
+  {
+   "kalshi_series": "KXUCLTOP8",
+   "polymarket_event_slug_regex": "^uefa-champions-league-team-to-finish-top-8-in-league-phase$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: top 8 of the 2026-27 UCL league phase, UEFA tie-breakers."
+  },
+  {
+   "kalshi_series": "KXUFCMIDDLEWEIGHTTITLE",
+   "polymarket_event_slug_regex": "^who-will-be-ufc-middleweight-champion-at-the-end-of-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official (non-interim) champion at Dec 31 2026 12:00 PM ET."
+  },
+  {
+   "kalshi_series": "KXUFCLIGHTWEIGHTTITLE",
+   "polymarket_event_slug_regex": "^who-will-be-ufc-lightweight-champion-at-the-end-of-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official (non-interim) champion at Dec 31 2026 12:00 PM ET."
+  },
+  {
+   "kalshi_series": "KXUFCWELTERWEIGHTTITLE",
+   "polymarket_event_slug_regex": "^who-will-be-ufc-welterweight-champion-at-the-end-of-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official (non-interim) champion at Dec 31 2026 12:00 PM ET."
+  },
+  {
+   "kalshi_series": "KXUFCBANTAMWEIGHTTITLE",
+   "polymarket_event_slug_regex": "^who-will-be-ufc-bantamweight-champion-at-the-end-of-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official (non-interim) champion at Dec 31 2026 12:00 PM ET."
+  },
+  {
+   "kalshi_series": "KXUFCLHEAVYWEIGHTTITLE",
+   "polymarket_event_slug_regex": "^who-will-be-ufc-light-heavyweight-champion-at-the-end-of-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: official (non-interim) champion at Dec 31 2026 12:00 PM ET."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKMOVIE",
+   "polymarket_event_slug_regex": "^what-will-be-the-top-us-netflix-movie-this-week$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: #1 on the Netflix US Top 10 published the stated Tuesday (week ending Sunday).",
+   "caveat": "Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKSHOW",
+   "polymarket_event_slug_regex": "^what-will-be-the-top-us-netflix-show-this-week$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: #1 US show on the stated Tuesday chart.",
+   "caveat": "Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKSHOWGLOBAL",
+   "polymarket_event_slug_regex": "^what-will-be-the-top-global-netflix-show-this-week$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: #1 GLOBAL show on the stated Tuesday chart.",
+   "caveat": "Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXPRESNOMD",
+   "polymarket_event_slug_regex": "^democratic-presidential-nominee-2028$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: wins and accepts the 2028 Democratic nomination."
+  },
+  {
+   "kalshi_series": "KXPRESNOMR",
+   "polymarket_event_slug_regex": "^republican-presidential-nominee-2028$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: wins and accepts the 2028 Republican nomination."
+  },
+  {
+   "kalshi_series": "KXESTPRES",
+   "polymarket_event_slug_regex": "^next-president-of-estonia$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: next non-interim president; Kalshi before Jan 1 2027, Polymarket by Dec 31 2026."
+  },
+  {
+   "kalshi_series": "KXKOSOVOPRES",
+   "polymarket_event_slug_regex": "^next-president-of-kosovo$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: next non-acting president (oath before the Assembly).",
+   "caveat": "Windows differ: Kalshi before Jan 1 2027, Polymarket by Apr 30 2027. The window check only allows YES on Polymarket."
+  },
+  {
+   "kalshi_series": "KXSAXANHMP",
+   "polymarket_event_slug_regex": "^next-ministerprasident-of-sachsen-anhalt$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: Minister-President chosen after the 2026 Landtag election."
+  },
+  {
+   "kalshi_series": "KXAUSTPM",
+   "polymarket_event_slug_regex": "^who-will-be-the-next-prime-minister-of-australia-after-the-next-election$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: PM formed after the next federal election.",
+   "caveat": "Kalshi deadline Sep 23 2029; Polymarket resolves on the next election even if early."
+  },
+  {
+   "kalshi_series": "KXSTPETERSBURGMAYOR",
+   "polymarket_event_slug_regex": "^stpt-petersburg-mayoral-election-winner$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: winner of the 2026 St. Petersburg FL mayoral election (incl. runoff)."
+  },
+  {
+   "kalshi_series": "KXVENEZDEFACTO",
+   "polymarket_event_slug_regex": "^venezuela-de-facto-leader-end-of-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: individual exercising primary executive authority at end of 2026.",
+   "caveat": "Kalshi 'end of 2026' vs Polymarket Dec 31 12:00 PM ET."
+  },
+  {
+   "kalshi_series": "KXSEXYMAN",
+   "polymarket_event_slug_regex": "^peoples-sexiest-man-alive-2026$",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: People's 2026 Sexiest Man Alive.",
+   "caveat": "Tie handling differs (Kalshi splits $1 between joint winners; Polymarket pays the first-listed/alphabetical name). A tie breaks the hedge. Rare for this event."
+  },
+  {
+   "kalshi_series": "KXMLSBTTS",
+   "polymarket_event_slug_regex": "^mls-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). MLS."
+  },
+  {
+   "kalshi_series": "KXLIGAMXBTTS",
+   "polymarket_event_slug_regex": "^mex-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Liga MX."
+  },
+  {
+   "kalshi_series": "KXUSLBTTS",
+   "polymarket_event_slug_regex": "^uslc-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). USL Championship."
+  },
+  {
+   "kalshi_series": "KXEFLL1BTTS",
+   "polymarket_event_slug_regex": "^el1-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). EFL League One."
+  },
+  {
+   "kalshi_series": "KXBRASILEIROBBTTS",
+   "polymarket_event_slug_regex": "^bra2-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Brasileirao Serie B."
+  },
+  {
+   "kalshi_series": "KXDIMAYORBTTS",
+   "polymarket_event_slug_regex": "^col1-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Colombia Primera A."
+  },
+  {
+   "kalshi_series": "KXEERSTEDIVBTTS",
+   "polymarket_event_slug_regex": "^ned2-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Eerste Divisie."
+  },
+  {
+   "kalshi_series": "KXLALIGA2BTTS",
+   "polymarket_event_slug_regex": "^es2-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). La Liga 2."
+  },
+  {
+   "kalshi_series": "KXKLEAGUEBTTS",
+   "polymarket_event_slug_regex": "^kor-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). K League 1."
+  },
+  {
+   "kalshi_series": "KXLIGAMX1HBTTS",
+   "polymarket_event_slug_regex": "^mex-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: first half incl. first-half stoppage time (Liga MX)."
+  },
+  {
+   "kalshi_series": "KXUEFANLBTTS",
+   "polymarket_event_slug_regex": "^unl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). UEFA Nations League.",
+   "caveat": "Group-stage matches only: knockout ties can go to extra time, which Kalshi excludes but Polymarket 'during the game' may include. Re-read before knockouts.",
+   "review_by": "2026-11-30"
+  },
+  {
+   "kalshi_series": "KXUEFANL1HBTTS",
+   "polymarket_event_slug_regex": "^unl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: first half incl. stoppage (UEFA Nations League).",
+   "caveat": "Group-stage matches only: knockout ties can go to extra time, which Kalshi excludes but Polymarket 'during the game' may include. Re-read before knockouts.",
+   "review_by": "2026-11-30"
+  },
+  {
+   "kalshi_series": "KXUEFANLSCORE",
+   "polymarket_event_slug_regex": "^unl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: exact score after 90 min + stoppage (UEFA NL). Signature gate checks score orientation.",
+   "caveat": "Group-stage matches only: knockout ties can go to extra time, which Kalshi excludes but Polymarket 'during the game' may include. Re-read before knockouts.",
+   "review_by": "2026-11-30"
+  },
+  {
+   "kalshi_series": "KXCONCACAFNLBTTS",
+   "polymarket_event_slug_regex": "^conl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Concacaf Nations League.",
+   "caveat": "Group-stage matches only: knockout ties can go to extra time, which Kalshi excludes but Polymarket 'during the game' may include. Re-read before knockouts.",
+   "review_by": "2026-11-30"
+  },
+  {
+   "kalshi_series": "KXMLBEXTRAS",
+   "polymarket_event_slug_regex": "^mlb-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-24",
+   "note": "Both: at least one extra inning played in the scheduled game (signature gate checks game date)."
+  },
+  {
+   "kalshi_series": "KXALBUMRELEASE",
+   "polymarket_event_slug_regex": "^which-artists-will-release-new-albums-in-2026$",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Kalshi: any new original material (singles/EPs) released during 2026. Polymarket: a mostly-new ALBUM released between market creation and Dec 31. Taylor Swift: Kalshi 98c vs Polymarket 55c."
+  },
+  {
+   "kalshi_series": "KXHURPATHHAWAII",
+   "polymarket_event_slug_regex": "^will-a-hurricane-make-landfall-in-hawaii-before-2027",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Kalshi: landfall during the 2026 hurricane season (ends Nov 30). Polymarket: market creation to Dec 31 2026. The board's basket bought YES on the narrower window."
+  },
+  {
+   "kalshi_series": "KXCRYPTOCAPGAIN",
+   "polymarket_event_slug_regex": "^trump-eliminates-capital-gains-tax-on-crypto",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Kalshi requires a LAW; Polymarket also accepts executive action."
+  },
+  {
+   "kalshi_series": "KXSPANISHPM",
+   "polymarket_event_slug_regex": "^next-prime-minister-of-spain",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Kalshi: PM formed after the next general election (by Aug 22 2028). Polymarket: the next PM to take office by Mar 31 2028, election or not."
+  },
+  {
+   "kalshi_series": "KXLEAVEOPEC",
+   "polymarket_event_slug_regex": "^will-another-country-leave-opec-in-2026$",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Polymarket excludes the UAE's April 2026 exit and counts from market creation; Kalshi counts any announcement before Jan 1 2027."
+  },
+  {
+   "kalshi_series": "KXRECOGSOMALI",
+   "polymarket_event_slug_regex": "^will-trump-recognize-somaliland-before-2027$",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Kalshi counts an embassy / accepting an ambassador / State Dept listing; Polymarket requires formal recognition only."
+  },
+  {
+   "kalshi_series": "KXRECOGPALESTINE",
+   "polymarket_event_slug_regex": "^which-countries-will-recognize-palestine-before-2027$",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Kalshi's list of qualifying acts (ambassador-level relations, embassy) is broader than Polymarket's 'formal recognition only; intentions don't count'."
+  },
+  {
+   "kalshi_series": "KXNOBELPEACE",
+   "polymarket_event_slug_regex": "^nobel-peace-prize-winner-2026",
+   "status": "rejected",
+   "rules_read": "2026-09-24",
+   "note": "Polymarket collapses a JOINT prize to a single winner and has special clauses for Trump/Zelenskyy/Netanyahu/Putin/Musk; joint prizes are common."
+  }
+ ]
+}

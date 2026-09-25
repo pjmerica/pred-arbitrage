@@ -306,12 +306,27 @@ def parse_market(event, market):
     }
 
 
+def fetch_series_fees():
+    """{series_ticker: (fee_type, fee_multiplier)} — one call returns all
+    ~14k series (verified 2026-09-24). Feeds utils/fees.py; on failure the
+    scanner falls back to the flat per-leg fee."""
+    try:
+        data = get("/series")
+    except Exception as e:
+        print(f"  WARN: series fee fetch failed ({e}); flat fees will be used")
+        return {}
+    return {s.get("ticker"): (s.get("fee_type"), s.get("fee_multiplier"))
+            for s in data.get("series", []) if s.get("ticker")}
+
+
 def run():
     RAW.mkdir(parents=True, exist_ok=True)
 
     print("Fetching all Kalshi open events via trade-api/v2...")
     events = fetch_all_events_with_markets()
     print(f"  Total events: {len(events)}")
+    series_fees = fetch_series_fees()
+    print(f"  Series fee schedules: {len(series_fees)}")
 
     rows = []
     seen_tickers = set()
@@ -332,6 +347,8 @@ def run():
             continue
         for market in event.get("markets") or []:
             row = parse_market(event, market)
+            ft, fm = series_fees.get(row.get("series_ticker"), (None, None))
+            row["fee_type"], row["fee_multiplier"] = ft, fm
             # Drop already-closed markets.
             cd = (row.get("close_date") or "")[:10]
             if cd and re.match(r"^\d{4}-\d{2}-\d{2}$", cd) and cd < today_iso:

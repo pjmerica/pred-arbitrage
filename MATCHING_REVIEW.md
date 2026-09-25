@@ -30,6 +30,40 @@
 > - Finalist/semifinalist placement added, after new DWTS "Finalists" markets appeared.
 > - polling-agg-2026 got the same fixes: its 3 live "guaranteed" arbs (56–81%) were margin buckets. See its CHANGELOG.
 >
+> **Fifth pass (2026-09-24/25): every board arb verified, real fees, series map.**
+>
+> *Per-arb verification.* Live books plus both rules texts, read side by side:
+>
+> | Pair | Verdict |
+> |---|---|
+> | BNB <$500, BTC <$55k | Real. The basket takes the safe direction (Polymarket's window starts earlier, and it resolves on any Binance wick, so it is the easier trigger). BNB capacity is about 5 contracts. |
+> | Bad Bunny Google Top-5, French ballot ×5 | Same rules on both sides. Real, small (+4–6¢ gross). |
+> | Hawaii hurricane | **Not a hedge.** Kalshi counts the 2026 season (ends Nov 30); Polymarket counts through Dec 31. The basket bought YES on the narrower window. New safeguard below. |
+>
+> *New safeguards.*
+> - **`utils/rules_window.py`:** parses each leg's resolution window from its rules text. A basket must buy YES on the side whose window contains the other's (`window_mismatch`: guaranteed → unverified).
+> - **`data/series_map.json`:** 52 hand-reviewed Kalshi-series ↔ Polymarket-event families, each read in full on 2026-09-24.
+>   - **44 approved.** These may now be "guaranteed". Tie-rule and deadline caveats are recorded per family; the Nations League entries lapse on 2026-11-30, before knockout matches.
+>   - **8 rejected, dropped with the reason logged:**
+>     - album release (definition and window);
+>     - Hawaii hurricane (window);
+>     - crypto capital-gains (law vs executive action);
+>     - Spain PM (post-election vs any next PM);
+>     - OPEC exit (UAE exclusion);
+>     - Somaliland and Palestine recognition (qualifying acts differ);
+>     - Nobel Peace (joint prize collapsed to one winner, special clauses).
+>   - **Unreviewed families** stay unverified and are listed in `data/processed/series_review.csv`, which CI commits each run. To extend the map, read both rules in full and add an entry with a note.
+>
+> *Real fees.* `utils/fees.py` uses each platform's published taker formula, verified 2026-09-24, plus a 0.5¢ per-basket safety margin. Unknown parameters fall back to the flat 2% / 12%.
+>
+> | Platform | Taker fee | Where the parameters come from |
+> |---|---|---|
+> | Kalshi | 0.07 × multiplier × C × P(1−P), rounded up to the cent | `fee_multiplier` per series, from one `GET /series` call |
+> | Polymarket | rate × C × p(1−p) | each market's `feeSchedule.rate` when `feesEnabled` (crypto 0.07, sports/culture/weather 0.05, politics 0.04, geopolitics 0) |
+> | PredictIt | 10% of profit + 5% withdrawal | no API; modelled on the conservative side |
+>
+> Sources: docs.polymarket.com (fees) · docs.kalshi.com (fee rounding, series fee fields) · Kalshi fee schedule PDF (via search; kalshi.com rate-limits scripted fetches).
+>
 > Live verification with `tools/deep_check.py` on the top 50: 0 WRONG_PAIR. The crypto guaranteed arbs are real but small (about $5–$30 capacity at quoted prices), and they close within minutes.
 
 ---

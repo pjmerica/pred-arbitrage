@@ -204,6 +204,18 @@ def fetch_all_events():
     return all_events
 
 
+def _fee_rate(market):
+    if market.get("feesEnabled") is False:
+        return 0.0
+    sched = market.get("feeSchedule")
+    if isinstance(sched, dict) and sched.get("rate") is not None:
+        try:
+            return float(sched["rate"])
+        except (TypeError, ValueError):
+            return None
+    return None
+
+
 def parse_market(event, market):
     outcomes = market.get("outcomes", "[]")
     prices   = market.get("outcomePrices", "[]")
@@ -347,6 +359,9 @@ def parse_market(event, market):
         "liquidity": (market.get("liquidityNum") if market is not event
                       else event.get("liquidity")) or 0,
         "event_liquidity": event.get("liquidity"),
+        # Taker fee rate for utils/fees.py (fee = rate·p·(1−p) per share);
+        # 0 when fees are disabled, blank when the API omits the schedule.
+        "fee_rate": _fee_rate(market),
         "volume": market.get("volume"),
         "event_slug": event_slug,
         "market_slug": market_slug,

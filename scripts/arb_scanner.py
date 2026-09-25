@@ -27,6 +27,11 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).parent.parent
 PROCESSED = ROOT / "data" / "processed"
 
+import sys as _sys_fee
+_sys_fee.path.insert(0, str(ROOT))
+from utils.fees import (leg_fee, kalshi_spec, polymarket_spec, predictit_spec,
+                        FEE_SAFETY_MARGIN)
+
 FEES = {
     # Conservative round-trip fee approximation per platform. Kept in
     # lockstep with polling-agg's FEES dict.
@@ -47,6 +52,10 @@ FEES = {
 # as 'unverified' — math kept, but never labelled locked profit.
 MAX_PLAUSIBLE_RETURN_PCT = 15.0
 
+# Minimum return on capital (after real fees + margin) to call a basket
+# guaranteed. Smaller baskets are real but not worth the capital lock-up.
+MIN_GUARANTEED_RETURN = 0.0025
+
 # Match types whose pairing is established by structured keys (asset +
 # strike + window, tournament + contestant, race + party/person), not by
 # title similarity. Only these can be labelled 'guaranteed'.
@@ -61,7 +70,8 @@ VERIFIED_MATCH_TYPES = {
 
 def compute_arb(prob_a, prob_b, fee_a, fee_b,
                 bid_a=None, ask_a=None, bid_b=None, ask_b=None,
-                no_bid_a=None, no_ask_a=None, no_bid_b=None, no_ask_b=None):
+                no_bid_a=None, no_ask_a=None, no_bid_b=None, no_ask_b=None,
+                leg_fees=None):
     """
     Returns arb type, net gap, guaranteed return, and stake ratios.
 
@@ -98,6 +108,12 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
     accurate but at least gives SOMETHING. The `arb_uses_live_book`
     flag in the output dict tells the dashboard whether the numbers
     are real or estimated.
+
+    Fees: with `leg_fees=(plat_a, spec_a, plat_b, spec_b)` each leg pays
+    its platform's real per-contract taker fee AT THE PRICE IT TRADES
+    (utils/fees.py: Kalshi 0.07·M·p(1−p), Polymarket rate·p(1−p),
+    PredictIt 10% of profit + 5% withdrawal) plus FEE_SAFETY_MARGIN per
+    basket. Without it, the legacy flat fee_a + fee_b is used.
 
     Guaranteed arb structures we try:
       Direction 1: Buy YES on A + Buy NO on B → cost = ask_a + no_ask_b
@@ -202,13 +218,24 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
             any_direction_real = True
         cost = pay_yes + pay_no
         gross = 1.0 - cost
-        net = gross - fee_a - fee_b
+        if leg_fees is not None:
+            pl_a, sp_a, pl_b, sp_b = leg_fees
+            (y_pl, y_sp), (n_pl, n_sp) = (((pl_a, sp_a), (pl_b, sp_b)) if lab_yes == "{pa}"
+                                          else ((pl_b, sp_b), (pl_a, sp_a)))
+            fees = leg_fee(y_pl, y_sp, pay_yes) + leg_fee(n_pl, n_sp, pay_no) + FEE_SAFETY_MARGIN
+        else:
+            fees = fee_a + fee_b
+        net = gross - fees
         if gross > 0:
             if best_pre_fee is None or gross > best_pre_fee["gross"]:
                 best_pre_fee = {"gross": gross, "net": net, "pay_yes": pay_yes,
                                 "pay_no": pay_no, "lab_yes": lab_yes, "lab_no": lab_no,
                                 "is_real": is_real}
-        if net > 0:
+        # Floor (2026-09-25): with real fees many baskets clear by a hair
+        # (0.06% on capital locked until 2027). Below MIN_GUARANTEED_RETURN
+        # they're reported as pre-fee, not 'guaranteed' — same floor as
+        # polling-agg's MIN_NET_RETURN.
+        if net > 0 and net / cost >= MIN_GUARANTEED_RETURN:
             if best_post_fee is None or net > best_post_fee["net"]:
                 best_post_fee = {"net": net, "pay_yes": pay_yes, "pay_no": pay_no,
                                  "lab_yes": lab_yes, "lab_no": lab_no, "is_real": is_real}
@@ -392,6 +419,28 @@ def run():
                     )
         except Exception as e:
             print(f"  WARN: predictit quote lookup failed: {e}")
+
+    # Real fee parameters per market (2026-09-24, utils/fees.py). Missing
+    # columns (CSV scraped before this change) -> flat fallback fee.
+    fee_spec_lookup = {}
+    try:
+        _k = pd.read_csv(ROOT / "data" / "raw" / "kalshi_markets.csv",
+                         usecols=lambda c: c in ("ticker", "fee_multiplier"))
+        if "fee_multiplier" in _k.columns:
+            for t_, m_ in zip(_k["ticker"], _k["fee_multiplier"]):
+                fee_spec_lookup[("kalshi", str(t_))] = kalshi_spec(m_)
+        _p = pd.read_csv(ROOT / "data" / "raw" / "polymarket_markets.csv", dtype={"yes_token_id": str},
+                         usecols=lambda c: c in ("yes_token_id", "fee_rate"))
+        if "fee_rate" in _p.columns:
+            for t_, r_ in zip(_p["yes_token_id"], _p["fee_rate"]):
+                fee_spec_lookup[("polymarket", str(t_))] = polymarket_spec(r_)
+    except Exception as e:
+        print(f"  WARN: fee lookup failed ({e}); using flat fallback fees")
+
+    def _fee_spec(platform, market_id):
+        if platform == "predictit":
+            return predictit_spec()
+        return fee_spec_lookup.get((platform, str(market_id)))
 
     kalshi_no_lookup = {}
     kalshi_csv = ROOT / "data" / "raw" / "kalshi_markets.csv"
@@ -707,7 +756,14 @@ def run():
                 bid_b=lb_bid, ask_b=lb_ask,
                 no_bid_a=no_a_bid, no_ask_a=no_a_ask,
                 no_bid_b=no_b_bid, no_ask_b=no_b_ask,
+                leg_fees=(row.get("platform_a"), _fee_spec(row.get("platform_a"), row.get("market_id_a")),
+                          row.get("platform_b"), _fee_spec(row.get("platform_b"), row.get("market_id_b"))),
             )
+            # 'real' = both legs priced with their platform's published fee
+            # formula; 'partial-flat' = at least one leg fell back to FLAT_FALLBACK.
+            arb["fee_model"] = "real" if all(
+                _fee_spec(row.get(f"platform_{s_}"), row.get(f"market_id_{s_}")) is not None
+                for s_ in "ab") else "partial-flat"
             arb["action"] = arb["action"].replace("{pa}", row.get("platform_a", "").title()) \
                                           .replace("{pb}", row.get("platform_b", "").title())
             for k, v in arb.items():
@@ -902,6 +958,89 @@ def run():
         result.loc[risky_direction, "suspicion_reasons"] = result.loc[risky_direction, "suspicion_reasons"].apply(
             lambda rs: list(rs) + ["basis_risk_direction"])
 
+    # Curated series map (2026-09-24, data/series_map.json): a fuzzy
+    # Kalshi<->Polymarket pair whose FAMILY (Kalshi series + Polymarket event
+    # slug pattern) was reviewed by reading both rules texts is 'approved'
+    # (may be guaranteed) or 'rejected' (dropped). Unreviewed families stay
+    # unverified and go to data/processed/series_review.csv.
+    from utils.series_map import load as _load_map, status as _map_status, slug_family as _slug_family
+    _fams = _load_map()
+    try:
+        _ks = pd.read_csv(ROOT / "data" / "raw" / "kalshi_markets.csv", dtype=str,
+                          usecols=["ticker", "series_ticker"])
+        _k_series = dict(zip(_ks["ticker"], _ks["series_ticker"]))
+        _ps = pd.read_csv(ROOT / "data" / "raw" / "polymarket_markets.csv", dtype=str,
+                          usecols=["yes_token_id", "event_slug"])
+        _pm_slug = dict(zip(_ps["yes_token_id"], _ps["event_slug"]))
+    except Exception as e:
+        print(f"  WARN: series-map lookups failed ({e}); fuzzy pairs stay unverified")
+        _k_series, _pm_slug = {}, {}
+    result["series_status"] = None
+    _review = []
+    _kp = ((result["match_type"] == "fuzzy") & (result["platform_a"] == "kalshi")
+           & (result["platform_b"] == "polymarket"))
+    for idx in result.index[_kp]:
+        ser = _k_series.get(str(result.at[idx, "market_id_a"]))
+        slug = _pm_slug.get(str(result.at[idx, "market_id_b"]))
+        st, _e = _map_status(_fams, ser, slug)
+        result.at[idx, "series_status"] = st
+        if st == "unreviewed":
+            _review.append({"kalshi_series": ser, "polymarket_family": _slug_family(slug),
+                            "arb_type": result.at[idx, "arb_type"],
+                            "return_pct": result.at[idx, "guaranteed_return_pct"],
+                            "question_a": result.at[idx, "question_a"],
+                            "question_b": result.at[idx, "question_b"],
+                            "url_a": result.at[idx, "url_a"], "url_b": result.at[idx, "url_b"]})
+    _rej = result["series_status"] == "rejected"
+    if _rej.any():
+        print(f"Dropped {int(_rej.sum())} pairs from REJECTED series families (data/series_map.json):")
+        for _, d in result[_rej].iterrows():
+            print(f"  - {str(d.get('question_a'))[:60]!r} <-> {str(d.get('question_b'))[:60]!r}")
+        result = result[~_rej].copy()
+    if _review:
+        rv = pd.DataFrame(_review)
+        grp = (rv.groupby(["kalshi_series", "polymarket_family"], dropna=False)
+                 .agg(pairs=("question_a", "size"),
+                      baskets=("arb_type", lambda s: int(s.isin(["guaranteed", "unverified"]).sum())),
+                      best_return_pct=("return_pct", "max"),
+                      example_a=("question_a", "first"), example_b=("question_b", "first"),
+                      url_a=("url_a", "first"), url_b=("url_b", "first"))
+                 .reset_index().sort_values(["baskets", "pairs"], ascending=False))
+        grp.to_csv(PROCESSED / "series_review.csv", index=False)
+        print(f"Review queue: {len(grp)} unreviewed series families -> data/processed/series_review.csv")
+
+    # Window containment (2026-09-24): a basket is a hedge only if the YES
+    # leg's resolution window contains the NO leg's. Kalshi "Hawaii
+    # hurricane landfall" counts the 2026 season (ends Nov 30), Polymarket
+    # through Dec 31 — the basket bought YES on Kalshi, which loses BOTH
+    # legs on a December landfall. Rules text is fetched (7-day cache) only
+    # for rows that would show a basket.
+    basket_rows = result["arb_type"].isin(["guaranteed", "unverified"]) & result["yes_leg"].isin(["a", "b"])
+    window_bad = pd.Series(False, index=result.index)
+    if basket_rows.any():
+        try:
+            from scripts import scrutiny as _scr
+            from utils.rules_window import yes_window_contains_no
+        except ImportError:
+            import sys as _s2
+            _s2.path.insert(0, str(ROOT))
+            from scripts import scrutiny as _scr
+            from utils.rules_window import yes_window_contains_no
+        _cache = _scr._load_cache()
+        for idx in result.index[basket_rows]:
+            row = result.loc[idx]
+            ys = row["yes_leg"]; ns = "b" if ys == "a" else "a"
+            y_txt = _scr.get_rules(row[f"platform_{ys}"], row[f"market_id_{ys}"], _cache)
+            n_txt = _scr.get_rules(row[f"platform_{ns}"], row[f"market_id_{ns}"], _cache)
+            ok, why = yes_window_contains_no(y_txt, n_txt)
+            if not ok:
+                window_bad.at[idx] = True
+                print(f"  window mismatch: {str(row.get('question_a'))[:60]!r} — {why}")
+        _scr._save_cache(_cache)
+        result.loc[window_bad, "suspicion_reasons"] = result.loc[window_bad, "suspicion_reasons"].apply(
+            lambda rs: list(rs) + ["window_mismatch"])
+        result.loc[window_bad, "suspicious"] = True
+
     implausible = (result["arb_type"] == "guaranteed") & (
         pd.to_numeric(result["guaranteed_return_pct"], errors="coerce") > MAX_PLAUSIBLE_RETURN_PCT)
     if implausible.any():
@@ -909,8 +1048,10 @@ def run():
             lambda rs: list(rs) + ["implausible_return"])
         result.loc[implausible, "suspicious"] = True
     unverified = (((result["arb_type"] == "guaranteed")
-                   & ~result["match_type"].isin(VERIFIED_MATCH_TYPES))
+                   & ~result["match_type"].isin(VERIFIED_MATCH_TYPES)
+                   & (result["series_status"] != "approved"))
                   | implausible
+                  | ((result["arb_type"] == "guaranteed") & window_bad)
                   | ((result["arb_type"] == "guaranteed") & one_sided_settle)
                   | ((result["arb_type"] == "guaranteed") & risky_direction)
                   # rules text looked different (scrutiny now warns, not drops)

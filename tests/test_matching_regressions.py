@@ -259,3 +259,101 @@ def test_election_fallback_stakes_hedge():
 ])
 def test_bound_or_above_vs_exact(a, b, same):
     assert (incompatibility(a, b) is None) is same
+
+
+# ── resolution-window containment (2026-09-24) ─────────────────────────────
+
+from utils.rules_window import window, yes_window_contains_no
+
+KALSHI_HAWAII = "If a 74 mph or higher hurricane makes landfall in Hawaii during the 2026 hurricane season, then the market resolves to Yes."
+POLY_HAWAII = ("This market will resolve to \"Yes\" if any storm makes landfall in the State of Hawaii at Category 1 "
+               "strength or higher ... between market creation and December 31, 2026, 11:59:59 PM ET.")
+KALSHI_BTC = "If the Bitcoin spot price according to the CF Bitcoin Real-Time Index is below $55000.00 starting Feb 5, 2026 and before Jan 1, 2027 at 12:00am ET, then the market resolves to Yes."
+POLY_BTC = ("This market will immediately resolve to \"Yes\" if any Binance 1 minute candle for Bitcoin (BTC/USDT) "
+            "between November 24, 2025, 14:00 and December 31, 2026, 23:59 in the ET timezone has a final \"Low\" price ...")
+
+
+def test_window_parse():
+    import datetime as dt
+    assert window(KALSHI_HAWAII) == (None, dt.date(2026, 11, 30))
+    assert window(POLY_BTC) == (dt.date(2025, 11, 24), dt.date(2026, 12, 31))
+    assert window(KALSHI_BTC) == (dt.date(2026, 2, 5), dt.date(2027, 1, 1))
+
+
+def test_yes_on_narrower_window_is_not_a_hedge():
+    assert yes_window_contains_no(KALSHI_HAWAII, POLY_HAWAII)[0] is False   # YES Kalshi (season) + NO Poly
+    assert yes_window_contains_no(POLY_HAWAII, KALSHI_HAWAII)[0] is True
+
+
+def test_yes_on_wider_window_is_fine():
+    assert yes_window_contains_no(POLY_BTC, KALSHI_BTC)[0] is True           # the board's direction
+    assert yes_window_contains_no(KALSHI_BTC, POLY_BTC)[0] is False          # starts later
+
+
+# ── real fee formulas (2026-09-24) ─────────────────────────────────────────
+
+from utils.fees import leg_fee, kalshi_spec, polymarket_spec, predictit_spec, FEE_SAFETY_MARGIN
+
+
+def test_fee_formulas_match_published_examples():
+    # Polymarket docs: 100 crypto shares at $0.50 -> $1.75
+    assert abs(100 * leg_fee("polymarket", polymarket_spec(0.07), 0.50) - 1.75) < 1e-9
+    # Kalshi: 0.07 x C x P x (1-P); at 50c = 1.75c per contract
+    assert abs(leg_fee("kalshi", kalshi_spec(1), 0.50) - 0.0175) < 1e-9
+    assert leg_fee("kalshi", kalshi_spec(0), 0.50) == 0            # fee-free series
+    assert abs(leg_fee("kalshi", kalshi_spec(0.5), 0.50) - 0.00875) < 1e-9
+    assert leg_fee("polymarket", polymarket_spec(0.0), 0.3) == 0   # feesEnabled False
+    assert abs(leg_fee("predictit", predictit_spec(), 0.40) - (0.10 * 0.60 + 0.05)) < 1e-9
+    # unknown -> conservative flat fallback
+    assert leg_fee("kalshi", None, 0.5) == 0.02
+
+
+def test_compute_arb_uses_leg_fees():
+    # BTC <55k board case: YES Polymarket 0.11 + NO Kalshi 0.86 (gross 3c).
+    kw = dict(bid_a=0.13, ask_a=0.15, bid_b=0.10, ask_b=0.11,
+              no_bid_a=0.85, no_ask_a=0.86, no_bid_b=0.89, no_ask_b=0.90)
+    flat = compute_arb(0.14, 0.105, 0.02, 0.02, **kw)
+    real = compute_arb(0.14, 0.105, 0.02, 0.02, **kw,
+                       leg_fees=("kalshi", kalshi_spec(1), "polymarket", polymarket_spec(0.07)))
+    assert flat["arb_type"] == "pre-fee"          # 3c gross < 4c flat fees
+    assert real["arb_type"] == "guaranteed" and real["yes_leg"] == "b"
+    fees = 0.07 * 0.86 * 0.14 + 0.07 * 0.11 * 0.89 + FEE_SAFETY_MARGIN
+    assert abs(real["guaranteed_return_pct"] - 100 * (0.03 - fees) / 0.97) < 0.01
+
+
+# ── curated series map (2026-09-24) ────────────────────────────────────────
+
+from utils.series_map import load as load_series_map, status as series_status, slug_family
+
+
+def test_series_map_statuses():
+    fams = load_series_map()
+    assert series_status(fams, "KXFRPRESBALLOT", "2027-french-presidential-election-who-will-be-on-the-ballot")[0] == "approved"
+    assert series_status(fams, "KXMLSBTTS", "mls-atl-nyc-2026-09-26-more-markets")[0] == "approved"
+    assert series_status(fams, "KXHURPATHHAWAII", "will-a-hurricane-make-landfall-in-hawaii-before-2027-20260721182828397")[0] == "rejected"
+    assert series_status(fams, "KXNOBELPEACE", "nobel-peace-prize-winner-2026-139")[0] == "rejected"
+    assert series_status(fams, "KXSOMETHINGNEW", "some-new-event")[0] == "unreviewed"
+    # wrong pairing inside an approved series is NOT approved
+    assert series_status(fams, "KXMLSBTTS", "which-artists-will-release-new-albums-in-2026")[0] == "unreviewed"
+
+
+def test_series_approval_lapses():
+    fams = load_series_map()
+    slug = "unl-tur-fra-2026-09-25-more-markets"
+    assert series_status(fams, "KXUEFANLBTTS", slug, today="2026-10-01")[0] == "approved"
+    assert series_status(fams, "KXUEFANLBTTS", slug, today="2026-12-15")[0] == "unreviewed"
+
+
+def test_slug_family():
+    assert slug_family("mls-atl-nyc-2026-09-26-more-markets") == "mls-*-<date>"
+    assert slug_family("big-brother-season-28-winner-20260708173711844") == "big-brother-season-28-winner"
+
+
+def test_tiny_baskets_are_not_guaranteed():
+    """Real fees let 0.06%-on-capital baskets through; below the 0.25%
+    floor they're pre-fee, not guaranteed (TN Senate 0.8c gross, 2026-09-25)."""
+    r = compute_arb(0.02, 0.03, 0.02, 0.02,
+                    bid_a=0.018, ask_a=0.019, bid_b=0.026, ask_b=0.027,
+                    no_bid_a=0.98, no_ask_a=0.982, no_bid_b=0.972, no_ask_b=0.973,
+                    leg_fees=("kalshi", kalshi_spec(1), "polymarket", polymarket_spec(0.04)))
+    assert r["arb_type"] == "pre-fee"

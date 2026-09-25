@@ -49,6 +49,7 @@ jobs:
             data/raw/orderbook_depth.csv \
             data/processed/house_incumbents.json \
             data/processed/election_pairs.csv \
+            data/processed/series_review.csv \
             docs/arb_data.js
           if git diff --cached --quiet; then
             echo "No changes."

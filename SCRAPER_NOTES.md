@@ -493,4 +493,10 @@ Suggested format for new entries:
 - **Kalshi correct-score titles are winner-first** ("Poland wins 2-0");
   **Polymarket's are fixture-order** ("Poland 0 - 2 Bosnia" is a Bosnia
   win).
+- **Fee schedules are in the APIs.**
+  - **Kalshi:** `GET /trade-api/v2/series` returns every series (~14k) with `fee_type` and `fee_multiplier`. On 2026-09-24: 14,176 quadratic×1, 159 quadratic_with_maker_fees×1, 18 ×0.5, 14 ×0 (fee-free). Event-level overrides exist (`Get Event Fee Changes`) and are not yet read.
+  - **Polymarket:** every gamma market carries `feesEnabled` and `feeSchedule` `{rate, exponent, takerOnly, rebateRate}`. Formula: fee = C × rate × p × (1−p), takers only.
+  - kalshi.com's fee-schedule PDF returns 429 to scripts, so use the docs/API.
+- **Rules windows differ even when titles match.** Seasonal markets such as Kalshi "during the 2026 hurricane season" end Nov 30. Polymarket usually counts "between market creation and <date>", while Kalshi counts "after issuance" or a stated start ("starting Feb 5, 2026").
+- **Tie rules differ.** Kalshi splits $1 between joint winners; Polymarket usually pays the first-listed or alphabetical name.
 

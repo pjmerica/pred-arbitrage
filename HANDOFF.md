@@ -29,7 +29,10 @@ section captures the differences and what's specific to this side.
 >   - the return is above 15% (`implausible_return`).
 > - **Stakes are proportional to price** (equal contracts on both legs). The old inverse-odds split was backwards. Return and profit are per $ staked.
 > - **Links:** Polymarket uses `/event/{event}/{market}` (`utils/links.py`). Kalshi uses `/markets/{series}/{event}`, from the API's `event_ticker`.
-> - **`tests/test_matching_regressions.py`** (65 cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
+> - **Fees are real per leg** (`utils/fees.py`, 2026-09-24): Kalshi 0.07·multiplier·P(1−P) (multiplier per series from `/series`), Polymarket rate·p(1−p) (rate per market from `feeSchedule`), PredictIt 10% of profit + 5% withdrawal, plus a 0.5¢ per-basket margin. Unknown parameters fall back to the flat 2% / 12%. `FEES` in `arb_scanner.py` now only feeds the display-level Net gap.
+> - **Window containment** (`utils/rules_window.py`): the basket must buy YES on the leg whose resolution window contains the other's (`window_mismatch`).
+> - **Series map** (`data/series_map.json`): hand-reviewed Kalshi series ↔ Polymarket event families. Approved families may be guaranteed, rejected ones are dropped, and unreviewed ones go to `data/processed/series_review.csv`. **To add a family, read both rules texts in full** and record the note and any caveat (ties, deadlines, extra time). Use `review_by` for approvals that should lapse.
+> - **`tests/test_matching_regressions.py`** (73+ cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
 
 ---
 
@@ -723,6 +726,11 @@ public volume field and the counterparty was often below $500.
   boilerplate makes identical questions score 5-13; it warns now.
 - **Label a crypto threshold basket guaranteed when it buys YES on
   Kalshi.** Kalshi = CF trimmed mean, Polymarket = any Binance wick.
+- **Approve a series family without reading BOTH rules texts in full.**
+  Titles matched on every rejected family (album, hurricane, OPEC,
+  Somaliland, Nobel...); only the fine print differed.
+- **Hard-code a flat fee back into the basket math.** Pass `leg_fees`
+  to `compute_arb` (utils/fees.py); flat fees stay for Net gap only.
 - **Revert Kalshi to v1.**
 - **Loosen the matcher guards** without verifying with the deep audit
   scripts (see "When something looks fishy" below). Each guard exists
