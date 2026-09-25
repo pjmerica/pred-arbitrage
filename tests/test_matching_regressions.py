@@ -369,3 +369,38 @@ def test_series_map_ignores_trailing_slug_ids():
                       ("KXNETFLIXRANKSHOW", "what-will-be-the-top-us-netflix-show-this-week-20260929"),
                       ("KXESTPRES", "next-president-of-estonia-20260727225811942")):
         assert series_status(fams, ser, slug)[0] == "approved", slug
+
+
+# 2026-09-25: year-end windows get their own bucket, separate from a single
+# month. "in December" (December only) must NOT key-match "in 2026" (full
+# year): a strike touched in October wins the full-year YES and can lose the
+# December-only leg, so both legs lose. Month names match on word boundaries.
+from scripts.matcher import _extract_threshold_key
+
+
+@pytest.mark.parametrize("title", [
+    "Will Gold (GC) hit (HIGH) $5,000 by end of December?",
+    "Will Bitcoin reach $200,000 by December 31, 2026?",
+    "Will Bitcoin reach $200,000 before 2027?",
+    "Will Bitcoin reach $200,000 this year?",
+])
+def test_threshold_year_end_bucket(title):
+    key = _extract_threshold_key(title, "polymarket")
+    assert key is not None and key[3] == "year" and key[4] is None
+
+
+def test_threshold_kalshi_year_bucket():
+    key = _extract_threshold_key("How high will Bitcoin get in 2026? - Above $200,000", "kalshi")
+    assert key is not None and key[3] == "year"
+
+
+def test_threshold_december_only_is_not_year():
+    k_month = _extract_threshold_key("Will Bitcoin reach $200,000 in December?", "polymarket")
+    k_year = _extract_threshold_key("How high will Bitcoin get in 2026? - Above $200,000", "kalshi")
+    assert k_month[3] == "dec" and k_year[3] == "year"
+    assert k_month[:4] != k_year[:4]
+
+
+def test_threshold_month_word_boundary():
+    # "market" is not March; no month and no year phrase -> no key.
+    assert _extract_threshold_key("Will the Bitcoin market reach $200,000?", "polymarket") is None

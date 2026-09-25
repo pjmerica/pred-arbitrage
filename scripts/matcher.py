@@ -1071,23 +1071,20 @@ def _extract_threshold_key(text: str, src: str):
         strike = float(m.group(1).replace(',', ''))
     except ValueError:
         return None
-    # Month bucket. Try full names first then 3-letter abbreviations.
-    month = None
-    for mo in _MONTHS_FULL:
-        if mo in t:
-            month = mo[:3]
-            break
-        if mo[:3] in t:
-            month = mo[:3]
-            break
-    # Year-end synonyms ("in 2026", "this year", "by December 31, 2026")
-    # all bucket to 'dec' so they cross-match.
-    if not month and (
-        'in 2026' in t or 'in 2027' in t or 'this year' in t
-        or 'by 2026' in t or 'by 2027' in t
-        or 'december 31, 2026' in t or 'december 31, 2027' in t
-    ):
-        month = 'dec'
+    # Window bucket (2026-09-25). Year-to-date / year-end windows ("in 2026",
+    # "by December 31, 2026", "by end of December", "before 2027", "this
+    # year") get their OWN bucket 'year'. They used to share 'dec' with a
+    # December-ONLY market ("reach $X in December?"), so a full-year Kalshi
+    # market could pair with a December-only Polymarket one: a strike hit
+    # in October wins Kalshi YES and can lose the December leg (both legs
+    # lose). Month names now match on word boundaries — the old substring
+    # test counted "market" as March and "decline" as December.
+    if re.search(r'\b(?:dec(?:ember)?\.?\s+31|end of dec(?:ember)?|this year|(?:in|by|before) 20\d\d)\b', t):
+        month = 'year'
+    else:
+        m_mo = re.search(r'\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|'
+                         r'aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b\.?', t)
+        month = m_mo.group(1)[:3] if m_mo else None
     if not month:
         return None
     # Day-of-month anchor (2026-07-04): month-only matching paired Kalshi
@@ -1101,8 +1098,8 @@ def _extract_threshold_key(text: str, src: str):
     m_day = re.search(r'\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\b', t)
     if m_day:
         day = int(m_day.group(2))
-        if month == 'dec' and day == 31:
-            day = None
+        if month == 'year':
+            day = None   # "December 31, 2026" is the year-end, not a daily market
     # Touch vs level semantics (2026-07-04): Kalshi "BTC price on Jul 4
     # at 5pm — $63,750 or above" settles on the price AT a timestamp;
     # Polymarket "reach $64,000 on July 4" settles if the price TOUCHES
