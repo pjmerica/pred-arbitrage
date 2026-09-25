@@ -21,6 +21,7 @@ Output: docs/arb_data.js
 import pandas as pd
 import numpy as np
 import json
+import os as _os
 import re
 from pathlib import Path
 from datetime import datetime, timezone
@@ -710,12 +711,20 @@ def run():
             no_a_ask = _live(row, "depth_no_a", "best_ask")
             no_b_bid = _live(row, "depth_no_b", "best_bid")
             no_b_ask = _live(row, "depth_no_b", "best_ask")
-            if no_a_bid is None and no_a_ask is None and row.get("platform_a") == "kalshi":
+            # CSV fallback for Kalshi NO only when (a) no live book was
+            # fetched at all for that leg and (b) the CSV is from THIS run.
+            # If the live book loaded but has no YES bids, there is no NO
+            # ask to buy (Kalshi NO fills against YES bids) — don't invent
+            # one from the CSV. In re-price mode the CSV can be 26h old.
+            _csv_ok = _os.environ.get("PRED_ARB_REPRICE") != "1"
+            if (_csv_ok and la_bid is None and la_ask is None
+                    and no_a_bid is None and no_a_ask is None and row.get("platform_a") == "kalshi"):
                 k_no = kalshi_no_lookup.get(str(row.get("market_id_a", "")))
                 if k_no:
                     no_a_bid = k_no[0] if k_no[0] and 0 < k_no[0] < 1 else None
                     no_a_ask = k_no[1] if k_no[1] and 0 < k_no[1] < 1 else None
-            if no_b_bid is None and no_b_ask is None and row.get("platform_b") == "kalshi":
+            if (_csv_ok and lb_bid is None and lb_ask is None
+                    and no_b_bid is None and no_b_ask is None and row.get("platform_b") == "kalshi"):
                 k_no = kalshi_no_lookup.get(str(row.get("market_id_b", "")))
                 if k_no:
                     no_b_bid = k_no[0] if k_no[0] and 0 < k_no[0] < 1 else None
@@ -1125,6 +1134,18 @@ def run():
     dropped_past = before - len(result)
     if dropped_past:
         print(f"Dropped {dropped_past} pairs with settle_date in the past (today is {today_iso})")
+
+    # 'suspicious' (hidden by default on the dashboard) = the two legs may
+    # not be the same question. Liquidity notes (thin depth, wide spread)
+    # stay in suspicion_reasons for the ⚠ tooltip but don't hide a row: the
+    # real BNB <$500 basket (5.9%) was hidden by default for thin_depth
+    # alone (2026-09-25), and capacity is already shown on the row.
+    MISMATCH_REASONS = {"wide_gap", "settled_one_side", "window_mismatch",
+                        "implausible_return", "basis_risk_direction"}
+    if "suspicion_reasons" in result.columns:
+        result["suspicious"] = result["suspicion_reasons"].apply(
+            lambda rs: isinstance(rs, list) and any(
+                (x in MISMATCH_REASONS) or str(x).startswith("criteria_warn") for x in rs))
 
     # Sort: guaranteed first, then by settle_date asc (soonest), then raw_gap desc
     result["_is_guaranteed"] = (result["arb_type"] == "guaranteed").astype(int)
