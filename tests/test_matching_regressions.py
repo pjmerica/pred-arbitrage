@@ -497,3 +497,15 @@ def test_window_start_gap_only_matters_while_ahead():
     no = "resolves Yes if the price between September 1, 2026 and September 30, 2026 is ever below ..."
     assert yes_window_contains_no(yes, no, today=date(2026, 9, 25))[0]       # gap is past
     assert not yes_window_contains_no(yes, no, today=date(2026, 9, 10))[0]   # gap still ahead
+
+
+# 2026-09-25: one-word subjects (countries) must match too.
+@pytest.mark.parametrize("a, b, bad", [
+    ("Who will host the 2028 Copa America? — USA", "Will Peru host the 2028 Copa America?", True),
+    ("Who will host the 2028 Copa America? — USA", "Will the United States host the 2028 Copa America?", False),
+    ("Who will host the 2028 Copa America? — Peru", "Will Peru host the 2028 Copa America?", False),
+    ("Which party will win the 2026 election for governor of Georgia? — Democratic",
+     "Will the Democrats win the Georgia governor race in 2026?", False),
+])
+def test_single_word_subject(a, b, bad):
+    assert (incompatibility(a, b) is not None) == bad

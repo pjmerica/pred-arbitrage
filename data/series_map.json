@@ -566,6 +566,27 @@
    "status": "rejected",
    "rules_read": "2026-09-25",
    "note": "Polymarket also counts disgorgement and any amended/replacement arrangement; Kalshi only a fine or monetary penalty on the Dec 24, 2025 deal. Disgorgement alone: Polymarket YES, Kalshi NO."
+  },
+  {
+   "kalshi_series": "KXCOPAAMERICAHOST",
+   "polymarket_event_slug_regex": "^copa-america-2028-host$",
+   "status": "rejected",
+   "rules_read": "2026-09-25",
+   "note": "Kalshi: every announced host (incl. co-hosts) resolves Yes. Polymarket: only the CONMEBOL-designated PRIMARY host; co-hosting without a primary resolves Other. A non-primary co-host: Kalshi YES, Polymarket NO."
+  },
+  {
+   "kalshi_series": "KXARGNACBBTTS",
+   "polymarket_event_slug_regex": "^argpn-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Argentina Primera Nacional."
+  },
+  {
+   "kalshi_series": "KXINTLFRIENDLY1HBTTS",
+   "polymarket_event_slug_regex": "^fif-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-09-25",
+   "note": "Both: first half + first-half stoppage only. International friendlies (BTTS is symmetric, so listing order does not matter)."
   }
  ]
 }

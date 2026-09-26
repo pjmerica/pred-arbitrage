@@ -216,6 +216,40 @@ def person_mismatch(a, b) -> bool:
     return False
 
 
+# Single-word subjects (2026-09-25): Kalshi "Who will host the 2028 Copa
+# America? — USA" paired with Polymarket "Will Peru host the 2028 Copa
+# America?" (208% "return"). Aliases stay narrow: "america" would match
+# "Copa America".
+_SUBJECT_ALIASES = {
+    "usa": {"us", "u s", "united states", "usmnt", "uswnt"},
+    "us": {"usa", "united states"},
+    "uk": {"united kingdom", "britain", "british", "great britain"},
+    "uae": {"united arab emirates"},
+    "korea": {"south korea", "korea republic"},
+}
+_OUTCOME_WORDS = re.compile(r"(democrat|republican|gop|independent|yes$|no$|other|none|tie$|draw)")
+
+
+def single_subject_mismatch(a, b) -> bool:
+    """A one-word capitalised trailing subject ("— USA", "— Peru") must
+    appear (fuzzily, or via _SUBJECT_ALIASES) in the other title."""
+    for x, y in ((a, b), (b, a)):
+        subj = _subject(x)
+        if not subj or re.search(r"\d", subj) or not subj.strip()[:1].isupper():
+            continue
+        toks = [t for t in re.findall(r"[a-z]+", fold(subj)) if t not in _NAME_STOP]
+        if len(toks) != 1 or _OUTCOME_WORDS.match(toks[0]):
+            continue
+        tok, yf = toks[0], fold(y)
+        other = re.findall(r"[a-z]+", yf)
+        if tok in other or any(fuzz.ratio(tok, o) >= 85 for o in other if len(o) >= 3):
+            continue
+        if any(re.search(rf"\b{re.escape(al)}\b", yf) for al in _SUBJECT_ALIASES.get(tok, ())):
+            continue
+        return True
+    return False
+
+
 def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
     """First outcome field on which titles `a` and `b` disagree, else None."""
     # pandas hands missing dates over as NaN, which is truthy.
@@ -257,6 +291,8 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
         return "day vs window"
     if person_mismatch(a, b):
         return "person differs"
+    if single_subject_mismatch(a, b):
+        return "subject differs"
     fa, fb = first_scorer(a), first_scorer(b)
     if (fa is None) != (fb is None):
         return "first-to-score vs other market"
