@@ -50,13 +50,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # Explicit list of artifacts the cron is allowed to push back.
           # Anything else in data/ or docs/ stays untouched even if it's
-          # been modified by the pipeline. .gitignore already restricts
-          # data/raw/ to the four scraper CSVs, but the explicit list
+          # been modified by the pipeline. The full Kalshi/Polymarket scrapes
+          # are gitignored (2026-09-26); data/reprice/ carries the matched
+          # rows the 2-hourly re-price needs. The explicit list
           # here means a future "wrote junk under data/" wouldn't
           # accidentally ship.
           git add \
-            data/raw/kalshi_markets.csv \
-            data/raw/polymarket_markets.csv \
+            data/reprice/kalshi_markets.csv \
+            data/reprice/polymarket_markets.csv \
             data/raw/predictit_markets.csv \
             data/raw/orderbook_depth.csv \
             data/processed/house_incumbents.json \

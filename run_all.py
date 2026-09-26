@@ -41,6 +41,9 @@ steps = [
     ("Arb scanner (pass 1)",  [sys.executable, "scripts/arb_scanner.py"]),
     ("Fetch orderbook depth", [sys.executable, "scripts/fetch_depth.py"]),
     ("Arb scanner (pass 2)",  [sys.executable, "scripts/arb_scanner.py"]),
+    # Small committed copy of the rows the re-price needs (2026-09-26): the
+    # full Kalshi/Polymarket CSVs (~63 MB per run) are no longer committed.
+    ("Trim re-price inputs",  [sys.executable, "scripts/trim_reprice_inputs.py"]),
 ]
 
 REPRICE_STEPS = [
@@ -56,6 +59,17 @@ if "--reprice" in sys.argv:
     # Tells arb_scanner the Kalshi/Polymarket CSVs are the last FULL run's
     # (pair list + display prices); the basket math uses the live books.
     os.environ["PRED_ARB_REPRICE"] = "1"
+    # A fresh checkout has no full scrape (data/raw/*_markets.csv are not
+    # committed since 2026-09-26): restore the full run's trimmed copies.
+    import shutil
+    for name in ("kalshi_markets.csv", "polymarket_markets.csv"):
+        src, dst = ROOT / "data" / "reprice" / name, ROOT / "data" / "raw" / name
+        if not dst.exists():
+            if not src.exists():
+                sys.exit(f"--reprice needs data/reprice/{name} from the last full refresh")
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+            print(f"Restored {name} from data/reprice/ (last full refresh's matched rows)")
 
 for name, cmd in steps:
     print(f"\n{'='*60}\n{name}\n{'='*60}", flush=True)

@@ -4,8 +4,10 @@ data/raw/*
 # (changed 2026-06-21 — previously gitignored entirely, which meant the
 # local CSV could silently lag production by months because nothing
 # ever pulled it down).
-!data/raw/kalshi_markets.csv
-!data/raw/polymarket_markets.csv
+# 2026-09-26: the full Kalshi/Polymarket scrapes (~63 MB per run) are no
+# longer committed (repo pack had reached 666 MB; GitHub rejects files
+# >100 MB). The full refresh commits data/reprice/ instead: just the rows
+# the 2-hourly re-price needs (scripts/trim_reprice_inputs.py).
 !data/raw/predictit_markets.csv
 !data/raw/orderbook_depth.csv
 data/processed/*
