@@ -52,14 +52,30 @@ def window(text) -> tuple[date | None, date | None]:
     return start, end
 
 
-def yes_window_contains_no(yes_text, no_text, slack_days=1) -> tuple[bool, str]:
+def yes_window_contains_no(yes_text, no_text, slack_days=1,
+                           yes_end_fallback=None, no_end_fallback=None, today=None) -> tuple[bool, str]:
     """(ok, why). ok=False when the YES leg's window is provably narrower
-    than the NO leg's (the basket can lose both legs)."""
+    than the NO leg's (the basket can lose both legs).
+
+    *_end_fallback: a hard end date (a Kalshi market's close) used only when
+    that leg's rules text states none. The caller passes it for match types
+    that skip the human family review (2026-09-25: Kalshi "LA-05 Republican
+    nominee?" has no date and closes Nov 2027; Polymarket resolves "Other"
+    if no nominee by Nov 3, 2026, and the May 16 primary was still
+    unresolved in late September — YES Polymarket + NO Kalshi loses both
+    legs if the nominee is named after Nov 3)."""
     ys, ye = window(yes_text)
     ns, ne = window(no_text)
+    ye = ye or yes_end_fallback
+    ne = ne or no_end_fallback
     slack = timedelta(days=slack_days)
     if ye and ne and ye + slack < ne:
         return False, f"YES window ends {ye} before NO window ends {ne}"
-    if ys and ns and ys > ns + slack:
+    # A later YES start only matters while that gap is still ahead: once
+    # it's past, an event inside it would already have settled (or priced
+    # at ~0/100) the NO leg, which the settled-one-side / implausible-return
+    # checks catch. (2026-09-25: Polymarket "Will Bitcoin dip to $75,000 in
+    # September?" counts from its Sep 16 creation, Kalshi from Sep 1.)
+    if ys and ns and ys > ns + slack and ys > (today or date.today()):
         return False, f"YES window starts {ys} after NO window starts {ns}"
     return True, ""

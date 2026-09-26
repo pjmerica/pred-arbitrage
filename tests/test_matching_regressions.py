@@ -287,7 +287,11 @@ def test_yes_on_narrower_window_is_not_a_hedge():
 
 def test_yes_on_wider_window_is_fine():
     assert yes_window_contains_no(POLY_BTC, KALSHI_BTC)[0] is True           # the board's direction
-    assert yes_window_contains_no(KALSHI_BTC, POLY_BTC)[0] is False          # starts later
+    # Kalshi starts later (Feb 5, 2026): unsafe while that gap is ahead; once
+    # it's past, a dip inside it would already have resolved Polymarket YES.
+    import datetime as dt
+    assert yes_window_contains_no(KALSHI_BTC, POLY_BTC, today=dt.date(2026, 1, 15))[0] is False
+    assert yes_window_contains_no(KALSHI_BTC, POLY_BTC, today=dt.date(2026, 9, 25))[0] is True
 
 
 # ── real fee formulas (2026-09-24) ─────────────────────────────────────────
@@ -468,3 +472,28 @@ def test_party_win_west_virginia_is_one_state():
 ])
 def test_first_team_to_score(a, b, bad):
     assert (incompatibility(a, b) is not None) == bad
+
+
+# 2026-09-25: a leg whose rules state no end date (Kalshi "LA-05 Republican
+# nominee?") uses its hard close date when the caller passes one.
+def test_window_uses_close_date_fallback():
+    from datetime import date
+    from utils.rules_window import yes_window_contains_no
+    pm = ('This market will resolve according to the candidate who wins the nomination... '
+          'If no nominee is announced by November 3, 2026, 11:59PM ET, this market will resolve to "Other".')
+    k = "If Misti Cordell wins the nomination for the Republican Party to contest the 2026 LA-05 House seat, then the market resolves to Yes."
+    # Without a fallback the Kalshi end is unknown and nothing flags.
+    assert yes_window_contains_no(pm, k)[0]
+    # YES on the Nov 3, 2026 leg vs NO on a Kalshi leg open until Nov 2027: unsafe.
+    assert not yes_window_contains_no(pm, k, no_end_fallback=date(2027, 11, 3))[0]
+    # The other direction is safe.
+    assert yes_window_contains_no(k, pm, yes_end_fallback=date(2027, 11, 3))[0]
+
+
+def test_window_start_gap_only_matters_while_ahead():
+    from datetime import date
+    from utils.rules_window import yes_window_contains_no
+    yes = "resolves Yes if any 1 minute candle between September 16, 2026 and September 30, 2026 ..."
+    no = "resolves Yes if the price between September 1, 2026 and September 30, 2026 is ever below ..."
+    assert yes_window_contains_no(yes, no, today=date(2026, 9, 25))[0]       # gap is past
+    assert not yes_window_contains_no(yes, no, today=date(2026, 9, 10))[0]   # gap still ahead

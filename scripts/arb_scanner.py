@@ -871,9 +871,24 @@ def run():
         # Compute suspicion_reasons. >20pp gap, wide depth spread, thin
         # depth all warrant manual verification. (one_sided is no longer
         # a suspicion code — pairs that fail it are dropped above.)
+        def book_gap_pp(row):
+            """Distance between the two live YES books (0 when the bid-ask
+            ranges overlap), else None. raw_gap_pp uses each platform's
+            DISPLAY price, and Kalshi's is the last trade, which on thin
+            markets sits far from the book (2026-09-25: SOL <$50 last 80c,
+            book 3/22c vs Polymarket 5/7c; Tallahassee Ausley last 92c,
+            book 46/54c vs 50/51c) and hid same-question pairs as possible
+            mismatches."""
+            q = [row.get(f"depth_{s}_best_{k}") for s in "ab" for k in ("bid", "ask")]
+            if any(v is None or pd.isna(v) for v in q):
+                return None
+            bid_a, ask_a, bid_b, ask_b = q
+            return 100 * max(0.0, bid_a - ask_b, bid_b - ask_a)
+
         def reasons(row):
             rs = []
-            if (row.get("raw_gap_pp") or 0) > 20:
+            bg = book_gap_pp(row)
+            if (bg if bg is not None else (row.get("raw_gap_pp") or 0)) > 20:
                 rs.append("wide_gap")
             for side in ("a", "b"):
                 bb = row.get(f"depth_{side}_best_bid")
@@ -1066,12 +1081,37 @@ def run():
             from scripts import scrutiny as _scr
             from utils.rules_window import yes_window_contains_no
         _cache = _scr._load_cache()
+        # Kalshi close dates, used as a leg's window end when its rules text
+        # has none — only for structured match types that skip the family
+        # review (reviewed families record deadline caveats by hand).
+        from datetime import date as _date
+        try:
+            _kc = pd.read_csv(ROOT / "data" / "raw" / "kalshi_markets.csv", dtype=str,
+                              usecols=["ticker", "close_date"]).dropna()
+            _k_close = dict(zip(_kc["ticker"], _kc["close_date"]))
+        except Exception:
+            _k_close = {}
+
+        def _close_fallback(row, side):
+            if row.get("match_type") not in ("primary-nominee",) and \
+                    not str(row.get("match_type", "")).startswith("tournament"):
+                return None
+            if row.get(f"platform_{side}") != "kalshi":
+                return None
+            cd = _k_close.get(str(row.get(f"market_id_{side}")))
+            try:
+                return _date.fromisoformat(str(cd)[:10])
+            except ValueError:
+                return None
+
         for idx in result.index[basket_rows]:
             row = result.loc[idx]
             ys = row["yes_leg"]; ns = "b" if ys == "a" else "a"
             y_txt = _scr.get_rules(row[f"platform_{ys}"], row[f"market_id_{ys}"], _cache)
             n_txt = _scr.get_rules(row[f"platform_{ns}"], row[f"market_id_{ns}"], _cache)
-            ok, why = yes_window_contains_no(y_txt, n_txt)
+            ok, why = yes_window_contains_no(y_txt, n_txt,
+                                             yes_end_fallback=_close_fallback(row, ys),
+                                             no_end_fallback=_close_fallback(row, ns))
             if not ok:
                 window_bad.at[idx] = True
                 print(f"  window mismatch: {str(row.get('question_a'))[:60]!r} — {why}")
