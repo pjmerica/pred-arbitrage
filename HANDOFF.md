@@ -34,7 +34,18 @@ section captures the differences and what's specific to this side.
 > - **Series map** (`data/series_map.json`): hand-reviewed Kalshi series ↔ Polymarket event families. Approved families may be guaranteed, rejected ones are dropped, and unreviewed ones go to `data/processed/series_review.csv`. **To add a family, read both rules texts in full** and record the note and any caveat (ties, deadlines, extra time). Use `review_by` for approvals that should lapse.
 > - **Two cadences** (2026-09-25): the full refresh (`refresh.yml`, 00:30/12:30 UTC) scrapes everything and rebuilds pairs, then commits `matched_pairs.csv`. The **re-price** (`reprice.yml`, :50 on odd hours, `run_all.py --reprice`) re-fetches only the matched markets' order books plus PredictIt (~1,200 requests, ~6 min). Both share the `pred-arb-data` concurrency group. The dashboard shows both clocks.
 > - **`tools/dash_smoke.js`** runs the dashboard JS against the fresh data (every tab/filter/sort, via `tools/dash_exercise.js`) after the pipeline and BEFORE the commit step; a runtime exception fails the run so the live page is never broken by data.
-> - **`tests/test_matching_regressions.py`** (73+ cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
+> - **`tests/test_matching_regressions.py`** (115 cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
+>
+> **Added 2026-09-25 .. 10-10** (details in CHANGELOG):
+> - **Polymarket is scraped with `/events/keyset`** (`after_cursor`; ~19k events). The old offset passes saw 28%. Both scrapers abort below a sanity floor rather than publish a partial universe.
+> - **The full Kalshi/Polymarket CSVs are NOT committed.** The full run writes `data/reprice/*.csv` (only the matched rows, ~500 KB; `scripts/trim_reprice_inputs.py`), and `run_all.py --reprice` restores them into `data/raw/` on a fresh checkout.
+> - **The scanner re-runs `incompatibility()` on every fuzzy pair each pass**, so a gate fix applies at the next re-price, not the next full refresh.
+> - **Soccer BTTS / correct-score pairs can be guaranteed without a family entry** when both rules texts carry the same standard period clause (`utils/rules_template.py`, status `template`, badge "✓ rules checked"). First-to-score stays hand-reviewed (Kalshi counts extra time).
+> - **Series-map approvals can list `polymarket_market_kinds`**; an unreviewed kind inside an approved event returns to the queue. Slug ids are stripped in both formats (`-20260708173711844`, `-20261006t230000000z`). Approvals within 14 days of `review_by` are listed in the job summary.
+> - **Single-word subjects** ("— USA" vs "Will Peru…") and **first-to-score subjects / "neither"** are part of the gate; team names use a distinctive + fallback token set ("Atletico" = "Club Atlético de Madrid", "Sporting CP" ≠ "Defensor Sporting").
+> - **Window check:** a later YES start only matters while it's ahead; Kalshi close dates stand in for a missing end date on primary-nominee/tournament pairs.
+> - **Election baskets are downgraded to unverified from 2026-11-03 to 2027-01-31** (`ELECTION_SETTLING`; same in polling-agg).
+> - **CI:** `reprice.yml` dispatches `refresh.yml` if the last full scrape is >14h old (GitHub cron runs late or not at all). Both workflows run `tools/livecheck.py`, an independent live re-check of every guaranteed basket (incl. PredictIt), into the job summary.
 
 ---
 

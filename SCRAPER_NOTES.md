@@ -221,6 +221,14 @@ before). `scrapers/polymarket.py` now uses keyset first and falls back
 to the offset passes if a page fails or the cursor stops advancing.
 Events tagged "Up or Down" (5-60 minute crypto candles) are skipped.
 
+### Event slugs carry a trailing id — two formats
+
+Repeating events append an id to the slug: digits
+(`big-brother-season-28-winner-20260708173711844`) and, since ~2026-10-06,
+a timestamp (`what-will-be-the-2-us-netflix-movie-this-week-20261006t230000000z`).
+`utils/series_map.strip_slug_id` removes both; anything matching families by
+slug must use it (the new format silently un-approved six Netflix families).
+
 ### Gamma is stale — always freshen
 
 Gamma's `bestBid`/`bestAsk` lag the live CLOB by minutes-to-hours on
