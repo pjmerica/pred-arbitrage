@@ -509,3 +509,67 @@ def test_window_start_gap_only_matters_while_ahead():
 ])
 def test_single_word_subject(a, b, bad):
     assert (incompatibility(a, b) is not None) == bad
+
+
+# 2026-09-26: an approval covers only the market kinds it was reviewed for,
+# and approvals about to lapse are surfaced.
+def test_series_map_market_kinds():
+    import re
+    from utils.series_map import market_kind, status
+    assert market_kind("mls-lag-col-2026-09-26-first-to-score-home") == "first-to-score-home"
+    assert market_kind("unl-pol-bih-2026-09-25-exact-score-3-2") == "exact-score-N-N"
+    assert market_kind("will-bad-bunny-rank-in-googles-top-5") is None
+    fam = [{"kalshi_series": "KXMLSFTTS", "polymarket_event_slug_regex": r"^mls-.+-\d{4}-\d{2}-\d{2}",
+            "_rx": re.compile(r"^mls-.+-\d{4}-\d{2}-\d{2}"), "status": "approved",
+            "polymarket_market_kinds": ["first-to-score-home", "first-to-score-away"]}]
+    ev = "mls-lag-col-2026-09-26-more-markets"
+    assert status(fam, "KXMLSFTTS", ev, pm_market_slug="mls-lag-col-2026-09-26-first-to-score-home")[0] == "approved"
+    assert status(fam, "KXMLSFTTS", ev, pm_market_slug="mls-lag-col-2026-09-26-first-to-score-neither")[0] == "unreviewed"
+    assert status(fam, "KXMLSFTTS", ev)[0] == "approved"       # no market slug known: event-level approval
+
+
+def test_lapsing_approvals_listed():
+    from datetime import date
+    from scripts.arb_scanner import _lapsing_approvals
+    assert any(f["kalshi_series"] == "KXMLSFTTS" for f in _lapsing_approvals(date(2026, 10, 10)))
+    assert not any(f["kalshi_series"] == "KXMLSFTTS" for f in _lapsing_approvals(date(2026, 9, 26)))
+
+
+# 2026-10-10: Polymarket's new timestamp slug suffix; team names made only
+# of stop words; soccer rules-text template.
+def test_slug_timestamp_suffix_stripped():
+    from utils.series_map import strip_slug_id
+    assert strip_slug_id("what-will-be-the-2-us-netflix-movie-this-week-20261006t230000000z") == \
+        "what-will-be-the-2-us-netflix-movie-this-week"
+    assert strip_slug_id("big-brother-season-28-winner-20260708173711844") == "big-brother-season-28-winner"
+    assert strip_slug_id("mls-lag-col-2026-09-26-more-markets") == "mls-lag-col-2026-09-26-more-markets"
+
+
+def test_stopword_only_team_name_still_checked():
+    a = "Lens vs Sporting CP: BTTS — Both Teams To Score"
+    assert incompatibility(a, "Defensor Sporting vs. CA Cerro: Both Teams to Score") is not None
+    assert incompatibility(a, "RC Lens vs. Sporting CP: Both Teams to Score") is None
+
+
+def test_soccer_rules_template():
+    from utils.rules_template import soccer_period, SOCCER_SERIES
+    k_full = "If A and B both score a goal ... after 90 minutes plus stoppage time (does not include extra time or penalties), then ..."
+    p_full = "... each score at least one goal during the game ... This market refers only to the outcome within the first 90 minutes of regular play plus stoppage time."
+    k_1h = "If A and B both score a goal in the 1st Half ... Only goals scored during the 1st Half count."
+    p_1h = "... during the first half (first 45 minutes of regular play plus first-half stoppage time)."
+    assert soccer_period(k_full, p_full) == "full"
+    assert soccer_period(k_1h, p_1h) == "1h"
+    assert soccer_period(k_full, p_1h) is None          # periods disagree
+    assert soccer_period(k_full, "resolves on the full game including extra time") is None
+    assert SOCCER_SERIES.match("KXEPL1HBTTS") and SOCCER_SERIES.match("KXEPLSCORE")
+    assert not SOCCER_SERIES.match("KXEPLFTTS")          # first-to-score stays hand-reviewed
+
+
+def test_club_word_only_names():
+    # "Atletico" alone is the same club as "Club Atletico de Madrid".
+    assert incompatibility("Atletico vs Manchester United: BTTS — Both Teams To Score",
+                           "Club Atlético de Madrid vs. Manchester United FC: Both Teams to Score") is None
+    assert incompatibility("Miami vs Loudoun United FC: BTTS — Both Teams To Score",
+                           "Inter Miami CF vs. D.C. United SC: Both Teams to Score") is not None
+    assert incompatibility("Manchester United vs Arsenal: BTTS — Both Teams To Score",
+                           "Newcastle United vs. Arsenal FC: Both Teams to Score") is not None

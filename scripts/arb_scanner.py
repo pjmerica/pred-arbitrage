@@ -53,6 +53,8 @@ FEES = {
 # strikes); the verified real ones were 0-5%. Above the cap a row is shown
 # as 'unverified' — math kept, but never labelled locked profit.
 MAX_PLAUSIBLE_RETURN_PCT = 15.0
+# Nov 3 2026 general election -> Jan 2027 swearing-in (see election_window).
+ELECTION_SETTLING = ("2026-11-03", "2027-01-31")
 
 # Minimum return on capital (after real fees + margin) to call a basket
 # guaranteed. Smaller baskets are real but not worth the capital lock-up.
@@ -328,8 +330,43 @@ def _write_job_summary(result):
         lines.append(f"| {r['arb_type']} | {r.get('guaranteed_return_pct')} | {r.get('match_type')} | "
                      f"{esc(r.get('question_a'))} | {esc(r.get('question_b'))} | "
                      f"{esc(','.join(r.get('suspicion_reasons') or []))} |")
+    lapsing = _lapsing_approvals()
+    if lapsing:
+        lines += ["", f"#### Series-map approvals lapsing within {LAPSE_WARN_DAYS} days "
+                      "(re-read both rules texts, then extend review_by or change status)", ""]
+        lines += [f"- `{f['kalshi_series']}` / `{f['polymarket_event_slug_regex']}`: "
+                  f"lapses {f['review_by']}. {f.get('caveat', '')}" for f in lapsing]
     with open(path, "a", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
+
+
+LAPSE_WARN_DAYS = 14
+
+
+def _lapsing_approvals(today=None):
+    """Approved series-map families whose review_by falls within
+    LAPSE_WARN_DAYS (2026-09-26). After review_by they silently revert to
+    unreviewed (their pairs show as unverified); this surfaces them in the
+    log and CI job summary beforehand."""
+    import json as _json
+    from datetime import date as _date, timedelta as _td
+    today = today or _date.today()
+    try:
+        fams = _json.load(open(ROOT / "data" / "series_map.json", encoding="utf8"))["families"]
+    except Exception:
+        return []
+    out = []
+    for f in fams:
+        rb = f.get("review_by")
+        if f.get("status") != "approved" or not rb:
+            continue
+        try:
+            d = _date.fromisoformat(rb)
+        except ValueError:
+            continue
+        if today <= d <= today + _td(days=LAPSE_WARN_DAYS):
+            out.append(f)
+    return out
 
 
 def _markets_scraped_at():
@@ -523,6 +560,22 @@ def run():
         })
 
     result = pd.DataFrame(rows)
+
+    # Re-apply the outcome gate (2026-10-10). The 2-hourly re-price reuses
+    # the last full run's matched_pairs.csv, so a gate fix (or a pair the
+    # older gate let through) only took effect at the next full refresh,
+    # up to ~12h later (Kalshi "Lens vs Sporting CP: BTTS" vs Polymarket
+    # "Defensor Sporting vs. CA Cerro" stayed on the board after its fix).
+    if not result.empty and "match_type" in result.columns:
+        from utils.proposition import incompatibility as _incompat
+        _fz = result["match_type"] == "fuzzy"
+        _why_bad = result[_fz].apply(lambda r: _incompat(str(r.get("question_a", "")), str(r.get("question_b", ""))), axis=1)
+        _bad = _why_bad[_why_bad.notna()]
+        if len(_bad):
+            print(f"Dropped {len(_bad)} fuzzy pairs that fail the current outcome gate:")
+            for i, why in _bad.items():
+                print(f"  - {why}: {str(result.at[i, 'question_a'])[:55]!r} <-> {str(result.at[i, 'question_b'])[:55]!r}")
+            result = result.drop(index=_bad.index).reset_index(drop=True)
 
     # ── Append 2026 US-election rows produced by scripts/elections.py ──
     # The election module runs before the scanner (see run_all.py) and
@@ -1008,7 +1061,7 @@ def run():
     # slug pattern) was reviewed by reading both rules texts is 'approved'
     # (may be guaranteed) or 'rejected' (dropped). Unreviewed families stay
     # unverified and go to data/processed/series_review.csv.
-    from utils.series_map import load as _load_map, status as _map_status, slug_family as _slug_family
+    from utils.series_map import load as _load_map, status as _map_status, slug_family as _slug_family, market_kind as _market_kind
     _fams = _load_map()
     try:
         _ks = pd.read_csv(ROOT / "data" / "raw" / "kalshi_markets.csv", dtype=str,
@@ -1022,6 +1075,9 @@ def run():
         _k_series, _pm_slug = {}, {}
     result["series_status"] = None
     _review = []
+    from utils.rules_template import soccer_period as _soccer_period, SOCCER_SERIES as _SOCCER_SERIES
+    from scripts import scrutiny as _tscr
+    _tcache = _tscr._load_cache()
     _kp = ((result["match_type"] == "fuzzy") & (result["platform_a"] == "kalshi")
            & (result["platform_b"] == "polymarket"))
     for idx in result.index[_kp]:
@@ -1032,15 +1088,32 @@ def run():
             # (polymarket.com/event/{event_slug}/{market_slug}).
             _m = re.search(r"polymarket\.com/event/([^/?#]+)", str(result.at[idx, "url_b"] or ""))
             slug = _m.group(1) if _m else None
-        st, _e = _map_status(_fams, ser, slug)
+        _mm = re.search(r"polymarket\.com/event/[^/?#]+/([^/?#]+)", str(result.at[idx, "url_b"] or ""))
+        _mslug = _mm.group(1) if _mm else None
+        st, _e = _map_status(_fams, ser, slug, pm_market_slug=_mslug)
+        # Rules-text template (2026-10-10): an unreviewed soccer BTTS /
+        # correct-score pair whose two rules texts state the same standard
+        # period clause counts as checked ('template'); see
+        # utils/rules_template.py. Rejected families stay rejected.
+        if st == "unreviewed" and ser and _SOCCER_SERIES.match(str(ser)):
+            _per = _soccer_period(_tscr.get_rules("kalshi", result.at[idx, "market_id_a"], _tcache),
+                                  _tscr.get_rules("polymarket", result.at[idx, "market_id_b"], _tcache))
+            if _per:
+                st = "template"
         result.at[idx, "series_status"] = st
         if st == "unreviewed":
-            _review.append({"kalshi_series": ser, "polymarket_family": _slug_family(slug),
+            # A new market kind inside an approved family is queued with its
+            # kind so the reviewer knows what to read (2026-09-26).
+            _fam = _slug_family(slug)
+            if _e is not None and _e.get("status") == "approved" and _market_kind(_mslug):
+                _fam = f"{_fam} [{_market_kind(_mslug)}]"
+            _review.append({"kalshi_series": ser, "polymarket_family": _fam,
                             "arb_type": result.at[idx, "arb_type"],
                             "return_pct": result.at[idx, "guaranteed_return_pct"],
                             "question_a": result.at[idx, "question_a"],
                             "question_b": result.at[idx, "question_b"],
                             "url_a": result.at[idx, "url_a"], "url_b": result.at[idx, "url_b"]})
+    _tscr._save_cache(_tcache)
     _rej = result["series_status"] == "rejected"
     if _rej.any():
         print(f"Dropped {int(_rej.sum())} pairs from REJECTED series families (data/series_map.json):")
@@ -1120,6 +1193,20 @@ def run():
             lambda rs: list(rs) + ["window_mismatch"])
         result.loc[window_bad, "suspicious"] = True
 
+    # Election resolution window (2026-09-26). Between election day and
+    # swearing-in the two platforms' rules genuinely diverge: Kalshi party
+    # markets pay on who takes office, Polymarket on the certified result /
+    # official vote count. Recounts, contested calls and certification
+    # disputes all live in that window, so election baskets are shown but
+    # not called guaranteed until Jan 31.
+    _today = datetime.now(timezone.utc).date().isoformat()
+    election_window = pd.Series(False, index=result.index)
+    if ELECTION_SETTLING[0] <= _today <= ELECTION_SETTLING[1]:
+        election_window = (result["arb_type"] == "guaranteed") & result["match_type"].isin(["general", "political"])
+        if election_window.any():
+            result.loc[election_window, "suspicion_reasons"] = result.loc[election_window, "suspicion_reasons"].apply(
+                lambda rs: list(rs) + ["election_settling"])
+
     implausible = (result["arb_type"] == "guaranteed") & (
         pd.to_numeric(result["guaranteed_return_pct"], errors="coerce") > MAX_PLAUSIBLE_RETURN_PCT)
     if implausible.any():
@@ -1128,8 +1215,9 @@ def run():
         result.loc[implausible, "suspicious"] = True
     unverified = (((result["arb_type"] == "guaranteed")
                    & ~result["match_type"].isin(VERIFIED_MATCH_TYPES)
-                   & (result["series_status"] != "approved"))
+                   & ~result["series_status"].isin(["approved", "template"]))
                   | implausible
+                  | election_window
                   | ((result["arb_type"] == "guaranteed") & window_bad)
                   | ((result["arb_type"] == "guaranteed") & one_sided_settle)
                   | ((result["arb_type"] == "guaranteed") & risky_direction)
@@ -1150,6 +1238,8 @@ def run():
                 return "ONE SIDE SETTLED — one market is effectively decided and the other isn't; the rules probably differ. "
             if any(str(x).startswith("criteria_warn") for x in rs):
                 return "RULES TEXT DIFFERS — read both markets' rules before trading. "
+            if "election_settling" in rs:
+                return "ELECTION SETTLING — between election day and swearing-in Kalshi pays on who takes office, Polymarket on the certified result; recounts or disputes can split them. "
             if "implausible_return" in rs:
                 return "CHECK BY HAND — return above 15%; past cases this large were different questions. "
             return "UNVERIFIED MATCH — confirm both legs resolve on the same event. "
@@ -1218,6 +1308,8 @@ def run():
 
     records = [{k: clean(v) for k, v in row.items()} for row in result.to_dict(orient="records")]
     _write_job_summary(result)
+    for f in _lapsing_approvals():
+        print(f"  NOTE: series-map approval {f['kalshi_series']} lapses {f['review_by']} — re-read rules before then")
 
     out = ROOT / "docs" / "arb_data.js"
     out.parent.mkdir(parents=True, exist_ok=True)

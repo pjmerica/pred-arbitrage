@@ -44,6 +44,13 @@ jobs:
       - name: Dashboard smoke test
         run: node tools/dash_smoke.js docs tools/dash_exercise.js
 
+      # Independent re-check (2026-09-26): re-fetch both books and fees for
+      # every guaranteed basket and write the table to the job summary.
+      # Report only; prices move between the scan and this step.
+      - name: Live re-check of guaranteed baskets
+        continue-on-error: true
+        run: python tools/livecheck.py --summary "$GITHUB_STEP_SUMMARY"
+
       - name: Commit and push if changed
         run: |
           git config user.name  "github-actions[bot]"

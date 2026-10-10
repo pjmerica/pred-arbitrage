@@ -34,6 +34,7 @@ BASE = "https://api.elections.kalshi.com/trade-api/v2"
 # set to look like a real kalshi.com webapp XHR. See utils/http_headers.py.
 HEADERS = browser_xhr_headers("https://kalshi.com")
 PAGE_SIZE = 200
+MIN_EVENTS = 7000
 
 STATE_ABBREVS = {
     "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS",
@@ -151,8 +152,10 @@ def fetch_all_events_with_markets():
         try:
             data = get("/events", params)
         except Exception as e:
-            print(f"  Error at page {page}: {e}")
-            break
+            # 2026-09-26: this used to `break` and save a truncated universe
+            # as if it were complete. get() already retried; fail the run so
+            # the live board keeps its last full snapshot.
+            raise SystemExit(f"Kalshi /events page {page} failed after retries ({e}); aborting the scrape")
         events = data.get("events", [])
         all_events.extend(events)
         cursor = data.get("cursor")
@@ -359,6 +362,11 @@ def run():
     print("Fetching all Kalshi open events via trade-api/v2...")
     events = fetch_all_events_with_markets()
     print(f"  Total events: {len(events)}")
+    # Sanity floor (2026-09-26): ~14.8k open events on 2026-09-25. A sharp
+    # drop means pagination or the API changed; publishing it would quietly
+    # shrink the board, so fail and keep the last good snapshot.
+    if len(events) < MIN_EVENTS:
+        raise SystemExit(f"Kalshi returned {len(events)} open events (< {MIN_EVENTS}); aborting")
     series_fees = fetch_series_fees()
     event_fees = fetch_event_fee_overrides()
     print(f"  Series fee schedules: {len(series_fees)}; active event overrides: {len(event_fees)}")

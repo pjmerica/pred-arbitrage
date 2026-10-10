@@ -11,3 +11,4 @@ for (const col of ['arb_type','raw_gap_pp','net_gap_pp','guaranteed_return_pct',
   sortCol = col; for (const d of [1,-1]) { sortDir = d; render(); }
 }
 fType='ALL'; fSuspicious='all'; currentTab='all'; fMinVol=0; render();
+for (const c of [10, 50, 250, 0]) { fMinCap = c; render(); }

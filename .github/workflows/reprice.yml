@@ -27,6 +27,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
+      actions: write          # lets the watchdog below dispatch refresh.yml
     steps:
       # A queued run is pinned to the commit that existed when it was
       # TRIGGERED; check out the latest master instead so a re-price queued
@@ -39,6 +40,21 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
+
+      # Watchdog (2026-09-26): GitHub's cron is best-effort — on 2026-09-25
+      # the 12:30 full refresh started at 17:24 and the 00:30 one hadn't
+      # started by 01:15. If the last full scrape is >14h old, dispatch
+      # refresh.yml; it queues behind this run (shared concurrency group).
+      - name: Full-refresh watchdog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          AGE=$(python -c "import json,datetime as d;s=open('docs/arb_data.js').read();j=json.loads(s[s.index('{'):s.rindex('}')+1]);t=d.datetime.fromisoformat(j['markets_scraped_at']);print(int((d.datetime.now(d.timezone.utc)-t).total_seconds()//3600))" 2>/dev/null || echo 99)
+          echo "Last full scrape: ${AGE}h ago"
+          if [ "$AGE" -ge 14 ]; then
+            echo "Full refresh overdue; dispatching refresh.yml"
+            gh workflow run refresh.yml --ref master || echo "::warning::could not dispatch refresh.yml"
+          fi
 
       - run: pip install -r requirements.txt pytest
 
@@ -54,6 +70,13 @@ jobs:
 
       - name: Dashboard smoke test
         run: node tools/dash_smoke.js docs tools/dash_exercise.js
+
+      # Independent re-check (2026-09-26): re-fetch both books and fees for
+      # every guaranteed basket and write the table to the job summary.
+      # Report only; prices move between the scan and this step.
+      - name: Live re-check of guaranteed baskets
+        continue-on-error: true
+        run: python tools/livecheck.py --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Commit and push if changed
         run: |

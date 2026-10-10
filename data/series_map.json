@@ -55,10 +55,10 @@
   },
   {
    "kalshi_series": "KXBALLONDORRANK",
-   "polymarket_event_slug_regex": "^ballon-dor-top-[35]-finish-2026$",
+   "polymarket_event_slug_regex": "^ballon-dor-top-(?:3|5|10)-finish-2026$",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: official final men's ranking top 3 / top 5 (signature gate keeps top-3 vs top-5 apart).",
+   "note": "Both: official final men's ranking top 3 / top 5 / top 10 (signature gate keeps the ranks apart). Top 10 rules read 2026-10-10.",
    "caveat": "Tie handling differs (Kalshi splits $1 between joint winners; Polymarket pays the first-listed/alphabetical name). A tie breaks the hedge. Rare for this event."
   },
   {
@@ -227,70 +227,100 @@
    "polymarket_event_slug_regex": "^mls-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). MLS."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). MLS.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXLIGAMXBTTS",
    "polymarket_event_slug_regex": "^mex-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Liga MX."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Liga MX.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXUSLBTTS",
    "polymarket_event_slug_regex": "^uslc-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). USL Championship."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). USL Championship.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXEFLL1BTTS",
    "polymarket_event_slug_regex": "^el1-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). EFL League One."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). EFL League One.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXBRASILEIROBBTTS",
    "polymarket_event_slug_regex": "^bra2-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Brasileirao Serie B."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Brasileirao Serie B.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXDIMAYORBTTS",
    "polymarket_event_slug_regex": "^col1-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Colombia Primera A."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Colombia Primera A.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXEERSTEDIVBTTS",
    "polymarket_event_slug_regex": "^ned2-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Eerste Divisie."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Eerste Divisie.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXLALIGA2BTTS",
    "polymarket_event_slug_regex": "^es2-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). La Liga 2."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). La Liga 2.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXKLEAGUEBTTS",
    "polymarket_event_slug_regex": "^kor-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). K League 1."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). K League 1.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXLIGAMX1HBTTS",
    "polymarket_event_slug_regex": "^mex-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: first half incl. first-half stoppage time (Liga MX)."
+   "note": "Both: first half incl. first-half stoppage time (Liga MX).",
+   "polymarket_market_kinds": [
+    "btts-first-half"
+   ]
   },
   {
    "kalshi_series": "KXUEFANLBTTS",
@@ -299,7 +329,10 @@
    "rules_read": "2026-09-24",
    "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). UEFA Nations League.",
    "caveat": "Group-stage matches only: knockout ties can go to extra time, which Kalshi excludes but Polymarket 'during the game' may include. Re-read before knockouts.",
-   "review_by": "2026-11-30"
+   "review_by": "2026-11-30",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXUEFANL1HBTTS",
@@ -326,14 +359,20 @@
    "rules_read": "2026-09-24",
    "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). Concacaf Nations League.",
    "caveat": "Group-stage matches only: knockout ties can go to extra time, which Kalshi excludes but Polymarket 'during the game' may include. Re-read before knockouts.",
-   "review_by": "2026-11-30"
+   "review_by": "2026-11-30",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXMLBEXTRAS",
    "polymarket_event_slug_regex": "^mlb-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-24",
-   "note": "Both: at least one extra inning played in the scheduled game (signature gate checks game date)."
+   "note": "Both: at least one extra inning played in the scheduled game (signature gate checks game date).",
+   "polymarket_market_kinds": [
+    "extra-innings"
+   ]
   },
   {
    "kalshi_series": "KXALBUMRELEASE",
@@ -396,7 +435,10 @@
    "polymarket_event_slug_regex": "^nwsl-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). NWSL."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket 'during the game' of a league match). NWSL.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXCANPLBTTS",
@@ -410,21 +452,30 @@
    "polymarket_event_slug_regex": "^mls-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in the first half incl. first-half stoppage time only. MLS."
+   "note": "Both: goals in the first half incl. first-half stoppage time only. MLS.",
+   "polymarket_market_kinds": [
+    "btts-first-half"
+   ]
   },
   {
    "kalshi_series": "KXUSL1HBTTS",
    "polymarket_event_slug_regex": "^uslc-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in the first half incl. first-half stoppage time only. USL Championship."
+   "note": "Both: goals in the first half incl. first-half stoppage time only. USL Championship.",
+   "polymarket_market_kinds": [
+    "btts-first-half"
+   ]
   },
   {
    "kalshi_series": "KXBRASILEIROB1HBTTS",
    "polymarket_event_slug_regex": "^bra2-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in the first half incl. first-half stoppage time only. Brasileirao Serie B."
+   "note": "Both: goals in the first half incl. first-half stoppage time only. Brasileirao Serie B.",
+   "polymarket_market_kinds": [
+    "btts-first-half"
+   ]
   },
   {
    "kalshi_series": "KXNETFLIXRANKMOVIEGLOBAL",
@@ -439,21 +490,30 @@
    "polymarket_event_slug_regex": "^enl-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). English National League."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). English National League.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXJ2LEAGUEBTTS",
    "polymarket_event_slug_regex": "^ja2-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). J2 League."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). J2 League.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXURYPDBTTS",
    "polymarket_event_slug_regex": "^uru1-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Uruguay Primera Division."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Uruguay Primera Division.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXINTLFRIENDLYBTTS",
@@ -461,14 +521,20 @@
    "status": "approved",
    "rules_read": "2026-09-25",
    "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). International friendlies (BTTS is symmetric, so home/away listing order does not matter).",
-   "caveat": "Friendlies are occasionally abandoned or shortened; Polymarket then uses the official score, Kalshi's full rules govern."
+   "caveat": "Friendlies are occasionally abandoned or shortened; Polymarket then uses the official score, Kalshi's full rules govern.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXEFLL11HBTTS",
    "polymarket_event_slug_regex": "^el1-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: first half + first-half stoppage only. EFL League One."
+   "note": "Both: first half + first-half stoppage only. EFL League One.",
+   "polymarket_market_kinds": [
+    "btts-first-half"
+   ]
   },
   {
    "kalshi_series": "KXTALLAHASSEEMAYOR",
@@ -501,7 +567,11 @@
    "rules_read": "2026-09-25",
    "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. MLS regular season.",
    "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. MLS Cup playoffs (from late Oct) have extra time.",
-   "review_by": "2026-10-18"
+   "review_by": "2026-10-18",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
   },
   {
    "kalshi_series": "KXLIGAMXFTTS",
@@ -510,7 +580,11 @@
    "rules_read": "2026-09-25",
    "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. Liga MX.",
    "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. The Liga MX final can go to extra time.",
-   "review_by": "2026-11-30"
+   "review_by": "2026-11-30",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
   },
   {
    "kalshi_series": "KXUEFANLFTTS",
@@ -519,14 +593,21 @@
    "rules_read": "2026-09-25",
    "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. UEFA Nations League.",
    "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. League phase ends mid-November.",
-   "review_by": "2026-11-18"
+   "review_by": "2026-11-18",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
   },
   {
    "kalshi_series": "KXBRASILEIROCBTTS",
    "polymarket_event_slug_regex": "^bra3-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Brasileiro Serie C."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Brasileiro Serie C.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXTITLEDTUESDAY",
@@ -579,14 +660,123 @@
    "polymarket_event_slug_regex": "^argpn-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Argentina Primera Nacional."
+   "note": "Both: goals in 90 minutes + stoppage time only (Kalshi explicit; Polymarket explicit). Argentina Primera Nacional.",
+   "polymarket_market_kinds": [
+    "btts"
+   ]
   },
   {
    "kalshi_series": "KXINTLFRIENDLY1HBTTS",
    "polymarket_event_slug_regex": "^fif-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: first half + first-half stoppage only. International friendlies (BTTS is symmetric, so listing order does not matter)."
+   "note": "Both: first half + first-half stoppage only. International friendlies (BTTS is symmetric, so listing order does not matter).",
+   "polymarket_market_kinds": [
+    "btts-first-half"
+   ]
+  },
+  {
+   "kalshi_series": "KXEPLFTTS",
+   "polymarket_event_slug_regex": "^epl-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: first goal credited to the team (own goals to the team awarded) within the match. Kalshi counts extra time, Polymarket 90 min + stoppage only, but domestic LEAGUE matches never go to extra time, so they agree. Home/away only ('neither' is a separate Polymarket outcome, not reviewed). Premier League.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
+  },
+  {
+   "kalshi_series": "KXLIGUE1FTTS",
+   "polymarket_event_slug_regex": "^fl1-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: first goal credited to the team (own goals to the team awarded) within the match. Kalshi counts extra time, Polymarket 90 min + stoppage only, but domestic LEAGUE matches never go to extra time, so they agree. Home/away only ('neither' is a separate Polymarket outcome, not reviewed). Ligue 1.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
+  },
+  {
+   "kalshi_series": "KXBUNDESLIGAFTTS",
+   "polymarket_event_slug_regex": "^bun-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: first goal credited to the team (own goals to the team awarded) within the match. Kalshi counts extra time, Polymarket 90 min + stoppage only, but domestic LEAGUE matches never go to extra time, so they agree. Home/away only ('neither' is a separate Polymarket outcome, not reviewed). Bundesliga.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
+  },
+  {
+   "kalshi_series": "KXSERIEAFTTS",
+   "polymarket_event_slug_regex": "^sea-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: first goal credited to the team (own goals to the team awarded) within the match. Kalshi counts extra time, Polymarket 90 min + stoppage only, but domestic LEAGUE matches never go to extra time, so they agree. Home/away only ('neither' is a separate Polymarket outcome, not reviewed). Serie A.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
+  },
+  {
+   "kalshi_series": "KXLALIGAFTTS",
+   "polymarket_event_slug_regex": "^lal-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: first goal credited to the team (own goals to the team awarded) within the match. Kalshi counts extra time, Polymarket 90 min + stoppage only, but domestic LEAGUE matches never go to extra time, so they agree. Home/away only ('neither' is a separate Polymarket outcome, not reviewed). LaLiga.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
+  },
+  {
+   "kalshi_series": "KXBRASILEIROFTTS",
+   "polymarket_event_slug_regex": "^bra-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: first goal credited to the team (own goals to the team awarded) within the match. Kalshi counts extra time, Polymarket 90 min + stoppage only, but domestic LEAGUE matches never go to extra time, so they agree. Home/away only ('neither' is a separate Polymarket outcome, not reviewed). Brasileirao Serie A.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home"
+   ]
+  },
+  {
+   "kalshi_series": "KXPGARYDER",
+   "polymarket_event_slug_regex": "^2027-ryder-cup-winner$",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: the team with more points wins; a 14-14 tie resolves the separate Tie market (Kalshi explicitly ignores the holder-retains rule).",
+   "caveat": "Cancellation: Polymarket resolves Tie Yes / teams No; Kalshi's full rules govern."
+  },
+  {
+   "kalshi_series": "KXHURCITYTPA",
+   "polymarket_event_slug_regex": "^will-any-category-[0-9]-hurricane-make-landfall-in-the-us",
+   "status": "rejected",
+   "rules_read": "2026-10-10",
+   "note": "Kalshi: landfall in the City of Tampa at EXACTLY that category from Oct 8. Polymarket: landfall anywhere in the conterminous US at that category or higher."
+  },
+  {
+   "kalshi_series": "KXSERBIAELECTIONCALL",
+   "polymarket_event_slug_regex": "^serbian-presidential-election-called",
+   "status": "rejected",
+   "rules_read": "2026-10-10",
+   "note": "Kalshi counts an agreement or announcement of the Speaker's decision; Polymarket needs the election formally declared with its date announced. Kalshi can resolve Yes first."
+  },
+  {
+   "kalshi_series": "KXFEATURE",
+   "polymarket_event_slug_regex": "^who-will-be-featured-on-gta-vi-the-album$",
+   "status": "rejected",
+   "rules_read": "2026-10-10",
+   "note": "Polymarket resolves No if the album isn't out by Nov 26, 2026; Kalshi has no deadline. A delayed album + later credit: Kalshi Yes, Polymarket No."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKMOVIEGLOBAL2",
+   "polymarket_event_slug_regex": "^what-will-be-the-2-global-netflix-movie-this-week$",
+   "status": "approved",
+   "rules_read": "2026-10-10",
+   "note": "Both: #2 on the Netflix global Top 10 movies published the stated Tuesday (week ending Sunday).",
+   "caveat": "Polymarket names the English-language global list; Kalshi says 'Global Movie' (Netflix's default global chart is the English list). Tie rules differ; rare."
   }
  ]
 }

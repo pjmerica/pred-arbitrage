@@ -108,7 +108,13 @@ _TEAM_STOP = {"fc", "sc", "cf", "cd", "ec", "afc", "club", "the", "of", "and",
 
 def _team_tokens(name) -> set:
     toks = re.findall(r"[a-z0-9]+", fold(name).replace("&", " "))
-    return {t for t in toks if len(t) >= 3 and t not in _TEAM_STOP}
+    out = {t for t in toks if len(t) >= 3 and t not in _TEAM_STOP}
+    # A name made only of stop words / short tokens ("Sporting CP") used to
+    # come back empty, which made teams() return None and skipped the
+    # fixture check entirely: Kalshi "Lens vs Sporting CP: BTTS" paired with
+    # Polymarket "Defensor Sporting vs. CA Cerro" (2026-10-10). Fall back to
+    # every 2+ letter token.
+    return out or {t for t in toks if len(t) >= 2 and t not in ("the", "of", "and")}
 
 
 def teams(title):
@@ -121,13 +127,41 @@ def teams(title):
     m = re.search(r"([^:?—–]+?)\s+vs\.?\s+([^:?—–]+)", t, re.IGNORECASE)
     if not m:
         return None
-    a, b = _team_tokens(m.group(1)), _team_tokens(m.group(2))
-    return (a, b) if a and b else None
+    a, b = _team_sig(m.group(1)), _team_sig(m.group(2))
+    return (a, b) if a[1] and b[1] else None
+
+
+def _team_sig(name):
+    """(distinctive tokens, fallback tokens). Distinctive drops every club
+    word ("united", "atletico", "sporting"...) and may be empty; fallback
+    drops only the purely generic ones (_TEAM_GENERIC). Dots are removed so
+    "D.C. United" gives "dc"."""
+    toks = re.findall(r"[a-z0-9]+", fold(name).replace(".", "").replace("&", " "))
+    return ({t for t in toks if len(t) >= 3 and t not in _TEAM_STOP},
+            {t for t in toks if len(t) >= 2 and t not in _TEAM_GENERIC})
+
+
+# Words that never identify a club on their own (a strict subset of
+# _TEAM_STOP: "atletico", "sporting", "real" stay, they're half a name).
+_TEAM_GENERIC = {"fc", "sc", "cf", "cd", "ec", "afc", "club", "the", "of", "and", "de", "la",
+                 "del", "united", "city", "st", "saint"}
+
+
+def _same_team(x, y) -> bool:
+    # Both sides have distinctive tokens: those must overlap (keeps
+    # "Manchester United" and "Newcastle United" apart). Otherwise compare
+    # raw tokens: "Atletico" vs "Club Atletico de Madrid" (same club;
+    # dropped by a distinctive-only fallback 2026-10-10) and "Sporting CP"
+    # vs "Defensor Sporting" (different clubs, caught by the fixture's
+    # other team).
+    if x[0] and y[0]:
+        return bool(x[0] & y[0])
+    return bool(x[1] & y[1])
 
 
 def _teams_compatible(ta, tb) -> bool:
     (a1, a2), (b1, b2) = ta, tb
-    return bool((a1 & b1 and a2 & b2) or (a1 & b2 and a2 & b1))
+    return bool((_same_team(a1, b1) and _same_team(a2, b2)) or (_same_team(a1, b2) and _same_team(a2, b1)))
 
 
 def score(title):

@@ -111,6 +111,7 @@ SCRAPE_PASSES = [
 ]
 
 
+MIN_EVENTS = 10000   # sanity floor; the capped offset passes top out near 5-10k
 SKIP_EVENT_TAGS = {"Up or Down"}   # 5-60 min crypto candles: settle before any board refresh
 
 
@@ -146,7 +147,7 @@ def fetch_all_events_keyset():
         cursor = (data or {}).get("next_cursor")
         if not cursor or not page:
             break
-        if len(events) % 5000 < 500:
+        if len(events) // 5000 != (len(events) - len(new)) // 5000:
             print(f"  keyset: {len(events)} events so far...")
     return events
 
@@ -415,8 +416,16 @@ def run():
     print("Fetching all Polymarket active events...")
     events = fetch_all_events_keyset()
     if events is None:
+        # The ordered offset passes reach ~28% of active events. Better
+        # than nothing locally, but never publish that silently: the floor
+        # below fails the run (2026-09-26).
+        print("  WARNING: keyset pagination failed; using the capped offset passes")
         events = fetch_all_events()
     print(f"  Total events fetched: {len(events)}")
+    if len(events) < MIN_EVENTS:
+        raise SystemExit(f"Polymarket returned {len(events)} active events (< {MIN_EVENTS}; "
+                         f"~19k on 2026-09-25). Keyset pagination probably broke; aborting so "
+                         f"the live board keeps its last full snapshot.")
 
     rows = []
     for event in events:
