@@ -45,6 +45,7 @@ section captures the differences and what's specific to this side.
 > - **Single-word subjects** ("— USA" vs "Will Peru…") and **first-to-score subjects / "neither"** are part of the gate; team names use a distinctive + fallback token set ("Atletico" = "Club Atlético de Madrid", "Sporting CP" ≠ "Defensor Sporting").
 > - **Window check:** a later YES start only matters while it's ahead; Kalshi close dates stand in for a missing end date on primary-nominee/tournament pairs.
 > - **Election baskets are downgraded to unverified from 2026-11-03 to 2027-01-31** (`ELECTION_SETTLING`; same in polling-agg).
+> - **Links are verified and repaired in CI** (`tools/linkcheck.py --fix --pages`): every URL is re-derived from the platform API by the priced ID. URL formats live only in `utils/links.py`.
 > - **CI:** `reprice.yml` dispatches `refresh.yml` if the last full scrape is >14h old (GitHub cron runs late or not at all). Both workflows run `tools/livecheck.py`, an independent live re-check of every guaranteed basket (incl. PredictIt), into the job summary.
 
 ---

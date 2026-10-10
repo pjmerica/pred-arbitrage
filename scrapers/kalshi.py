@@ -26,6 +26,7 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 from utils.http_headers import browser_xhr_headers
+from utils.links import kalshi_url
 
 RAW = ROOT / "data" / "raw"
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
@@ -270,12 +271,7 @@ def parse_market(event, market):
     # We URL-lowercase both segments to match what Kalshi's own
     # navigation produces (their canonical URLs are lowercase even though
     # the API tickers are uppercase).
-    if series_ticker and event_ticker:
-        market_url = f"https://kalshi.com/markets/{series_ticker.lower()}/{event_ticker.lower()}"
-    elif series_ticker:
-        market_url = f"https://kalshi.com/markets/{series_ticker.lower()}"
-    else:
-        market_url = ""
+    market_url = kalshi_url(series_ticker, event_ticker) or ""
 
     return {
         "ticker":        market_ticker,

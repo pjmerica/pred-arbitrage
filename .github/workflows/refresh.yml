@@ -41,6 +41,14 @@ jobs:
       # Run the dashboard's JS against the freshly generated data in a DOM
       # stub; if the page would throw, fail BEFORE committing so the live
       # site keeps its last good snapshot.
+      # Link check (2026-10-10): rebuild every leg's URL from the platform
+      # API by the ID we priced and repair any that differ, before the
+      # smoke test and commit. A platform changing its URL scheme then
+      # fixes itself instead of shipping links to the wrong prop.
+      - name: Verify and repair market links
+        continue-on-error: true
+        run: python tools/linkcheck.py --fix --pages --summary "$GITHUB_STEP_SUMMARY"
+
       - name: Dashboard smoke test
         run: node tools/dash_smoke.js docs tools/dash_exercise.js
 

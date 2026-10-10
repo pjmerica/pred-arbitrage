@@ -8,6 +8,14 @@ opens the exact market (verified live 2026-09-23: the page's og:title is
 the market question; an unknown market slug falls back to the generic
 title). Single-market events use the same slug for both, so the event URL
 is already exact there.
+
+Kalshi: `/markets/{series}/{event}` (lowercase). The series alone makes
+Kalshi's page pick an arbitrary event (KXNHPRIMARY landed on NH-02 for an
+NH-01 market); the event comes from the API's `event_ticker`, never from
+trimming the market ticker (KXNOBELPEACE-27-CPJ belongs to KXNOBELPEACE-26).
+Both formats live here only, so a platform URL change is one edit; CI's
+tools/linkcheck.py re-derives every published link from the API and
+repairs any that differ (2026-10-10).
 """
 
 import pandas as pd
@@ -25,4 +33,13 @@ def polymarket_url(event_slug, market_slug=None) -> str | None:
         return f"https://polymarket.com/event/{ev}/{mk}"
     if ev or mk:
         return f"https://polymarket.com/event/{ev or mk}"
+    return None
+
+
+def kalshi_url(series_ticker, event_ticker=None) -> str | None:
+    ser, ev = _s(series_ticker), _s(event_ticker)
+    if ser and ev:
+        return f"https://kalshi.com/markets/{ser.lower()}/{ev.lower()}"
+    if ser:
+        return f"https://kalshi.com/markets/{ser.lower()}"
     return None

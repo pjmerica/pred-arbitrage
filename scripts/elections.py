@@ -53,7 +53,7 @@ PROCESSED = ROOT / "data" / "processed"
 # DO NOT add a separate FEES dict here — import from the scanner module
 # instead so changes propagate.
 from scripts.arb_scanner import FEES
-from utils.links import polymarket_url
+from utils.links import polymarket_url, kalshi_url as _kalshi_url
 from utils.election_shapes import is_derivative, party_win_side
 
 
@@ -79,7 +79,7 @@ def kalshi_url(series_ticker, market_ticker=None, event_ticker=None):
     # guess that breaks on tickers like KXNOBELPEACE-27-CPJ, whose event is
     # KXNOBELPEACE-26 (verified via /markets/{ticker} 2026-09-24).
     if event_ticker is not None and not pd.isna(event_ticker) and str(event_ticker):
-        return f"https://kalshi.com/markets/{series_lc}/{str(event_ticker).lower()}"
+        return _kalshi_url(series_ticker, event_ticker)
     if market_ticker and not pd.isna(market_ticker):
         # event_ticker = market_ticker with the trailing market segment
         # stripped. "KXNHPRIMARY-01R26-HNOV" -> "KXNHPRIMARY-01R26".

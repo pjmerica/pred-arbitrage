@@ -573,3 +573,16 @@ def test_club_word_only_names():
                            "Inter Miami CF vs. D.C. United SC: Both Teams to Score") is not None
     assert incompatibility("Manchester United vs Arsenal: BTTS — Both Teams To Score",
                            "Newcastle United vs. Arsenal FC: Both Teams to Score") is not None
+
+
+# 2026-10-10: one definition per platform URL format.
+def test_url_builders():
+    from utils.links import kalshi_url, polymarket_url
+    from scripts.elections import kalshi_url as elections_kalshi_url
+    assert kalshi_url("SENATEAR", "SENATEAR-26") == "https://kalshi.com/markets/senatear/senatear-26"
+    assert kalshi_url("KXNOBELPEACE", "KXNOBELPEACE-26") == "https://kalshi.com/markets/kxnobelpeace/kxnobelpeace-26"
+    assert elections_kalshi_url("KXNOBELPEACE", "KXNOBELPEACE-27-CPJ", "KXNOBELPEACE-26") == \
+        "https://kalshi.com/markets/kxnobelpeace/kxnobelpeace-26"     # API event, not the trimmed ticker
+    assert polymarket_url("mls-lag-col-2026-09-26-more-markets", "mls-lag-col-2026-09-26-btts") == \
+        "https://polymarket.com/event/mls-lag-col-2026-09-26-more-markets/mls-lag-col-2026-09-26-btts"
+    assert polymarket_url("single-market-event", "single-market-event") == "https://polymarket.com/event/single-market-event"
