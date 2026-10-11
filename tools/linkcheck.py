@@ -15,9 +15,10 @@ published link:
   PredictIt   contract id -> /api/marketdata/all -> market id. Expected:
               predictit.org/markets/detail/{market}.
 
---pages also fetches each Polymarket link of a guaranteed/unverified row
-and checks the page's og:title is that market's question (Kalshi pages
-render client-side with a generic title, so only the API check applies).
+--pages also fetches the pages of guaranteed/unverified rows: a Polymarket
+page's og:title must be that market's question; a Kalshi page (rendered
+client-side) must carry a canonical link under the same series, which
+proves the series exists; the event segment is verified through the API.
 
 --fix rewrites any wrong link in the board file to the expected one (the
 IDs are what we priced, so the API-derived URL is the right one). CI runs
@@ -43,13 +44,31 @@ H = {"User-Agent": "Mozilla/5.0"}
 K = "https://api.elections.kalshi.com/trade-api/v2"
 
 
-def gj(url, tries=4):
+def fetch(url, tries=6):
+    """Body text, retrying 429/5xx with growing backoff (Kalshi rate-limits
+    both its API and its website); None if it never succeeds."""
+    for i in range(tries):
+        try:
+            return urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=30).read().decode("utf8", "ignore")
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+            if i < tries - 1:
+                time.sleep(3 * (i + 1)); continue
+            return None
+        except Exception:
+            if i < tries - 1:
+                time.sleep(2); continue
+            return None
+
+
+def gj(url, tries=6):
     for i in range(tries):
         try:
             return json.loads(urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=30).read())
         except urllib.error.HTTPError as e:
-            if e.code == 429 and i < tries - 1:
-                time.sleep(2 * (i + 1)); continue
+            if e.code in (429, 500, 502, 503, 504) and i < tries - 1:
+                time.sleep(3 * (i + 1)); continue
             return None
         except Exception:
             if i < tries - 1:
@@ -74,7 +93,7 @@ def kalshi_expected(tickers):
     for ev in sorted({e for e in ev_of.values() if e}):
         d = gj(f"{K}/events/{ev}") or {}
         series_of[ev] = (d.get("event") or {}).get("series_ticker")
-        time.sleep(0.06)   # stay well under ~20 req/s
+        time.sleep(0.12)   # stay well under Kalshi's ~20 req/s
     out = {}
     for t in tickers:
         ev = ev_of.get(t)
@@ -128,14 +147,30 @@ def norm(u):
 
 
 def page_title_ok(url, question):
-    try:
-        t = urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=30).read().decode("utf8", "ignore")
-    except Exception as e:
-        return False, f"fetch failed ({e})"
+    t = fetch(url)
+    if t is None:
+        return None, "unchecked (fetch failed)"
     m = re.search(r'og:title" content="([^"]*)"', t)
     og = html.unescape(m.group(1)).strip() if m else ""
     q = (question or "").strip()
     return (og == q), og
+
+
+def kalshi_page_ok(url):
+    """Kalshi renders client-side: the served HTML only proves the SERIES
+    exists (its canonical link is /markets/{series}/{slug}; an unknown series
+    gets a generic page with no canonical). The event segment is verified
+    through the API above. Probed 2026-10-11."""
+    m = re.match(r"https://kalshi\.com/markets/([^/]+)/", str(url or ""))
+    if not m:
+        return False, "not a /markets/{series}/{event} link"
+    time.sleep(1.0)        # kalshi.com rate-limits page loads hard (429)
+    t = fetch(url)
+    if t is None:
+        return None, "unchecked (fetch failed)"
+    c = re.search(r'rel="canonical" href="([^"]+)"', t)
+    canon = c.group(1) if c else ""
+    return canon.lower().startswith(f"https://kalshi.com/markets/{m.group(1).lower()}/"), canon
 
 
 def main():
@@ -183,21 +218,30 @@ def main():
                 lines.append(f"| {r.get('arb_type')} | {p} | {mid[:24]} | {url} | {want} |")
                 if fix and want.startswith("http"):
                     r[f"url_{s}"] = want; fixed += 1
-    page_bad = []
+    page_bad, unchecked = [], 0
     if pages:
         for r in rows:
             if r.get("arb_type") not in ("guaranteed", "unverified"):
                 continue
             for s in "ab":
+                if r.get(f"platform_{s}") == "kalshi":
+                    ok, got = kalshi_page_ok(r.get(f"url_{s}"))
+                    if ok is None:
+                        unchecked += 1
+                    elif not ok:
+                        page_bad.append(f"| {r.get(f'url_{s}')} | a Kalshi series page | {got!r} |")
+                    continue
                 if r.get(f"platform_{s}") != "polymarket":
                     continue
                 tok = str(r.get(f"market_id_{s}"))
                 url, q = r.get(f"url_{s}"), (exp_p.get(tok) or (None, None))[1]
                 ok, og = page_title_ok(url, q)
-                if not ok:
+                if ok is None:
+                    unchecked += 1
+                elif not ok:
                     page_bad.append(f"| {url} | expected {q!r} | page {og!r} |")
     head = (f"Link check: {checked} links, {wrong} wrong{' (fixed)' if fix and wrong else ''}, "
-            f"{unknown} no longer in the API" + (f", {len(page_bad)} Polymarket page-title mismatches" if pages else ""))
+            f"{unknown} no longer in the API" + (f", {len(page_bad)} page mismatches (Polymarket title / Kalshi series), {unchecked} pages unchecked" if pages else ""))
     print(head)
     for l in lines + page_bad:
         print(" ", l)
