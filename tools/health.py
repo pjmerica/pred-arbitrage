@@ -172,6 +172,10 @@ def main():
     if "--stale-hours" in args:
         STALE_HOURS = float(args[args.index("--stale-hours") + 1])
     act, info = collect()
+    if "--test-alert" in args:
+        # Manual end-to-end test of the notification path (workflow_dispatch
+        # input health_test): opens the issue; the next normal run closes it.
+        act.append("**Test alert** — checking that this issue opens (and notifies) and closes itself on the next normal run. Nothing to do.")
     text = body(act, info)
     print(text)
     if "--summary" in args:

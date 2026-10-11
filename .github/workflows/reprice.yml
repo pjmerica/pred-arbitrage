@@ -18,6 +18,11 @@ on:
   schedule:
     - cron: '17 * * * *'      # hourly at an off-peak minute (2026-10-11): GitHub skipped ~2/3 of the 2-hourly runs
   workflow_dispatch:
+    inputs:
+      health_test:
+        description: "Add a test alert so the Board health issue opens (next normal run closes it)"
+        type: boolean
+        default: false
 
 concurrency:
   group: pred-arb-data        # shared with refresh.yml: queue, never race
@@ -129,4 +134,4 @@ jobs:
         timeout-minutes: 3
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python tools/health.py --issue --summary "$GITHUB_STEP_SUMMARY"
+        run: python tools/health.py --issue --summary "$GITHUB_STEP_SUMMARY" ${{ inputs.health_test && '--test-alert' || '' }}
