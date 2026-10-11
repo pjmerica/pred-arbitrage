@@ -253,6 +253,15 @@ def main():
     head = (f"Link check: {checked} links, {wrong} wrong{' (fixed)' if fix and wrong else ''}, "
             f"{unknown} no longer in the API" + (f", {len(page_bad)} page mismatches (Polymarket title / Kalshi series), {unchecked} pages unchecked" if pages else ""))
     print(head)
+    # Machine-readable result for tools/health.py (not committed).
+    try:
+        (ROOT / "data" / "processed").mkdir(parents=True, exist_ok=True)
+        (ROOT / "data" / "processed" / "linkcheck.json").write_text(json.dumps(
+            {"checked": checked, "wrong": wrong, "fixed": fixed, "unknown": unknown,
+             "page_mismatches": len(page_bad), "unchecked_pages": unchecked if pages else None,
+             "wrong_rows": lines, "page_rows": page_bad}), encoding="utf8")
+    except OSError:
+        pass
     for l in lines + page_bad:
         print(" ", l)
     if fix and fixed:

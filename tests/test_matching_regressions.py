@@ -531,7 +531,7 @@ def test_series_map_market_kinds():
 def test_lapsing_approvals_listed():
     from datetime import date
     from scripts.arb_scanner import _lapsing_approvals
-    assert any(f["kalshi_series"] == "KXMLSFTTS" for f in _lapsing_approvals(date(2026, 10, 10)))
+    assert any(f["kalshi_series"] == "KXUEFANLBTTS" for f in _lapsing_approvals(date(2026, 11, 20)))
     assert not any(f["kalshi_series"] == "KXMLSFTTS" for f in _lapsing_approvals(date(2026, 9, 26)))
 
 
@@ -586,3 +586,14 @@ def test_url_builders():
     assert polymarket_url("mls-lag-col-2026-09-26-more-markets", "mls-lag-col-2026-09-26-btts") == \
         "https://polymarket.com/event/mls-lag-col-2026-09-26-more-markets/mls-lag-col-2026-09-26-btts"
     assert polymarket_url("single-market-event", "single-market-event") == "https://polymarket.com/event/single-market-event"
+
+
+def test_on_lapse_reject():
+    import re
+    from utils.series_map import status
+    fam = [{"kalshi_series": "KXMLSFTTS", "_rx": re.compile(r"^mls-"), "status": "approved",
+            "review_by": "2026-10-18", "on_lapse": "reject"}]
+    assert status(fam, "KXMLSFTTS", "mls-x-2026-10-17", today="2026-10-17")[0] == "approved"
+    assert status(fam, "KXMLSFTTS", "mls-x-2026-10-25", today="2026-10-19")[0] == "rejected"
+    fam[0].pop("on_lapse")
+    assert status(fam, "KXMLSFTTS", "mls-x-2026-10-25", today="2026-10-19")[0] == "unreviewed"

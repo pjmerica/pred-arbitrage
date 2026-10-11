@@ -67,6 +67,12 @@ def status(families, kalshi_series, pm_event_slug, today=None, pm_market_slug=No
     for e in families:
         if e.get("kalshi_series") == kalshi_series and any(e["_rx"].search(c) for c in candidates):
             if e.get("status") == "approved" and e.get("review_by") and today > e["review_by"]:
+                # Lapsed. on_lapse: "reject" = the review already established the
+                # family stops matching after this date (e.g. first-to-score once
+                # knockout games with extra time start), so drop the pairs
+                # instead of queueing them for a re-read (2026-10-11).
+                if e.get("on_lapse") == "reject":
+                    return "rejected", e
                 return "unreviewed", e          # approval lapsed — re-read the rules
             kinds = e.get("polymarket_market_kinds")
             kind = market_kind(pm_market_slug)

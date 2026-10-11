@@ -4,8 +4,10 @@ on:
   schedule:
     # Two refreshes/day, offset 30 min from polling-agg so we don't hammer
     # Polymarket/Kalshi at the same instant.
-    - cron: '30 12 * * *'   # 08:30 ET (morning)
-    - cron: '30 0 * * *'    # 20:30 ET (evening)
+    # Off the busy :00/:30 minutes (2026-10-11): GitHub ran the :30 slots
+    # ~6 h late. reprice.yml's watchdog dispatches this if it's >14 h stale.
+    - cron: '7 12 * * *'    # ~08:07 ET (morning)
+    - cron: '7 0 * * *'     # ~20:07 ET (evening)
   workflow_dispatch:
 
 # Full refresh and the 2-hourly re-price (reprice.yml) share one queue so
@@ -20,6 +22,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      issues: write           # tools/health.py keeps one "Board health" issue in sync
     steps:
       - uses: actions/checkout@v4
 
@@ -99,3 +102,16 @@ jobs:
             done
             echo "Push failed after 3 attempts"; exit 1
           fi
+
+      # Board health (2026-10-11): one GitHub issue listing what needs a
+      # human (unreviewed families, lapsing approvals, repaired links, stale
+      # data, held-back baskets). Opened when something appears (that's the
+      # notification), edited while it persists, closed when it clears.
+      # Runs even if an earlier step failed.
+      - name: Board health issue
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 3
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/health.py --issue --summary "$GITHUB_STEP_SUMMARY"

@@ -1,4 +1,4 @@
-name: Re-price (2-hourly)
+name: Re-price (hourly)
 
 # Fast loop between the twice-daily full refreshes (refresh.yml). Keeps the
 # last full run's matched pairs and re-fetches ONLY their order books
@@ -7,14 +7,16 @@ name: Re-price (2-hourly)
 # minutes-to-hours; the full scrape re-prices all ~31k Polymarket markets
 # (~32,700 requests) and only runs twice a day.
 #
-# Load: 12 runs/day x ~1,200 requests ~= 15k/day, well inside Polymarket's
-# 1,500 req/10s /book limit (throttles, doesn't ban) and Kalshi's ~20 req/s
-# basic read tier. :50 on odd hours keeps clear of polling-agg's market
-# refresh (:30 on odd hours) and this repo's full runs (00:30 / 12:30 UTC).
+# Load: hourly (2026-10-11) ~= 24 runs/day x ~1,200 requests ~= 29k/day,
+# well inside Polymarket's 1,500 req/10s /book limit (throttles, doesn't
+# ban) and Kalshi's ~20 req/s basic read tier. GitHub's cron is
+# best-effort and skipped about 2/3 of the old 2-hourly runs, so a denser
+# schedule at an off-peak minute (:17) keeps the board within ~1-2 h. The
+# shared concurrency group keeps runs from overlapping.
 
 on:
   schedule:
-    - cron: '50 1-23/2 * * *'
+    - cron: '17 * * * *'      # hourly at an off-peak minute (2026-10-11): GitHub skipped ~2/3 of the 2-hourly runs
   workflow_dispatch:
 
 concurrency:
@@ -27,6 +29,7 @@ jobs:
     timeout-minutes: 30      # re-price ~8 min on the keyset universe + checks (2026-10-11)
     permissions:
       contents: write
+      issues: write           # tools/health.py keeps one "Board health" issue in sync
       actions: write          # lets the watchdog below dispatch refresh.yml
     steps:
       # A queued run is pinned to the commit that existed when it was
@@ -114,3 +117,16 @@ jobs:
             done
             echo "Push failed after 3 attempts"; exit 1
           fi
+
+      # Board health (2026-10-11): one GitHub issue listing what needs a
+      # human (unreviewed families, lapsing approvals, repaired links, stale
+      # data, held-back baskets). Opened when something appears (that's the
+      # notification), edited while it persists, closed when it clears.
+      # Runs even if an earlier step failed.
+      - name: Board health issue
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 3
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/health.py --issue --summary "$GITHUB_STEP_SUMMARY"

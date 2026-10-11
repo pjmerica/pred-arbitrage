@@ -122,6 +122,13 @@ def main():
         lines.append(f"| {status} | {r.get('guaranteed_return_pct')}% | {live} | {q.replace('|', '/')} |")
     head = f"Live re-check of {len(g)} guaranteed baskets (board {meta.get('updated_at', '?')}): {ok} still open"
     print(head)
+    # Machine-readable result for tools/health.py (not committed).
+    try:
+        (ROOT / "data" / "processed").mkdir(parents=True, exist_ok=True)
+        (ROOT / "data" / "processed" / "livecheck.json").write_text(json.dumps(
+            {"guaranteed": len(g), "open": ok, "lines": lines}), encoding="utf8")
+    except OSError:
+        pass
     if summary:
         with open(summary, "a", encoding="utf8") as f:
             f.write(f"\n### {head}\n\n| status | board | live | basket |\n|---|---|---|---|\n")

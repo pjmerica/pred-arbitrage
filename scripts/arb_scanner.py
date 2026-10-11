@@ -358,8 +358,8 @@ def _lapsing_approvals(today=None):
     out = []
     for f in fams:
         rb = f.get("review_by")
-        if f.get("status") != "approved" or not rb:
-            continue
+        if f.get("status") != "approved" or not rb or f.get("on_lapse") == "reject":
+            continue        # on_lapse=reject families retire themselves; nothing to do
         try:
             d = _date.fromisoformat(rb)
         except ValueError:

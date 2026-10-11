@@ -571,7 +571,8 @@
    "polymarket_market_kinds": [
     "first-to-score-away",
     "first-to-score-home"
-   ]
+   ],
+   "on_lapse": "reject"
   },
   {
    "kalshi_series": "KXLIGAMXFTTS",
@@ -584,7 +585,8 @@
    "polymarket_market_kinds": [
     "first-to-score-away",
     "first-to-score-home"
-   ]
+   ],
+   "on_lapse": "reject"
   },
   {
    "kalshi_series": "KXUEFANLFTTS",
@@ -597,7 +599,8 @@
    "polymarket_market_kinds": [
     "first-to-score-away",
     "first-to-score-home"
-   ]
+   ],
+   "on_lapse": "reject"
   },
   {
    "kalshi_series": "KXBRASILEIROCBTTS",
@@ -777,6 +780,30 @@
    "rules_read": "2026-10-10",
    "note": "Both: #2 on the Netflix global Top 10 movies published the stated Tuesday (week ending Sunday).",
    "caveat": "Polymarket names the English-language global list; Kalshi says 'Global Movie' (Netflix's default global chart is the English list). Tie rules differ; rare."
+  },
+  {
+   "kalshi_series": "KXTITLEDTUESTOP",
+   "polymarket_event_slug_regex": "^titled-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "rules_read": "2026-10-11",
+   "note": "Both: finishes in the top 8 of the stated Chess.com Titled Tuesday per the final standings; a player who doesn't play resolves No on both.",
+   "caveat": "Polymarket resolves No if postponed past ~2 weeks; Kalshi's full rules govern a postponement."
+  },
+  {
+   "kalshi_series": "KXFTCAIBOOKS",
+   "polymarket_event_slug_regex": "^ftc-opens-investigation-into-ai-book-destruction-in-2026$",
+   "status": "approved",
+   "rules_read": "2026-10-11",
+   "note": "Both: the FTC opens an investigation / issues 6(b) orders / files an enforcement action on AI companies acquiring, scanning or destroying books for training, before Jan 1, 2027.",
+   "caveat": "Polymarket also counts the FTC 'confirming' an investigation; Kalshi needs a public act (press release, docketed order, complaint, on-the-record statement)."
+  },
+  {
+   "kalshi_series": "KXNETFLIXRANKSHOWGLOBAL2",
+   "polymarket_event_slug_regex": "^what-will-be-the-2-global-netflix-show-this-week$",
+   "status": "approved",
+   "rules_read": "2026-10-11",
+   "note": "Both: #2 on the Netflix global Top 10 TV published the stated Tuesday (week ending Sunday).",
+   "caveat": "Same as #2 global movie: Polymarket names Netflix's global (English) list; Kalshi says 'Global Show'. Tie rules differ; rare."
   }
  ]
 }
