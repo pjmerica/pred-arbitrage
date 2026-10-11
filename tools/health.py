@@ -31,6 +31,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 PROCESSED = ROOT / "data" / "processed"
 TITLE = "Board health: needs attention"
+STALE_HOURS = 4      # --stale-hours N: polling-agg refreshes every 2 h, so it passes 8
 
 
 def _board():
@@ -56,14 +57,15 @@ def _json(name):
 def collect():
     act, info = [], []
     board = _board()
-    rows = board.get("races", [])
+    # pred-arb keeps rows under "races"; polling-agg under its first list.
+    rows = board.get("races") or next((v for v in board.values() if isinstance(v, list)), [])
 
     a = _age_h(board.get("markets_scraped_at"))
     if a is not None and a > 14:
         act.append(f"**Stale scrape:** the last full scrape was {a:.0f} h ago (limit 14 h). "
                    "Check the Daily refresh workflow; the re-price watchdog should have dispatched one.")
     a = _age_h(board.get("updated_at"))
-    if a is not None and a > 4:
+    if a is not None and a > STALE_HOURS:
         act.append(f"**Board not re-priced in {a:.0f} h.** GitHub cron may be skipping runs.")
 
     try:
@@ -75,8 +77,11 @@ def collect():
         # the rules text each scan; one in the queue means that check couldn't
         # fetch the rules this time (rate limit). Info only — the next scan
         # retries — so it doesn't open an issue and notify for nothing.
-        from utils.rules_template import SOCCER_SERIES
-        auto = q[q["kalshi_series"].astype(str).str.match(SOCCER_SERIES)]
+        try:
+            from utils.rules_template import SOCCER_SERIES
+            auto = q[q["kalshi_series"].astype(str).str.match(SOCCER_SERIES)]
+        except ImportError:
+            auto = q.iloc[0:0]
         q = q[~q.index.isin(auto.index)]
         if len(auto):
             info.append(f"{len(auto)} soccer families waiting for an automatic rules-text check "
@@ -122,7 +127,7 @@ def collect():
     lv = _json("livecheck.json")
     if lv:
         info.append(f"Live re-check: {lv.get('open')} of {lv.get('guaranteed')} guaranteed baskets still open.")
-    info.append(f"Board {board.get('updated_at')} ({board.get('mode')}), "
+    info.append(f"Board {board.get('updated_at')} ({board.get('mode') or 'market refresh'}), "
                 f"{sum(r.get('arb_type') == 'guaranteed' for r in rows)} guaranteed of {len(rows)} pairs.")
     return act, info
 
@@ -134,28 +139,38 @@ def body(act, info):
 
 def gh(*args):
     r = subprocess.run(["gh", *args], capture_output=True, text=True)
-    return r.stdout.strip() if r.returncode == 0 else None
+    if r.returncode != 0:
+        # Surface failures (no token, issues disabled, API error) as a CI
+        # warning instead of printing a success line that didn't happen.
+        print(f"::warning::gh {' '.join(args[:2])} failed: {r.stderr.strip()[:300]}")
+        return None
+    return r.stdout.strip() or "ok"
 
 
 def sync_issue(act, info):
     num = gh("issue", "list", "--state", "open", "--search", f'in:title "{TITLE}"',
              "--json", "number", "--jq", ".[0].number")
+    if num in (None, "ok"):
+        num = None
     text = body(act, info)
     if act and not num:
-        gh("issue", "create", "--title", TITLE, "--body", text)
-        print("health: opened issue")
+        if gh("issue", "create", "--title", TITLE, "--body", text):
+            print("health: opened issue")
     elif act and num:
-        gh("issue", "edit", num, "--body", text)
-        print(f"health: updated issue #{num}")
+        if gh("issue", "edit", num, "--body", text):
+            print(f"health: updated issue #{num}")
     elif not act and num:
-        gh("issue", "close", num, "--comment", "All clear: " + " ".join(info))
-        print(f"health: closed issue #{num}")
+        if gh("issue", "close", num, "--comment", "All clear: " + " ".join(info)):
+            print(f"health: closed issue #{num}")
     else:
         print("health: all clear, no issue")
 
 
 def main():
     args = sys.argv[1:]
+    global STALE_HOURS
+    if "--stale-hours" in args:
+        STALE_HOURS = float(args[args.index("--stale-hours") + 1])
     act, info = collect()
     text = body(act, info)
     print(text)
