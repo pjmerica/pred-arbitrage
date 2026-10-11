@@ -47,6 +47,7 @@ jobs:
       # fixes itself instead of shipping links to the wrong prop.
       - name: Verify and repair market links
         continue-on-error: true
+        timeout-minutes: 4       # never let link checking block the publish (2026-10-11)
         run: python tools/linkcheck.py --fix --pages --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Dashboard smoke test
@@ -57,6 +58,7 @@ jobs:
       # Report only; prices move between the scan and this step.
       - name: Live re-check of guaranteed baskets
         continue-on-error: true
+        timeout-minutes: 4
         run: python tools/livecheck.py --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Commit and push if changed

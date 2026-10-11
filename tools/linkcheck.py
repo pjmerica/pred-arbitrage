@@ -147,13 +147,16 @@ def norm(u):
 
 
 def page_title_ok(url, question):
-    t = fetch(url)
+    t = fetch(url, tries=3)
     if t is None:
         return None, "unchecked (fetch failed)"
     m = re.search(r'og:title" content="([^"]*)"', t)
     og = html.unescape(m.group(1)).strip() if m else ""
     q = (question or "").strip()
     return (og == q), og
+
+
+_KALSHI_PAGES_BLOCKED = False
 
 
 def kalshi_page_ok(url):
@@ -164,9 +167,16 @@ def kalshi_page_ok(url):
     m = re.match(r"https://kalshi\.com/markets/([^/]+)/", str(url or ""))
     if not m:
         return False, "not a /markets/{series}/{event} link"
+    global _KALSHI_PAGES_BLOCKED
+    if _KALSHI_PAGES_BLOCKED:
+        return None, "unchecked (kalshi.com rate-limited this run)"
     time.sleep(1.0)        # kalshi.com rate-limits page loads hard (429)
-    t = fetch(url)
+    t = fetch(url, tries=2)
     if t is None:
+        # Circuit breaker (2026-10-11): kalshi.com 429s GitHub runners too;
+        # retrying every page with backoff ran the step 12 min and the job
+        # hit its timeout. One failure = skip the rest of the Kalshi pages.
+        _KALSHI_PAGES_BLOCKED = True
         return None, "unchecked (fetch failed)"
     c = re.search(r'rel="canonical" href="([^"]+)"', t)
     canon = c.group(1) if c else ""
