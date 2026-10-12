@@ -24,7 +24,12 @@ jobs:
       contents: write
       issues: write           # tools/health.py keeps one "Board health" issue in sync
     steps:
+      # Latest master, not the commit the run was triggered on (2026-10-12):
+      # a queued refresh pinned to an old SHA conflicted with the hourly
+      # re-price and its whole result was discarded.
       - uses: actions/checkout@v4
+        with:
+          ref: master
 
       - uses: actions/setup-python@v5
         with:
@@ -121,11 +126,21 @@ jobs:
               if git push; then exit 0; fi
               echo "Push rejected, rebasing on origin/master (attempt $i)…"
               if ! git pull --rebase origin master; then
-                # A newer run already committed these generated files. Its
-                # data is at least as fresh as ours: abort cleanly, skip.
-                git rebase --abort
-                echo "Newer data landed on master during this run; skipping this push."
-                exit 0
+                # A re-price committed the same generated files during this
+                # run. The full refresh is newer and carries the new pair
+                # list, so it WINS on its own files (2026-10-12: the old
+                # "skip" rule discarded a whole full refresh). Code / config
+                # conflicts can't happen here (the commit only holds
+                # generated files plus series_map.json), but if anything
+                # else is left unresolved, abort and fail loudly.
+                CONFLICTED=$(git diff --name-only --diff-filter=U)
+                echo "Rebase conflict on: $CONFLICTED — keeping this full refresh's versions"
+                echo "$CONFLICTED" | xargs -r git checkout --theirs --
+                echo "$CONFLICTED" | xargs -r git add --
+                if ! GIT_EDITOR=true git rebase --continue; then
+                  git rebase --abort
+                  echo "::error::could not rebase the full refresh onto master"; exit 1
+                fi
               fi
             done
             echo "Push failed after 3 attempts"; exit 1
