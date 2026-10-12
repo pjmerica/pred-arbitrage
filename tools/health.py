@@ -87,8 +87,17 @@ def collect():
             info.append(f"{len(auto)} soccer families waiting for an automatic rules-text check "
                         f"(rules fetch failed this run): " + ", ".join(auto["kalshi_series"].astype(str)[:10]))
     if len(q):
+        drafts = {d.get("kalshi_series"): d for d in (_json("llm_reviews.json") or [])}
+        def _draft(ser):
+            d = drafts.get(ser)
+            if not d or not d.get("verdict"):
+                return ""
+            diffs = "; ".join(d.get("differences") or []) or "none found"
+            return (f"\n    - model draft: **{d['verdict']}**, safe direction {d.get('safe_direction')}; "
+                    f"differences: {diffs}" + (f"; note: {d['note']}" if d.get("note") else ""))
         lines = [f"  - `{r.kalshi_series}` / `{r.polymarket_family}`: {int(r.pairs)} pairs, "
                  f"{int(r.baskets) if pd.notna(r.baskets) else 0} baskets — e.g. {str(r.example_a)[:70]!r}"
+                 + _draft(r.kalshi_series)
                  for r in q.itertuples()]
         act.append(f"**{len(q)} unreviewed market families** (read both rules texts, then approve or "
                    "reject in `data/series_map.json`):\n" + "\n".join(lines[:25])

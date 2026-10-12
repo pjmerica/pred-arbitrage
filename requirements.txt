@@ -4,3 +4,4 @@ rapidfuzz
 # Required by scrapers/house_incumbents.py (added 2026-06-21 with the
 # elections port — uses the unitedstates/congress-legislators YAML).
 pyyaml
+anthropic

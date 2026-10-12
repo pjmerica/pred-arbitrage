@@ -597,3 +597,18 @@ def test_on_lapse_reject():
     assert status(fam, "KXMLSFTTS", "mls-x-2026-10-25", today="2026-10-19")[0] == "rejected"
     fam[0].pop("on_lapse")
     assert status(fam, "KXMLSFTTS", "mls-x-2026-10-25", today="2026-10-19")[0] == "unreviewed"
+
+
+# 2026-10-12: the model reviewer may only auto-apply after a clean validation,
+# and the labeled set it validates against stays intact.
+def test_llm_review_gates(tmp_path, monkeypatch):
+    import json
+    import tools.llm_review as lr
+    monkeypatch.setattr(lr, "VALIDATION", tmp_path / "v.json")
+    assert lr.auto_allowed()[0] is False                       # no validation on record
+    (tmp_path / "v.json").write_text(json.dumps({"model": lr.MODEL, "false_approvals": ["KXLEAVEOPEC"]}))
+    assert lr.auto_allowed()[0] is False                       # approved a rejected family
+    (tmp_path / "v.json").write_text(json.dumps({"model": lr.MODEL, "false_approvals": []}))
+    assert lr.auto_allowed()[0] is True
+    data = json.loads(lr.LABELED.read_text(encoding="utf8"))
+    assert len(data) >= 90 and sum(o["status"] == "rejected" for o in data) >= 10

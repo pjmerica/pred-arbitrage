@@ -55,9 +55,19 @@ jobs:
       - name: Run full pipeline
         run: python -u run_all.py
 
-      # Run the dashboard's JS against the freshly generated data in a DOM
-      # stub; if the page would throw, fail BEFORE committing so the live
-      # site keeps its last good snapshot.
+      # Model-assisted review of new market families (2026-10-12,
+      # tools/llm_review.py). No ANTHROPIC_API_KEY secret = no-op. Drafts go
+      # into the Board health issue; with repo variable LLM_REVIEW_MODE=auto
+      # verdicts are written into data/series_map.json, which the tool
+      # refuses unless the committed validation run approved zero rejected
+      # families. New approvals apply from the next re-price.
+      - name: Model review of new market families
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python tools/llm_review.py ${{ vars.LLM_REVIEW_MODE == 'auto' && '--apply' || '' }}
+
       # Link check (2026-10-10): rebuild every leg's URL from the platform
       # API by the ID we priced and repair any that differ, before the
       # smoke test and commit. A platform changing its URL scheme then
@@ -67,6 +77,9 @@ jobs:
         timeout-minutes: 4       # never let link checking block the publish (2026-10-11)
         run: python tools/linkcheck.py --fix --pages --summary "$GITHUB_STEP_SUMMARY"
 
+      # Run the dashboard's JS against the freshly generated data in a DOM
+      # stub; if the page would throw, fail BEFORE committing so the live
+      # site keeps its last good snapshot.
       - name: Dashboard smoke test
         run: node tools/dash_smoke.js docs tools/dash_exercise.js
 
@@ -98,6 +111,7 @@ jobs:
             data/processed/election_pairs.csv \
             data/processed/series_review.csv \
             data/processed/matched_pairs.csv \
+            data/series_map.json \
             docs/arb_data.js
           if git diff --cached --quiet; then
             echo "No changes."
