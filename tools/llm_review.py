@@ -48,15 +48,7 @@ MODEL = "claude-opus-5-5"
 # Phrases that only ever appeared on ONE side in families a human rejected
 # (never in an approved one) — a model "equivalent" with any of these present
 # on one side only is downgraded to "unsure".
-HARD_ASYMMETRIC = {
-    "may include / not limited to": r"may include|not limited to|could include",
-    "co-host / primary host": r"\bco-?host|primary host",
-    "singles / EPs": r"\bsingles?\b|\bEPs?\b",
-    "executive action": r"executive action",
-    "consent decree / disgorgement / plea": r"consent decree|disgorgement|plea agreement",
-    "geographic scope": r"conterminous|municipal boundar",
-    "intention": r"\bintention",
-}
+from utils.rules_template import HARD_ASYMMETRIC  # one copy, shared with the template matcher
 
 SYSTEM = """You compare the resolution rules of two prediction markets, one on Kalshi and one on Polymarket, that a matcher paired as the same question. A trader will buy YES on one and NO on the other as a hedge. The hedge only works if every real-world outcome resolves the two the same way; if some outcome makes one YES and the other NO in the wrong direction, both legs lose.
 

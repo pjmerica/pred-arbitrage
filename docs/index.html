@@ -462,7 +462,7 @@ function render() {
     const familyBadge = r.series_status === 'approved'
       ? `<span class="badge-political" title="This Kalshi series / Polymarket event family was reviewed: both rules texts read side by side and they resolve on the same event (data/series_map.json).">✓ reviewed</span>`
       : r.series_status === 'template'
-      ? `<span class="badge-political" title="Soccer BTTS / correct-score pair: both platforms' rules texts carry the same standard period clause (full match = 90 min + stoppage, no extra time; or 1st half / 2nd half only). Checked per pair from the rules text (utils/rules_template.py).">✓ rules checked</span>`
+      ? `<span class="badge-political" title="${r.template_of ? `Both rules texts match the template of a hand-reviewed family: ${esc(r.template_of)} (names, dates and numbers masked; utils/rules_template.py).` : `Soccer BTTS / correct-score pair: both platforms' rules texts carry the same standard period clause (full match = 90 min + stoppage, no extra time; or 1st half / 2nd half only). Checked per pair from the rules text (utils/rules_template.py).`}">✓ rules checked</span>`
       : r.series_status === 'unreviewed'
       ? `<span class="badge-fuzzy" style="color:#fb923c" title="Nobody has compared the rules of this market family yet - it can't be Guaranteed until it's reviewed (data/processed/series_review.csv).">unreviewed family</span>`
       : '';

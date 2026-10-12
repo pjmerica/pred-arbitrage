@@ -117,6 +117,7 @@ jobs:
             data/processed/series_review.csv \
             data/processed/matched_pairs.csv \
             data/series_map.json \
+            data/template_refs.json \
             docs/arb_data.js
           if git diff --cached --quiet; then
             echo "No changes."

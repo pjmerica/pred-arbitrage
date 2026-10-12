@@ -612,3 +612,31 @@ def test_llm_review_gates(tmp_path, monkeypatch):
     assert lr.auto_allowed()[0] is True
     data = json.loads(lr.LABELED.read_text(encoding="utf8"))
     assert len(data) >= 90 and sum(o["status"] == "rejected" for o in data) >= 10
+
+
+# 2026-10-12: template matching against hand-reviewed families. Leave-one-out
+# on tests/data/reviewed_families.json must never approve a rejected family.
+def test_template_match_leave_one_out():
+    import json
+    from utils.rules_template import load_template_refs, template_match
+    path = "tests/data/reviewed_families.json"
+    data = json.loads(open(path, encoding="utf8").read())
+    refs = load_template_refs([path])
+    approved = rejected = 0
+    for o in data:
+        fam, _ = template_match(o["kalshi_rules"], o["poly_rules"], o["kalshi_q"], o["poly_q"], refs,
+                                exclude_family=o["family"])
+        if fam:
+            approved += o["status"] == "approved"
+            rejected += o["status"] == "rejected"
+    assert rejected == 0
+    assert approved >= 40
+
+
+def test_template_blockers():
+    from utils.rules_template import template_blockers
+    k = "If X records the first goal during the entire game (regulation, stoppage and any extra time periods)..."
+    p = "...if X are the first to score within the first 90 minutes of regular play plus stoppage time."
+    assert "extra time counted on one side only" in template_blockers(k, p)
+    assert template_blockers("Official diplomatic recognition may include ...", "Only formal recognition counts.")
+    assert template_blockers("same text", "same text") == []

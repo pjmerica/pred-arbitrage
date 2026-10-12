@@ -1076,6 +1076,12 @@ def run():
     result["series_status"] = None
     _review = []
     from utils.rules_template import soccer_period as _soccer_period, SOCCER_SERIES as _SOCCER_SERIES
+    from utils.rules_template import load_template_refs as _load_trefs, template_match as _template_match
+    _tref_files = [ROOT / "tests" / "data" / "reviewed_families.json", ROOT / "data" / "template_refs.json"]
+    _trefs = _load_trefs(_tref_files)
+    _tref_names = {r["family"] for r in _trefs}
+    _new_refs = []
+    result["template_of"] = None
     from scripts import scrutiny as _tscr
     _tcache = _tscr._load_cache()
     _kp = ((result["match_type"] == "fuzzy") & (result["platform_a"] == "kalshi")
@@ -1100,6 +1106,31 @@ def run():
                                   _tscr.get_rules("polymarket", result.at[idx, "market_id_b"], _tcache))
             if _per:
                 st = "template"
+        # Template match against human-reviewed families (2026-10-12; see
+        # utils/rules_template.template_match): both rules texts, names /
+        # dates / numbers masked, must match both texts of an approved
+        # family, and nothing may block it (extra time on one side only,
+        # rejected-only phrases).
+        if st == "unreviewed" and ser:
+            _kt = _tscr.get_rules("kalshi", result.at[idx, "market_id_a"], _tcache)
+            _pt = _tscr.get_rules("polymarket", result.at[idx, "market_id_b"], _tcache)
+            if _kt and _pt:
+                _tf, _ts = _template_match(_kt, _pt, result.at[idx, "question_a"], result.at[idx, "question_b"], _trefs)
+                if _tf:
+                    st = "template"
+                    result.at[idx, "template_of"] = f"{_tf.split(' | ')[0]} ({_ts:.0%})"
+        # Grow the reference set from human approvals (no lapse date, not
+        # model-reviewed): each hand review makes later families automatic.
+        if st == "approved" and _e is not None and not _e.get("review_by") and _e.get("reviewed_by") != "model":
+            _fam_key = f"{_e['kalshi_series']} | {_e['polymarket_event_slug_regex']}"
+            if _fam_key not in _tref_names:
+                _kt = _tscr.get_rules("kalshi", result.at[idx, "market_id_a"], _tcache)
+                _pt = _tscr.get_rules("polymarket", result.at[idx, "market_id_b"], _tcache)
+                if _kt and _pt:
+                    _new_refs.append({"family": _fam_key, "status": "approved",
+                                      "kalshi_q": result.at[idx, "question_a"], "poly_q": result.at[idx, "question_b"],
+                                      "kalshi_rules": _kt, "poly_rules": _pt})
+                    _tref_names.add(_fam_key)
         result.at[idx, "series_status"] = st
         if st == "unreviewed":
             # A new market kind inside an approved family is queued with its
@@ -1114,6 +1145,15 @@ def run():
                             "question_b": result.at[idx, "question_b"],
                             "url_a": result.at[idx, "url_a"], "url_b": result.at[idx, "url_b"]})
     _tscr._save_cache(_tcache)
+    if _new_refs:
+        import json as _json
+        _p = ROOT / "data" / "template_refs.json"
+        try:
+            _cur = _json.loads(_p.read_text(encoding="utf8"))
+        except (OSError, ValueError):
+            _cur = []
+        _p.write_text(_json.dumps(_cur + _new_refs, ensure_ascii=False, indent=0), encoding="utf8")
+        print(f"Template references: +{len(_new_refs)} human-approved families -> data/template_refs.json")
     _rej = result["series_status"] == "rejected"
     if _rej.any():
         print(f"Dropped {int(_rej.sum())} pairs from REJECTED series families (data/series_map.json):")
