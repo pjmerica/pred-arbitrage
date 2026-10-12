@@ -1,1 +1,10 @@
-[]
+[
+{
+"family": "KXWCW | ^fifa-womens-world-cup-2027-winner$",
+"status": "approved",
+"kalshi_q": "2027 FIFA Women's World Cup Champion — Denmark",
+"poly_q": "Will Denmark win the 2027 FIFA Women's World Cup?",
+"kalshi_rules": "Will Denmark win the 2027 FIFA Women's World Cup? If Denmark is the 2027 FIFA Women's World Cup champion, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Denmark win the 2027 FIFA Women's World Cup? This market will resolve according to the team that wins the 2027 FIFA Women's World Cup.\n\nIf at any point it becomes impossible for a listed team to win the 2027 FIFA Women's World Cup per the rules of FIFA (e.g., they are eliminated), the corresponding market will resolve to \"No\".\n\nIf the 2027 FIFA Women's World Cup is cancelled, postponed after August 8, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from FIFA; however, a consensus of credible reporting may also be used."
+}
+]
