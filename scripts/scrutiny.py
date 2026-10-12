@@ -24,6 +24,7 @@ import re
 import time
 import sys
 import urllib.request
+import urllib.error
 import urllib.parse
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -70,13 +71,25 @@ def _load_excludes():
     return []
 
 
-def _http_json(url, timeout=15):
-    try:
-        req = urllib.request.Request(url, headers=HEADERS)
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return json.loads(r.read())
-    except Exception:
-        return None
+def _http_json(url, timeout=15, tries=4):
+    # Retry rate limits / server errors with backoff (2026-10-11): Kalshi
+    # 429s GitHub runners, and a single failure left a soccer pair
+    # "unreviewed" for the run.
+    for i in range(tries):
+        try:
+            req = urllib.request.Request(url, headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 504) and i < tries - 1:
+                time.sleep(2 * (i + 1))
+                continue
+            return None
+        except Exception:
+            if i < tries - 1:
+                time.sleep(1)
+                continue
+            return None
 
 
 def fetch_kalshi_rules(market_id):
@@ -131,7 +144,11 @@ def get_rules(platform, market_id, cache):
         text = fetch_polymarket_rules(market_id)
     else:
         text = None
-    cache[key] = {"text": text, "fetched_at": now}
+    # Only cache real text: a failed fetch (None) used to be cached for the
+    # full 7-day TTL, and with the cache now persisted across CI runs one
+    # rate-limited run would have blinded the rules checks for a week.
+    if text:
+        cache[key] = {"text": text, "fetched_at": now}
     return text
 
 

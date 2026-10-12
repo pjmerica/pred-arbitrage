@@ -31,6 +31,20 @@ jobs:
           python-version: '3.12'
           cache: pip
 
+      # Rules-text + Kalshi event->series caches survive between runs
+      # (2026-10-11): a fresh checkout re-fetched ~300 rules texts and ~400
+      # events every hour and Kalshi rate-limited the runner (35 soccer
+      # families unchecked, 76 links unresolved). Restore the newest copy,
+      # save an updated one under a new key.
+      - name: Restore rules / series caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/processed/scrutiny_cache.json
+            data/processed/kalshi_series_cache.json
+          key: pred-arb-rules-${{ github.run_id }}
+          restore-keys: pred-arb-rules-
+
       - run: pip install -r requirements.txt pytest
 
       # Regression cases for past fake-arb incidents. If a code change

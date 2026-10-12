@@ -15,6 +15,9 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 ## Unreleased
 
+## 2026-10-12
+
+- `[pending]` ci: persist rules / Kalshi-series caches; never cache a failed rules fetch. The first health issue (#1, opened by the test-alert run 2026-10-11) showed 76 links unresolved and 35 soccer families unchecked: every CI run started from a fresh checkout, so the scanner re-fetched ~300 rules texts and the link check ~400 Kalshi events every hour, and Kalshi rate-limited the runner. (1) Both workflows restore `data/processed/scrutiny_cache.json` and the new `kalshi_series_cache.json` with actions/cache (newest copy in, updated copy saved per run). (2) `scripts/scrutiny.get_rules` cached failures (text None) for the full 7-day TTL; it now caches only real text, so a rate-limited run can't blind the checks for a week. (3) `_http_json` retries 429/5xx with backoff. (4) The link check remembers event->series (it never changes) and only asks Kalshi about new events.
 ## 2026-10-11
 
 - `[c0a4737]` health: `--test-alert` and a `health_test` workflow_dispatch input on reprice.yml, to test the issue/notification path end to end (open on the test run, close on the next normal run).

@@ -89,11 +89,26 @@ def kalshi_expected(tickers):
         d = gj(f"{K}/markets?" + urllib.parse.urlencode({"tickers": ",".join(ch), "limit": 1000})) or {}
         for m in d.get("markets", []):
             ev_of[m["ticker"]] = m.get("event_ticker")
-    series_of = {}
-    for ev in sorted({e for e in ev_of.values() if e}):
+    # event -> series never changes: keep it across runs (CI restores this
+    # file with actions/cache) so each run only asks Kalshi about new events.
+    # Without it the hourly re-price re-fetched ~400 events and got 429s
+    # (76 links "unresolved" on 2026-10-11).
+    cache_p = ROOT / "data" / "processed" / "kalshi_series_cache.json"
+    try:
+        series_of = json.loads(cache_p.read_text(encoding="utf8"))
+    except (OSError, ValueError):
+        series_of = {}
+    for ev in sorted({e for e in ev_of.values() if e} - set(series_of)):
         d = gj(f"{K}/events/{ev}") or {}
-        series_of[ev] = (d.get("event") or {}).get("series_ticker")
+        ser = (d.get("event") or {}).get("series_ticker")
+        if ser:
+            series_of[ev] = ser
         time.sleep(0.12)   # stay well under Kalshi's ~20 req/s
+    try:
+        cache_p.parent.mkdir(parents=True, exist_ok=True)
+        cache_p.write_text(json.dumps(series_of), encoding="utf8")
+    except OSError:
+        pass
     out = {}
     for t in tickers:
         ev = ev_of.get(t)
