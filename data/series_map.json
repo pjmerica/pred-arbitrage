@@ -830,6 +830,14 @@
    ],
    "review_by": "2027-02-20",
    "on_lapse": "reject"
+  },
+  {
+   "kalshi_series": "KXWCW",
+   "polymarket_event_slug_regex": "^fifa-womens-world-cup-2027-winner$",
+   "status": "approved",
+   "rules_read": "2026-10-12",
+   "note": "Both: the 2027 FIFA Women's World Cup champion (FIFA official).",
+   "caveat": "Cancelled or postponed past Aug 8, 2027: Polymarket resolves Other; Kalshi closes Aug 9, 2027."
   }
  ]
 }
