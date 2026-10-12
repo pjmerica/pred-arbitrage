@@ -96,12 +96,30 @@ def normalize_rules(text, *questions):
     return re.sub(r"\s+", " ", t).strip()
 
 
+# Competitions (as Kalshi's rules name them: "... professional {X} soccer
+# game ...") where no match ever goes to extra time: domestic round-robin
+# leagues with no playoffs (their cups are separate Kalshi series). For
+# these the extra-time difference between Kalshi first-to-score (whole game
+# incl. extra time) and Polymarket (90 min) can't change the outcome.
+# Checked 2026-10-12 against all 33 Kalshi *FTTS series. NOT here: MLS and
+# Liga MX (playoffs), every cup / super cup, Champions / Europa / Conference
+# League, Nations League, World Cup and qualifiers.
+NO_EXTRA_TIME_COMPETITIONS = {"EPL", "La Liga", "Serie A", "Bundesliga", "Ligue 1", "Brasileiro Serie A"}
+_COMPETITION = re.compile(r"professional (.+?) soccer game")
+
+
+def kalshi_competition(kalshi_text):
+    m = _COMPETITION.search(str(kalshi_text or ""))
+    return m.group(1).strip() if m else None
+
+
 def template_blockers(kalshi_text, poly_text):
     """Reasons this pair must not be template-approved (empty = none)."""
     k, p = str(kalshi_text or ""), str(poly_text or "")
     out = []
     if (_ET_IN.search(k) and _ET_OUT.search(p)) or (_ET_IN.search(p) and _ET_OUT.search(k)):
-        out.append("extra time counted on one side only")
+        if kalshi_competition(k) not in NO_EXTRA_TIME_COMPETITIONS:
+            out.append("extra time counted on one side only")
     out += [n for n, rx in HARD_ASYMMETRIC.items()
             if bool(re.search(rx, k, re.I)) != bool(re.search(rx, p, re.I))]
     return out

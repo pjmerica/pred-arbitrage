@@ -640,3 +640,14 @@ def test_template_blockers():
     assert "extra time counted on one side only" in template_blockers(k, p)
     assert template_blockers("Official diplomatic recognition may include ...", "Only formal recognition counts.")
     assert template_blockers("same text", "same text") == []
+
+
+def test_no_extra_time_competitions():
+    from utils.rules_template import template_blockers, kalshi_competition
+    p = "...first to score within the first 90 minutes of regular play plus stoppage time."
+    league = ("If Arsenal records the first goal during the entire game (regulation, stoppage and any extra time "
+              "periods) of the Arsenal vs Leeds professional EPL soccer game originally scheduled for Oct 10, 2026...")
+    cup = league.replace("professional EPL soccer game", "professional FA Cup soccer game")
+    assert kalshi_competition(league) == "EPL"
+    assert template_blockers(league, p) == []                       # EPL games never go to extra time
+    assert template_blockers(cup, p) == ["extra time counted on one side only"]
