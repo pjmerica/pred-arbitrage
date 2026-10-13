@@ -1360,7 +1360,16 @@ def run():
     def _slim(v):
         v = clean(v)
         return round(v, 4) if isinstance(v, float) else v
-    records = [{k: sv for k, v in row.items() if (sv := _slim(v)) is not None}
+    # Order-book detail the page never reads (2026-10-13: game spreads /
+    # totals took the board to ~4,900 rows / 9.7 MB, a third of it these).
+    # The page uses only depth_*_max_at_3pp ("Tradeable"); the full depth
+    # stays in data/raw/orderbook_depth.csv.
+    def _board_field(k):
+        if k.startswith("depth_"):
+            return k.endswith("_max_at_3pp")
+        return k not in ("fillable_bid_a", "fillable_bid_b", "fillable_no_bid_a", "fillable_no_bid_b",
+                         "fee_model", "arb_uses_live_book")
+    records = [{k: sv for k, v in row.items() if _board_field(k) and (sv := _slim(v)) is not None}
                for row in result.to_dict(orient="records")]
     _write_job_summary(result)
     for f in _lapsing_approvals():
