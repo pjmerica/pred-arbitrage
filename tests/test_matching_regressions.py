@@ -651,3 +651,54 @@ def test_no_extra_time_competitions():
     assert kalshi_competition(league) == "EPL"
     assert template_blockers(league, p) == []                       # EPL games never go to extra time
     assert template_blockers(cup, p) == ["extra time counted on one side only"]
+
+
+# 2026-10-12: soccer fixture markets — winner / draw / total / spread lines.
+_WA = "Wales vs Albania: Regulation Time "
+@pytest.mark.parametrize("a, b, bad", [
+    (_WA + "BTTS — Reg Time: Both Teams To Score", "Wales vs. Albania: Both Teams to Score", False),
+    (_WA + "Moneyline — Reg Time: Wales", "Will Wales win on 2026-10-13?", False),
+    (_WA + "Moneyline — Reg Time: Wales", "Will Albania win on 2026-10-13?", True),
+    (_WA + "Moneyline — Reg Time: Tie", "Will Wales vs. Albania end in a draw?", False),
+    (_WA + "Moneyline — Reg Time: Wales", "Will Wales vs. Albania end in a draw?", True),
+    ("Sevilla vs Osasuna — Tie", "Will Sevilla FC vs. CA Osasuna end in a draw?", False),
+    ("Sevilla vs Osasuna — Osasuna", "Will Sevilla FC win on 2026-10-12?", True),
+    (_WA + "Total Goals — Reg Time: Over 2.5 goals scored", "Wales vs. Albania: O/U 2.5", False),
+    (_WA + "Total Goals — Reg Time: Over 2.5 goals scored", "Wales vs. Albania: O/U 3.5", True),
+    (_WA + "Total Goals — Reg Time: Over 2.5 goals scored", "Wales vs. Albania: Wales O/U 2.5", True),   # team total
+    (_WA + "Spread — Reg Time: Wales wins by more than 1.5 goals", "Spread: Wales (-1.5)", False),
+    (_WA + "Spread — Reg Time: Wales wins by more than 1.5 goals", "Spread: Wales (-2.5)", True),
+    (_WA + "Spread — Reg Time: Wales wins by more than 1.5 goals", "Spread: Albania (-1.5)", True),
+    ("Virtus.pro vs. Geekay Esports — Virtus.pro", "Rainbow Six Siege: Geekay Esports vs Virtus.pro - Game 1 Winner", True),
+    ("Game 2: Los Angeles D vs Milwaukee — Los Angeles D",
+     "Will there be a run scored in the first inning?: Los Angeles Dodgers vs. Milwaukee Brewers", True),
+])
+def test_soccer_fixture_outcomes(a, b, bad):
+    assert (incompatibility(a, b) is not None) == bad
+
+
+def test_fixture_matcher_skips_other_sports():
+    """KXNHLGAME 'New York I vs Toronto' must not pair with MLS 'New York Red
+    Bulls vs Toronto FC' on the same date: GAME/TOTAL/SPREAD count as soccer
+    only when the league also has a BTTS series."""
+    from scripts.matcher import match_soccer_fixtures
+    k = pd.DataFrame([
+        {"series_ticker": "KXNHLGAME", "market_id": "KXNHLGAME-26OCT17NYITOR-TOR",
+         "question": "New York I vs Toronto — Toronto", "game_date": "2026-10-17"},
+        {"series_ticker": "KXMLSGAME", "market_id": "KXMLSGAME-26OCT17NYRBTOR-TOR",
+         "question": "New York RB vs Toronto — Toronto", "game_date": "2026-10-17"},
+        {"series_ticker": "KXMLSBTTS", "market_id": "KXMLSBTTS-26OCT17NYRBTOR-BTTS",
+         "question": "New York RB vs Toronto: BTTS — Both Teams To Score", "game_date": "2026-10-17"},
+    ])
+    for c in ("implied_prob", "settle_date", "url", "category", "volume"):
+        k[c] = ""
+    p = pd.DataFrame([
+        {"market_id": "t1", "question": "Will Toronto FC win on 2026-10-17?",
+         "event_slug": "mls-nyrb-tor-2026-10-17", "market_slug": "mls-nyrb-tor-2026-10-17-tor", "game_date": "2026-10-17"},
+        {"market_id": "t2", "question": "New York Red Bulls vs. Toronto FC: O/U 2.5",
+         "event_slug": "mls-nyrb-tor-2026-10-17", "market_slug": "mls-nyrb-tor-2026-10-17-total-2pt5", "game_date": "2026-10-17"},
+    ])
+    for c in ("implied_prob", "settle_date", "url", "volume"):
+        p[c] = ""
+    out = match_soccer_fixtures({"kalshi": k, "polymarket": p})
+    assert list(out["market_id_a"]) == ["KXMLSGAME-26OCT17NYRBTOR-TOR"]

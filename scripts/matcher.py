@@ -1497,6 +1497,128 @@ def match_tournament_winner(dfs: dict) -> pd.DataFrame:
     return pd.DataFrame(pairs)
 
 
+# ── soccer fixtures (2026-10-12) ──────────────────────────────────────────
+# Soccer prop markets are fully determined by fixture date + the two teams +
+# the market kind, so they don't need fuzzy titles. Recall check on a fresh
+# scrape: of 183 Kalshi full-match BTTS markets with a true Polymarket
+# counterpart, the fuzzy matcher found 138 and missed 45 — Kalshi uses short
+# names ("Getafe vs Vallecano"), Polymarket full ones ("Getafe CF vs. Rayo
+# Vallecano de Madrid"), and the length gap pulls token_sort_ratio under the
+# cutoff. This pairs them structurally; the outcome gate
+# (utils.proposition.incompatibility: teams, date, period, first-scorer
+# subject, exact-score orientation) must still accept the pair, and exactly
+# one Polymarket candidate must survive. Rows are emitted as match_type
+# "fuzzy" so the series map / rules template / scan-time re-gate all apply.
+_SOCCER_KALSHI = re.compile(r"^KX[A-Z0-9]*?(1HBTTS|2HBTTS|BTTS|FTTS|SCORE|GAME|TOTAL|SPREAD)$")
+_KIND_OF_SERIES = {"BTTS": "btts", "1HBTTS": "btts-first-half", "2HBTTS": "btts-second-half",
+                   "FTTS": "first-to-score", "SCORE": "exact-score",
+                   # 2026-10-12: winner / total goals / spread. Kalshi "Regulation Time"
+                   # moneyline / totals / spreads and Polymarket's per-game winner,
+                   # O/U and spread markets all resolve on 90 min + stoppage; the
+                   # gate (soccer_outcome) checks team / draw / line. Non-soccer
+                   # GAME/TOTAL/SPREAD series (points, runs) fail that check.
+                   "GAME": "winner", "TOTAL": "total", "SPREAD": "spread"}
+
+
+def _poly_soccer_kind(market_slug):
+    from utils.series_map import market_kind
+    k = market_kind(market_slug) or ""
+    if k in ("btts", "btts-first-half", "btts-second-half"):
+        return k
+    if k.startswith("first-to-score"):
+        return "first-to-score"
+    if k.startswith("exact-score"):
+        return "exact-score"
+    if re.fullmatch(r"total-NptN", k):                 # match total only, not team totals
+        return "total"
+    if re.fullmatch(r"spread-(?:home|away)-NptN", k):
+        return "spread"
+    return None
+
+
+def match_soccer_fixtures(dfs: dict) -> pd.DataFrame:
+    from datetime import date, timedelta
+    from utils.proposition import teams, _teams_compatible
+    k, p = dfs.get("kalshi"), dfs.get("polymarket")
+    if k is None or p is None or k.empty or p.empty or "series_ticker" not in k.columns \
+            or "market_slug" not in p.columns:
+        return pd.DataFrame()
+    ks = k[k["series_ticker"].astype(str).str.match(_SOCCER_KALSHI)].copy()
+    # Winner / total / spread series exist for every sport, and hockey also
+    # counts "goals": KXNHLGAME "New York I vs Toronto" paired with MLS "New
+    # York Red Bulls vs Toronto FC" on the same date (2026-10-12, caught before
+    # commit). Treat a GAME/TOTAL/SPREAD series as soccer only if the same
+    # league also has a both-teams-to-score series (KXMLSGAME <- KXMLSBTTS;
+    # there is no KXNHLBTTS).
+    _all_series = set(k["series_ticker"].astype(str))
+    _soccer_leagues = {s[:-len(m.group(1))] for s in _all_series
+                       for m in [re.match(r"^KX[A-Z0-9]*?(1HBTTS|2HBTTS|BTTS)$", s)] if m}
+    def _is_soccer(series):
+        mm = _SOCCER_KALSHI.match(series)
+        return bool(mm) and (mm.group(1) not in ("GAME", "TOTAL", "SPREAD")
+                             or series[:-len(mm.group(1))] in _soccer_leagues)
+    ks = ks[ks["series_ticker"].astype(str).map(_is_soccer)]
+    ps = p.copy()
+    ps["soccer_kind"] = ps["market_slug"].map(_poly_soccer_kind)
+    # Winner markets only by their exact question form ("Will Wales win on
+    # 2026-10-13?" / "... end in a draw?"), never by slug: a slug-code rule
+    # picked up "game1" / "nrfi" and paired an MLB game with "Will there be
+    # a run scored in the first inning?" (2026-10-12, caught before commit).
+    from utils.proposition import soccer_outcome as _soc
+    _win = ps["question"].map(lambda q: (_soc(q) or ("",))[0] == "winner")
+    ps.loc[_win & ps["soccer_kind"].isna(), "soccer_kind"] = "winner"
+    ps = ps[ps["soccer_kind"].notna() & ps["game_date"].notna()]
+    # Fixture teams per event: spread questions ("Spread: Getafe CF (-1.5)")
+    # don't name the opponent, so take the teams from a sibling market in the
+    # same event ("Getafe CF vs. Rayo Vallecano de Madrid: O/U 2.5").
+    ev_teams = {}
+    for ev, q in zip(p["event_slug"], p["question"]):
+        if ev not in ev_teams:
+            tmq = teams(q)
+            if tmq:
+                ev_teams[ev] = tmq
+    by = {}
+    for r in ps.itertuples(index=False):
+        tm = teams(r.question) or ev_teams.get(r.event_slug)
+        if tm:
+            by.setdefault((r.soccer_kind, r.game_date), []).append((r, tm))
+    pairs, ambiguous = [], 0
+    for r in ks.itertuples(index=False):
+        kind = _KIND_OF_SERIES[_SOCCER_KALSHI.match(str(r.series_ticker)).group(1)]
+        tm = teams(r.question)
+        if not tm or not isinstance(r.game_date, str):
+            continue
+        d = date.fromisoformat(r.game_date)
+        cands = []
+        for dd in (d, d - timedelta(days=1), d + timedelta(days=1)):
+            for c, ctm in by.get((kind, dd.isoformat()), []):
+                if not _teams_compatible(tm, ctm) or incompatibility(str(r.question), str(c.question)):
+                    continue
+                # winner / total / spread: BOTH sides must parse as that soccer
+                # outcome (the gate only compares them when both parse).
+                if kind in ("winner", "total", "spread"):
+                    oa, ob = _soc(str(r.question)), _soc(str(c.question))
+                    if not oa or not ob or oa[0] != kind or ob[0] != kind:
+                        continue
+                cands.append(c)
+        if len(cands) != 1:
+            ambiguous += len(cands) > 1
+            continue
+        c = cands[0]
+        pairs.append({
+            "match_type": "fuzzy", "race_id": None, "platform_a": "kalshi", "platform_b": "polymarket",
+            "question_a": r.question, "question_b": c.question,
+            "market_id_a": r.market_id, "market_id_b": c.market_id,
+            "implied_prob_a": r.implied_prob, "implied_prob_b": c.implied_prob,
+            "settle_date": r.settle_date or c.settle_date, "category": getattr(r, "category", ""),
+            "url_a": r.url, "url_b": c.url, "volume_a": getattr(r, "volume", None),
+            "volume_b": getattr(c, "volume", None), "fuzzy_score": 100.0,
+        })
+    if ambiguous:
+        print(f"    ({ambiguous} soccer markets skipped: more than one Polymarket candidate)")
+    return pd.DataFrame(pairs)
+
+
 def run():
     PROCESSED.mkdir(parents=True, exist_ok=True)
 
@@ -1533,8 +1655,12 @@ def run():
     # matching Polymarket "win" market). The wrong-subject dedup at the
     # end of run() doesn't help because it keys on (market_id_a,
     # market_id_b) which is DIFFERENT between the two matches.
-    prior = pd.concat([political, threshold, tournament, nominee], ignore_index=True) \
-        if any(len(x) for x in [political, threshold, tournament, nominee]) else pd.DataFrame()
+    print("\nMatching soccer fixtures (date + teams + market kind)...")
+    fixtures = match_soccer_fixtures(dfs)
+    print(f"  Soccer fixture pairs: {len(fixtures)}")
+
+    prior = pd.concat([political, threshold, tournament, nominee, fixtures], ignore_index=True) \
+        if any(len(x) for x in [political, threshold, tournament, nominee, fixtures]) else pd.DataFrame()
     claimed_by_platform = {}
     if not prior.empty:
         for _, r in prior.iterrows():
@@ -1554,7 +1680,7 @@ def run():
     fuzzy = match_fuzzy(dfs_for_fuzzy)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
-    all_pairs = pd.concat([political, threshold, tournament, nominee, fuzzy], ignore_index=True)
+    all_pairs = pd.concat([political, threshold, tournament, nominee, fixtures, fuzzy], ignore_index=True)
     # Remove duplicates (same market pair, different direction)
     all_pairs = all_pairs.drop_duplicates(subset=["platform_a", "platform_b", "market_id_a", "market_id_b"])
 

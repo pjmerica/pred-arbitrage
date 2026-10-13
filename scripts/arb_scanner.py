@@ -1084,6 +1084,12 @@ def run():
     result["template_of"] = None
     from scripts import scrutiny as _tscr
     _tcache = _tscr._load_cache()
+    # Batch-prefetch rules texts for the Kalshi-Polymarket title pairs the
+    # family / template checks below may read (2026-10-12).
+    _kpm = (result["match_type"] == "fuzzy") & (result["platform_a"] == "kalshi") & (result["platform_b"] == "polymarket")
+    _nk, _np = _tscr.prefetch_rules(result.loc[_kpm, "market_id_a"].astype(str), result.loc[_kpm, "market_id_b"].astype(str), _tcache)
+    if _nk or _np:
+        print(f"Rules prefetch: {_nk} Kalshi + {_np} Polymarket markets not cached")
     _kp = ((result["match_type"] == "fuzzy") & (result["platform_a"] == "kalshi")
            & (result["platform_b"] == "polymarket"))
     for idx in result.index[_kp]:
@@ -1346,7 +1352,14 @@ def run():
             return None
         return v
 
-    records = [{k: clean(v) for k, v in row.items()} for row in result.to_dict(orient="records")]
+    # Drop empty fields and round floats (2026-10-12): the soccer fixture
+    # matcher took the board to ~3,300 rows / 8.6 MB with 84 mostly-empty
+    # fields per row. The page reads a missing field like null.
+    def _slim(v):
+        v = clean(v)
+        return round(v, 4) if isinstance(v, float) else v
+    records = [{k: sv for k, v in row.items() if (sv := _slim(v)) is not None}
+               for row in result.to_dict(orient="records")]
     _write_job_summary(result)
     for f in _lapsing_approvals():
         print(f"  NOTE: series-map approval {f['kalshi_series']} lapses {f['review_by']} — re-read rules before then")

@@ -220,7 +220,12 @@ def _subject(title) -> str | None:
     t = str(title or "")
     for sep in ("—", "–"):
         if sep in t:
-            return t.rsplit(sep, 1)[1].strip()
+            # Drop Kalshi period labels ("Reg Time: Wales", "1st Half: Both
+            # Teams To Score"): the period is checked separately, and the
+            # label read as part of a person's name made "Regulation Time
+            # BTTS" fail the person check (2026-10-12).
+            return re.sub(r"^(?:reg(?:ulation)? time|1st half|2nd half|first half|second half)\s*:\s*",
+                          "", t.rsplit(sep, 1)[1].strip(), flags=re.IGNORECASE)
     return None
 
 
@@ -327,6 +332,22 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
         return "person differs"
     if single_subject_mismatch(a, b):
         return "subject differs"
+    oa, ob = soccer_outcome(a), soccer_outcome(b)
+    if oa or ob:
+        if not (oa and ob) or oa[0] != ob[0]:
+            return f"soccer market kind {oa and oa[0]} vs {ob and ob[0]}"
+        if oa[0] == "winner":
+            if (oa[1] == "draw") != (ob[1] == "draw"):
+                return "winner: draw vs a team"
+            if oa[1] != "draw" and _club_sim(oa[1], ob[1]) < (70, 0):
+                return "winner: different team"
+        elif oa[0] == "total" and oa[1] != ob[1]:
+            return f"total line {oa[1]} vs {ob[1]}"
+        elif oa[0] == "spread":
+            if oa[2] != ob[2]:
+                return f"spread line {oa[2]} vs {ob[2]}"
+            if _club_sim(oa[1], ob[1]) < (70, 0):
+                return "spread: different team"
     fa, fb = first_scorer(a), first_scorer(b)
     if (fa is None) != (fb is None):
         return "first-to-score vs other market"
@@ -404,3 +425,56 @@ def slug_game_date(slug) -> str | None:
     """'mlb-tor-bal-2026-09-22' -> '2026-09-22'."""
     m = re.search(r"(20\d\d-\d\d-\d\d)", str(slug or ""))
     return m.group(1) if m else None
+
+
+# ── soccer winner / total / spread (2026-10-12) ───────────────────────────
+# Kalshi "Wales vs Albania: Regulation Time Moneyline — Reg Time: Wales" /
+# "— Reg Time: Tie" / "Total Goals — Reg Time: Over 2.5 goals scored" /
+# "Spread — Reg Time: Wales wins by more than 1.5 goals" vs Polymarket
+# "Will Wales win on 2026-10-13?" / "Will Wales vs. Albania end in a draw?" /
+# "Wales vs. Albania: O/U 2.5" (Over = YES) / "Spread: Wales (-1.5)" (Wales
+# covers = YES). Without this the gate passed a team vs the draw and
+# mismatched lines (2.5 vs 3.5 goals, -1.5 vs -2.5).
+
+_K_TOTAL = re.compile(r"[—–]\s*(?:reg(?:ulation)? time\s*:\s*)?over\s+(\d+(?:\.\d+)?)\s+goals?", re.IGNORECASE)
+_P_TOTAL = re.compile(r":\s*o/u\s+(\d+(?:\.\d+)?)\s*$", re.IGNORECASE)
+_K_SPREAD = re.compile(r"[—–]\s*(?:reg(?:ulation)? time\s*:\s*)?(.+?)\s+wins by more than\s+(\d+(?:\.\d+)?)\s+goals?", re.IGNORECASE)
+_P_SPREAD = re.compile(r"^\s*spread:\s*(.+?)\s*\(-(\d+(?:\.\d+)?)\)\s*$", re.IGNORECASE)
+_K_WINNER = re.compile(r"(?:moneyline|winner\??)\s*[—–]\s*(?:reg(?:ulation)? time\s*:\s*)?(.+?)\s*$", re.IGNORECASE)
+_P_WIN = re.compile(r"^\s*will\s+(.+?)\s+win on\s+\d{4}-\d{2}-\d{2}\s*\??\s*$", re.IGNORECASE)
+_P_DRAW = re.compile(r"\bend in a draw\b", re.IGNORECASE)
+
+
+def soccer_outcome(title):
+    """('winner', team|'draw') / ('total', line) / ('spread', team, line)
+    for soccer fixture markets on either platform, else None."""
+    t = str(title or "")
+    m = _K_TOTAL.search(t) or _P_TOTAL.search(t)
+    if m:
+        return ("total", float(m.group(1)))
+    m = _K_SPREAD.search(t) or _P_SPREAD.search(t)
+    if m:
+        return ("spread", m.group(1).strip(), float(m.group(2)))
+    if _P_DRAW.search(t):
+        return ("winner", "draw")
+    m = _P_WIN.search(t)
+    if m:
+        return ("winner", m.group(1).strip())
+    m = _K_WINNER.search(t)
+    if m and " vs" in t.lower():
+        who = m.group(1).strip()
+        return ("winner", "draw" if who.lower() in ("tie", "draw") else who)
+    # Kalshi league format "Sevilla vs Osasuna — Sevilla" / "— Tie": the
+    # subject must be (almost exactly) one of the two sides, or Tie/Draw, so
+    # "— Sevilla wins 2-1" or "— Both Teams To Score" don't qualify.
+    m = _K_BARE_WIN.search(t)   # search: Kalshi MLB titles start "Game 2: ..."
+    if m:
+        home, away, who = m.group(1), m.group(2), m.group(3).strip()
+        if who.lower() in ("tie", "draw"):
+            return ("winner", "draw")
+        if max(fuzz.ratio(_club_norm(who), _club_norm(home)), fuzz.ratio(_club_norm(who), _club_norm(away))) >= 85:
+            return ("winner", who)
+    return None
+
+
+_K_BARE_WIN = re.compile(r"([^:—–]+?)\s+vs\.?\s+([^:—–]+?)\s*[—–]\s*(?:reg(?:ulation)? time\s*:\s*)?(.+?)\s*$", re.IGNORECASE)

@@ -34,6 +34,7 @@ import sys
 import json
 import time
 import urllib.request
+import urllib.error
 import urllib.parse
 import pandas as pd
 from pathlib import Path
@@ -78,7 +79,16 @@ def _kalshi_yes_book(ticker: str) -> dict:
     data = _http_json(KALSHI_OB_URL.format(ticker=urllib.parse.quote(str(ticker))))
     if not data:
         return out
-    ob = data.get("orderbook_fp") or data.get("orderbook") or {}
+    return _kalshi_stats(data.get("orderbook_fp") or data.get("orderbook") or {})
+
+
+def _kalshi_stats(ob: dict) -> dict:
+    """Top-of-book / depth stats from a Kalshi orderbook_fp dict."""
+    out = {"best_bid": None, "best_ask": None,
+           "best_bid_size": None, "best_ask_size": None,
+           "depth_bid_at_1pp": None, "depth_ask_at_1pp": None,
+           "max_buy_size_at_3pp_edge": None}
+    ob = ob or {}
     yes_bids_raw = ob.get("yes_dollars") or ob.get("yes") or []   # YES BUY orders
     no_bids_raw  = ob.get("no_dollars")  or ob.get("no")  or []   # NO BUY orders
 
@@ -121,6 +131,16 @@ def _polymarket_yes_book(token_id: str) -> dict:
     data = _http_json(POLY_OB_URL.format(tid=str(token_id)))
     if not data:
         return out
+    return _poly_stats(data)
+
+
+def _poly_stats(data: dict) -> dict:
+    """Top-of-book / depth stats from a Polymarket CLOB book dict."""
+    out = {"best_bid": None, "best_ask": None,
+           "best_bid_size": None, "best_ask_size": None,
+           "depth_bid_at_1pp": None, "depth_ask_at_1pp": None,
+           "max_buy_size_at_3pp_edge": None}
+    data = data or {}
     bids = [(float(b["price"]), float(b["size"])) for b in data.get("bids", [])]
     asks = [(float(a["price"]), float(a["size"])) for a in data.get("asks", [])]
     bids.sort(key=lambda x: x[0])
@@ -158,6 +178,61 @@ def fetch_one(platform: str, market_id: str) -> dict:
     return d
 
 
+KALSHI_BOOKS_URL = "https://api.elections.kalshi.com/trade-api/v2/markets/orderbooks"
+POLY_BOOKS_URL = "https://clob.polymarket.com/books"
+
+
+def _kalshi_books_batch(tickers):
+    """{ticker: orderbook_fp} for up to 100 tickers in ONE request
+    (GET /markets/orderbooks?tickers=a&tickers=b...; verified 2026-10-12:
+    100 in, 100 out, same levels as /markets/{t}/orderbook). None on failure."""
+    url = KALSHI_BOOKS_URL + "?" + urllib.parse.urlencode([("tickers", t) for t in tickers])
+    for attempt in range(4):
+        req = urllib.request.Request(url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                d = json.loads(r.read())
+            return {o.get("ticker"): (o.get("orderbook_fp") or o.get("orderbook") or {}) for o in d.get("orderbooks", [])}
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 504):
+                time.sleep(2 * (attempt + 1)); continue
+            return None
+        except Exception:
+            time.sleep(1)
+    return None
+
+
+def _poly_books_batch(tokens):
+    """{token: book} for up to 500 tokens in ONE request (POST /books).
+    Tokens without a book are absent. None on failure."""
+    body = json.dumps([{"token_id": t} for t in tokens]).encode()
+    for attempt in range(4):
+        req = urllib.request.Request(POLY_BOOKS_URL, data=body, method="POST",
+                                     headers={**HEADERS, "Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                books = json.loads(r.read())
+            return {str(b.get("asset_id")): b for b in books or []}
+        except Exception:
+            time.sleep(2 * (attempt + 1))
+    return None
+
+
+def _batched(ids, size, fetch_batch, fetch_single):
+    """{id: stats} — batch requests, per-id fallback for failed chunks."""
+    out, ids = {}, list(dict.fromkeys(ids))
+    for i in range(0, len(ids), size):
+        chunk = ids[i:i + size]
+        got = fetch_batch(chunk)
+        if got is None:
+            for t in chunk:
+                out[t] = fetch_single(t)
+        else:
+            out.update({t: got.get(t) for t in chunk})
+        time.sleep(0.1)
+    return out
+
+
 def run(targets_csv: Path = None, out_csv: Path = None, delay: float = 0.1):
     targets_csv = targets_csv or (PROCESSED / "depth_targets.csv")
     out_csv = out_csv or (RAW / "orderbook_depth.csv")
@@ -175,35 +250,38 @@ def run(targets_csv: Path = None, out_csv: Path = None, delay: float = 0.1):
     targets["no_market_id"] = targets["no_market_id"].fillna("").astype(str)
     print(f"Fetching depth for {len(targets)} markets...")
 
+    # Batched (2026-10-12): the soccer fixture matcher grew the pair list
+    # ~10x (9,824 books); one request per book took 43 min. Kalshi 100 /
+    # request, Polymarket 500 / request.
+    kal = targets.loc[targets["platform"] == "kalshi", "market_id"].astype(str).tolist()
+    pol = targets.loc[targets["platform"] == "polymarket", "market_id"].astype(str).tolist()
+    pol_no = [x for x in targets.loc[targets["platform"] == "polymarket", "no_market_id"].astype(str)
+              if x and x != "nan"]
+    k_books = _batched(kal, 100, _kalshi_books_batch, lambda t: None)
+    p_books = _batched(pol + pol_no, 500, _poly_books_batch, lambda t: None)
+    now = datetime.now(timezone.utc).isoformat()
+
+    def _row(plat, mid, side, book, single):
+        d = (_kalshi_stats(book) if plat == "kalshi" else _poly_stats(book)) if book is not None else single(mid)
+        d.update({"platform": plat, "market_id": mid, "fetched_at": now, "side": side})
+        return d
+
     rows = []
     n_no_fetched = 0
-    for i, (_, r) in enumerate(targets.iterrows()):
-        plat = r["platform"]
-        mid = str(r["market_id"])
-        # Always fetch YES book for the row's market_id.
-        yes_row = fetch_one(plat, mid)
-        yes_row["side"] = "yes"
-        rows.append(yes_row)
-
-        # For Polymarket, ALSO fetch the NO orderbook when no_market_id
-        # was provided. Polymarket exposes YES and NO as separate tokens
-        # with their own bid/ask. We used to infer no_ask = 1 - yes_bid,
-        # which only matches when both books are tight and aligned;
-        # arb math against an inferred no_ask was producing spurious
-        # numbers on markets with asymmetric YES/NO books (2026-06-21).
+    for _, r in targets.iterrows():
+        plat, mid = r["platform"], str(r["market_id"])
+        if plat == "kalshi":
+            rows.append(_row(plat, mid, "yes", k_books.get(mid), _kalshi_yes_book))
+        else:
+            rows.append(_row(plat, mid, "yes", p_books.get(mid), _polymarket_yes_book))
+        # Polymarket YES and NO are separate tokens with their own books
+        # (inferring no_ask = 1 - yes_bid produced spurious arbs, 2026-06-21).
         no_mid = r.get("no_market_id", "")
         if plat == "polymarket" and no_mid and no_mid != "nan":
-            no_row = fetch_one("polymarket", no_mid)
-            no_row["side"] = "no"
-            # Tag with the YES market_id too so the scanner can join on
-            # the original market identity.
+            no_row = _row("polymarket", no_mid, "no", p_books.get(no_mid), _polymarket_yes_book)
             no_row["yes_market_id"] = mid
             rows.append(no_row)
             n_no_fetched += 1
-
-        if (i + 1) % 25 == 0:
-            print(f"  {i+1}/{len(targets)} fetched ({n_no_fetched} NO books too)")
-        time.sleep(delay)
 
     df = pd.DataFrame(rows)
     df["market_id"] = df["market_id"].astype(str)

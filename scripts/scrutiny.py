@@ -105,9 +105,11 @@ def fetch_polymarket_rules(token_id):
     # Search by token. The CLOB doesn't return rules, but gamma's /markets does.
     # We don't have a direct token→market endpoint, so search by clobTokenIds.
     d = _http_json(f"https://gamma-api.polymarket.com/markets?clob_token_ids={token_id}")
-    if not d:
-        return None
-    items = d if isinstance(d, list) else d.get("data", [])
+    items = (d if isinstance(d, list) else (d or {}).get("data", [])) if d else []
+    if not items:
+        # Closed markets (game already played) only come back when asked.
+        d = _http_json(f"https://gamma-api.polymarket.com/markets?clob_token_ids={token_id}&closed=true")
+        items = (d if isinstance(d, list) else (d or {}).get("data", [])) if d else []
     if not items:
         return None
     m = items[0]
@@ -252,3 +254,51 @@ if __name__ == "__main__":
     }
     r = scrutinize([pair], threshold_pp=0)
     print(r)
+
+
+def prefetch_rules(kalshi_tickers, poly_tokens, cache):
+    """Fill the rules cache in batches for ids not cached yet (2026-10-12).
+    One request per market took ~20 min once the soccer fixture matcher
+    added ~2,600 pairs; Kalshi /markets?tickers= takes 100 per call and
+    gamma /markets?clob_token_ids= 50. Text format matches get_rules()."""
+    import time as _t
+    now = _t.time()
+    def _missing(platform, ids):
+        out = []
+        for i in ids:
+            e = cache.get(f"{platform}:{i}")
+            if not (e and e.get("text") and (now - e.get("fetched_at", 0)) < CACHE_TTL_SEC):
+                out.append(str(i))
+        return list(dict.fromkeys(out))
+    kt = _missing("kalshi", kalshi_tickers)
+    for i in range(0, len(kt), 100):
+        chunk = kt[i:i + 100]
+        d = _http_json("https://api.elections.kalshi.com/trade-api/v2/markets?"
+                       + urllib.parse.urlencode({"tickers": ",".join(chunk), "limit": 1000}), timeout=30)
+        for m in (d or {}).get("markets", []):
+            parts = [m.get("title") or "", m.get("rules_primary") or "", m.get("rules_secondary") or ""]
+            text = " ".join(p for p in parts if p).strip()
+            if text:
+                cache[f"kalshi:{m['ticker']}"] = {"text": text, "fetched_at": now}
+        _t.sleep(0.1)
+    pt = _missing("polymarket", poly_tokens)
+    # Gamma omits CLOSED markets unless asked (games already played today),
+    # so ask for open ones, then closed=true for whatever is still missing.
+    for closed in (None, "true"):
+      todo = [t for t in pt if not (cache.get(f"polymarket:{t}") or {}).get("text")] if closed else pt
+      for i in range(0, len(todo), 50):
+        chunk = todo[i:i + 50]
+        q = [("clob_token_ids", t) for t in chunk] + [("limit", 500)] + ([("closed", closed)] if closed else [])
+        d = _http_json("https://gamma-api.polymarket.com/markets?" + urllib.parse.urlencode(q), timeout=30)
+        for m in (d if isinstance(d, list) else []):
+            try:
+                toks = json.loads(m.get("clobTokenIds") or "[]")
+            except ValueError:
+                toks = []
+            parts = [m.get("question") or "", m.get("description") or ""]
+            text = " ".join(p for p in parts if p).strip()
+            for tok in toks:
+                if tok in chunk and text:
+                    cache[f"polymarket:{tok}"] = {"text": text, "fetched_at": now}
+        _t.sleep(0.1)
+    return len(kt), len(pt)

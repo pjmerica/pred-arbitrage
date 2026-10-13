@@ -31,7 +31,7 @@ _SOCCER = [
 # Kalshi series the template applies to: both-teams-to-score (full / 1H /
 # 2H) and correct score. NOT first-team-to-score: Kalshi counts extra time
 # there and Polymarket doesn't, so those stay hand-reviewed (league phase).
-SOCCER_SERIES = re.compile(r"^KX[A-Z0-9]*(?:BTTS|SCORE)$")
+SOCCER_SERIES = re.compile(r"^KX[A-Z0-9]*(?:BTTS|SCORE|GAME|TOTAL|SPREAD)$")  # + winner / total / spread 2026-10-12
 
 
 def soccer_period(kalshi_text, poly_text):
