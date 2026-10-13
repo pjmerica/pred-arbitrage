@@ -867,3 +867,37 @@ def test_games_college_names_exact():
     ]
     out = match_games(_game_frames(k, p))
     assert dict(zip(out["market_id_b"], out["market_id_a"])) == {"p1": "KXNCAAFGAME-26OCT17FRESDSU-FRES"}
+
+
+def test_game_lines_pair_team_and_line():
+    """Kalshi 'Green Bay wins by over 16.5' = Polymarket 'Spread: Packers
+    (-16.5)'; 'Over 31.5 points' = 'O/U 31.5'. A different line, the other
+    team's spread, a first-half spread and an Under-first token don't pair."""
+    from scripts.matcher import match_games
+    ev = "KXNFLGAME-26OCT18DALGB"
+    k = [
+        {"market_id": ev + "-GB", "question": "Dallas vs Green Bay — Green Bay", "yes_sub_title": "Green Bay", "game_date": "2026-10-18"},
+        {"market_id": ev + "-DAL", "question": "Dallas vs Green Bay — Dallas", "yes_sub_title": "Dallas", "game_date": "2026-10-18"},
+        {"market_id": "KXNFLSPREAD-26OCT18DALGB-GB17", "question": "Dallas vs Green Bay: Spread — Green Bay wins by over 16.5 points",
+         "yes_sub_title": "Green Bay wins by over 16.5 points", "game_date": "2026-10-18"},
+        {"market_id": "KXNFLSPREAD-26OCT18DALGB-DAL4", "question": "Dallas vs Green Bay: Spread — Dallas wins by over 3.5 points",
+         "yes_sub_title": "Dallas wins by over 3.5 points", "game_date": "2026-10-18"},
+        {"market_id": "KXNFLTOTAL-26OCT18DALGB-32", "question": "Dallas vs Green Bay: Total Points — Over 31.5 points",
+         "yes_sub_title": "Over 31.5 points", "game_date": "2026-10-18"},
+        {"market_id": "KXNFLTOTAL-26OCT18DALGB-35", "question": "Dallas vs Green Bay: Total Points — Over 34.5 points",
+         "yes_sub_title": "Over 34.5 points", "game_date": "2026-10-18"},
+    ]
+    slug = "nfl-dal-gb-2026-10-18"
+    p = [
+        {"market_id": "ml", "question": "Cowboys vs. Packers", "market_slug": slug, "yes_outcome": "Cowboys"},
+        {"market_id": "sp", "question": "Spread: Packers (-16.5)", "market_slug": slug + "-spread-home-16pt5", "yes_outcome": "Packers"},
+        {"market_id": "sp_line", "question": "Spread: Dallas Cowboys (-4.5)", "market_slug": slug + "-spread-away-4pt5"},
+        {"market_id": "tot", "question": "Cowboys vs. Packers: O/U 31.5", "market_slug": slug + "-total-31pt5", "yes_outcome": "Over"},
+        {"market_id": "tot_under", "question": "Cowboys vs. Packers: O/U 34.5", "market_slug": slug + "-total-34pt5", "yes_outcome": "Under"},
+        {"market_id": "sp_1h", "question": "1H Spread: Cowboys (-3.5)", "market_slug": slug + "-1h-spread-away-3pt5"},
+    ]
+    for r in p:
+        r["event_slug"] = slug; r["game_date"] = "2026-10-18"
+    out = match_games(_game_frames(k, p))
+    assert dict(zip(out["market_id_b"], out["market_id_a"])) == {
+        "ml": ev + "-DAL", "sp": "KXNFLSPREAD-26OCT18DALGB-GB17", "tot": "KXNFLTOTAL-26OCT18DALGB-32"}

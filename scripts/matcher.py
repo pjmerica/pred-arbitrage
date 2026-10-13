@@ -1848,6 +1848,7 @@ def match_games(dfs: dict) -> pd.DataFrame:
             seen[kk] = seen.get(kk, 0) + 1
 
     pairs = []
+    linked = []   # (kalshi series, kalshi event, sport, sides, polymarket event slug)
     for (sport, _ev), ev in events.items():
         if len(ev["rows"]) != 2 or not ev.get("day"):
             continue
@@ -1860,27 +1861,134 @@ def match_games(dfs: dict) -> pd.DataFrame:
             continue
         _, keyed, p_row = cands[0]
         k_row = ev["rows"][keyed[0]]
-        pairs.append({
-            "match_type": "game",
-            "race_id": None,
-            "platform_a": "kalshi",
-            "platform_b": "polymarket",
-            "question_a": k_row.get("question", ""),
-            "question_b": p_row.get("question", ""),
-            "market_id_a": k_row.get("market_id", ""),
-            "market_id_b": p_row.get("market_id", ""),
-            "implied_prob_a": k_row.get("implied_prob"),
-            "implied_prob_b": p_row.get("implied_prob"),
-            "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
-            "category": k_row.get("category", ""),
-            "url_a": k_row.get("url", ""),
-            "url_b": p_row.get("url", ""),
-            "volume_a": k_row.get("volume"),
-            "volume_b": p_row.get("volume"),
-            "fuzzy_score": 100,
-        })
-    print(f"  games: kalshi events={len(events)}, polymarket games={sum(len(v) for v in games.values())}, pairs={len(pairs)}")
+        pairs.append(_game_pair_row(k_row, p_row))
+        linked.append((str(k_row.get("series_ticker")), _ev, sport, keyed, str(p_row.get("event_slug"))))
+    n_games = len(pairs)
+    pairs += _match_game_lines(k, p, linked)
+    print(f"  games: kalshi events={len(events)}, polymarket games={sum(len(v) for v in games.values())}, "
+          f"pairs={n_games} games + {len(pairs) - n_games} spreads/totals")
     return pd.DataFrame(pairs)
+
+
+def _game_pair_row(k_row, p_row):
+    return {
+        "match_type": "game",
+        "race_id": None,
+        "platform_a": "kalshi",
+        "platform_b": "polymarket",
+        "question_a": k_row.get("question", ""),
+        "question_b": p_row.get("question", ""),
+        "market_id_a": k_row.get("market_id", ""),
+        "market_id_b": p_row.get("market_id", ""),
+        "implied_prob_a": k_row.get("implied_prob"),
+        "implied_prob_b": p_row.get("implied_prob"),
+        "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+        "category": k_row.get("category", ""),
+        "url_a": k_row.get("url", ""),
+        "url_b": p_row.get("url", ""),
+        "volume_a": k_row.get("volume"),
+        "volume_b": p_row.get("volume"),
+        "fuzzy_score": 100,
+    }
+
+
+# Spreads and totals of a game already paired above (2026-10-13). Kalshi
+# "Green Bay wins by over 16.5 points" (KXNFLSPREAD, same event code as
+# KXNFLGAME) = Polymarket "Spread: Packers (-16.5)" (first token = the
+# named team, "wins by 17 or more"); Kalshi "Over 31.5 points" (KXNFLTOTAL)
+# = Polymarket "O/U 31.5" (first token = Over, "32 or more"). Rules read
+# 2026-10-13 for NFL / NBA / NHL / college football: full game incl.
+# overtime on both; an NHL shootout adds one goal to the winner on both;
+# same cancellation caveat as the game markets. Team and line must match
+# exactly; first-half / first-5-innings / team totals are other series on
+# Kalshi and other slug kinds on Polymarket, and are not paired.
+_K_SPREAD_SUB = re.compile(r"^(.+?) wins by (?:over|more than) (\d+(?:\.\d+)?)(?: (?:points?|goals?|runs?))?$", re.I)
+_K_TOTAL_SUB = re.compile(r"^over (\d+(?:\.\d+)?)(?: (?:points?|goals?|runs?))?(?: scored)?$", re.I)
+_P_SPREAD_Q = re.compile(r"^Spread: (.+?) \(-(\d+(?:\.\d+)?)\)$", re.I)
+_P_TOTAL_Q = re.compile(r": O/U (\d+(?:\.\d+)?)$", re.I)
+
+
+def _match_game_lines(k, p, linked):
+    from utils.series_map import market_kind
+    out = []
+    if not linked:
+        return out
+    k_by_event = {}
+    for _, r in k[k["series_ticker"].astype(str).str.match(r"^KX[A-Z]+(?:SPREAD|TOTAL)$")].iterrows():
+        k_by_event.setdefault(str(r.get("event_ticker")), []).append(r)
+    slugs = {lk[4] for lk in linked}
+    pm = p[p["event_slug"].astype(str).isin(slugs)]
+    p_by_event = {}
+    for _, r in pm.iterrows():
+        p_by_event.setdefault(str(r["event_slug"]), []).append(r)
+
+    for series, k_event, sport, keyed, slug in linked:
+        if not series.endswith("GAME"):
+            continue
+        base = series[:-4]
+        code = k_event.split("-", 1)[1] if "-" in k_event else ""
+        league = sport if sport in _LEAGUE_TEAMS else None
+
+        def side_of(label, from_kalshi):
+            """Which of the game's two sides a team label names (index), or None."""
+            hits = []
+            for i, sd in enumerate(keyed):
+                if league:
+                    ok = _kalshi_label_fits(label, sd) if from_kalshi else _league_team(league, label) == sd
+                else:
+                    ok = _person_key(label) == sd
+                if ok:
+                    hits.append(i)
+            return hits[0] if len(hits) == 1 else None
+
+        k_lines = {}
+        for kind in ("SPREAD", "TOTAL"):
+            for r in k_by_event.get(f"{base}{kind}-{code}", []):
+                sub = str(r.get("yes_sub_title") or "").strip()
+                if kind == "SPREAD":
+                    m = _K_SPREAD_SUB.match(sub)
+                    i = side_of(m.group(1), True) if m else None
+                    key = ("spread", i, float(m.group(2))) if m and i is not None else None
+                else:
+                    m = _K_TOTAL_SUB.match(sub)
+                    key = ("total", None, float(m.group(1))) if m else None
+                if key:
+                    k_lines.setdefault(key, []).append(r)
+        if not k_lines:
+            continue
+        p_lines = {}
+        for r in p_by_event.get(slug, []):
+            kind = market_kind(r.get("market_slug")) or ""
+            q = str(r.get("question") or "").strip()
+            yo = r.get("yes_outcome")
+            yo = yo.strip() if isinstance(yo, str) and yo.strip() else None
+            ms = re.match(r"^(spread|total)-(?:home-|away-)?(N)ptN$", kind)
+            if not ms:
+                continue
+            if ms.group(1) == "spread":
+                mk = re.search(r"-spread-(?:home|away)-(\d+)pt(\d+)$", str(r.get("market_slug")))
+                mq = _P_SPREAD_Q.match(q)
+                if not mk or not mq or float(f"{mk.group(1)}.{mk.group(2)}") != float(mq.group(2)):
+                    continue
+                if yo and _person_key(yo) != _person_key(mq.group(1)):
+                    continue
+                i = side_of(mq.group(1), False)
+                if i is None:
+                    continue
+                key = ("spread", i, float(mq.group(2)))
+            else:
+                mk = re.search(r"-total-(\d+)pt(\d+)$", str(r.get("market_slug")))
+                mq = _P_TOTAL_Q.search(q)
+                if not mk or not mq or float(f"{mk.group(1)}.{mk.group(2)}") != float(mq.group(1)):
+                    continue
+                if yo and yo.lower() != "over":
+                    continue
+                key = ("total", None, float(mq.group(1)))
+            p_lines.setdefault(key, []).append(r)
+        for key in set(k_lines) & set(p_lines):
+            if len(k_lines[key]) == 1 and len(p_lines[key]) == 1:
+                out.append(_game_pair_row(k_lines[key][0], p_lines[key][0]))
+    return out
 
 
 # ── soccer fixtures (2026-10-12) ──────────────────────────────────────────
