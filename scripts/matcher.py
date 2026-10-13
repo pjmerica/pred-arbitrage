@@ -1714,6 +1714,167 @@ def match_league_futures(dfs: dict) -> pd.DataFrame:
     return pd.DataFrame(pairs)
 
 
+# ── US-league games, tennis matches, UFC fights (2026-10-13) ─────────────
+# Kalshi lists one market per side ("Oklahoma City vs San Antonio — Oklahoma
+# City"); Polymarket one two-outcome market per game ("Thunder vs. Spurs",
+# tokens in the order the sides are listed, so its "YES" token is the first
+# side and its "NO" token the second). Titles share almost no words (city
+# vs nickname), so these are keyed structurally: sport + game date + both
+# sides, and the Polymarket game is paired with the Kalshi market for its
+# FIRST-listed side.
+#
+# Rules read 2026-10-13 (NFL, NBA, MLB, NHL, ATP/WTA, UFC; both sides):
+# the named side wins the game / match / fight, overtime included; NFL and
+# UFC ties / draws / no contests pay $0.50 on Kalshi and resolve 50-50 on
+# Polymarket, so a hedged basket still collects $1. Tail caveat: if the game
+# is cancelled or not started within 48 h (tennis: walkover), Kalshi pays a
+# discretionary "fair price" and Polymarket 50-50 — the same caveat as the
+# approved soccer families. A tennis retirement pays the player who
+# advances on both.
+#
+# Dates: US leagues need the exact date (playoff series play on
+# consecutive days, so ±1 could pair the wrong game); tennis and UFC
+# allow ±2 days (a pairing meets once per event). Exactly one Polymarket
+# game must fit each Kalshi game.
+_GAME_SERIES = {
+    "KXNFLGAME": ("nfl", "nfl"), "KXNBAGAME": ("nba", "nba"),
+    "KXMLBGAME": ("mlb", "mlb"), "KXNHLGAME": ("nhl", "nhl"),
+    "KXATPMATCH": ("atp", None), "KXWTAMATCH": ("wta", None),
+    "KXUFCFIGHT": ("ufc", None),
+}
+_GAME_DAY_SLACK = {"atp": 2, "wta": 2, "ufc": 2}
+
+
+def _league_team(league, name):
+    """Polymarket game side ('Thunder', 'Golden Knights', 'Los Angeles
+    Dodgers') -> full team name, or None unless exactly one team fits."""
+    n = _team_norm(name)
+    hits = [f for f in _LEAGUE_TEAMS[league].values() if f == n or f.endswith(" " + n)]
+    return hits[0] if len(hits) == 1 else None
+
+
+def _person_key(name):
+    """Fighter / player name as a sorted token tuple ('Wang Xiyu' =
+    'Xiyu Wang'); None for blanks."""
+    toks = re.findall(r"[a-z0-9']+", _strip_diacritics(str(name or "")).lower())
+    return tuple(sorted(toks)) or None
+
+
+def _poly_game_sides(question):
+    """('A', 'B') from 'A vs. B', 'Jinan: A vs B', "Dana White's Contender
+    Series: A vs. B (Featherweight, Main Card)"."""
+    q = str(question or "").strip()
+    q = re.sub(r"\s*\([^)]*\)\s*$", "", q)
+    if ":" in q:
+        q = q.rsplit(":", 1)[1]
+    parts = re.split(r"\s+vs\.?\s+", q.strip(), flags=re.I)
+    if len(parts) != 2 or not all(x.strip() for x in parts):
+        return None
+    return parts[0].strip(), parts[1].strip()
+
+
+def match_games(dfs: dict) -> pd.DataFrame:
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']; p = dfs['polymarket']
+    if k.empty or p.empty or "series_ticker" not in k.columns or "event_slug" not in p.columns:
+        return pd.DataFrame()
+    from datetime import date as _date
+
+    def _day(s):
+        try:
+            return _date.fromisoformat(str(s)[:10])
+        except ValueError:
+            return None
+
+    # Kalshi: event -> {side key: row}
+    ks = k[k["series_ticker"].isin(list(_GAME_SERIES))]
+    events = {}
+    for _, r in ks.iterrows():
+        sport, league = _GAME_SERIES[r["series_ticker"]]
+        t = str(r["market_id"])
+        if league:
+            full = _LEAGUE_TEAMS[league].get(t.rsplit("-", 1)[-1])
+            if not full or not _kalshi_label_fits(r.get("yes_sub_title"), full):
+                continue
+            side = full
+        else:
+            side = _person_key(r.get("yes_sub_title"))
+            if not side:
+                continue
+        ev = events.setdefault((sport, str(r.get("event_ticker") or t.rsplit("-", 1)[0])), {"rows": {}})
+        ev["day"] = _day(r.get("game_date"))
+        ev["rows"][side] = r
+
+    # Polymarket: moneyline markets of dated game events (market slug ==
+    # event slug, i.e. not a spread / total / prop inside the event).
+    # "-game-2" suffixes (doubleheaders) are kept so they count as a second
+    # candidate and make the date ambiguous rather than being skipped.
+    pm = p[p["event_slug"].astype(str).str.match(r"^(nfl|nba|mlb|nhl|atp|wta|ufc)-.+-\d{4}-\d{2}-\d{2}(?:-game-?\d+)?$")
+           & (p["market_slug"].astype(str) == p["event_slug"].astype(str))]
+    if "outcomes_binary" in pm.columns:
+        pm = pm[pm["outcomes_binary"].astype(str) != "True"]
+    games = {}
+    for _, r in pm.iterrows():
+        sport = str(r["event_slug"]).split("-", 1)[0]
+        sides = _poly_game_sides(r.get("question"))
+        day = _day(r.get("game_date"))
+        if not sides or not day:
+            continue
+        # The scraper records the first token's outcome name when it has
+        # it; it must be the first-listed side.
+        yo = r.get("yes_outcome") if "yes_outcome" in pm.columns else None
+        if isinstance(yo, str) and yo.strip() and _person_key(yo) != _person_key(sides[0]):
+            continue
+        league = sport if sport in _LEAGUE_TEAMS else None
+        keyed = tuple(_league_team(league, s) if league else _person_key(s) for s in sides)
+        if not all(keyed) or keyed[0] == keyed[1]:
+            continue
+        games.setdefault((sport, frozenset(keyed)), []).append((day, keyed, r))
+
+    # Two Kalshi events for the same sides and day (doubleheader): skip both.
+    seen = {}
+    for (sport, _ev), ev in events.items():
+        if len(ev["rows"]) == 2 and ev.get("day"):
+            kk = (sport, frozenset(ev["rows"]), ev["day"])
+            seen[kk] = seen.get(kk, 0) + 1
+
+    pairs = []
+    for (sport, _ev), ev in events.items():
+        if len(ev["rows"]) != 2 or not ev.get("day"):
+            continue
+        if seen[(sport, frozenset(ev["rows"]), ev["day"])] > 1:
+            continue
+        slack = _GAME_DAY_SLACK.get(sport, 0)
+        cands = [g for g in games.get((sport, frozenset(ev["rows"])), [])
+                 if abs((g[0] - ev["day"]).days) <= slack]
+        if len(cands) != 1:
+            continue
+        _, keyed, p_row = cands[0]
+        k_row = ev["rows"][keyed[0]]
+        pairs.append({
+            "match_type": "game",
+            "race_id": None,
+            "platform_a": "kalshi",
+            "platform_b": "polymarket",
+            "question_a": k_row.get("question", ""),
+            "question_b": p_row.get("question", ""),
+            "market_id_a": k_row.get("market_id", ""),
+            "market_id_b": p_row.get("market_id", ""),
+            "implied_prob_a": k_row.get("implied_prob"),
+            "implied_prob_b": p_row.get("implied_prob"),
+            "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+            "category": k_row.get("category", ""),
+            "url_a": k_row.get("url", ""),
+            "url_b": p_row.get("url", ""),
+            "volume_a": k_row.get("volume"),
+            "volume_b": p_row.get("volume"),
+            "fuzzy_score": 100,
+        })
+    print(f"  games: kalshi events={len(events)}, polymarket games={sum(len(v) for v in games.values())}, pairs={len(pairs)}")
+    return pd.DataFrame(pairs)
+
+
 # ── soccer fixtures (2026-10-12) ──────────────────────────────────────────
 # Soccer prop markets are fully determined by fixture date + the two teams +
 # the market kind, so they don't need fuzzy titles. Recall check on a fresh
@@ -1876,8 +2037,12 @@ def run():
     fixtures = match_soccer_fixtures(dfs)
     print(f"  Soccer fixture pairs: {len(fixtures)}")
 
-    prior = pd.concat([political, threshold, tournament, nominee, fixtures], ignore_index=True) \
-        if any(len(x) for x in [political, threshold, tournament, nominee, fixtures]) else pd.DataFrame()
+    print("\nMatching games (US leagues, tennis, UFC: date + both sides)...")
+    games = match_games(dfs)
+    print(f"  Game pairs: {len(games)}")
+
+    prior = pd.concat([political, threshold, tournament, nominee, fixtures, games], ignore_index=True) \
+        if any(len(x) for x in [political, threshold, tournament, nominee, fixtures, games]) else pd.DataFrame()
     claimed_by_platform = {}
     if not prior.empty:
         for _, r in prior.iterrows():
@@ -1897,7 +2062,7 @@ def run():
     fuzzy = match_fuzzy(dfs_for_fuzzy)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
-    all_pairs = pd.concat([political, threshold, tournament, nominee, fixtures, fuzzy], ignore_index=True)
+    all_pairs = pd.concat([political, threshold, tournament, nominee, fixtures, games, fuzzy], ignore_index=True)
     # Remove duplicates (same market pair, different direction)
     all_pairs = all_pairs.drop_duplicates(subset=["platform_a", "platform_b", "market_id_a", "market_id_b"])
 

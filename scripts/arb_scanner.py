@@ -68,6 +68,7 @@ VERIFIED_MATCH_TYPES = {
     "tournament-tennis",
     "tournament-worldcup",
     "tournament-league",   # NBA/NHL/MLB/NFL/WNBA/CFP champion futures
+    "game",                # NFL/NBA/MLB/NHL games, ATP/WTA matches, UFC fights
     "primary-nominee",
     "general",   # elections.py party-win legs (allowlisted titles)
 }

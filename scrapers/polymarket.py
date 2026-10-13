@@ -385,6 +385,9 @@ def parse_market(event, market):
         "no_token_id": no_token,
         "question": market.get("question", event.get("title", "")),
         "outcomes_binary": outcomes_binary,
+        # Name of the first token's outcome on a two-sided market ("Bills",
+        # "Over"); the game matcher checks it is the first-listed side.
+        "yes_outcome": (str(outcomes[0]) if outcomes and not outcomes_binary else None),
         "category": category,
         "end_date": str(market.get("endDate", event.get("endDate", "")))[:10],
         "implied_prob": round(implied_prob, 4) if implied_prob is not None else None,

@@ -767,3 +767,77 @@ def test_postponement_deadline_is_window_end():
     assert window(poly)[1] == date(2027, 6, 30)
     assert not yes_window_contains_no(poly, kal, no_end_fallback=date(2029, 7, 30))[0]
     assert yes_window_contains_no(kal, poly, yes_end_fallback=date(2029, 7, 30))[0]
+
+
+def _game_frames(k_rows, p_rows):
+    k = pd.DataFrame(k_rows); p = pd.DataFrame(p_rows)
+    for c in ("implied_prob", "settle_date", "url", "category", "volume"):
+        k[c] = ""; p[c] = ""
+    k["series_ticker"] = k["market_id"].str.extract(r"^(KX[A-Z]+)")[0]
+    k["event_ticker"] = k["market_id"].str.rsplit("-", n=1).str[0]
+    if "market_slug" not in p.columns:
+        p["market_slug"] = p["event_slug"]
+    p["outcomes_binary"] = False
+    return {"kalshi": k, "polymarket": p}
+
+
+def test_games_pair_first_listed_side():
+    """Polymarket 'Thunder vs. Spurs' (first token = Thunder) pairs with
+    Kalshi's Oklahoma City market, not San Antonio's; tennis by full name."""
+    from scripts.matcher import match_games
+    dfs = _game_frames([
+        {"market_id": "KXNBAGAME-26OCT20OKCSAS-OKC", "question": "Oklahoma City vs San Antonio — Oklahoma City",
+         "yes_sub_title": "Oklahoma City", "game_date": "2026-10-20"},
+        {"market_id": "KXNBAGAME-26OCT20OKCSAS-SAS", "question": "Oklahoma City vs San Antonio — San Antonio",
+         "yes_sub_title": "San Antonio", "game_date": "2026-10-20"},
+        {"market_id": "KXWTAMATCH-26OCT13POHWAN-WAN", "question": "Pohankova vs Wang — Xiyu Wang",
+         "yes_sub_title": "Xiyu Wang", "game_date": "2026-10-13"},
+        {"market_id": "KXWTAMATCH-26OCT13POHWAN-POH", "question": "Pohankova vs Wang — Mia Pohankova",
+         "yes_sub_title": "Mia Pohankova", "game_date": "2026-10-13"},
+    ], [
+        {"market_id": "p1", "question": "Spurs vs. Thunder", "event_slug": "nba-sas-okc-2026-10-20",
+         "game_date": "2026-10-20", "yes_outcome": "Spurs"},
+        {"market_id": "p2", "question": "Wuhan Tennis Open: Mia Pohankova vs Xiyu Wang",
+         "event_slug": "wta-pohanko-wang-2026-10-12", "game_date": "2026-10-12"},
+    ])
+    out = match_games(dfs)
+    assert dict(zip(out["market_id_b"], out["market_id_a"])) == {
+        "p1": "KXNBAGAME-26OCT20OKCSAS-SAS", "p2": "KXWTAMATCH-26OCT13POHWAN-POH"}
+    assert set(out["match_type"]) == {"game"}
+
+
+@pytest.mark.parametrize("p_row", [
+    # Next game of the series (one day later): US leagues need the exact date.
+    {"question": "Tampa Bay Rays vs. Cleveland Guardians", "event_slug": "mlb-tb-cle-2026-10-17", "game_date": "2026-10-17"},
+    # Same date, different opponent.
+    {"question": "Tampa Bay Rays vs. Boston Red Sox", "event_slug": "mlb-tb-bos-2026-10-16", "game_date": "2026-10-16"},
+    # Token order disagrees with the title: never guess which token is which.
+    {"question": "Tampa Bay Rays vs. Cleveland Guardians", "event_slug": "mlb-tb-cle-2026-10-16",
+     "game_date": "2026-10-16", "yes_outcome": "Cleveland Guardians"},
+    # A spread inside the game event is not the moneyline.
+    {"question": "Spread: Tampa Bay Rays (-1.5)", "event_slug": "mlb-tb-cle-2026-10-16",
+     "market_slug": "mlb-tb-cle-2026-10-16-spread-home-1pt5", "game_date": "2026-10-16"},
+])
+def test_games_reject(p_row):
+    from scripts.matcher import match_games
+    dfs = _game_frames([
+        {"market_id": "KXMLBGAME-26OCT161800TBCLE-TB", "question": "Game 4: Tampa Bay vs Cleveland — Tampa Bay",
+         "yes_sub_title": "Tampa Bay", "game_date": "2026-10-16"},
+        {"market_id": "KXMLBGAME-26OCT161800TBCLE-CLE", "question": "Game 4: Tampa Bay vs Cleveland — Cleveland",
+         "yes_sub_title": "Cleveland", "game_date": "2026-10-16"},
+    ], [dict(p_row, market_id="p1")])
+    assert match_games(dfs).empty
+
+
+def test_games_two_candidates_skipped():
+    """Two Polymarket games fit (doubleheader / duplicate event): skip."""
+    from scripts.matcher import match_games
+    k = [{"market_id": "KXNHLGAME-26OCT18CARCGY-CAR", "question": "Carolina vs Calgary — Carolina",
+          "yes_sub_title": "Carolina", "game_date": "2026-10-18"},
+         {"market_id": "KXNHLGAME-26OCT18CARCGY-CGY", "question": "Carolina vs Calgary — Calgary",
+          "yes_sub_title": "Calgary", "game_date": "2026-10-18"}]
+    p = [{"market_id": f"p{i}", "question": "Hurricanes vs. Flames", "event_slug": f"nhl-car-cgy-2026-10-18{s}",
+          "game_date": "2026-10-18"} for i, s in ((1, ""), (2, "-game-2"))]
+    for r in p:
+        r["market_slug"] = r["event_slug"]
+    assert match_games(_game_frames(k, p)).empty
