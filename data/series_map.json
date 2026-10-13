@@ -810,10 +810,11 @@
    "polymarket_event_slug_regex": "^ucl-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-10-12",
-   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time, Polymarket 90 min + stoppage only; league-phase matches have no extra time, so they agree. Home/away only. UEFA Champions League league phase (ends late Jan 2027; knockout ties can go to extra time).",
+   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time, Polymarket 90 min + stoppage only; league-phase matches have no extra time, so they agree. Home/away only. UEFA Champions League league phase (ends late Jan 2027; knockout ties can go to extra time). 2026-10-13: 'No Goal' (Kalshi) = 'Neither' (Polymarket) added; same period caveat. Polymarket resolves 'Neither' if the game is cancelled with no make-up.",
    "polymarket_market_kinds": [
     "first-to-score-away",
-    "first-to-score-home"
+    "first-to-score-home",
+    "first-to-score-neither"
    ],
    "review_by": "2027-01-28",
    "on_lapse": "reject"
@@ -846,6 +847,20 @@
    "rules_read": "2026-10-13",
    "note": "Both: Spotify's officially reported Q3 2026 monthly active users above the stated number (strictly above on both).",
    "caveat": "Polymarket resolves No if Q3 earnings aren't released by Nov 30, 2026 (Spotify reports late October); Kalshi stays open to Feb 2027."
+  },
+  {
+   "kalshi_series": "KXLOL",
+   "polymarket_event_slug_regex": "^worlds-2026-winner$",
+   "status": "approved",
+   "rules_read": "2026-10-13",
+   "note": "Both: the 2026 League of Legends World Championship champion (Riot / LoL Esports). Polymarket resolves Other if postponed past Nov 28, 2026, cancelled or no winner by then; Kalshi closes Nov 29. Polymarket ties: first name alphabetically."
+  },
+  {
+   "kalshi_series": "KXLOLQUALIFIERS",
+   "polymarket_event_slug_regex": "^worlds-2026-winner$",
+   "status": "rejected",
+   "rules_read": "2026-10-13",
+   "note": "Kalshi pays on reaching a stage (quarterfinalists / finalists); Polymarket on winning Worlds. Different questions (143% fake returns)."
   }
  ]
 }

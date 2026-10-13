@@ -928,5 +928,25 @@
 "poly_rules": "This market will resolve according to the winner of the 46th FIDE Chess Olympiad Open Tournament, currently scheduled for September 15, 2026 to September 28, 2026.\n\nIf this tournament is postponed after October 12, 2026, 11:59 PM ET, canceled, or a winner has not been declared within this timeframe, this market will resolve to \"Other.\"\n\nIf multiple teams are declared winner, this market will resolve in favor of the team whose listed team name comes first alphabetically.\n\nThe resolution source for this market will be official information from the tournament organizer, FIDE (https://chessolympiad2026.fide.com/); however, a consensus of credible reporting may also be used.",
 "kalshi_close": "2026-09-28T11:58:08Z",
 "poly_end": "2026-10-13T03:59:00Z"
+},
+{
+"family": "KXLOL | ^worlds-2026-winner$",
+"status": "approved",
+"kalshi_q": "Worlds 2026 Champion — Hanwha Life Esports",
+"poly_q": "Will Hanwha Life Esports win Worlds 2026?",
+"kalshi_rules": "Will Hanwha Life Esports win League of Legends Worlds? If Hanwha Life Esports is the 2026 League of Legends Worlds champion, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Hanwha Life Esports win Worlds 2026? This market will resolve according to the winner of the 2026 League of Legends World Championship (Worlds 2026), currently scheduled for October 15 to November 14, 2026.\n\nIf this tournament is postponed after November 28, 2026, 11:59 PM ET, canceled, or a winner has not been declared within this timeframe, this market will resolve to \"Other\".\n\nIf multiple teams are declared winners, this market will resolve in favor of the team whose listed team name comes first alphabetically.\n\nThe resolution source for this market will be official information from the tournament organizer, Riot Games, via the LoL Esports website (https://lolesports.com). However, a consensus of credible reporting (e.g., Liquipedia at https://liquipedia.net/leagueoflegends/World_Championship/2026) may also be used.",
+"kalshi_close": "2026-11-29",
+"poly_end": "2026-11-29"
+},
+{
+"family": "KXLOLQUALIFIERS | ^worlds-2026-winner$",
+"status": "rejected",
+"kalshi_q": "Worlds 2026 Quarterfinalists — Hanwha Life Esports",
+"poly_q": "Will Hanwha Life Esports win Worlds 2026?",
+"kalshi_rules": "Will Hanwha Life Esports qualify for the 2026 League of Legends Worlds quarterfinals? If Hanwha Life Esports is one of the teams to qualify for the 2026 League of Legends Worlds quarterfinals, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Hanwha Life Esports win Worlds 2026? This market will resolve according to the winner of the 2026 League of Legends World Championship (Worlds 2026), currently scheduled for October 15 to November 14, 2026.\n\nIf this tournament is postponed after November 28, 2026, 11:59 PM ET, canceled, or a winner has not been declared within this timeframe, this market will resolve to \"Other\".\n\nIf multiple teams are declared winners, this market will resolve in favor of the team whose listed team name comes first alphabetically.\n\nThe resolution source for this market will be official information from the tournament organizer, Riot Games, via the LoL Esports website (https://lolesports.com). However, a consensus of credible reporting (e.g., Liquipedia at https://liquipedia.net/leagueoflegends/World_Championship/2026) may also be used.",
+"kalshi_close": "2026-11-15",
+"poly_end": "2026-11-15"
 }
 ]
