@@ -67,6 +67,7 @@ VERIFIED_MATCH_TYPES = {
     "threshold",
     "tournament-tennis",
     "tournament-worldcup",
+    "tournament-league",   # NBA/NHL/MLB/NFL/WNBA/CFP champion futures
     "primary-nominee",
     "general",   # elections.py party-win legs (allowlisted titles)
 }

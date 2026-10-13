@@ -43,6 +43,12 @@ def window(text) -> tuple[date | None, date | None]:
     ends = [e for e in ends if e]
     if ends:
         end = ends[-1]
+    # A postponement deadline is also an end: Polymarket league futures
+    # resolve "Other" if the final is "postponed after June 30, 2027" (a
+    # later champion pays only the leg without that cutoff). 2026-10-13.
+    m = re.search(r"\b(?:postponed|delayed|rescheduled)\s+(?:to\s+)?(?:after|beyond|past)\s+" + _DATE, t)
+    if m and _d(m):
+        end = _d(m) if end is None else min(end, _d(m))
     # Seasonal windows: "during the 2026 (Atlantic|Pacific) hurricane season"
     # — NOAA season ends Nov 30 (Atlantic and Central/Eastern Pacific).
     m = re.search(r"during the (20\d\d)\s+(?:atlantic\s+|pacific\s+|central pacific\s+)?hurricane season", t)

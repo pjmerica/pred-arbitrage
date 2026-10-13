@@ -702,3 +702,68 @@ def test_fixture_matcher_skips_other_sports():
         p[c] = ""
     out = match_soccer_fixtures({"kalshi": k, "polymarket": p})
     assert list(out["market_id_a"]) == ["KXMLSGAME-26OCT17NYRBTOR-TOR"]
+
+
+def _league_frames(k_rows, p_rows):
+    k = pd.DataFrame(k_rows); p = pd.DataFrame(p_rows)
+    for df in (k, p):
+        for c in ("implied_prob", "settle_date", "url", "category", "volume"):
+            df[c] = ""
+    return {"kalshi": k, "polymarket": p}
+
+
+def test_league_futures_pair_on_season_and_team():
+    """Kalshi 'Pro Basketball Champion — Los Angeles L' pairs with the Lakers,
+    not the Clippers; 'Ohio St.' with Ohio State; NHL '2026-27' with 2026-27."""
+    from scripts.matcher import match_league_futures
+    dfs = _league_frames([
+        {"market_id": "KXNBA-27-LAL", "question": "2027 Pro Basketball Champion — Los Angeles L", "yes_sub_title": "Los Angeles L"},
+        {"market_id": "KXNCAAF-27-OSU", "question": "College Football National Championship Winner — Ohio St.", "yes_sub_title": "Ohio St."},
+        {"market_id": "KXNHL-27-MTL", "question": "2026-27 Stanley Cup® Finals Winner — Montréal Canadiens", "yes_sub_title": "Montréal Canadiens"},
+        {"market_id": "KXNCAAF-27-MIA", "question": "College Football National Championship Winner — Miami (FL)", "yes_sub_title": "Miami (FL)"},
+    ], [
+        {"market_id": "p1", "question": "Will Los Angeles Clippers win the 2027 NBA Finals?"},
+        {"market_id": "p2", "question": "Will Los Angeles Lakers win the 2027 NBA Finals?"},
+        {"market_id": "p3", "question": "Will Ohio State Buckeyes win the 2027 CFP National Championship?"},
+        {"market_id": "p4", "question": "Will the Montreal Canadiens be named the 2026-27 NHL Stanley Cup Champion?"},
+        {"market_id": "p5", "question": "Will Miami Hurricanes win the 2027 CFP National Championship?"},
+    ])
+    out = match_league_futures(dfs)
+    got = dict(zip(out["market_id_a"], out["market_id_b"]))
+    assert got == {"KXNBA-27-LAL": "p2", "KXNCAAF-27-OSU": "p3", "KXNHL-27-MTL": "p4", "KXNCAAF-27-MIA": "p5"}
+    assert set(out["match_type"]) == {"tournament-league"}
+
+
+@pytest.mark.parametrize("k_row, p_q", [
+    # Different season: 2026 World Series vs a 2027 one.
+    ({"market_id": "KXMLB-26-LAD", "question": "Pro Baseball Champion — Los Angeles D", "yes_sub_title": "Los Angeles D"},
+     "Will the Los Angeles Dodgers win the 2027 World Series?"),
+    # Ticker abbreviation and Kalshi's own label disagree (reassigned code).
+    ({"market_id": "KXNBA-27-LAL", "question": "2027 Pro Basketball Champion — Los Angeles C", "yes_sub_title": "Los Angeles C"},
+     "Will Los Angeles Lakers win the 2027 NBA Finals?"),
+    # Title year contradicts the ticker season.
+    ({"market_id": "KXNBA-27-BOS", "question": "2028 Pro Basketball Champion — Boston", "yes_sub_title": "Boston"},
+     "Will Boston Celtics win the 2027 NBA Finals?"),
+    # Conference title is not the championship.
+    ({"market_id": "KXNBA-27-BOS", "question": "2027 Pro Basketball Eastern Conference Champion — Boston", "yes_sub_title": "Boston"},
+     "Will Boston Celtics win the 2027 NBA Finals?"),
+    # Texas is not Texas Tech / Texas A&M.
+    ({"market_id": "KXNCAAF-27-TEX", "question": "College Football National Championship Winner — Texas", "yes_sub_title": "Texas"},
+     "Will Texas Tech Red Raiders win the 2027 CFP National Championship?"),
+])
+def test_league_futures_reject(k_row, p_q):
+    from scripts.matcher import match_league_futures
+    out = match_league_futures(_league_frames([k_row], [{"market_id": "p1", "question": p_q}]))
+    assert out.empty
+
+
+def test_postponement_deadline_is_window_end():
+    """Polymarket futures resolve 'Other' if the final is postponed past a date;
+    Kalshi (closes 2029) has no cutoff. Only YES-on-Kalshi is a hedge."""
+    from datetime import date
+    poly = ('If this event is cancelled, postponed after June 30, 2027, 11:59 PM ET, or a champion '
+            'has not been declared within this timeframe, this market will resolve to "Other".')
+    kal = "If Boston wins the 2027 Pro Basketball Finals, then the market resolves to Yes."
+    assert window(poly)[1] == date(2027, 6, 30)
+    assert not yes_window_contains_no(poly, kal, no_end_fallback=date(2029, 7, 30))[0]
+    assert yes_window_contains_no(kal, poly, yes_end_fallback=date(2029, 7, 30))[0]

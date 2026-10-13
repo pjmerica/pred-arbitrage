@@ -1494,6 +1494,223 @@ def match_tournament_winner(dfs: dict) -> pd.DataFrame:
                 "fuzzy_score": 100,
             })
     print(f"  Tournament pairs matched: {len(pairs)}")
+    league = match_league_futures(dfs)
+    if len(league):
+        return pd.concat([pd.DataFrame(pairs), league], ignore_index=True)
+    return pd.DataFrame(pairs)
+
+
+# ── US league championship futures (2026-10-13) ───────────────────────────
+# Kalshi "2027 Pro Basketball Champion — Boston" (KXNBA-27-BOS) and
+# Polymarket "Will Boston Celtics win the 2027 NBA Finals?" are the same
+# proposition, but Kalshi's trademark-free wording ("Pro Basketball") and
+# city-only names keep them far below the fuzzy cutoff — none of the ~100
+# open futures were paired. Rules read side by side (NBA, NHL, MLB, NFL,
+# WNBA, CFP): both resolve on the league's official champion for the same
+# season. Polymarket alone resolves "Other" if the final is postponed past
+# a stated date; rules_window reads that deadline and the Kalshi close date
+# is the other leg's end, so only YES-on-Kalshi baskets pass the window
+# check.
+#
+# Key: (league, season year, team). Kalshi's team is the ticker suffix,
+# looked up in a per-league abbreviation table; Polymarket's team is the
+# full name in the question. A second guard checks Kalshi's own team label
+# ("Los Angeles L", "Ohio St.") against the Polymarket name, so a reused
+# or reassigned abbreviation can't pair the wrong team.
+_LEAGUE_TEAMS = {
+    "nba": {
+        "ATL": "atlanta hawks", "BOS": "boston celtics", "BKN": "brooklyn nets",
+        "CHA": "charlotte hornets", "CHI": "chicago bulls", "CLE": "cleveland cavaliers",
+        "DAL": "dallas mavericks", "DEN": "denver nuggets", "DET": "detroit pistons",
+        "GSW": "golden state warriors", "HOU": "houston rockets", "IND": "indiana pacers",
+        "LAC": "los angeles clippers", "LAL": "los angeles lakers", "MEM": "memphis grizzlies",
+        "MIA": "miami heat", "MIL": "milwaukee bucks", "MIN": "minnesota timberwolves",
+        "NOP": "new orleans pelicans", "NYK": "new york knicks", "OKC": "oklahoma city thunder",
+        "ORL": "orlando magic", "PHI": "philadelphia 76ers", "PHX": "phoenix suns",
+        "POR": "portland trail blazers", "SAC": "sacramento kings", "SAS": "san antonio spurs",
+        "TOR": "toronto raptors", "UTA": "utah jazz", "WAS": "washington wizards",
+    },
+    "wnba": {
+        "ATL": "atlanta dream", "CHI": "chicago sky", "CON": "connecticut sun",
+        "DAL": "dallas wings", "GS": "golden state valkyries", "IND": "indiana fever",
+        "LV": "las vegas aces", "LA": "los angeles sparks", "MIN": "minnesota lynx",
+        "NY": "new york liberty", "PHX": "phoenix mercury", "SEA": "seattle storm",
+        "WAS": "washington mystics", "TOR": "toronto tempo", "POR": "portland fire",
+    },
+    "nhl": {
+        "ANA": "anaheim ducks", "BOS": "boston bruins", "BUF": "buffalo sabres",
+        "CGY": "calgary flames", "CAR": "carolina hurricanes", "CHI": "chicago blackhawks",
+        "COL": "colorado avalanche", "CBJ": "columbus blue jackets", "DAL": "dallas stars",
+        "DET": "detroit red wings", "EDM": "edmonton oilers", "FLA": "florida panthers",
+        "LA": "los angeles kings", "MIN": "minnesota wild", "MTL": "montreal canadiens",
+        "NSH": "nashville predators", "NJ": "new jersey devils", "NYI": "new york islanders",
+        "NYR": "new york rangers", "OTT": "ottawa senators", "PHI": "philadelphia flyers",
+        "PIT": "pittsburgh penguins", "SJ": "san jose sharks", "SEA": "seattle kraken",
+        "STL": "st. louis blues", "TB": "tampa bay lightning", "TOR": "toronto maple leafs",
+        "UTA": "utah mammoth", "VAN": "vancouver canucks", "VGK": "vegas golden knights",
+        "WSH": "washington capitals", "WPG": "winnipeg jets",
+    },
+    "mlb": {
+        "ARI": "arizona diamondbacks", "ATL": "atlanta braves", "BAL": "baltimore orioles",
+        "BOS": "boston red sox", "CHC": "chicago cubs", "CWS": "chicago white sox",
+        "CIN": "cincinnati reds", "CLE": "cleveland guardians", "COL": "colorado rockies",
+        "DET": "detroit tigers", "HOU": "houston astros", "KC": "kansas city royals",
+        "LAA": "los angeles angels", "LAD": "los angeles dodgers", "MIA": "miami marlins",
+        "MIL": "milwaukee brewers", "MIN": "minnesota twins", "NYM": "new york mets",
+        "NYY": "new york yankees", "PHI": "philadelphia phillies", "PIT": "pittsburgh pirates",
+        "SD": "san diego padres", "SF": "san francisco giants", "SEA": "seattle mariners",
+        "STL": "st. louis cardinals", "TB": "tampa bay rays", "TEX": "texas rangers",
+        "TOR": "toronto blue jays", "WSH": "washington nationals",
+    },
+    "nfl": {
+        "ARI": "arizona cardinals", "ATL": "atlanta falcons", "BAL": "baltimore ravens",
+        "BUF": "buffalo bills", "CAR": "carolina panthers", "CHI": "chicago bears",
+        "CIN": "cincinnati bengals", "CLE": "cleveland browns", "DAL": "dallas cowboys",
+        "DEN": "denver broncos", "DET": "detroit lions", "GB": "green bay packers",
+        "HOU": "houston texans", "IND": "indianapolis colts", "JAC": "jacksonville jaguars",
+        "KC": "kansas city chiefs", "LV": "las vegas raiders", "LAC": "los angeles chargers",
+        "LAR": "los angeles rams", "MIA": "miami dolphins", "MIN": "minnesota vikings",
+        "NE": "new england patriots", "NO": "new orleans saints", "NYG": "new york giants",
+        "NYJ": "new york jets", "PHI": "philadelphia eagles", "PIT": "pittsburgh steelers",
+        "SF": "san francisco 49ers", "SEA": "seattle seahawks", "TB": "tampa bay buccaneers",
+        "TEN": "tennessee titans", "WAS": "washington commanders",
+    },
+    # College: programs Kalshi or Polymarket list now; add as more appear.
+    # "Miami (FL)" is the Hurricanes (Miami (OH) is the RedHawks); Kalshi's
+    # "Ole Miss" is Polymarket's "Mississippi Rebels".
+    "cfp": {
+        "OSU": "ohio state buckeyes", "TEX": "texas longhorns", "ND": "notre dame fighting irish",
+        "IND": "indiana hoosiers", "UGA": "georgia bulldogs", "LSU": "lsu tigers",
+        "TTU": "texas tech red raiders", "MIA": "miami hurricanes", "ALA": "alabama crimson tide",
+        "MISS": "mississippi rebels", "UTAH": "utah utes", "UCLA": "ucla bruins",
+        "ORE": "oregon ducks", "TAMU": "texas a&m aggies", "OU": "oklahoma sooners",
+        "MICH": "michigan wolverines", "USC": "usc trojans", "FLA": "florida gators",
+    },
+}
+
+# Kalshi series -> (league, phrase its title must contain).
+_KALSHI_LEAGUE_SERIES = {
+    "KXNBA": ("nba", "pro basketball champion"),
+    "KXWNBA": ("wnba", "women's pro basketball champion"),
+    "KXNHL": ("nhl", "stanley cup"),
+    "KXMLB": ("mlb", "pro baseball champion"),
+    "KXSB": ("nfl", "pro football champion"),
+    "KXNCAAF": ("cfp", "college football national championship"),
+}
+
+# Polymarket question -> league, team name, season (the year the final is
+# played; NHL "2026-27" -> 27).
+_POLY_LEAGUE_Q = [
+    ("nba", re.compile(r"^Will (?:the )?(.+?) win the (20\d\d) NBA Finals\?$", re.I)),
+    ("wnba", re.compile(r"^Will (?:the )?(.+?) win the (20\d\d) WNBA Finals\?$", re.I)),
+    ("nhl", re.compile(r"^Will (?:the )?(.+?) be named the 20\d\d-(\d\d) NHL Stanley Cup Champion\?$", re.I)),
+    ("mlb", re.compile(r"^Will (?:the )?(.+?) win the (20\d\d) World Series\?$", re.I)),
+    ("nfl", re.compile(r"^Will (?:the )?(.+?) win the (20\d\d) NFL league championship\?$", re.I)),
+    ("cfp", re.compile(r"^Will (?:the )?(.+?) win the (20\d\d) CFP National Championship\?$", re.I)),
+]
+
+
+def _team_norm(s):
+    s = _strip_diacritics(str(s or "")).lower().strip()
+    return re.sub(r"\s+", " ", s)
+
+
+def _kalshi_label_fits(label, full_name):
+    """Kalshi's team label must describe the Polymarket team: a prefix of
+    it ("Boston" / "Boston Celtics"; "Ohio St." / "Ohio State Buckeyes")
+    or city + nickname initial ("Los Angeles L" / "Los Angeles Lakers")."""
+    lab = _team_norm(label); full = _team_norm(full_name)
+    lab = {"ole miss": "mississippi", "miami (fl)": "miami"}.get(lab, lab)
+    # College "St." means State ("Ohio St."); NHL/MLB "St. Louis" is a city.
+    lab = re.sub(r"(?<=\w) st\.?$", " state", lab)
+    if not lab:
+        return False
+    if full == lab or full.startswith(lab + " "):
+        return True
+    m = re.match(r"^(.+) ([a-z])$", lab)
+    if m and full.startswith(m.group(1) + " "):
+        return full[len(m.group(1)) + 1:][:1] == m.group(2)
+    return False
+
+
+def _kalshi_league_key(row):
+    t = str(row.get("market_id") or "")
+    m = re.match(r"^(KX[A-Z]+)-(\d\d)-([A-Z]+)$", t)
+    if not m or m.group(1) not in _KALSHI_LEAGUE_SERIES:
+        return None
+    league, phrase = _KALSHI_LEAGUE_SERIES[m.group(1)]
+    title = _strip_diacritics(str(row.get("question") or "")).lower()
+    if phrase not in title:
+        return None
+    # A year in the title ("2027 Pro Basketball", "2026-27 Stanley Cup")
+    # must agree with the ticker's season.
+    ty = re.search(r"\b20(\d\d)(?:[- ](\d\d))?\b", title)  # hyphen -> space above
+    if ty and (ty.group(2) or ty.group(1)) != m.group(2):
+        return None
+    team = _LEAGUE_TEAMS[league].get(m.group(3))
+    if not team or not _kalshi_label_fits(row.get("yes_sub_title"), team):
+        return None
+    return (league, m.group(2), team)
+
+
+def _poly_league_key(question):
+    q = str(question or "").strip()
+    for league, rx in _POLY_LEAGUE_Q:
+        m = rx.match(q)
+        if m:
+            name = _team_norm(m.group(1))
+            if name in _LEAGUE_TEAMS[league].values():
+                return (league, m.group(2)[-2:], name)
+            return None
+    return None
+
+
+def match_league_futures(dfs: dict) -> pd.DataFrame:
+    """Kalshi vs Polymarket US-league champion futures, keyed on
+    (league, season, team). See the block comment above."""
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']; p = dfs['polymarket']
+    if k.empty or p.empty:
+        return pd.DataFrame()
+    k_idx, p_idx = {}, {}
+    ks = k[k['market_id'].astype(str).str.match(r"^KX(?:NBA|WNBA|NHL|MLB|SB|NCAAF)-\d\d-")]
+    for _, r in ks.iterrows():
+        key = _kalshi_league_key(r)
+        if key:
+            k_idx.setdefault(key, []).append(r)
+    for _, r in p.iterrows():
+        key = _poly_league_key(r.get('question', ''))
+        if key:
+            p_idx.setdefault(key, []).append(r)
+    pairs = []
+    for key in sorted(set(k_idx) & set(p_idx)):
+        # Exactly one market per side, or the key isn't precise enough.
+        if len(k_idx[key]) != 1 or len(p_idx[key]) != 1:
+            print(f"  league futures: ambiguous key {key} ({len(k_idx[key])} Kalshi, "
+                  f"{len(p_idx[key])} Polymarket) - skipped")
+            continue
+        k_row = k_idx[key][0]; p_row = p_idx[key][0]
+        pairs.append({
+            "match_type": "tournament-league",
+            "race_id": None,
+            "platform_a": "kalshi",
+            "platform_b": "polymarket",
+            "question_a": k_row.get("question", ""),
+            "question_b": p_row.get("question", ""),
+            "market_id_a": k_row.get("market_id", ""),
+            "market_id_b": p_row.get("market_id", ""),
+            "implied_prob_a": k_row.get("implied_prob"),
+            "implied_prob_b": p_row.get("implied_prob"),
+            "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+            "category": k_row.get("category", ""),
+            "url_a": k_row.get("url", ""),
+            "url_b": p_row.get("url", ""),
+            "volume_a": k_row.get("volume"),
+            "volume_b": p_row.get("volume"),
+            "fuzzy_score": 100,
+        })
+    print(f"  league futures: kalshi={len(k_idx)}, polymarket={len(p_idx)}, pairs={len(pairs)}")
     return pd.DataFrame(pairs)
 
 
