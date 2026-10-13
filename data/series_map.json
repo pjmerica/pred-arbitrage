@@ -838,6 +838,14 @@
    "rules_read": "2026-10-12",
    "note": "Both: the 2027 FIFA Women's World Cup champion (FIFA official).",
    "caveat": "Cancelled or postponed past Aug 8, 2027: Polymarket resolves Other; Kalshi closes Aug 9, 2027."
+  },
+  {
+   "kalshi_series": "KXSPOT",
+   "polymarket_event_slug_regex": "^spotify-monthly-active-users-above-in-q3$",
+   "status": "approved",
+   "rules_read": "2026-10-13",
+   "note": "Both: Spotify's officially reported Q3 2026 monthly active users above the stated number (strictly above on both).",
+   "caveat": "Polymarket resolves No if Q3 earnings aren't released by Nov 30, 2026 (Spotify reports late October); Kalshi stays open to Feb 2027."
   }
  ]
 }
