@@ -841,3 +841,27 @@ def test_games_two_candidates_skipped():
     for r in p:
         r["market_slug"] = r["event_slug"]
     assert match_games(_game_frames(k, p)).empty
+
+
+def test_games_college_names_exact():
+    """'Fresno St.' = 'Fresno State'; 'Miami (FL)' is not paired with a bare
+    'Miami' (could be Miami (OH))."""
+    from scripts.matcher import match_games
+    k = [
+        {"market_id": "KXNCAAFGAME-26OCT17FRESDSU-FRES", "question": "Fresno St. vs San Diego St. — Fresno St.",
+         "yes_sub_title": "Fresno St.", "game_date": "2026-10-17"},
+        {"market_id": "KXNCAAFGAME-26OCT17FRESDSU-SDSU", "question": "Fresno St. vs San Diego St. — San Diego St.",
+         "yes_sub_title": "San Diego St.", "game_date": "2026-10-17"},
+        {"market_id": "KXNCAAFGAME-26OCT17MIAFSU-MIA", "question": "Miami (FL) vs Florida St. — Miami (FL)",
+         "yes_sub_title": "Miami (FL)", "game_date": "2026-10-17"},
+        {"market_id": "KXNCAAFGAME-26OCT17MIAFSU-FSU", "question": "Miami (FL) vs Florida St. — Florida St.",
+         "yes_sub_title": "Florida St.", "game_date": "2026-10-17"},
+    ]
+    p = [
+        {"market_id": "p1", "question": "Fresno State vs. San Diego State", "event_slug": "cfb-fresno-sdsu-2026-10-17",
+         "game_date": "2026-10-17"},
+        {"market_id": "p2", "question": "Miami vs. Florida State", "event_slug": "cfb-mia-fsu-2026-10-17",
+         "game_date": "2026-10-17"},
+    ]
+    out = match_games(_game_frames(k, p))
+    assert dict(zip(out["market_id_b"], out["market_id_a"])) == {"p1": "KXNCAAFGAME-26OCT17FRESDSU-FRES"}

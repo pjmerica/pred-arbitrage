@@ -1741,8 +1741,14 @@ _GAME_SERIES = {
     "KXMLBGAME": ("mlb", "mlb"), "KXNHLGAME": ("nhl", "nhl"),
     "KXATPMATCH": ("atp", None), "KXWTAMATCH": ("wta", None),
     "KXUFCFIGHT": ("ufc", None),
+    # College football: exact school names on both sides ("Ohio St." =
+    # "Ohio State"); a near-name ("Miami (FL)" vs "Miami") stays unpaired.
+    # Rules read 2026-10-13: winner incl. overtime on both; same 48 h /
+    # cancellation caveat as the pro leagues.
+    "KXNCAAFGAME": ("cfb", None),
 }
-_GAME_DAY_SLACK = {"atp": 2, "wta": 2, "ufc": 2}
+# Teams play weekly, so a day of slack can't reach another game.
+_GAME_DAY_SLACK = {"atp": 2, "wta": 2, "ufc": 2, "cfb": 1}
 
 
 def _league_team(league, name):
@@ -1754,9 +1760,11 @@ def _league_team(league, name):
 
 
 def _person_key(name):
-    """Fighter / player name as a sorted token tuple ('Wang Xiyu' =
-    'Xiyu Wang'); None for blanks."""
-    toks = re.findall(r"[a-z0-9']+", _strip_diacritics(str(name or "")).lower())
+    """Fighter / player / school name as a sorted token tuple ('Wang Xiyu'
+    = 'Xiyu Wang'; 'Ohio St.' = 'Ohio State'); None for blanks."""
+    s = _strip_diacritics(str(name or "")).lower()
+    s = re.sub(r"(?<=\w) st\.?(?=\s|$)", " state", s)
+    toks = re.findall(r"[a-z0-9'&]+", s)
     return tuple(sorted(toks)) or None
 
 
@@ -1810,7 +1818,7 @@ def match_games(dfs: dict) -> pd.DataFrame:
     # event slug, i.e. not a spread / total / prop inside the event).
     # "-game-2" suffixes (doubleheaders) are kept so they count as a second
     # candidate and make the date ambiguous rather than being skipped.
-    pm = p[p["event_slug"].astype(str).str.match(r"^(nfl|nba|mlb|nhl|atp|wta|ufc)-.+-\d{4}-\d{2}-\d{2}(?:-game-?\d+)?$")
+    pm = p[p["event_slug"].astype(str).str.match(r"^(nfl|nba|mlb|nhl|atp|wta|ufc|cfb)-.+-\d{4}-\d{2}-\d{2}(?:-game-?\d+)?$")
            & (p["market_slug"].astype(str) == p["event_slug"].astype(str))]
     if "outcomes_binary" in pm.columns:
         pm = pm[pm["outcomes_binary"].astype(str) != "True"]
