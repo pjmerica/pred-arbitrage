@@ -2444,6 +2444,85 @@
    "status": "rejected",
    "note": "Mention market: Kalshi's counting rules (plural / possessive forms) vs Polymarket's separate PDF can't be compared. Showed a 132% 'return'.",
    "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMARMAD",
+   "polymarket_event_slug_regex": "^2027-mens-college-basketball-national-champion",
+   "status": "approved",
+   "note": "Both: the 2026-27 NCAA Division I men's basketball national champion.",
+   "caveat": "Polymarket Other if postponed after Apr 19, 2027; Kalshi closes Apr 27.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLPLAYOFF",
+   "polymarket_event_slug_regex": "^nfl-team-to-make-postseason",
+   "status": "approved",
+   "note": "Both: the team clinches a spot in the 2026-27 NFL playoffs.",
+   "caveat": "Polymarket resolves No if the playoffs start after Jan 24, 2027 or the 14-team field isn't confirmed by then.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNBAPLAYOFF",
+   "polymarket_event_slug_regex": "^nba-team-to-make-playoffs",
+   "status": "approved",
+   "note": "Both: the team qualifies for the 2027 NBA playoffs; reaching the play-in alone does not count on either.",
+   "caveat": "Polymarket resolves No if the playoffs start after May 15, 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLPLAYOFF",
+   "polymarket_event_slug_regex": "^which-teams-will-make-the-nhl-playoffs-2026-27",
+   "status": "approved",
+   "note": "Both: the team qualifies for the 2026-27 NHL playoffs (wild cards count).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXUCLLEADER",
+   "polymarket_event_slug_regex": "^uefa-champions-league-top-scorer-2026-27",
+   "status": "approved",
+   "note": "Both: the 2026-27 Champions League top goal scorer (official UEFA statistics).",
+   "caveat": "A tie UEFA doesn't break: Kalshi pays tied players an equal share, Polymarket the first last name alphabetically. Polymarket Other if postponed after Jun 19, 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXVPRESNOMD",
+   "polymarket_event_slug_regex": "^democratic-vp-nominee-2028",
+   "status": "approved",
+   "note": "Both: the 2028 Democratic vice-presidential nominee who accepts the nomination.",
+   "caveat": "Kalshi pays anyone who accepts the nomination in 2028; Polymarket only the first formally nominated who accepts (a replacement doesn't count). With a replacement only YES Kalshi + NO Polymarket is hedged.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXVPRESNOMR",
+   "polymarket_event_slug_regex": "^republican-vp-nominee-2028",
+   "status": "approved",
+   "note": "Both: the 2028 Republican vice-presidential nominee who accepts the nomination.",
+   "caveat": "Same as KXVPRESNOMD: a replacement nominee pays on Kalshi only.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXPRESPERSON",
+   "polymarket_event_slug_regex": "^presidential-election-winner-2028",
+   "status": "approved",
+   "note": "Kalshi: the person inaugurated for the term beginning 2029; Polymarket: the winner called by AP, Fox and NBC (else whoever is inaugurated). Same person unless the called winner is not inaugurated.",
+   "caveat": "Called winner not inaugurated (death, disqualification, contested result) can lose both legs in either direction, so the approval lapses before election day.",
+   "review_by": "2028-11-06",
+   "on_lapse": "reject",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXUEFANLGROUPWIN",
+   "polymarket_event_slug_regex": "^uefa-nations-league-2026-27-group-[a-d]\\d-winner",
+   "status": "approved",
+   "note": "Both: the team finishing first in the named 2026-27 UEFA Nations League group (official UEFA tiebreaks). One Kalshi series spans all groups; the subject matcher's wording rule keeps the group code aligned.",
+   "caveat": "Polymarket Other if the league phase runs past Dec 1, 2026.",
+   "rules_read": "2026-10-13"
   }
  ]
 }

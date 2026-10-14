@@ -1075,3 +1075,26 @@ def test_subject_events_edition_year():
     dfs = _subject_frames(_kal("KXTESTHEISMAN-27", "Heisman Trophy Winner", names),
                           _pol("ncaa-football-2026-heisman-award-winner", "Will {} win the 2026 Heisman Trophy?", names))
     assert len(match_subject_events(dfs)) == 3
+
+
+def test_subject_events_us_scope():
+    """'US' as a scope matters (Kalshi Spotify U.S. charts vs Polymarket's
+    global chart); as an institution label it doesn't ('US Senate')."""
+    from scripts.matcher import match_subject_events
+    names = ["Iceman", "Debut Album", "Third Record"]
+    dfs = _subject_frames(_kal("KXTESTALBUMUSA-26", "Top Album on Spotify U.S in 2026?", names),
+                          _pol("top-spotify-album-2026", "Will {} be the top album for 2026?", names))
+    assert match_subject_events(dfs).empty
+    names = ["Alpha Person", "Bravo Person", "Charlie Person"]
+    dfs = _subject_frames(_kal("KXTESTSENMIN-27", "Who will be Senate Minority Leader?", names),
+                          _pol("next-us-senate-minority-leader", "Will {} be the next US Senate Minority Leader?", names))
+    assert len(match_subject_events(dfs)) == 3
+
+
+def test_playoff_qualifiers_gate():
+    """'Playoff Qualifiers — X' = 'make the Playoffs'; a play-in qualifier
+    is not."""
+    assert incompatibility("Pro Football Playoff Qualifiers — Arizona",
+                           "Will the Arizona Cardinals make the 2027 NFL Playoffs?") is None
+    assert incompatibility("Eastern Conference Play-In Tournament Qualifiers — Boston",
+                           "Will the Boston Celtics make the 2027 NBA Playoffs?") is not None

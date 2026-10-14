@@ -45,6 +45,11 @@ def position(title) -> str | None:
     'win-compatible': "2028 Democratic nominee — X" ≈ "Will X win the
     nomination?")."""
     t = fold(title)
+    # "Pro Football Playoff Qualifiers — Arizona" = "Will the Arizona
+    # Cardinals make the 2027 NFL Playoffs?" (2026-10-14); a play-in
+    # tournament qualifier is not a playoff team.
+    if re.search(r"\bplayoffs? qualif(?:y|ies|ier|iers|ication)\b|\bqualif\w* for the playoffs?\b", t):
+        return "playoffs"
     if re.search(r"\bqualif(?:y|ies|ier|iers|ication)\b", t):
         return "qualify"
     if re.search(r"\b(?:finish(?:es)?|place[sd]?|come in)\s+last\b|\blast place\b", t):

@@ -1382,5 +1382,61 @@
 "poly_q": "Will the Hokkaido Nippon-Ham Fighters win the 2026 Japan Series?",
 "kalshi_rules": "Will Hokkaido Nippon-Ham Fighters win the Japan NPB? If the Hokkaido Nippon-Ham Fighters are the 2026 Japan NPB champion, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
 "poly_rules": "Will the Hokkaido Nippon-Ham Fighters win the 2026 Japan Series? This market will resolve according to the club that wins the 2026 Japan Series (the Nippon Professional Baseball championship series).\n\nIf at any point it becomes impossible for a listed club to win the 2026 Japan Series (e.g., they are eliminated), the corresponding market will resolve to \"No\".\n\nIf the 2026 NPB postseason is cancelled, postponed after November 30, 2026, 11:59 PM ET, or there is otherwise no Japan Series champion declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from NPB (https://npb.jp); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXVPRESNOMR | ^republican-vp-nominee-2028",
+"status": "approved",
+"kalshi_q": "2028 Republican VP nominee — J.D. Vance",
+"poly_q": "Will J.D. Vance be the 2028 Republican Vice-Presidential nominee?",
+"kalshi_rules": "Will J.D. Vance be the nominee for the Vice Presidency for the Republican party? If J.D. Vance accepts the nomination for the Vice Presidency for the Republican party in 2028, then the market resolves to Yes.",
+"poly_rules": "Will J.D. Vance be the 2028 Republican Vice-Presidential nominee? This market will resolve according to the first individual to be formally nominated by the Republican Party for Vice President of the United States in the 2028 presidential election cycle who accepts the nomination. \n\nThe resolution source for this market will be a consensus of official GOP sources, including https://www.gop.com.\n\nAny replacement of the nominee before election day will not change the resolution of the market."
+},
+{
+"family": "KXVPRESNOMD | ^democratic-vp-nominee-2028",
+"status": "approved",
+"kalshi_q": "2028 Democratic VP nominee — Gavin Newsom",
+"poly_q": "Will Gavin Newsom be the 2028 Democratic Vice-Presidential nominee?",
+"kalshi_rules": "Will Gavin Newsom be the nominee for the Vice Presidency for the Democratic party? If Gavin Newsom accepts the nomination for the Vice Presidency for the Democratic party in 2028, then the market resolves to Yes.",
+"poly_rules": "Will Gavin Newsom be the 2028 Democratic Vice-Presidential nominee? This market will resolve according to the first individual to be formally nominated by the Democratic Party for Vice President of the United States in the 2028 Presidential election cycle who accepts the nomination. \n\nThe resolution source for this market will be a consensus of official Democratic Party sources, including https://democrats.org/.\n\nAny replacement of the nominee before election day will not change the resolution of the market."
+},
+{
+"family": "KXUCLLEADER | ^uefa-champions-league-top-scorer-2026-27",
+"status": "approved",
+"kalshi_q": "Champions League Golden Boot — Kylian Mbappe",
+"poly_q": "Will Kylian Mbappé score the most goals in the 2026-27 UEFA Champions League?",
+"kalshi_rules": "Will Kylian Mbappe lead Champions League in goals for the 2026-27 season? If Kylian Mbappe leads the Champions League in goals for the 2026-27 tournament, then the market resolves to Yes. Kylian Mbappe must have the highest total goals across the entire tournament as documented by the official league statistics. If  Kylian Mbappe competes for multiple teams within the league during the season, statistics from all teams are combined. If Kylian Mbappe does not play any games due to injury, suspension, retirement, or other reasons resolve to No.\nIf multiple players finish tied for the most goals and the league does not officially declare a single leader through a tiebreaker, the market will resolve as a dead heat. \"Yes\" Contracts on each tied player will pay an equal share of $1. For example, if two players tie, each \"Yes\" Contract pays $0.50. If three players tie, each \"Yes\" Contract pays approximately $0.33. No contracts pay $1 minus the Yes payout.\nIf the league officially uses a tiebreaker to determine a single leader, the market resolves based on the league's official winner.\n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Kylian Mbappé score the most goals in the 2026-27 UEFA Champions League? This market will resolve to the player who scores the most goals through all main tournament rounds of the 2026-27 UEFA Champions League competition.\n\nIn the event of a tie, this market will resolve according to the official leader as determined by UEFA. If multiple leaders are announced, this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 Champions League competition is cancelled, postponed after June 19, 2027, 11:59 PM ET, or there is otherwise no official leader declared within that timeframe, this market will resolve to \"Other\".\n\nThe resolution source for this market will be official information from UEFA (https://www.uefa.com/uefachampionsleague/statistics/players/goals/); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNBAPLAYOFF | ^nba-team-to-make-playoffs",
+"status": "approved",
+"kalshi_q": "Pro Basketball Playoff Qualifiers — Boston",
+"poly_q": "Will the Boston Celtics make the 2027 NBA Playoffs?",
+"kalshi_rules": "Pro Basketball Playoff Qualifiers If Boston qualifies for the Pro Basketball Playoffs in the 2026-27 season, then the market resolves to Yes. Note: Qualifying for the Pro Basketball play-in tournament does not count as playoff qualification.\n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will the Boston Celtics make the 2027 NBA Playoffs? This market will resolve to \"Yes\" if the listed team clinches a spot in the 2027 NBA Playoffs per the rules of the NBA. Otherwise, the associated market will resolve to \"No\".\n\nIf at any point it becomes impossible for the listed team to advance to the 2027 NBA Playoffs (e.g. they are mathematically eliminated), the associated market will resolve to \"No\". \n\nReaching the Play-In Tournament does not, by itself, qualify a team for the Playoffs and will not resolve this market to \"Yes.\" A team must win its way through the Play-In into the 7-seed or 8-seed to qualify. Losing in the Play-In Tournament (or any associated tiebreaker) resolves this market to \"No.\"\n\nIf the 2027 NBA Playoffs are cancelled, postponed to begin after May 15, 2027, 11:59 PM ET, or the full 16-team playoff field has not been officially confirmed by the NBA within that timeframe, this market will resolve to \"No\".\n\nThe resolution source for this market will be official information from the NBA and/or the clinching team; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMARMAD | ^2027-mens-college-basketball-national-champion",
+"status": "approved",
+"kalshi_q": "Men's 2027 College Basketball Champion — Creighton",
+"poly_q": "Will Creighton win the 2027 NCAA Men's Basketball National Championship?",
+"kalshi_rules": "Will Creighton win the College Basketball National Championship? If Creighton is the 2026-27 Division 1 Men's College Basketball National Champion, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the NCAA. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Creighton win the 2027 NCAA Men's Basketball National Championship? This market will resolve according to the team that wins the 2027 NCAA Division I Men's Basketball Tournament (the national champion).\n\nIf at any point it becomes impossible for a listed team to win the 2027 tournament (e.g., they are eliminated or fail to qualify), the corresponding market will resolve to \"No\".\n\nIf the 2027 NCAA Division I Men's Basketball Tournament is cancelled, postponed after April 19, 2027, 11:59 PM ET, or there is otherwise no champion declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from the NCAA (https://www.ncaa.com); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLPLAYOFF | ^which-teams-will-make-the-nhl-playoffs-2026-27",
+"status": "approved",
+"kalshi_q": "NHL Playoff Qualifiers — Anaheim Ducks",
+"poly_q": "Will the Anaheim Ducks make the 2026-27 NHL Playoffs?",
+"kalshi_rules": "Will the Anaheim Ducks qualify for the playoffs in the 2026-27 NHL season? If the Anaheim Ducks qualify for the playoffs in the 2026-27 NHL season, then the market resolves to Yes.",
+"poly_rules": "Will the Anaheim Ducks make the 2026-27 NHL Playoffs? This market will resolve to \"Yes\" if the listed team makes the 2026-27 NHL Playoffs. Otherwise, this market will resolve to \"No.\"\n\nA team will be considered to have made the Playoffs if it qualifies for the postseason bracket under the official rules of the NHL for the 2026-27 season. Qualification through any officially recognized NHL format (including Wild Card berths) will count.\n\nIf it becomes impossible for the listed team to qualify for the Playoffs based on the rules of the NHL (e.g. the team is mathematically eliminated), this market will resolve immediately to \"No.\"\n\nThe resolution source for this market will be official information from the NHL, however a consensus of credible reporting will also be used."
+},
+{
+"family": "KXNFLPLAYOFF | ^nfl-team-to-make-postseason",
+"status": "approved",
+"kalshi_q": "Pro Football Playoff Qualifiers — Arizona",
+"poly_q": "Will the Arizona Cardinals make the 2027 NFL Playoffs?",
+"kalshi_rules": "Will Arizona be one of the 2026-27 Pro Football playoff qualifiers? If Arizona is one of the Pro Football playoff qualifiers, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will the Arizona Cardinals make the 2027 NFL Playoffs? This market will resolve to \"Yes\" if the listed team clinches a spot in the 2026-27 NFL Playoffs per the rules of the NFL. Otherwise, the associated market will resolve to \"No\".\n\nIf at any point it becomes impossible for the listed team to advance to the 2026-27 NFL Playoffs (e.g. they are mathematically eliminated), the associated market will resolve to \"No\". Any tiebreaker will not be considered part of the NFL Playoffs.\n\nIf the 2026-27 NFL Playoffs are cancelled, postponed to begin after January 24, 2027, 11:59 PM ET, or the full 14-team playoff field has not been officially confirmed by the NFL within that timeframe, this market will resolve to \"No\".\n\nThe resolution source for this market will be official information from the NFL and/or the clinching team; however, a consensus of credible reporting may also be used."
 }
 ]

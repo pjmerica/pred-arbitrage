@@ -2121,6 +2121,17 @@ _SUBJ_SYN = [
     # Kalshi election rules: the winner is the party / candidate with the
     # most seats / votes.
     (r"\bmost (?:seats|votes)\b", "champion"),
+    # 2026-10-14 (second near-miss pass): playoff qualifiers = make the
+    # playoffs; Golden Boot / top scorer = scores the most goals;
+    # "Vice-Presidential" = VP; "U.S." = US.
+    (r"\bqualif(?:iers?|y|ies|ied)\b", "make"), (r"\bplayoffs?\b|\bpostseason\b", "playoff"),
+    (r"\bgolden boot\b|\btop scorer\b", "score most goals"), (r"\bgoals? scorer\b", "score"),
+    (r"\bvice[ -]?presiden\w*\b", "vp"), (r"\bu s\b", "us"),
+    # "US" as a label of a US institution says nothing ("US Senate Minority
+    # Leader" = "Senate Minority Leader"); as a scope it does: Kalshi "Top
+    # Album on Spotify U.S." is not Polymarket's global top album. So it is
+    # dropped only before an institution word, and is not neutral.
+    (r"\bus (?=(?:senate|house|president|presidential|vp|supreme|congress|government|federal|economy|economic)\b)", ""),
 ]
 _SUBJ_STOP = set(
     "will the be a an of in on at to for who what which is are by after before next new this year season "
@@ -2151,8 +2162,8 @@ def _subj_words(text, subject=""):
 _SUBJ_NEUTRAL = {"division", "lord", "annual", "series", "music", "congress", "following", "general", "federal",
                  "municipal", "role", "yea", "affairs", "confirmed", "midterm", "midterms", "donald", "dp",
                  "craftsman", "fide", "countries", "states", "companies", "bills", "senators", "lists", "parties",
-                 "bc", "ontario", "tx", "ky", "nv",
-                 "champion", "award", "election", "seat", "us", "fc", "cf", "sc", "nfl", "nba", "nhl", "mlb",
+                 "bc", "ontario", "tx", "ky", "nv", "national",
+                 "champion", "award", "election", "seat", "fc", "cf", "sc", "nfl", "nba", "nhl", "mlb",
                  "wnba", "ncaa", "ap", "district", "trophy", "memorial", "world", "league", "race", "person"}
 
 
