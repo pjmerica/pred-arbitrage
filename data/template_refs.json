@@ -14,5 +14,989 @@
 "poly_q": "Spotify Monthly Active Users above 800M in Q3?",
 "kalshi_rules": "Will Spotify Technology S.A. report Above 800 million monthly active users in Q3 2026? If Spotify Technology S.A. reports Above 800000000 monthly active users in Q3 2026, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the underlying company. All trademarks, logos, and brand names are the property of their respective owners.",
 "poly_rules": "Spotify Monthly Active Users above 800M in Q3? This market will resolve to “Yes” if Spotify’s total monthly active users for the third fiscal quarter of 2026, as reported in its official company earnings materials, is above the listed amount. Otherwise, this market will resolve to “No”.\n\nThe specified metric will be considered as reported in the company’s official earnings materials. Subsequent revisions will not be considered.\n\nIf the specified company’s official earnings materials for the specified quarter are released and the specified metric is not included, this market will resolve to “No”.\n\nIf the specified company does not release quarterly earnings materials for the specified quarter by November 30, 2026, 11:59 PM ET, this market will resolve to “No”.\n\nIf the specified metric is reported as a range rather than a specific number, the midpoint of the range will be used for resolution of this market.\n\nThe resolution source for this market is Spotify’s official company earnings materials, including press releases, investor presentations, and regulatory filings. If the specified metric is not reported in these materials, recordings or transcripts of the company’s earnings webcast may also be used.\n\nNote: This market will resolve based on the most numerically precise version of the specified metric reported in the company’s official earnings materials. Only the specified metric will be considered; alternate versions that differ in definition or scope from the specified metric will not be considered."
+},
+{
+"family": "KXGREEKPM | ^next-prime-minister-of-greece",
+"status": "approved",
+"kalshi_q": "Prime Minister of Greece after the next election? — Kyriakos Mitsotakis",
+"poly_q": "Will Kyriakos Mitsotakis be the next Prime Minister of Greece?",
+"kalshi_rules": "Will Kyriakos Mitsotakis become Prime Minister of Greece following the next Greek general election? If Kyriakos Mitsotakis becomes Prime Minister of Greece as a result of government formation following the next Greek general election and meets all constitutional requirements before Jul 25, 2028, then the market resolves to Yes. The market resolves to the first person who, as a result of government formation following the election, is formally appointed, sworn in, or invested as Prime Minister according to the country's constitutional procedures, commands the confidence of the parliament/legislature, and exercises the full powers of the office (not serving in a caretaker/acting capacity from the previous government).\n\nIf no government forms by Jul 25, 2028, the Contract resolves to \"No one\" if that is an option and No for all other strikes. If new elections are called before government formation, the Contract resolves to \"No one\" immediately and No for all other strikes.",
+"poly_rules": "Will Kyriakos Mitsotakis be the next Prime Minister of Greece? This market will resolve to the next individual who is officially appointed and sworn in as Prime Minister of Greece following the next parliamentary election. If an election is called early, this market will immediately resolve to the individual who is officially appointed and sworn in after that election.\n\nTo count for resolution, the individual must be formally sworn-in by the specified date. Any interim or caretaker Prime Minister will not count toward the resolution of this market.\n\nIf no such Prime Minister takes office by December 31, 2027, 11:59 PM ET, this market will resolve to “Other”.\n\nThis market will resolve based on a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official information from the Greek government."
+},
+{
+"family": "KXOSCARSUPACTR | ^oscars-2027-best-supporting-actress-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Supporting Actress — Sandra Hüller",
+"poly_q": "Will Sandra Hüller win Best Supporting Actress at the 99th Academy Awards?",
+"kalshi_rules": "Will Sandra Hüller win Best Supporting Actress at the Oscars? If Sandra Hüller has won Best Supporting Actress at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Sandra Hüller win Best Supporting Actress at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed actress that wins the 99th Academy Award for Best Supporting Actress.\n\nIf an actress is not officially nominated for the Academy Award for Best Supporting Actress when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated actress whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARSUPACTO | ^oscars-2027-best-supporting-actor-winner",
+"status": "approved",
+"kalshi_q": "Oscar winner: Best Supporting Actor — Paul Giamatti",
+"poly_q": "Will Paul Giamatti win Best Supporting Actor at the 99th Academy Awards?",
+"kalshi_rules": "Will Paul Giamatti win Best Supporting Actor at the Oscars? If Paul Giamatti has won Best Supporting Actor at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Paul Giamatti win Best Supporting Actor at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed actor that wins the 99th Academy Award for Best Supporting Actor.\n\nIf an actor is not officially nominated for the Academy Award for Best Supporting Actor when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated actor whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARSPLAY | ^oscars-2027-best-original-screenplay-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Original Screenplay — Digger",
+"poly_q": "Will Digger win Best Original Screenplay at the 99th Academy Awards?",
+"kalshi_rules": "Will Digger win Best Original Screenplay at the Oscars? If Digger has won Best Original Screenplay at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Digger win Best Original Screenplay at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Original Screenplay.\n\nIf a film is not officially nominated for the Academy Award for Best Original Screenplay when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARPIC | ^oscars-2027-best-picture-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Picture — The Odyssey",
+"poly_q": "Will The Odyssey win Best Picture at the 99th Academy Awards?",
+"kalshi_rules": "Will The Odyssey win Best Picture at the Oscars? If The Odyssey has won Best Picture at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will The Odyssey win Best Picture at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Picture. \n\nIf a film is not officially nominated for the Academy Award for Best Picture when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARMAH | ^oscars-2027-best-makeup-and-hairstyling-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Makeup and Hairstyling — Clayface",
+"poly_q": "Will Clayface win Best Makeup and Hairstyling at the 99th Academy Awards?",
+"kalshi_rules": "Will Clayface win Best Makeup and Hairstyling at the Oscars? If Clayface has won Best Makeup and Hairstyling at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Clayface win Best Makeup and Hairstyling at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Makeup and Hairstyling.\n\nIf a film is not officially nominated for the Academy Award for Best Makeup and Hairstyling when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARINTLFILM | ^oscars-2027-best-international-feature-film-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best International Feature Film — Fjord",
+"poly_q": "Will Fjord win Best International Feature Film at the 99th Academy Awards?",
+"kalshi_rules": "Will Fjord win Best International Feature Film at the Oscars? If Fjord has won Best International Feature Film at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Fjord win Best International Feature Film at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best International Feature Film.\n\nIf a film is not officially nominated for the Academy Award for Best International Feature Film when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARDOCU | ^oscars-2027-best-documentary-feature-film-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Documentary Feature Film — One in a Million",
+"poly_q": "Will One in a Million win Best Documentary Feature Film at the 99th Academy Awards?",
+"kalshi_rules": "Will One in a Million win Best Documentary Feature Film at the Oscars? If One in a Million has won Best Documentary Feature Film at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will One in a Million win Best Documentary Feature Film at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Documentary Feature Film.\n\nIf a film is not officially nominated for the Academy Award for Best Documentary Feature Film when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARDIR | ^oscars-2027-best-director-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Director — Martin McDonagh",
+"poly_q": "Will Martin McDonagh win Best Director at the 99th Academy Awards?",
+"kalshi_rules": "Will Martin McDonagh win Best Director at the Oscars? If Martin McDonagh has won Best Director at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Martin McDonagh win Best Director at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed director who wins the 99th Academy Award for Best Director. \n\nIf a director is not officially nominated for the Academy Award for Best Director when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated director whose listed last name comes first in alphabetical order. Where an option lists more than one director, if one of the listed directors wins individually, or both listed options win jointly, that option will resolve to \"Yes\". If only one of the jointly listed directors is a joint winner with another individual (e.g., tied with a director from another option), only the winning listed director's last names will be considered for the purposes of alphabetical ordering. If both jointly listed directors win alongside one or more directors not listed in that option, all winning listed directors last names will be considered for the purposes of alphabetical ordering.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARCINE | ^oscars-2027-best-cinematography-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Cinematography — Digger",
+"poly_q": "Will Digger win Best Cinematography at the 99th Academy Awards?",
+"kalshi_rules": "Will Digger win Best Cinematography at the Oscars? If Digger has won Best Cinematography at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Digger win Best Cinematography at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Cinematography.\n\nIf a film is not officially nominated for the Academy Award for Best Cinematography when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARASPLAY | ^oscars-2027-best-adapted-screenplay-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Adapted Screenplay — Dune: Part Three",
+"poly_q": "Will Dune: Part Three win Best Adapted Screenplay at the 99th Academy Awards?",
+"kalshi_rules": "Will Dune: Part Three win Best Adapted Screenplay at the Oscars? If Dune: Part Three has won Best Adapted Screenplay at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Dune: Part Three win Best Adapted Screenplay at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Adapted Screenplay.\n\nIf a film is not officially nominated for the Academy Award for Best Adapted Screenplay when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARANIMATED | ^oscars-2027-best-animated-feature-film-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Animated Feature Film — Forgotten Island",
+"poly_q": "Will Forgotten Island win Best Animated Feature Film at the 99th Academy Awards?",
+"kalshi_rules": "Will Forgotten Island win Best Animated Feature Film at the Oscars? If Forgotten Island has won Best Animated Feature Film at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Forgotten Island win Best Animated Feature Film at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed film that wins the 99th Academy Award for Best Animated Feature Film.\n\nIf a film is not officially nominated for the Academy Award for Best Animated Feature Film when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated film whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARACTR | ^oscars-2027-best-actress-winner",
+"status": "approved",
+"kalshi_q": "Oscar winner: Best Actress — Renate Reinsve",
+"poly_q": "Will Renate Reinsve win Best Actress at the 99th Academy Awards?",
+"kalshi_rules": "Will Renate Reinsve win Best Actress at the Oscars? If Renate Reinsve has won Best Actress at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will Renate Reinsve win Best Actress at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed actress who wins the 99th Academy Award for Best Actress. \n\nIf an actress is not officially nominated for the Academy Award for Best Actress when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated actress whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARACTO | ^oscars-2027-best-actor-winner",
+"status": "approved",
+"kalshi_q": "Oscar Winner: Best Actor — John Malkovich",
+"poly_q": "Will John Malkovich win Best Actor at the 99th Academy Awards?",
+"kalshi_rules": "Will John Malkovich win Best Actor at the Oscars? If John Malkovich has won Best Actor at the 99th Academy Awards, then the market resolves to Yes. The 99 Academy Awards are expected to be held in March 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will John Malkovich win Best Actor at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve according to the listed actor who wins the 99th Academy Award for Best Actor. \n\nIf an actor is not officially nominated for the Academy Award for Best Actor when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated actor whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXONTLIBLEAD | ^ontario-liberal-party-leadership-election-winner",
+"status": "approved",
+"kalshi_q": "Ontario Liberal Party leadership election winner? — Navdeep Bains",
+"poly_q": "Will Navdeep Bains win the 2026 Ontario Liberal Party leadership election?",
+"kalshi_rules": "Will Navdeep Bains win the 2026 Ontario Liberal Party leadership election? If Navdeep Bains wins the 2026 Ontario Liberal Party leadership election, then the market resolves to Yes.",
+"poly_rules": "Will Navdeep Bains win the 2026 Ontario Liberal Party leadership election? The 2026 Ontario Liberal Party leadership election is currently scheduled to conclude on November 21, 2026, with voting held from November 9 to November 20, 2026.\n\nThis market will resolve according to the candidate who becomes the next leader of the Ontario Liberal Party as a result of this election.\n\nTemporary, interim, or placeholder leaders appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the Ontario Liberal Party."
+},
+{
+"family": "KXNZPM | ^next-prime-minister-of-new-zealand",
+"status": "approved",
+"kalshi_q": "New Zealand Prime Minister after the election? — Christopher Luxon",
+"poly_q": "Will Christopher Luxon be the next Prime Minister of New Zealand after the 2026 elections?",
+"kalshi_rules": "Will Christopher Luxon become Prime Minister of New Zealand following the 2026 New Zealand general election? If Christopher Luxon becomes Prime Minister of New Zealand as a result of government formation following the 2026 New Zealand general election and meets all constitutional requirements before Nov 7, 2027, then the market resolves to Yes. The market resolves to the first person who, as a result of government formation following the election, is formally appointed, sworn in, or invested as Prime Minister according to the country's constitutional procedures, commands the confidence of the parliament/legislature, and exercises the full powers of the office (not serving in a caretaker/acting capacity from the previous government).\n\nIf no government forms by Nov 7, 2027, the Contract resolves to \"No one\" if that is an option and No for all other strikes. If new elections are called before government formation, the Contract resolves to \"No one\" immediately and No for all other strikes.\n\nThis market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Christopher Luxon be the next Prime Minister of New Zealand after the 2026 elections? A general election is scheduled to be held in New Zealand on November 7, 2026.\n\nThis market will resolve to the next individual who officially assumes the office of Prime Minister of New Zealand following the 2026 General elections.\n\nTo count for resolution, the individual must be officially appointed by the Governor-General as Prime Minister of New Zealand. Any interim or caretaker Prime Minister will not count toward the resolution of this market.\n\nIf no such Prime Minister takes office by December 31, 2027, 11:59 PM ET, this market will resolve to “Other”.\n\nThe primary resolution source for this market will be official information from the Government of New Zealand; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXARGENTINAPRES | ^argentina-presidential-election-winner$",
+"status": "approved",
+"kalshi_q": "Argentina presidential election winner? — Javier Milei",
+"poly_q": "Will Javier Milei win the 2027 Argentina presidential election?",
+"kalshi_rules": "Who will win the next Argentine presidential election? If the winner of the next Argentine presidential election is Javier Milei, then the market resolves to Yes. This market may resolve early once a consensus of designated media sources has declared a winner. See full rules for details.",
+"poly_rules": "Will Javier Milei win the 2027 Argentina presidential election? A presidential election scheduled to be held in Argentina on October 24, 2027.\n\nThis market will resolve according to the listed candidate who wins the next Argentinian Presidential election. \n\nThis market includes any potential second round. \n\nIf the results are not known definitively by October 31, 2028, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by Argentina government sources, including the Cámara Nacional Electoral (https://www.electoral.gob.ar/nuevo/index.php) and the Dirección Nacional Electoral (https://www.argentina.gob.ar/dine)."
+},
+{
+"family": "KXWINNIPEGMAYOR | ^winnipeg-mayoral-election-2026",
+"status": "approved",
+"kalshi_q": "Winnipeg mayoral election winner? — Scott Gillingham",
+"poly_q": "Will Scott Gillingham win the 2026 Winnipeg mayoral election?",
+"kalshi_rules": "Will Scott Gillingham win the 2026 Winnipeg mayoral election? If Scott Gillingham wins the 2026 Winnipeg mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Scott Gillingham win the 2026 Winnipeg mayoral election? The 2026 Winnipeg mayoral election is currently scheduled to be held on October 28, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Winnipeg as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Winnipeg."
+},
+{
+"family": "KXNANAIMOMAYOR | ^nanaimo-mayoral-election-2026",
+"status": "approved",
+"kalshi_q": "Nanaimo mayoral election winner? — Leonard Krog",
+"poly_q": "Will Leonard Krog win the 2026 Nanaimo mayoral election?",
+"kalshi_rules": "Will Leonard Krog win the 2026 Nanaimo mayoral election? If Leonard Krog wins the 2026 Nanaimo mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Leonard Krog win the 2026 Nanaimo mayoral election? The 2026 Nanaimo, BC mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Nanaimo as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Nanaimo."
+},
+{
+"family": "KXKELOWNAMAYOR | ^kelowna-mayoral-election-2026",
+"status": "approved",
+"kalshi_q": "Kelowna mayoral election winner? — Tom Dyas",
+"poly_q": "Will Tom Dyas win the 2026 Kelowna mayoral election?",
+"kalshi_rules": "Will Tom Dyas win the 2026 election for Mayor of Kelowna, British Columbia? If Tom Dyas wins the 2026 election for Mayor of Kelowna, British Columbia, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Tom Dyas win the 2026 Kelowna mayoral election? The 2026 Kelowna mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Kelowna as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Kelowna."
+},
+{
+"family": "KXTLAXGOV | ^tlaxcala-governor-election-winner",
+"status": "approved",
+"kalshi_q": "Tlaxcala Governor winner? — Ana Lilia Rivera Rivera",
+"poly_q": "Will Ana Lilia Rivera Rivera win the 2027 Tlaxcala Governor Election?",
+"kalshi_rules": "Will Ana Lilia Rivera Rivera win the 2027 Tlaxcala gubernatorial election? If Ana Lilia Rivera Rivera wins the 2027 Tlaxcala gubernatorial election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Ana Lilia Rivera Rivera win the 2027 Tlaxcala Governor Election? Gubernatorial elections are currently scheduled to be held in Tlaxcala on June 6, 2027.\n\nThis market will resolve according to the listed candidate who wins the 2027 Tlaxcala gubernatorial elections. Any interim or caretaker Governor will not qualify.\n\nIf the results are not known definitively by December 31, 2027, 11:59 PM ET, this market will resolve to “Other”.\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by government sources of Tlaxcala and Mexico, including the Electoral Institute of Tlaxcala and the National Electoral Institute of Mexico."
+},
+{
+"family": "KXNUEVOLEONGOV | ^nuevo-leon-governor-election-winner",
+"status": "approved",
+"kalshi_q": "Nuevo León Governor winner? — Adrián de la Garza Santos",
+"poly_q": "Will Adrián de la Garza Santos win the 2027 Nuevo León Governor Election?",
+"kalshi_rules": "Will Adrián de la Garza Santos win the 2027 Nuevo León gubernatorial election? If Adrián de la Garza Santos wins the 2027 Nuevo León gubernatorial election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Adrián de la Garza Santos win the 2027 Nuevo León Governor Election? Gubernatorial elections are currently scheduled to be held in Nuevo León on June 6, 2027.\n\nThis market will resolve according to the listed candidate who wins the 2027 Nuevo León gubernatorial elections. Any interim or caretaker Governor will not qualify.\n\nIf the results are not known definitively by December 31, 2027, 11:59 PM ET, this market will resolve to “Other”.\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by government sources of Nuevo León and Mexico, including the Electoral Institute of Nuevo León and the National Electoral Institute of Mexico."
+},
+{
+"family": "KXNBAROY | ^nba-2026-27-rookie-of-the-year",
+"status": "approved",
+"kalshi_q": "Pro Basketball Rookie of the Year Winner — AJ Dybantsa",
+"poly_q": "Will AJ Dybantsa win the 2026-27 NBA Rookie of the Year?",
+"kalshi_rules": "Will AJ Dybantsa win Rookie of the Year? If AJ Dybantsa wins the Pro Basketball Rookie of the Year award in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will AJ Dybantsa win the 2026-27 NBA Rookie of the Year? This market will resolve to the player who wins the Rookie of the Year award for the 2026-27 NBA regular season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NBA rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NBA regular season is cancelled, postponed after April 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from NBA; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLWEST | ^nhl-2027-western-conference-champion",
+"status": "approved",
+"kalshi_q": "NHL Western Conference Finals Winner — Winnipeg Jets",
+"poly_q": "Will Winnipeg Jets be the 2027 NHL Western Conference Champion?",
+"kalshi_rules": "Will the Winnipeg Jets win the Western Conference Finals? If the Winnipeg Jets win the 2026-27 NHL Western Conference Finals, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Winnipeg Jets be the 2027 NHL Western Conference Champion? This market will resolve according to the team that wins the Western Conference Finals for the 2027 Stanley Cup Playoffs.\n\nIf at any point it becomes impossible for a listed team to win the 2027 Western Conference Finals per the rules of NHL (e.g., they are eliminated in the playoffs), the corresponding market will resolve to “No”.\n\nIf the 2027 NHL season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe primary resolution source will be official information from NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLEAST | ^nhl-2027-eastern-conference-champion",
+"status": "approved",
+"kalshi_q": "NHL Eastern Conference Finals Winner — Toronto Maple Leafs",
+"poly_q": "Will Toronto Maple Leafs be the 2027 NHL Eastern Conference Champion?",
+"kalshi_rules": "Will the Toronto Maple Leafs win the Eastern Conference Finals? If the Toronto Maple Leafs win the 2026-27 NHL Eastern Conference Finals, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Toronto Maple Leafs be the 2027 NHL Eastern Conference Champion? This market will resolve according to the team that wins the Eastern Conference Finals for the 2027 Stanley Cup Playoffs.\n\nIf at any point it becomes impossible for a listed team to win the 2027 Eastern Conference Finals per the rules of NHL (e.g., they are eliminated in the playoffs), the corresponding market will resolve to “No”.\n\nIf the 2027 NHL season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe primary resolution source will be official information from NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLVEZINA | ^nhl-vezina-trophy-winner-2026-27",
+"status": "approved",
+"kalshi_q": "NHL Vezina Trophy — Andrei Vasilevskiy",
+"poly_q": "Will Andrei Vasilevskiy win the 2026-27 Vezina Trophy?",
+"kalshi_rules": "Vezina Trophy: Andrei Vasilevskiy wins If Andrei Vasilevskiy wins the NHL Vezina Trophy in the 2026-27 NHL season, then the market resolves to Yes. If multiple participants tie for the award, “Yes” positions will pay $1/N (rounded down to the nearest cent), where N is the number of tied participants, and “No” positions will pay $1 minus the “Yes” payout.",
+"poly_rules": "Will Andrei Vasilevskiy win the 2026-27 Vezina Trophy? This market will resolve to the player who wins the Vezina Trophy for the 2026-27 NHL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NHL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NHL season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to \"Other\".\n\nThe resolution source for this market will be official information from the NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLNORRIS | ^nhl-james-norris-memorial-trophy-winner-2026-27",
+"status": "approved",
+"kalshi_q": "NHL James Norris Memorial Trophy — Rasmus Dahlin",
+"poly_q": "Will Rasmus Dahlin win the 2026-27 James Norris Memorial Trophy?",
+"kalshi_rules": "James Norris Memorial Trophy: Rasmus Dahlin wins If Rasmus Dahlin wins the NHL James Norris Memorial Trophy in the 2026-27 NHL season, then the market resolves to Yes. If multiple participants tie for the award, “Yes” positions will pay $1/N (rounded down to the nearest cent), where N is the number of tied participants, and “No” positions will pay $1 minus the “Yes” payout.",
+"poly_rules": "Will Rasmus Dahlin win the 2026-27 James Norris Memorial Trophy? This market will resolve to the player who wins the James Norris Memorial Trophy for the 2026-27 NHL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NHL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NHL season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to \"Other\".\n\nThe resolution source for this market will be official information from the NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLHART | ^nhl-hart-memorial-trophy-winner-2026-27",
+"status": "approved",
+"kalshi_q": "NHL Hart Memorial Trophy — Connor McDavid",
+"poly_q": "Will Connor McDavid win the 2026-27 Hart Memorial Trophy?",
+"kalshi_rules": "Who will win Hart Memorial Trophy? If Connor McDavid wins the NHL Hart Memorial Trophy in the 2026-27 NHL season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Connor McDavid win the 2026-27 Hart Memorial Trophy? This market will resolve to the player who wins the Hart Memorial Trophy for the 2026-27 NHL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NHL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NHL season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to \"Other\".\n\nThe resolution source for this market will be official information from the NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNHLCALDER | ^nhl-2026-27-calder-trophy",
+"status": "approved",
+"kalshi_q": "NHL Calder Memorial Trophy — Ivar Stenberg",
+"poly_q": "Will Ivar Stenberg win the 2026-27 Calder Trophy?",
+"kalshi_rules": "Calder Memorial Trophy: Ivar Stenberg wins If Ivar Stenberg wins the NHL Calder Memorial Trophy in the 2026-27 NHL season, then the market resolves to Yes. If multiple participants tie for the award, “Yes” positions will pay $1/N (rounded down to the nearest cent), where N is the number of tied participants, and “No” positions will pay $1 minus the “Yes” payout.",
+"poly_rules": "Will Ivar Stenberg win the 2026-27 Calder Trophy? This market will resolve to the player who wins the Calder Memorial Trophy for the 2026-27 NHL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NHL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NHL season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to \"Other\".\n\nThe resolution source for this market will be official information from the NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNBAWEST | ^nba-2027-western-conference-champion",
+"status": "approved",
+"kalshi_q": "Pro Basketball Western Conference Champion — Denver",
+"poly_q": "Will the Denver Nuggets be the 2027 NBA Western Conference Champion?",
+"kalshi_rules": "Will Denver win the Pro Basketball Western Conference Finals in the 2026-27 season? If Denver wins the Pro Basketball Western Conference Finals in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will the Denver Nuggets be the 2027 NBA Western Conference Champion? This market will resolve according to the team that wins the Western Conference Finals for the 2027 NBA Playoffs.\n\nIf at any point it becomes impossible for a listed team to win the 2027 Western Conference Finals per the rules of NBA (e.g., they are eliminated in the playoffs), the corresponding market will resolve to “No”.\n\nIf the 2027 NBA season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe primary resolution source will be official information from NBA; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNBAEAST | ^nba-2027-eastern-conference-champion",
+"status": "approved",
+"kalshi_q": "Pro Basketball Eastern Conference Champion — Atlanta",
+"poly_q": "Will the Atlanta Hawks be the 2027 NBA Eastern Conference Champion?",
+"kalshi_rules": "Will Atlanta win the Pro Basketball Eastern Conference Finals in the 2026-27 season? If Atlanta wins the Pro Basketball Eastern Conference Finals in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will the Atlanta Hawks be the 2027 NBA Eastern Conference Champion? This market will resolve according to the team that wins the Eastern Conference Finals for the 2027 NBA Playoffs.\n\nIf at any point it becomes impossible for a listed team to win the 2027 Eastern Conference Finals per the rules of NBA (e.g., they are eliminated in the playoffs), the corresponding market will resolve to “No”.\n\nIf the 2027 NBA season is cancelled, postponed after June 30, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe primary resolution source will be official information from NBA; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXFRENCHPRES | ^next-french-presidential-election$",
+"status": "approved",
+"kalshi_q": "Next French presidential election winner? — Édouard Philippe",
+"poly_q": "Will Édouard Philippe win the 2027 French presidential election?",
+"kalshi_rules": "Will Édouard Philippe win the 2027 French presidential election? If Édouard Philippe wins the next French presidential election, then the market resolves to Yes.",
+"poly_rules": "Will Édouard Philippe win the 2027 French presidential election? The next French presidential election is currently expected to be held around April 2027.  This market pertains to the outcome of the next French presidential election, regardless of whether it follows the scheduled end of the current term or is held earlier. \n\nThe President of France is elected via a two-round system; a candidate must secure over 50% of the vote to win outright in the first round. If no candidate achieves this, the top two contenders advance to a runoff.\n\nThis market will resolve according to the candidate who wins this election.\n\nThis market includes any potential second round. If, for any reason, the results of the election are not known by December 31, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the French Government, specifically the Ministry of the Interior (https://www.interieur.gouv.fr/)."
+},
+{
+"family": "KXNHLPRES | ^nhl-presidents-trophy-winner-2026-27",
+"status": "approved",
+"kalshi_q": "NHL Presidents' Trophy Winner — Utah Mammoth",
+"poly_q": "Will the Utah Mammoth win the 2026-27 NHL Presidents' Trophy?",
+"kalshi_rules": "Will the Utah Mammoth win the Presidents' Trophy? If the Utah Mammoth win the 2026-27 NHL Presidents' Trophy, then the market resolves to Yes. If teams finish tied in points, the Presidents’ Trophy tiebreakers are:\n\n1) Regulation wins\n2) Regulation and overtime wins\n3) Total wins\n4) Head-to-head points\n5) Goal differential\n6) Goals scored",
+"poly_rules": "Will the Utah Mammoth win the 2026-27 NHL Presidents' Trophy? This market will resolve according to the NHL team that wins the 2026-27 Presidents' Trophy (best regular season record by points).\n\nIf two or more teams finish the 2026-27 NHL regular season tied on points, this market will resolve according to the official NHL tiebreaker. If a tie still persists, this market will resolve in favor of the team with the most wins during the 2026-27 NHL regular season. If a tie still persists, this market will resolve in favor of the team with the most goals scored during the 2026-27 NHL regular season.\n\nThe resolution source for this market will be official information from the NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCONCACAFNL | ^concacaf-nations-league-2026-27-winner",
+"status": "approved",
+"kalshi_q": "CONCACAF Nations League A Champion — Canada",
+"poly_q": "Will Canada win the 2026-27 CONCACAF Nations League?",
+"kalshi_rules": "Will Canada win the CONCACAF Nations League A? If Canada is the 2026-27 CONCACAF Nations League A champion, then the market resolves to Yes.",
+"poly_rules": "Will Canada win the 2026-27 CONCACAF Nations League? This market will resolve according to the team that wins the 2026-27 CONCACAF Nations League.\n\nIf at any point it becomes impossible for a listed team to win the 2026-27 CONCACAF Nations League per the rules of CONCACAF (e.g., they are eliminated), the corresponding market will resolve to \"No\".\n\nIf the 2026-27 CONCACAF Nations League is cancelled, postponed after April 14, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from CONCACAF; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLOROTY | ^pro-football-2026-27-ap-offensive-rookie-of-the-year-winner",
+"status": "approved",
+"kalshi_q": "Offensive Rookie of the Year Winner? — Fernando Mendoza",
+"poly_q": "Will Fernando Mendoza win the 2026 NFL Offensive Rookie of the Year award for the 2026-27 NFL season?",
+"kalshi_rules": "Will Fernando Mendoza win the Offensive Rookie of the Year? If Fernando Mendoza wins the Pro Football AP Offensive Rookie of the Year in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Fernando Mendoza win the 2026 NFL Offensive Rookie of the Year award for the 2026-27 NFL season? This market will resolve to the player who wins the 2026 Associated Press (AP) NFL Offensive Rookie of the Year award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLDROTY | ^pro-football-2026-27-ap-defensive-rookie-of-the-year-winner",
+"status": "approved",
+"kalshi_q": "Defensive Rookie of the Year Winner? — Arvell Reese",
+"poly_q": "Will Arvell Reese win the 2026 NFL Defensive Rookie of the Year award for the 2026-27 NFL season?",
+"kalshi_rules": "Will Arvell Reese win the Defensive Rookie of the Year? If Arvell Reese wins the Pro Football AP Defensive Rookie of the Year in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Arvell Reese win the 2026 NFL Defensive Rookie of the Year award for the 2026-27 NFL season? This market will resolve to the player who wins the 2026 Associated Press (AP) NFL Defensive Rookie of the Year award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLCOTY | ^pro-football-2026-27-ap-coach-of-the-year-winner",
+"status": "approved",
+"kalshi_q": "Coach of the Year Winner? — Kevin Stefanski",
+"poly_q": "Will Kevin Stefanski win the 2026 NFL Coach of the Year award for the 2026-27 NFL season?",
+"kalshi_rules": "Will Kevin Stefanski win the Coach of the Year? If Kevin Stefanski wins the Pro Football AP Coach of the Year in the 2026-2027 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Kevin Stefanski win the 2026 NFL Coach of the Year award for the 2026-27 NFL season? This market will resolve to the coach who wins the 2026 Associated Press (AP) NFL Coach of the Year award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the coach whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLCPOTY | ^pro-football-2026-27-ap-comeback-player-of-the-year-winner",
+"status": "approved",
+"kalshi_q": "Comeback Player of the Year Winner? — Patrick Mahomes",
+"poly_q": "Will Patrick Mahomes win the 2026 NFL Comeback Player of the Year award for the 2026-27 NFL season?",
+"kalshi_rules": "Will Patrick Mahomes win the Comeback Player of the Year? If Patrick Mahomes wins the Pro Football AP Comeback Player of the Year in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Patrick Mahomes win the 2026 NFL Comeback Player of the Year award for the 2026-27 NFL season? This market will resolve to the player who wins the 2026 Associated Press (AP) NFL Comeback Player of the Year award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLMVP | ^pro-football-2026-mvp-winner",
+"status": "approved",
+"kalshi_q": "MVP Winner? — Lamar Jackson",
+"poly_q": "Will Lamar Jackson win the 2026 NFL MVP?",
+"kalshi_rules": "Will Lamar Jackson win the MVP? If Lamar Jackson wins the Pro Football AP Regular Season MVP in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Lamar Jackson win the 2026 NFL MVP? This market will resolve to the player who wins the 2026 NFL Most Valuable Player award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLOPOTY | ^pro-football-2026-27-ap-offensive-player-of-the-year-winner",
+"status": "approved",
+"kalshi_q": "Offensive Player of the Year Winner? — Ja'Marr Chase",
+"poly_q": "Will Ja'Marr Chase win the 2026 NFL Offensive Player of the Year award for the 2026-27 NFL season?",
+"kalshi_rules": "Will Ja'Marr Chase win the Offensive Player of the Year? If Ja'Marr Chase wins the Pro Football AP Offensive Player of the Year in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Ja'Marr Chase win the 2026 NFL Offensive Player of the Year award for the 2026-27 NFL season? This market will resolve to the player who wins the 2026 Associated Press (AP) NFL Offensive Player of the Year award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLDPOTY | ^pro-football-2026-27-ap-defensive-player-of-the-year-winner",
+"status": "approved",
+"kalshi_q": "Defensive Player of the Year Winner? — Aidan Hutchinson",
+"poly_q": "Will Aidan Hutchinson win the 2026 NFL Defensive Player of the Year award for the 2026-27 NFL season?",
+"kalshi_rules": "Will Aidan Hutchinson win the Defensive Player of the Year? If Aidan Hutchinson wins the Pro Football AP Defensive Player Of The Year in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Aidan Hutchinson win the 2026 NFL Defensive Player of the Year award for the 2026-27 NFL season? This market will resolve to the player who wins the 2026 Associated Press (AP) NFL Defensive Player of the Year award for the 2026-27 NFL season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by NFL rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026-27 NFL season is cancelled, postponed after February 28, 2027, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from the NFL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXPRESNIGERIA | ^nigerian-presidential-election-winner",
+"status": "approved",
+"kalshi_q": "Nigerian presidential election winner? — Bola Tinubu",
+"poly_q": "Will Bola Tinubu win the 2027 Nigerian Presidential Election?",
+"kalshi_rules": "Who will win the next Nigerian presidential election? If the winner of the next Nigerian presidential election is Bola Tinubu, then the market resolves to Yes. This market may resolve early once a consensus of designated media sources has declared a winner. See full rules for details.",
+"poly_rules": "Will Bola Tinubu win the 2027 Nigerian Presidential Election? Presidential elections are scheduled to be held in Nigeria on January 16, 2027.\n\nThis market will resolve according to the listed candidate who wins the 2027 Nigerian presidential election. \n\nThis market includes any potential second round. \n\nIf the results are not known definitively by October 31, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by Nigerian government sources, including the Independent National Electoral Commission (https://www.inecnigeria.org/)."
+},
+{
+"family": "KXMAYORCHI | ^2027-chicago-mayoral-election$",
+"status": "approved",
+"kalshi_q": "Chicago mayoral election winner? (2027) — Brandon Johnson",
+"poly_q": "Will Brandon Johnson win the 2027 Chicago mayoral election?",
+"kalshi_rules": "Who will win Chicago Mayoral Election? If Brandon Johnson wins the Chicago Mayoral Election in 2027, then the market resolves to Yes.",
+"poly_rules": "Will Brandon Johnson win the 2027 Chicago mayoral election? The 2027 Chicago mayoral election will be held on February 23, 2027, to elect the mayor of Chicago, Illinois. If no candidate receives a majority of the vote, a runoff election will be held on April 6, 2027.\n\nThis market will resolve according to the candidate that wins the election.\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the City of Chicago."
+},
+{
+"family": "KXCHICAGOMAYOR | ^2027-chicago-mayoral-election$",
+"status": "approved",
+"kalshi_q": "Chicago Mayor winner? — Alexi Giannoulias",
+"poly_q": "Will Alexi Giannoulias win the 2027 Chicago mayoral election?",
+"kalshi_rules": "Who will win 2027 Chicago mayoral election? If Alexi Giannoulias wins the 2027 Chicago mayoral election, then the market resolves to Yes.",
+"poly_rules": "Will Alexi Giannoulias win the 2027 Chicago mayoral election? The 2027 Chicago mayoral election will be held on February 23, 2027, to elect the mayor of Chicago, Illinois. If no candidate receives a majority of the vote, a runoff election will be held on April 6, 2027.\n\nThis market will resolve according to the candidate that wins the election.\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the City of Chicago."
+},
+{
+"family": "KXNFLNFCCHAMP | ^pro-football-2027-nfc-champion",
+"status": "approved",
+"kalshi_q": "NFC Championship Winner — Atlanta",
+"poly_q": "Will Atlanta Falcons win the 2027 NFL NFC Championship?",
+"kalshi_rules": "Will Atlanta win the Pro Football NFC Championship? If Atlanta wins the Pro Football NFC Championship, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Atlanta Falcons win the 2027 NFL NFC Championship? This market will resolve according to the team that wins the 2027 NFC championship game.\n\nIf at any point it becomes impossible for a listed team to win the 2027 NFL NFC championship per the rules of the NFL (e.g., they are eliminated in the playoffs), the corresponding market will resolve to “No”.\n\nIf the 2027 NFL NFC championship game is cancelled, postponed after March 31, 2027 ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe primary resolution source will be official information from NFL (https://www.nfl.com/); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNFLAFCCHAMP | ^pro-football-2027-afc-champion",
+"status": "approved",
+"kalshi_q": "AFC Championship Winner — Baltimore",
+"poly_q": "Will Baltimore Ravens win the 2027 NFL AFC Championship?",
+"kalshi_rules": "Will Baltimore win the Pro Football AFC Championship? If Baltimore wins the Pro Football AFC Championship, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Baltimore Ravens win the 2027 NFL AFC Championship? This market will resolve according to the team that wins the 2027 AFC championship game.\n\nIf at any point it becomes impossible for a listed team to win the 2027 NFL AFC championship per the rules of the NFL (e.g., they are eliminated in the playoffs), the corresponding market will resolve to “No”.\n\nIf the 2027 NFL AFC championship game is cancelled, postponed after March 31, 2027 ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe primary resolution source will be official information from NFL (https://www.nfl.com/); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNBACUP | ^nba-2026-nba-cup-winner",
+"status": "approved",
+"kalshi_q": "2026 Pro Basketball Cup Champion — Atlanta",
+"poly_q": "Will the Atlanta Hawks win the 2026 NBA Cup?",
+"kalshi_rules": "Will Atlanta be the Emirates 2026 Pro Basketball Cup champion in the 2026-27 season? If Atlanta is the Emirates 2026 Pro Basketball Cup champion in the 2026-27 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will the Atlanta Hawks win the 2026 NBA Cup? This market will resolve according to the team that wins the 2026 NBA Cup.\n\nIf at any point it becomes impossible for a listed team to win the 2026 NBA Cup per the rules of the NBA (e.g., elimination), the corresponding market will resolve to \"No\". If multiple teams are declared winners, this market will resolve in favor of the team whose listed name comes first alphabetically.\n\nIf this event is cancelled, or a champion has not been declared by December 31, 2026, 11:59 PM ET, the market will resolve according to official NBA declarations."
+},
+{
+"family": "KXMISSISSAUGAMAYOR | ^mississauga-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Mississauga mayoral election winner? — Carolyn Parrish",
+"poly_q": "Will Carolyn Parrish win the 2026 Mississauga mayoral election?",
+"kalshi_rules": "Will Carolyn Parrish win the 2026 Mississauga mayoral election? If Carolyn Parrish wins the 2026 Mississauga mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Carolyn Parrish win the 2026 Mississauga mayoral election? The 2026 Mississauga, Ontario mayoral election is currently scheduled to be held on October 26, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Mississauga, Ontario as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Mississauga, Ontario."
+},
+{
+"family": "KXOSCARNOMPIC | ^oscars-2026-best-picture-nominations",
+"status": "approved",
+"kalshi_q": "Oscar nominees: Best Picture — The Odyssey",
+"poly_q": "Will \"The Odyssey\" be nominated for Best Picture at the 99th Academy Awards?",
+"kalshi_rules": "2027 Best Picture Oscar nominations? If The Odyssey has been nominated for Best Picture at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards Nominations are expected to be announced in January 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will \"The Odyssey\" be nominated for Best Picture at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve to \"Yes\" if the listed film is nominated for the 99th Academy Award for Best Picture. If a film is not officially nominated for the Academy Award for Best Picture when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIf, for any reason, no nominations are declared by March 14, 2027, 11:59 PM ET,  this market will resolve to \"No\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXOSCARNOMACTO | ^oscars-2026-best-actor-nominations",
+"status": "approved",
+"kalshi_q": "Oscar nominees: Best Actor — John Malkovich",
+"poly_q": "Will John Malkovich be nominated for Best Actor at the 99th Academy Awards?",
+"kalshi_rules": "2027 Best Actor Oscar nominations? If John Malkovich has been nominated for Best Actor at the 99th Academy Awards, then the market resolves to Yes. The 99th Academy Awards Nominations are expected to be announced in January 2027.\n\nThis market and these products have not been endorsed by the Oscars. Any references to Oscars, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between Oscars and Kalshi.",
+"poly_rules": "Will John Malkovich be nominated for Best Actor at the 99th Academy Awards? The Academy Awards are presented annually by the Academy of Motion Picture Arts and Sciences (AMPAS) to honor outstanding artistic and technical achievements in film. For the 99th Academy Awards in 2027, nominations are scheduled to be announced on January 21, followed by the ceremony on March 14, 2027.\n\nThis market will resolve to \"Yes\" if the listed actor is nominated for the 99th Academy Award for Best Actor. If an actor is not officially nominated for the Academy Award for Best Actor when the 2027 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIf, for any reason, no nominations are declared by March 14, 2027, 11:59 PM ET,  this market will resolve to \"No\".\n\nThe primary resolution source for this market will be official information from the Academy Awards and AMPAS, including data from their website (e.g., https://www.oscars.org/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXLJUBLJANAMAYOR | ^ljubljana-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Ljubljana mayoral election winner? — Zoran Janković",
+"poly_q": "Will Zoran Janković win the 2026 Ljubljana mayoral election?",
+"kalshi_rules": "Will Zoran Janković win the 2026 Ljubljana mayoral election? If Zoran Janković wins the 2026 Ljubljana mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Zoran Janković win the 2026 Ljubljana mayoral election? The next Ljubljana mayoral election is scheduled to be held on November 15, 2026, to elect the mayor of the City Municipality of Ljubljana, Slovenia (župan Mestne občine Ljubljana). If no candidate wins a majority of valid votes in the first round, a runoff between the two leading candidates is scheduled for November 29, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Ljubljana as a result of this election.\n\nTemporary, interim, or placeholder mayors will not be considered.\n\nIf the result of this election isn't known by May 31, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Municipal Election Commission of the City Municipality of Ljubljana (Občinska volilna komisija Mestne občine Ljubljana) and published by the State Election Commission (Državna volilna komisija, DVK) (https://www.dvk-rs.si/)."
+},
+{
+"family": "KXVICTORIAPREMIER | ^next-premier-of-victoria",
+"status": "approved",
+"kalshi_q": "Who will be Premier of Victoria after the 2026 election? — Ben Carroll",
+"poly_q": "Will Ben Carroll be the next Premier of Victoria?",
+"kalshi_rules": "Will it be confirmed that Ben Carroll is the first person to serve as Premier of Victoria after the caretaker period for the 2026 Victorian state election ends? If Ben Carroll is the first person to serve as Premier of Victoria after the caretaker period for the 2026 Victorian state election ends before Jan 1, 2027, then the market resolves to Yes. This must be confirmed, verified, or established as factual by at least one Source Agency.\n\nThe qualifying person is the person serving as Premier of Victoria when the caretaker period following the 2026 Victorian state election ends. If the government changes, this is the incoming Premier sworn in by the Governor. If the incumbent government is returned, this is the Premier in office when the election result becomes clear. Service only in caretaker capacity before that point does NOT qualify.\n\nIf a person not listed on this event is the first qualifying Premier, every named market resolves NO. If the caretaker period has not ended and no person has qualified before January 1, 2027, every named market resolves NO.",
+"poly_rules": "Will Ben Carroll be the next Premier of Victoria? The 2026 Victorian state election is currently scheduled to be held on 28 November 2026 to elect members of the 61st Parliament of Victoria.\n\nThis market will resolve to the individual who is formally appointed as Premier of Victoria as a result of the specified elections.\n\nTo count for resolution, the individual must be formally sworn-in as Premier following the specified elections. Any interim or caretaker head of government will not count toward the resolution of this market.\n\nIf no such Premier is appointed by June 30, 2027, 11:59 PM ET, this market will resolve to “Other”.\n\nThe primary resolution source for this market will be official information from the Government of Victoria; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXTRUMPPARDON | ^who-will-trump-pardon-before-2027",
+"status": "approved",
+"kalshi_q": "Who will Trump pardon in 2026? — Keonne Rodriguez",
+"poly_q": "Will Trump pardon Keonne Rodriguez before 2027?",
+"kalshi_rules": "Will Keonne Rodriguez receive a presidential pardon before Jan 1, 2027? If Keonne Rodriguez has been given a presidential pardon, commutation, or reprieve during Trump's second term and before Jan 1, 2027, then the market resolves to Yes.",
+"poly_rules": "Will Trump pardon Keonne Rodriguez before 2027? This market will resolve to \"Yes\" if the listed individual receives a presidential pardon, commutation, or reprieve from Donald Trump between December 16, 2025 and December 31, 2026, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nThe primary resolution source for whether the individual is pardoned or not will be official information from the US government, however a consensus of credible reporting will also be used."
+},
+{
+"family": "KXHEISMAN | ^ncaa-football-2026-heisman-award-winner",
+"status": "approved",
+"kalshi_q": "Heisman Trophy Winner — Jeremiah Smith",
+"poly_q": "Will Jeremiah Smith win the 2026 Heisman Trophy?",
+"kalshi_rules": "Who will win Heisman Trophy? If Jeremiah Smith wins the College Football Heisman Trophy in the 2026-2027 college football season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the NCAA. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Jeremiah Smith win the 2026 Heisman Trophy? This market will resolve according to the winner of the 2026 Heisman Trophy, awarded to the most outstanding player in college football, with the winner announced at the Heisman ceremony currently scheduled for December 12, 2026.\n\nIf the ceremony is postponed after December 26, 2026, 11:59 PM ET, canceled, or a winner has not been announced within this timeframe, this market will resolve to \"Other.\"\n\nIf multiple players are declared co-winners, this market will resolve in favor of the player whose listed name comes first alphabetically.\n\nThe resolution source for this market will be official information from the Heisman Trophy Trust (https://www.heisman.com); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXTHEGAMBIAPRES | ^gambia-presidential-election-winner",
+"status": "approved",
+"kalshi_q": "Gambian presidential election winner? — Adama Barrow",
+"poly_q": "Will Adama Barrow win the 2026 Gambian presidential election?",
+"kalshi_rules": "Who will win the next Gambian presidential election? If the winner of the next Gambian presidential election is Adama Barrow, then the market resolves to Yes. This market may resolve early once a consensus of designated media sources has declared a winner. See full rules for details.",
+"poly_rules": "Will Adama Barrow win the 2026 Gambian presidential election? Presidential elections are currently scheduled to be held in The Gambia on December 5, 2026.\n\nThis market will resolve according to the listed candidate who wins the 2026 Gambian presidential election. Any interim or caretaker President will not qualify.\n\nIf the results are not known definitively by December 31, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by the Independent Electoral Commission of The Gambia (https://www.iec.gm/)."
+},
+{
+"family": "KXMLBWSMVP | ^mlb-postseason-world-series-mvp",
+"status": "approved",
+"kalshi_q": "Pro Baseball Championship Series MVP Winner — Shohei Ohtani",
+"poly_q": "Will Shohei Ohtani win the 2026 World Series MVP?",
+"kalshi_rules": "Will Shohei Ohtani win Pro Baseball Championship Series MVP? If Shohei Ohtani wins the World Series Most Valuable Player Award in the 2026 season, then the market resolves to Yes. If two or more players are officially named co-winners of the award, each co-winner’s Yes contracts will pay $1/N and No contracts will pay $1 minus the Yes payout, where N is the total number of official co-winners.\n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Shohei Ohtani win the 2026 World Series MVP? This market will resolve to the player who wins the Willie Mays World Series MVP Award for the 2026 World Series. If the winner is not a listed player, the \"Other\" market will resolve to \"Yes\".\n\nIf more than one player is named the winner of the award, each listed player's market, including those of the co-winners, will resolve to \"No\" and the \"Other\" market will resolve to \"Yes\".\n\nIf the 2026 World Series is cancelled, or no winner of the award is announced by November 15, 2026, 11:59 PM ET, each listed player's market will resolve to \"No\" and the \"Other\" market will resolve to \"Yes\".\n\nThe resolution source for this market will be official information from MLB; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMLBNLROTY | ^mlb-nl-rookie-of-the-year",
+"status": "approved",
+"kalshi_q": "NL Rookie of the Year Winner — Sal Stewart",
+"poly_q": "Will Sal Stewart win the 2026 NL Rookie of the Year award?",
+"kalshi_rules": "Will Sal Stewart win NL ROTY? If Sal Stewart wins the Pro Baseball National League Rookie of the Year in the 2026 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Sal Stewart win the 2026 NL Rookie of the Year award? This market will resolve to the player who wins the 2026 National League Rookie of the Year award for the 2026 MLB Season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by MLB rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026 MLB season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from Major League Baseball; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMLBNLMOTY | ^mlb-nl-manager-of-the-year",
+"status": "approved",
+"kalshi_q": "NL Manager of the Year Winner — Walt Weiss",
+"poly_q": "Will Walt Weiss win the 2026 NL Manager of the Year?",
+"kalshi_rules": "Will Walt Weiss win NL MOTY? If Walt Weiss wins the Pro Baseball National League Manager of the Year in the 2026 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Walt Weiss win the 2026 NL Manager of the Year? This market will resolve to the manager who wins the 2026 National League Manager of the Year award for the 2026 MLB Season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by MLB rules. If multiple winners are announced then this market will resolve to the manager whose listed last name comes first alphabetically.\n\nIf the 2026 MLB season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from Major League Baseball; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMLBNLCPOTY | ^mlb-nl-comeback-player-of-the-year",
+"status": "approved",
+"kalshi_q": "NL Comeback Player of the Year Winner — Sandy Alcantara",
+"poly_q": "Will Sandy Alcantara win the 2026 NL Comeback Player of the Year award?",
+"kalshi_rules": "Will Sandy Alcantara win NL CPOTY? If Sandy Alcantara wins the Pro Baseball National League Comeback Player of the Year in the 2026 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Sandy Alcantara win the 2026 NL Comeback Player of the Year award? This market will resolve to the player who wins the 2026 National League Comeback Player of the Year award for the 2026 MLB Season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by MLB rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026 MLB season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from Major League Baseball; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMLBALROTY | ^mlb-al-rookie-of-the-year",
+"status": "approved",
+"kalshi_q": "AL Rookie of the Year Winner — Kevin McGonigle",
+"poly_q": "Will Kevin McGonigle win the 2026 AL Rookie of the Year award?",
+"kalshi_rules": "Will Kevin McGonigle win AL ROTY? If Kevin McGonigle wins the Pro Baseball American League Rookie of the Year in the 2026 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Kevin McGonigle win the 2026 AL Rookie of the Year award? This market will resolve to the player who wins the 2026 American League Rookie of the Year award for the 2026 MLB Season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by MLB rules. If multiple winners are announced then this market will resolve to the player whose listed last name comes first alphabetically.\n\nIf the 2026 MLB season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from Major League Baseball; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMLBALMOTY | ^mlb-al-manager-of-the-year",
+"status": "approved",
+"kalshi_q": "AL Manager of the Year Winner — Will Venable",
+"poly_q": "Will Will Venable win the 2026 AL Manager of the Year?",
+"kalshi_rules": "Will Will Venable win AL MOTY? If Will Venable wins the Pro Baseball American League Manager of the Year in the 2026 season, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Will Venable win the 2026 AL Manager of the Year? This market will resolve to the manager who wins the 2026 American League Manager of the Year award for the 2026 MLB Season.\n\nIn the event of a tie, this market will resolve according to the official winner as determined by MLB rules. If multiple winners are announced then this market will resolve to the manager whose listed last name comes first alphabetically.\n\nIf the 2026 MLB season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no winner declared within that timeframe, this market will resolve to “Other”.\n\nThe resolution source for this market will be official information from Major League Baseball; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXGAMEAWARDS | ^the-game-awards-best-multiplayer",
+"status": "approved",
+"kalshi_q": "Game Awards: Best Multiplayer — Gears of War: E-Day",
+"poly_q": "Will Gears of War: E-Day win Best Multiplayer at the 2026 Game Awards?",
+"kalshi_rules": "Will Gears of War: E-Day win the 2026 Game Award for Best Multiplayer? If Gears of War: E-Day has won Best Multiplayer at the 2026 Game Awards, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Game Awards. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Gears of War: E-Day win Best Multiplayer at the 2026 Game Awards? The Game Awards are presented annually to honor achievements in the video game industry. The 2026 Game Awards are currently scheduled to be presented on December 10, 2026.\n\nThis market will resolve according to the listed video game that wins the 2026 Game Award for Best Multiplayer.\n\nIf a game is not officially nominated for the 2026 Game Award for Best Multiplayer when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated game whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from The Game Awards, including data from their website (e.g., https://thegameawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXGAMEAWARDS | ^the-game-awards-best-independent-game",
+"status": "approved",
+"kalshi_q": "Game Awards: Best Independent Game — Mina the Hollower",
+"poly_q": "Will Mina the Hollower win Best Independent Game at the 2026 Game Awards?",
+"kalshi_rules": "Will Mina the Hollower win the 2026 Game Award for Best Independent Game? If Mina the Hollower has won Best Independent Game at the 2026 Game Awards, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Game Awards. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Mina the Hollower win Best Independent Game at the 2026 Game Awards? The Game Awards are presented annually to honor achievements in the video game industry. The 2026 Game Awards are currently scheduled to be presented on December 10, 2026.\n\nThis market will resolve according to the listed video game that wins the 2026 Game Award for Best Independent Game.\n\nIf a game is not officially nominated for the 2026 Game Award for Best Independent Game when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated game whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from The Game Awards, including data from their website (e.g., https://thegameawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXGAMEAWARDSBGD | ^the-game-awards-best-game-direction",
+"status": "approved",
+"kalshi_q": "Game Awards: Best Game Direction — Grand Theft Auto VI",
+"poly_q": "Will Grand Theft Auto VI win Best Game Direction at the 2026 Game Awards?",
+"kalshi_rules": "Will Grand Theft Auto VI win the 2026 Game Award for Best Game Direction? If Grand Theft Auto VI has won Best Game Direction at the 2026 Game Awards, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Game Awards. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Grand Theft Auto VI win Best Game Direction at the 2026 Game Awards? The Game Awards are presented annually to honor achievements in the video game industry. The 2026 Game Awards are currently scheduled to be presented on December 10, 2026.\n\nThis market will resolve according to the listed video game that wins the 2026 Game Award for Best Game Direction.\n\nIf a game is not officially nominated for the 2026 Game Award for Best Game Direction when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated game whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from The Game Awards, including data from their website (e.g., https://thegameawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXGAMEAWARDS | ^the-game-awards-best-audio-design",
+"status": "approved",
+"kalshi_q": "Game Awards: Best Audio Design — Grand Theft Auto VI",
+"poly_q": "Will Grand Theft Auto VI win Best Audio Design at the 2026 Game Awards?",
+"kalshi_rules": "Will Grand Theft Auto VI win the 2026 Game Award for Best Audio Design? If Grand Theft Auto VI has won Best Audio Design at the 2026 Game Awards, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Game Awards. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Grand Theft Auto VI win Best Audio Design at the 2026 Game Awards? The Game Awards are presented annually to honor achievements in the video game industry. The 2026 Game Awards are currently scheduled to be presented on December 10, 2026.\n\nThis market will resolve according to the listed video game that wins the 2026 Game Award for Best Audio Design.\n\nIf a game is not officially nominated for the 2026 Game Award for Best Audio Design when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated game whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from The Game Awards, including data from their website (e.g., https://thegameawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXGAMEAWARDS | ^the-game-awards-game-of-the-year",
+"status": "approved",
+"kalshi_q": "The Game Awards: Game of the Year — Grand Theft Auto VI",
+"poly_q": "Will Grand Theft Auto VI win Game of the Year at the 2026 Game Awards?",
+"kalshi_rules": "2026 Game of the Year? If Grand Theft Auto VI has won Game of the Year at the 2026 Game Awards, then the market resolves to Yes. This market and these products have not been endorsed by the Game Awards. Any references to the Game Awards, or any associated marks are descriptive only and do not indicate an endorsement of this product or any affiliation between the Game Awards and Kalshi.",
+"poly_rules": "Will Grand Theft Auto VI win Game of the Year at the 2026 Game Awards? The Game Awards are presented annually to honor achievements in the video game industry. The 2026 Game Awards are currently scheduled to be presented on December 10, 2026.\n\nThis market will resolve according to the listed video game that wins the 2026 Game Award for Game of the Year.\n\nIf a game is not officially nominated for the 2026 Game Award for Game of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the nominated game whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from The Game Awards, including data from their website (e.g., https://thegameawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXTAINANMAYOR | ^tainan-mayor-election-winner",
+"status": "approved",
+"kalshi_q": "Tainan mayoral election winner? — Chen Ting-fei",
+"poly_q": "Will Chen Ting-fei win the next Tainan Mayor election?",
+"kalshi_rules": "Will Chen Ting-fei win the 2026 Tainan mayoral election? If Chen Ting-fei wins the 2026 Tainan mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Chen Ting-fei win the next Tainan Mayor election? Taiwanese local elections are scheduled to be held on November 28, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of Tainan as a result of this election.\n\nTemporary, interim, or placeholder Mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known, or no candidate has been elected, by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of the elections as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the Taiwanese government, specifically the Central Election Commission (https://db.cec.gov.tw/)."
+},
+{
+"family": "KXHSINCHUCOUNTYMAG | ^hsinchu-county-magistrate-election-winner",
+"status": "approved",
+"kalshi_q": "Hsinchu County magistrate election winner? — Hsu Hsin-ying",
+"poly_q": "Will Hsu Hsin-ying win the next Hsinchu County Magistrate election?",
+"kalshi_rules": "Will Hsu Hsin-ying win the 2026 Hsinchu County magistrate election? If Hsu Hsin-ying wins the 2026 Hsinchu County magistrate election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Hsu Hsin-ying win the next Hsinchu County Magistrate election? Taiwanese local elections are scheduled to be held on November 28, 2026.\n\nThis market will resolve according to the candidate who becomes the next Magistrate of Hsinchu County as a result of this election.\n\nTemporary, interim, or placeholder Magistrates appointed before the election will not be considered.\n\nIf the result of this election isn't known, or no candidate has been elected, by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of the elections as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the Taiwanese government, specifically the Central Election Commission (https://db.cec.gov.tw/)."
+},
+{
+"family": "KXHSINCHUCITYMAYOR | ^hsinchu-city-mayor-election-winner",
+"status": "approved",
+"kalshi_q": "Hsinchu City mayoral election winner? — Ann Kao",
+"poly_q": "Will Ann Kao win the next Hsinchu City Mayor election?",
+"kalshi_rules": "Will Ann Kao win the 2026 Hsinchu City mayoral election? If Ann Kao wins the 2026 Hsinchu City mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Ann Kao win the next Hsinchu City Mayor election? Taiwanese local elections are scheduled to be held on November 28, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of Hsinchu City as a result of this election.\n\nTemporary, interim, or placeholder Mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known, or no candidate has been elected, by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of the elections as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the Taiwanese government, specifically the Central Election Commission (https://db.cec.gov.tw/)."
+},
+{
+"family": "KXMLSWEST | ^mls-western-conference-champion-2026",
+"status": "approved",
+"kalshi_q": "MLS Western Conference Champion — Dallas",
+"poly_q": "Will FC Dallas win the 2026 MLS Western Conference?",
+"kalshi_rules": "Will Dallas win the MLS Western Conference? If Dallas is the 2026 Major League Soccer (MLS) Western Conference champion, then the market resolves to Yes. This market refers to the Eastern Conference champion in the MLS playoffs.\n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will FC Dallas win the 2026 MLS Western Conference? This market will resolve according to the team that wins the 2026 MLS Western Conference (the Western Conference club that advances to MLS Cup 2026 by winning the Western Conference Final).\n\nIf at any point it becomes impossible for a listed team to win the 2026 MLS Western Conference per the rules of MLS (e.g., they are eliminated from the Western Conference playoffs), the corresponding market will resolve to \"No\".\n\nIf the 2026 MLS season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no Western Conference champion declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from Major League Soccer; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXMLSEAST | ^mls-eastern-conference-champion-2026",
+"status": "approved",
+"kalshi_q": "MLS Eastern Conference Champion — New York City",
+"poly_q": "Will New York City FC win the 2026 MLS Eastern Conference?",
+"kalshi_rules": "Will New York City win the MLS Eastern Conference? If New York City is the 2026 Major League Soccer (MLS) Eastern Conference champion, then the market resolves to Yes. This market refers to the Eastern Conference champion in the MLS playoffs.\n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will New York City FC win the 2026 MLS Eastern Conference? This market will resolve according to the team that wins the 2026 MLS Eastern Conference (the Eastern Conference club that advances to MLS Cup 2026 by winning the Eastern Conference Final).\n\nIf at any point it becomes impossible for a listed team to win the 2026 MLS Eastern Conference per the rules of MLS (e.g., they are eliminated from the Eastern Conference playoffs), the corresponding market will resolve to \"No\".\n\nIf the 2026 MLS season is cancelled, postponed after December 31, 2026, 11:59 PM ET, or there is otherwise no Eastern Conference champion declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from Major League Soccer; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNALSIABY | ^northern-nalsia-district-by-election-winner",
+"status": "approved",
+"kalshi_q": "Northern Nalšia by-election winner? — Gintautas Kindurys",
+"poly_q": "Will Gintautas Kindurys win the 2026 Northern Nalšia district by-election?",
+"kalshi_rules": "Will Gintautas Kindurys win the 2026 Northern Nalšia Seimas by-election? If Gintautas Kindurys wins the 2026 Northern Nalšia Seimas by-election, then the market resolves to Yes. The winner is the candidate the Central Electoral Commission of Lithuania declares elected after any runoff.\n\nThis market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Gintautas Kindurys win the 2026 Northern Nalšia district by-election? An early election for a member of the Seimas of the Republic of Lithuania in the single-member Northern Nalšia constituency (No. 52) is scheduled to take place on November 8, 2026. The by-election was triggered by the death of the incumbent member, Jevgenij Šuklin, on May 28, 2026.\n\nThis market will resolve to the candidate who wins the election in the Northern Nalšia constituency.\n\nIf no candidate receives the required share of the vote in the first round, this market will resolve according to the result of the second round.\n\nIf the results of the specified election are not definitively known by May 31, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the results of the election as indicated by a consensus of credible reporting. In the case of ambiguity, this market will resolve solely based on the official results as reported by the Central Electoral Commission of the Republic of Lithuania (Vyriausioji rinkimų komisija, https://www.vrk.lt/)."
+},
+{
+"family": "KXNEWTAIPEIMAYOR | ^new-taipei-mayor-election-winner",
+"status": "approved",
+"kalshi_q": "New Taipei mayoral election winner? — Lee Shu-chuan",
+"poly_q": "Will Lee Shu-chuan win the next New Taipei Mayor election?",
+"kalshi_rules": "Will Lee Shu-chuan win the 2026 New Taipei mayoral election? If Lee Shu-chuan wins the 2026 New Taipei mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Lee Shu-chuan win the next New Taipei Mayor election? Taiwanese local elections are scheduled to be held on November 28, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of New Taipei as a result of this election.\n\nTemporary, interim, or placeholder Mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known, or no candidate has been elected, by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of the elections as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the Taiwanese government, specifically the Central Election Commission (https://db.cec.gov.tw/)."
+},
+{
+"family": "KXKAOHSIUNGMAYOR | ^kaohsiung-mayor-election-winner",
+"status": "approved",
+"kalshi_q": "Kaohsiung mayoral election winner? — Ko Chih-en",
+"poly_q": "Will Ko Chih-en win the next Kaohsiung Mayor election?",
+"kalshi_rules": "Will Ko Chih-en win the 2026 Kaohsiung mayoral election? If Ko Chih-en wins the 2026 Kaohsiung mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Ko Chih-en win the next Kaohsiung Mayor election? Taiwanese local elections are scheduled to be held on November 28, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of Kaohsiung as a result of this election.\n\nTemporary, interim, or placeholder Mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known, or no candidate has been elected, by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of the elections as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the Taiwanese government, specifically the Central Election Commission (https://db.cec.gov.tw/)."
+},
+{
+"family": "KXWILCOJUDGE | ^2026-williamson-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "Williamson County Judge winner? — Steven Snell",
+"poly_q": "Will Steven Snell win the 2026 Williamson County Judge election?",
+"kalshi_rules": "Who will win the 2026 Williamson County Judge general election? If Steven Snell wins the 2026 Williamson County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Steven Snell win the 2026 Williamson County Judge election? The 2026 Williamson County Judge election will be held on November 3, 2026, to elect the County Judge of Williamson County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of Williamson County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and Williamson County."
+},
+{
+"family": "KXWARATAHWYNYARD | ^waratah-wynyard-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Waratah-Wynyard mayoral election winner? — Dillon Roberts",
+"poly_q": "Will Dillon Roberts win the next Waratah–Wynyard mayoral election?",
+"kalshi_rules": "Will Dillon Roberts win the 2026 Waratah-Wynyard mayoral election? If Dillon Roberts wins the 2026 Waratah-Wynyard mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Dillon Roberts win the next Waratah–Wynyard mayoral election? Local government elections are scheduled to be held across Tasmania on October 27, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of the Waratah–Wynyard Council area as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Tasmanian Electoral Commission (https://www.tec.tas.gov.au/)."
+},
+{
+"family": "KXTARRANTCOUNTYJUDGE | ^2026-tarrant-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "Tarrant County Judge winner? — Tim O'Hare",
+"poly_q": "Will Tim O'Hare win the 2026 Tarrant County Judge election?",
+"kalshi_rules": "Who will win the 2026 Tarrant County Judge general election? If Tim O'Hare wins the 2026 Tarrant County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Tim O'Hare win the 2026 Tarrant County Judge election? The 2026 Tarrant County Judge election will be held on November 3, 2026, to elect the County Judge of Tarrant County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of Tarrant County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and Tarrant County."
+},
+{
+"family": "KXSAANICHMAYOR | ^saanich-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Saanich mayoral election winner? — Karen Harper",
+"poly_q": "Will Karen Harper win the 2026 Saanich mayoral election?",
+"kalshi_rules": "Will Karen Harper win the 2026 Saanich mayoral election? If Karen Harper wins the 2026 Saanich mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Karen Harper win the 2026 Saanich mayoral election? The 2026 Saanich, British Columbia mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Saanich, British Columbia as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Saanich, British Columbia."
+},
+{
+"family": "KXREVELSTOKEMAYOR | ^revelstoke-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Revelstoke mayoral election winner? — Taha Attiah",
+"poly_q": "Will Taha Attiah win the 2026 Revelstoke mayoral election?",
+"kalshi_rules": "Will Taha Attiah win the 2026 Revelstoke mayoral election? If Taha Attiah wins the 2026 Revelstoke mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Taha Attiah win the 2026 Revelstoke mayoral election? The 2026 Revelstoke, British Columbia mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Revelstoke, British Columbia as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Revelstoke, British Columbia."
+},
+{
+"family": "KXPRINCEGEORGEMAYOR | ^prince-george-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Prince George mayoral election winner? — Garth Frizzell",
+"poly_q": "Will Garth Frizzell win the 2026 Prince George mayoral election?",
+"kalshi_rules": "Will Garth Frizzell win the 2026 Prince George mayoral election? If Garth Frizzell wins the 2026 Prince George mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Garth Frizzell win the 2026 Prince George mayoral election? The 2026 Prince George, British Columbia mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Prince George, British Columbia as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Prince George, British Columbia."
+},
+{
+"family": "KXPRESOVMAYOR | ^presov-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Prešov mayoral election winner? — Artúr Benes",
+"poly_q": "Will Artúr Benes win the 2026 Prešov mayoral election?",
+"kalshi_rules": "Will Artúr Benes win the 2026 Prešov mayoral election? If Artúr Benes wins the 2026 Prešov mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Artúr Benes win the 2026 Prešov mayoral election? The 2026 Prešov mayoral election is currently scheduled to be held on October 24, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of Prešov as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by government sources of Prešov, Prešov Region and Slovakia, including the Statistical Office of the Slovak Republic (https://volby.statistics.sk/)."
+},
+{
+"family": "KXOSHAWAMAYOR | ^oshawa-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Oshawa mayoral election winner? — Tito-Dante Marimpietri",
+"poly_q": "Will Tito-Dante Marimpietri win the 2026 Oshawa mayoral election?",
+"kalshi_rules": "Will Tito-Dante Marimpietri win the 2026 Oshawa, Ontario mayoral election? If Tito-Dante Marimpietri wins the 2026 Oshawa, Ontario mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Tito-Dante Marimpietri win the 2026 Oshawa mayoral election? The 2026 Oshawa, Ontario mayoral election is currently scheduled to be held on October 26, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Oshawa, Ontario as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Oshawa, Ontario."
+},
+{
+"family": "KXNOTLMAYOR | ^niagara-on-the-lake-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Niagara-on-the-Lake mayoral election winner? — Vaughn Goettler",
+"poly_q": "Will Vaughn Goettler win the 2026 Niagara-on-the-Lake mayoral election?",
+"kalshi_rules": "Will Vaughn Goettler win the 2026 Niagara-on-the-Lake mayoral election? If Vaughn Goettler wins the 2026 Niagara-on-the-Lake mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Vaughn Goettler win the 2026 Niagara-on-the-Lake mayoral election? The 2026 Niagara-on-the-Lake, Ontario mayoral election is currently scheduled to be held on October 26, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Niagara-on-the-Lake, Ontario as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Niagara-on-the-Lake, Ontario."
+},
+{
+"family": "KXNORTHMIDLANDSMAYOR | ^northern-midlands-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Northern Midlands mayoral election winner? — Adam Barnett",
+"poly_q": "Will Adam Barnett win the next Northern Midlands mayoral election?",
+"kalshi_rules": "Will Adam Barnett win the 2026 Northern Midlands mayoral election? If Adam Barnett wins the 2026 Northern Midlands mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Adam Barnett win the next Northern Midlands mayoral election? Local government elections are scheduled to be held across Tasmania on October 27, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of the Northern Midlands Council area as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Tasmanian Electoral Commission (https://www.tec.tas.gov.au/)."
+},
+{
+"family": "KXLEXMAYOR | ^2026-lexington-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Lexington mayoral election winner? — Linda Gorton",
+"poly_q": "Will Linda Gorton win the 2026 Lexington mayoral election?",
+"kalshi_rules": "Who will win the 2026 Lexington, Kentucky mayoral election? If Linda Gorton wins the 2026 Lexington, Kentucky mayoral election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Linda Gorton win the 2026 Lexington mayoral election? The 2026 Lexington mayoral election will be held on November 3, 2026, to elect the mayor of Lexington, KY.\n\nThis market will resolve according to the candidate who becomes the next mayor of Lexington as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Kentucky and the Lexington-Fayette Urban County Government."
+},
+{
+"family": "KXLAUNCESTONMAYOR | ^launceston-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Launceston mayoral election winner? — Matthew Garwood",
+"poly_q": "Will Matthew Garwood win the next Launceston mayoral election?",
+"kalshi_rules": "Will Matthew Garwood win the 2026 Launceston mayoral election? If Matthew Garwood wins the 2026 Launceston mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Matthew Garwood win the next Launceston mayoral election? Local government elections are scheduled to be held across Tasmania on October 27, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of the City of Launceston as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Tasmanian Electoral Commission (https://www.tec.tas.gov.au/)."
+},
+{
+"family": "KXKAMLOOPSMAYOR | ^kamloops-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Kamloops mayoral election winner? — Nelly Dever",
+"poly_q": "Will Nelly Dever win the 2026 Kamloops mayoral election?",
+"kalshi_rules": "Will Nelly Dever win the 2026 Kamloops mayoral election? If Nelly Dever wins the 2026 Kamloops mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Nelly Dever win the 2026 Kamloops mayoral election? The 2026 Kamloops, British Columbia mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Kamloops, British Columbia as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Kamloops, British Columbia."
+},
+{
+"family": "KXHUONMAYOR | ^huon-valley-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Huon Valley mayoral election winner? — Abby McKibben",
+"poly_q": "Will Abby McKibben win the next Huon Valley mayoral election?",
+"kalshi_rules": "Will Abby McKibben win the 2026 Huon Valley mayoral election? If Abby McKibben wins the 2026 Huon Valley mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Abby McKibben win the next Huon Valley mayoral election? Local government elections are scheduled to be held across Tasmania on October 27, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of the Huon Valley Council area as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Tasmanian Electoral Commission (https://www.tec.tas.gov.au/)."
+},
+{
+"family": "KXHARRISCOUNTYJUDGE | ^2026-harris-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "Harris County Judge winner? — Orlando Sanchez",
+"poly_q": "Will Orlando Sanchez win the 2026 Harris County Judge election?",
+"kalshi_rules": "Who will win the 2026 Harris County Judge general election? If Orlando Sanchez wins the 2026 Harris County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Orlando Sanchez win the 2026 Harris County Judge election? The 2026 Harris County Judge election will be held on November 3, 2026, to elect the County Judge of Harris County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of Harris County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and Harris County."
+},
+{
+"family": "KXFORTBENDCOUNTYJUDGE | ^2026-fort-bend-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "Fort Bend County Judge winner? — Daniel Wong",
+"poly_q": "Will Daniel Wong win the 2026 Fort Bend County Judge election?",
+"kalshi_rules": "Who will win the 2026 Fort Bend County Judge general election? If Daniel Wong wins the 2026 Fort Bend County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Daniel Wong win the 2026 Fort Bend County Judge election? The 2026 Fort Bend County Judge election will be held on November 3, 2026, to elect the County Judge of Fort Bend County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of Fort Bend County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and Fort Bend County."
+},
+{
+"family": "KXELPASOCOUNTYJUDGE | ^2026-el-paso-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "El Paso County Judge winner? — Ricardo Samaniego",
+"poly_q": "Will Ricardo Samaniego win the 2026 El Paso County Judge election?",
+"kalshi_rules": "Who will win the 2026 El Paso County Judge general election? If Ricardo Samaniego wins the 2026 El Paso County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Ricardo Samaniego win the 2026 El Paso County Judge election? The 2026 El Paso County Judge election will be held on November 3, 2026, to elect the County Judge of El Paso County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of El Paso County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and El Paso County."
+},
+{
+"family": "KXDENTONCOUNTYJUDGE | ^2026-denton-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "Denton County Judge winner? — Andy Eads",
+"poly_q": "Will Andy Eads win the 2026 Denton County Judge election?",
+"kalshi_rules": "Who will win the 2026 Denton County Judge general election? If Andy Eads wins the 2026 Denton County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Andy Eads win the 2026 Denton County Judge election? The 2026 Denton County Judge election will be held on November 3, 2026, to elect the County Judge of Denton County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of Denton County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and Denton County."
+},
+{
+"family": "KXCLARENCEMAYOR | ^clarence-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Clarence mayoral election winner? — Brendan Blomeley",
+"poly_q": "Will Brendan Blomeley win the next Clarence mayoral election?",
+"kalshi_rules": "Will Brendan Blomeley win the 2026 Clarence mayoral election? If Brendan Blomeley wins the 2026 Clarence mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Brendan Blomeley win the next Clarence mayoral election? Local government elections are scheduled to be held across Tasmania on October 27, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of the City of Clarence as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Tasmanian Electoral Commission (https://www.tec.tas.gov.au/)."
+},
+{
+"family": "KXBEXARCOUNTYJUDGE | ^2026-bexar-county-judge-election-winner",
+"status": "approved",
+"kalshi_q": "Bexar County Judge winner? — Ron Nirenberg",
+"poly_q": "Will Ron Nirenberg win the 2026 Bexar County Judge election?",
+"kalshi_rules": "Who will win the 2026 Bexar County Judge general election? If Ron Nirenberg wins the 2026 Bexar County Judge general election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Ron Nirenberg win the 2026 Bexar County Judge election? The 2026 Bexar County Judge election will be held on November 3, 2026, to elect the County Judge of Bexar County, TX.\n\nThis market will resolve according to the candidate who becomes the next County Judge of Bexar County as a result of this election.\n\nTemporary, interim, or placeholder County Judges appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Texas and Bexar County."
+},
+{
+"family": "KXGOVAK | ^alaska-governor-election-winner$",
+"status": "approved",
+"kalshi_q": "Alaska Governor winner? — Tom Begich",
+"poly_q": "Will Tom Begich win the 2026 Alaska governor election?",
+"kalshi_rules": "Who will win the governorship in Alaska? If Tom Begich is elected the governor of Alaska pursuant to the election in 2026, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Tom Begich win the 2026 Alaska governor election? This market will resolve according to the candidate who wins the 2026 Alaska gubernatorial election currently scheduled for November 3, 2026.  \n\nIf the results of the election are not confirmed by July 31, 2027, this market will resolve to \"Other\".  \n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race in Alaska for the same candidate, this market will resolve based on official certification."
+},
+{
+"family": "KXMOTOGP | ^motogp-world-champion-2026",
+"status": "approved",
+"kalshi_q": "MotoGP World Champion — Jorge Martin",
+"poly_q": "Will Jorge Martin win the 2026 MotoGP World Championship?",
+"kalshi_rules": "Will Jorge Martin be the 2026 MotoGP World Champion? If Jorge Martin wins the 2026 MotoGP World Championship, then the market resolves to Yes. The 2026 MotoGP World Champion is decided by the highest number of points accumulated over a 22-round season.\n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Jorge Martin win the 2026 MotoGP World Championship? This market will resolve according to the rider who wins the 2026 MotoGP World Championship.\n\nIf at any point it becomes impossible for a listed rider to win the 2026 MotoGP World Championship (e.g., they are mathematically eliminated from title contention), the corresponding market will resolve to \"No\".\n\nIf the 2026 MotoGP season is cancelled, postponed after December 13, 2026, 11:59 PM ET, or there is otherwise no World Champion crowned within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from MotoGP / the FIM (https://www.motogp.com); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXBRATISLAVAMAYOR | ^bratislava-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Bratislava mayoral election winner? — Matúš Vallo",
+"poly_q": "Will Matúš Vallo win the 2026 Bratislava mayoral election?",
+"kalshi_rules": "Will Matúš Vallo win the 2026 Bratislava mayoral election? If Matúš Vallo wins the 2026 Bratislava mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Matúš Vallo win the 2026 Bratislava mayoral election? The 2026 Bratislava mayoral election is currently scheduled to be held on October 24, 2026.\n\nThis market will resolve according to the candidate who becomes the next Mayor of Bratislava as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by March 31, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThis market will resolve based on the results of this election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve solely based on official results as reported by government sources of Bratislava, Bratislava Region and Slovakia, including the Statistical Office of the Slovak Republic (https://volby.statistics.sk/)."
+},
+{
+"family": "KXCMA | ^cma-music-video-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Music Video of the Year — Choosin’ Texas",
+"poly_q": "Will “Choosin' Texas” by Ella Langley win Music Video of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Choosin’ Texas win Music Video of the Year at the 60th Country Music Association Awards? If Choosin’ Texas wins Music Video of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will “Choosin' Texas” by Ella Langley win Music Video of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed music video that wins the 60th Annual Country Music Association Award for Music Video of the Year. \n\nIf a listed music video is not officially nominated for the Country Music Association Award for Music Video of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning music video whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-vocal-group-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Vocal Group of the Year — Old Dominion",
+"poly_q": "Will Old Dominion win Vocal Group of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Old Dominion win Vocal Group of the Year at the 60th Country Music Association Awards? If Old Dominion wins Vocal Group of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Old Dominion win Vocal Group of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed group that wins the 60th Annual Country Music Association Award for Vocal Group of the Year. \n\nIf a listed group is not officially nominated for the Country Music Association Award for Vocal Group of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning group whose listed name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-vocal-duo-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Vocal Duo of the Year — Brooks & Dunn",
+"poly_q": "Will Brooks & Dunn win Vocal Duo of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Brooks & Dunn win Vocal Duo of the Year at the 60th Country Music Association Awards? If Brooks & Dunn wins Vocal Duo of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Brooks & Dunn win Vocal Duo of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed duo that wins the 60th Annual Country Music Association Award for Vocal Duo of the Year. \n\nIf a listed duo is not officially nominated for the Country Music Association Award for Vocal Duo of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning duo whose listed name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-single-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Single of the Year — Be Her",
+"poly_q": "Will “Be Her” by Ella Langley win Single of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Be Her win Single of the Year at the 60th Country Music Association Awards? If Be Her wins Single of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will “Be Her” by Ella Langley win Single of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed single that wins the 60th Annual Country Music Association Award for Single of the Year. \n\nIf a listed single is not officially nominated for the Country Music Association Award for Single of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning single whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-song-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Song of the Year — Be Her",
+"poly_q": "Will “Be Her” by Ella Langley win Song of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Be Her win Song of the Year at the 60th Country Music Association Awards? If Be Her wins Song of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will “Be Her” by Ella Langley win Song of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed song that wins the 60th Annual Country Music Association Award for Song of the Year. \n\nIf a listed song is not officially nominated for the Country Music Association Award for Song of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning song whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-new-artist-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: New Artist of the Year — Carter Faith",
+"poly_q": "Will Carter Faith win New Artist of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Carter Faith win New Artist of the Year at the 60th Country Music Association Awards? If Carter Faith wins New Artist of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Carter Faith win New Artist of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed artist who wins the 60th Annual Country Music Association Award for New Artist of the Year. \n\nIf a listed artist is not officially nominated for the Country Music Association Award for New Artist of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning artist whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-male-vocalist-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Male Vocalist of the Year — Luke Combs",
+"poly_q": "Will Luke Combs win Male Vocalist of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Luke Combs win Male Vocalist of the Year at the 60th Country Music Association Awards? If Luke Combs wins Male Vocalist of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Luke Combs win Male Vocalist of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed artist who wins the 60th Annual Country Music Association Award for Male Vocalist of the Year. \n\nIf a listed artist is not officially nominated for the Country Music Association Award for Male Vocalist of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning artist whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-musician-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Musician of the Year — Tom Bukovac",
+"poly_q": "Will Tom Bukovac (guitar) win Musician of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Tom Bukovac win Musician of the Year at the 60th Country Music Association Awards? If Tom Bukovac wins Musician of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Tom Bukovac (guitar) win Musician of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed musician who wins the 60th Annual Country Music Association Award for Musician of the Year. \n\nIf a listed musician is not officially nominated for the Country Music Association Award for Musician of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning musician whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-musical-event-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Musical Event of the Year — A Song To Sing",
+"poly_q": "Will “A Song To Sing” by Miranda Lambert and Chris Stapleton win Musical Event of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will A Song To Sing win Musical Event of the Year at the 60th Country Music Association Awards? If A Song To Sing wins Musical Event of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will “A Song To Sing” by Miranda Lambert and Chris Stapleton win Musical Event of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed collaboration that wins the 60th Annual Country Music Association Award for Musical Event of the Year. \n\nIf a listed collaboration is not officially nominated for the Country Music Association Award for Musical Event of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning collaboration whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-female-vocalist-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Female Vocalist of the Year — Miranda Lambert",
+"poly_q": "Will Miranda Lambert win Female Vocalist of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Miranda Lambert win Female Vocalist of the Year at the 60th Country Music Association Awards? If Miranda Lambert wins Female Vocalist of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Miranda Lambert win Female Vocalist of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed artist who wins the 60th Annual Country Music Association Award for Female Vocalist of the Year. \n\nIf a listed artist is not officially nominated for the Country Music Association Award for Female Vocalist of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning artist whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-entertainer-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Entertainer of the Year — Luke Combs",
+"poly_q": "Will Luke Combs win Entertainer of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Luke Combs win Entertainer of the Year at the 60th Country Music Association Awards? If Luke Combs wins Entertainer of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will Luke Combs win Entertainer of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed artist who wins the 60th Annual Country Music Association Award for Entertainer of the Year. \n\nIf a listed artist is not officially nominated for the Country Music Association Award for Entertainer of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning artist whose listed last name comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXCMA | ^cma-album-of-the-year-2026",
+"status": "approved",
+"kalshi_q": "CMA Awards: Album of the Year — Ain’t In It For My Health",
+"poly_q": "Will “Ain't in It for My Health” by Zach Top win Album of the Year at the 2026 CMA Awards?",
+"kalshi_rules": "Will Ain’t In It For My Health win Album of the Year at the 60th Country Music Association Awards? If Ain’t In It For My Health wins Album of the Year at the 60th Country Music Association Awards, then the market resolves to Yes.",
+"poly_rules": "Will “Ain't in It for My Health” by Zach Top win Album of the Year at the 2026 CMA Awards? The Country Music Association Awards are presented annually by the Country Music Association (CMA) to honor outstanding achievement in country music. The 60th Annual Country Music Association Awards are currently scheduled for November 18, 2026.\n\nThis market will resolve according to the listed album that wins the 60th Annual Country Music Association Award for Album of the Year. \n\nIf a listed album is not officially nominated for the Country Music Association Award for Album of the Year when the 2026 nominees are announced, the corresponding market will immediately resolve to \"No\".\n\nIn case of a tie for the winner, this market will resolve in favor of the tied winning album whose listed title comes first in alphabetical order.\n\nIf, for any reason, no winner is declared by December 31, 2026, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from the CMA Awards and the Country Music Association, including data from their website (e.g., https://cmaawards.com/) and the live broadcast of the award ceremony; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNASCARCUPSERIES | ^nascar-cup-series-2026-champion",
+"status": "approved",
+"kalshi_q": "NASCAR Cup Series Champion — Kyle Larson",
+"poly_q": "Will Kyle Larson win the 2026 NASCAR Cup Series championship?",
+"kalshi_rules": "Will Kyle Larson be the NASCAR Cup Series Champion? If Kyle Larson wins the 2026 NASCAR Cup Series, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Kyle Larson win the 2026 NASCAR Cup Series championship? This market will resolve according to the listed driver that finishes 1st in the driver standings for the 2026 NASCAR Cup Series.\n\nThis market will resolve as soon as the official results of the final scheduled race of the 2026 NASCAR Cup Series are known.\n\nIf multiple drivers tie for first place in the drivers standings, this market will resolve according to the tiebreak procedure used by NASCAR to determine the 2026 NASCAR Cup Series champion.\n\nIf at any point it becomes impossible for a listed driver to win the 2026 NASCAR Cup Series Championship based on the rules of NASCAR (e.g., they are mathematically eliminated from contention), the corresponding market will resolve to “No”.\n\nIf the 2026 NASCAR Cup Series season is permanently canceled or has not been completed by November 22, 2026, 11:59 PM ET, this market will resolve to “Other”.\n\nThe primary resolution source for this market will be official information from NASCAR."
+},
+{
+"family": "KXSURREYMAYOR | ^surrey-mayoral-election",
+"status": "approved",
+"kalshi_q": "Surrey mayoral election winner? — Brenda Locke",
+"poly_q": "Will Brenda Locke win the 2026 Surrey mayoral election?",
+"kalshi_rules": "Will Brenda Locke win the 2026 Surrey mayoral election? If Brenda Locke wins the 2026 Surrey mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Brenda Locke win the 2026 Surrey mayoral election? The 2026 Surrey, BC mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Surrey as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Surrey."
+},
+{
+"family": "KXCOQUITLAMMAYOR | ^coquitlam-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Coquitlam mayoral election winner? — Craig Hodge",
+"poly_q": "Will Craig Hodge win the 2026 Coquitlam mayoral election?",
+"kalshi_rules": "Will Craig Hodge win the 2026 Coquitlam mayoral election? If Craig Hodge wins the 2026 Coquitlam mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Craig Hodge win the 2026 Coquitlam mayoral election? The 2026 Coquitlam, British Columbia mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Coquitlam, British Columbia as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Coquitlam, British Columbia."
+},
+{
+"family": "KXAKSENATE | ^alaska-senate-election-winner$",
+"status": "approved",
+"kalshi_q": "Alaska Senate winner? (Person) — Dan Sullivan",
+"poly_q": "Will Dan Sullivan win the Alaska Senate race in 2026?",
+"kalshi_rules": "Will Dan Sullivan win the 2026 Alaska Senate race? If Dan Sullivan wins the 2026 Alaska Senate election, then the market resolves to Yes. For parliamentary elections, the party or coalition with the most seats wins. If two parties tie in seats: the one entering government will resolve to Yes and all others to No. If both or neither enter government, the one with the higher share of the vote will resolve to Yes and all others to No. For coalitions/alliances, only those formally registered with electoral authorities before the nomination deadline count, not post-election governing arrangements. Overhang seats, leveling seats, and appointed seats count only if specified. For referenda/plebiscites, the specified option achieves the required threshold per applicable law (simple majority, supermajority, dual majority, turnout requirements). If multiple thresholds exist (e.g., majority of votes AND majority of states), all must be met. For presidential or direct elections, the candidate who wins according to the electoral system (electoral college, popular vote, or runoff as applicable) and either (i) is inaugurated/sworn in/takes office, or (ii) the scheduled inauguration date passes without a different candidate taking office is the winner.  \n\nThe market resolves based on the official certification or declaration by the relevant electoral authority. Contested results are resolved based on the final certified outcome by the appropriate electoral authority or highest court with jurisdiction. In cases of competing claims (two presidents, disputed succession), the individual recognized by the hierarchical majority of Source Agencies prevails. The market remains open until the rescheduled election or two years from the original date, whichever comes first. Repeated postponements count towards the 2-year deadline.  If results are annulled by a court/authority AFTER announcement but BEFORE the winner takes office, the Contract remains open until re-run election or expiration.",
+"poly_rules": "Will Dan Sullivan win the Alaska Senate race in 2026? This market will resolve according to the winner of the 2026 midterm Alaska U.S. Senate election, inclusive of any run-offs, currently scheduled for November 3, 2026.\n\nIf the results of the election are not confirmed by July 31, 2027, this market will resolve to \"Other\".\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race in this state for the same candidate, this market will resolve based on official certification."
+},
+{
+"family": "KXNASCARAUTOPARTSSERIES | ^nascar-oreilly-auto-parts-series-champion-2026",
+"status": "approved",
+"kalshi_q": "NASCAR O'Reilly Auto Parts Series Champion — Sheldon Creed",
+"poly_q": "Will Sheldon Creed win the 2026 NASCAR O'Reilly Auto Parts Series championship?",
+"kalshi_rules": "Will Sheldon Creed be the NASCAR O'Reilly Auto Parts Series Champion? If Sheldon Creed wins the 2026 NASCAR O'Reilly Auto Parts Series Championship, then the market resolves to Yes.  \n\nKalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Sheldon Creed win the 2026 NASCAR O'Reilly Auto Parts Series championship? This market will resolve according to the driver who wins the 2026 NASCAR O'Reilly Auto Parts Series (Xfinity Series) championship.\n\nIf at any point it becomes impossible for a listed driver to win the 2026 NASCAR O'Reilly Auto Parts Series (Xfinity Series) championship (e.g., they are mathematically eliminated from the playoffs), the corresponding market will resolve to \"No\".\n\nIf the 2026 NASCAR O'Reilly Auto Parts Series (Xfinity Series) season is cancelled, postponed after November 21, 2026, 11:59 PM ET, or there is otherwise no champion crowned within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from NASCAR (https://www.nascar.com); however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXRENOMAYOR | ^2026-reno-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Reno mayoral election winner? — Kate Marshall",
+"poly_q": "Will Kate Marshall win the 2026 Reno mayoral election?",
+"kalshi_rules": "Who will win the 2026 Reno, Nevada mayoral election? If Kate Marshall wins the 2026 Reno, Nevada mayoral election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Kate Marshall win the 2026 Reno mayoral election? The 2026 Reno mayoral election will be held on November 3, 2026, to elect the mayor of Reno, NV.\n\nThis market will resolve according to the candidate who becomes the next mayor of Reno as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Nevada, Washoe County, and the City of Reno."
+},
+{
+"family": "KXOAKLANDMAYOR | ^oakland-mayoral-election",
+"status": "approved",
+"kalshi_q": "Oakland Mayor winner? — Brenda Grisham",
+"poly_q": "Will Brenda Grisham win the Oakland Mayor election?",
+"kalshi_rules": "Who will win the 2026 Oakland mayoral election? If Brenda Grisham wins the 2026 Oakland mayoral election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Brenda Grisham win the Oakland Mayor election? The 2026 Oakland mayoral election will be held on November 3, 2026, to elect the mayor of Oakland, California. \n\nThis market will resolve according to the candidate that wins the election.\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the City of Oakland."
+},
+{
+"family": "KXLOUISVILLEMAYOR | ^2026-louisville-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Louisville Mayor Election winner? — Craig Greenberg",
+"poly_q": "Will Craig Greenberg win the 2026 Louisville mayoral election?",
+"kalshi_rules": "Who will win the 2026 Louisville, KY mayoral election? If Craig Greenberg wins the 2026 Louisville, KY mayoral election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Craig Greenberg win the 2026 Louisville mayoral election? The 2026 Louisville mayoral election will be held on November 3, 2026, to elect the mayor of Louisville, KY.\n\nThis market will resolve according to the candidate who becomes the next mayor of Louisville as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, the market will resolve to “Other.”\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from the State of Kentucky and the Louisville/Jefferson County Metro Government."
+},
+{
+"family": "KXCAELECTION | ^ca-\\d\\d-house-election-winner-(?:by-)?individual",
+"status": "approved",
+"kalshi_q": "CA-40 House winner? — Ken Calvert",
+"poly_q": "Will Ken Calvert win the CA-40 House seat?",
+"kalshi_rules": "Who will win the 2026 CA-40 House election? If Ken Calvert wins the 2026 CA-40 House election, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Ken Calvert win the CA-40 House seat? This market will resolve according to the individual who wins the CA-40 congressional district seat in the U.S. House of Representatives in the 2026 midterm elections. The midterm elections will take place on November 3, 2026.\n\nThis market will resolve based on the result of the election as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the United States government, specifically the Federal Election Commission (https://www.fec.gov/)."
+},
+{
+"family": "KXCA11PERSON | ^ca-11-house-election-winner-individual",
+"status": "approved",
+"kalshi_q": "CA-11 House winner?  — Scott Wiener",
+"poly_q": "Will Scott Wiener win the CA-11 House seat?",
+"kalshi_rules": "Who will win the CA-11 House election? If Scott Wiener wins the CA-11 House election in 2026, then the market resolves to Yes. This market is eligible for accelerated determination after a consensus of media organizations project the winner. See full rules for details.",
+"poly_rules": "Will Scott Wiener win the CA-11 House seat? This market will resolve according to the individual who wins the CA-11 congressional district seat in the U.S. House of Representatives in the 2026 midterm elections. The midterm elections will take place on November 3, 2026.\n\nThis market will resolve based on the result of the election as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as reported by the United States government, specifically the Federal Election Commission (https://www.fec.gov/)."
+},
+{
+"family": "KXTORONTOMAYOR | ^toronto-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Toronto mayoral election winner? — Olivia Chow",
+"poly_q": "Will Olivia Chow win the 2026 Toronto mayoral election?",
+"kalshi_rules": "Will Olivia Chow win the 2026 Toronto mayoral election? If Olivia Chow wins the 2026 Toronto mayoral election, then the market resolves to Yes. This market may resolve early once a consensus of designated media sources has declared a winner. See full rules for details.",
+"poly_rules": "Will Olivia Chow win the 2026 Toronto mayoral election? The 2026 Toronto mayoral election is currently scheduled to be held on October 26, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Toronto as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Toronto."
+},
+{
+"family": "KXOTTAWAMAYOR | ^ottawa-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Ottawa mayoral election winner? — Mark Sutcliffe",
+"poly_q": "Will Mark Sutcliffe win the 2026 Ottawa mayoral election?",
+"kalshi_rules": "Will Mark Sutcliffe win the 2026 Ottawa mayoral election? If Mark Sutcliffe wins the 2026 Ottawa mayoral election, then the market resolves to Yes. This market may resolve early once a consensus of designated media sources has declared a winner. See full rules for details.",
+"poly_rules": "Will Mark Sutcliffe win the 2026 Ottawa mayoral election? The 2026 Ottawa mayoral election is currently scheduled to be held on October 26, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Ottawa as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Ottawa."
+},
+{
+"family": "KXYOKOHAMAMAYOR | ^yokohama-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Yokohama mayoral election winner? — Atsumi Harasawa",
+"poly_q": "Will Atsumi Harasawa win the 2026 Yokohama mayoral election?",
+"kalshi_rules": "Will Atsumi Harasawa win the 2026 Yokohama mayoral election? If Atsumi Harasawa wins the 2026 Yokohama mayoral election, then the market resolves to Yes. This market is eligible for accelerated resolution by a consensus of media calls. See full rules for details.",
+"poly_rules": "Will Atsumi Harasawa win the 2026 Yokohama mayoral election? The next Yokohama mayoral election is scheduled to be held on October 18, 2026, to elect the mayor of Yokohama, Japan (横浜市長). The election is being held following the resignation of Mayor Takeharu Yamanaka on September 7, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Yokohama as a result of this election.\n\nTemporary, interim, or placeholder mayors will not be considered.\n\nIf the result of this election isn't known by April 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThis market will resolve based on the result of the election, as indicated by a consensus of credible reporting. If there is ambiguity, this market will resolve based solely on the official results as declared by the Yokohama City Election Administration Commission (https://www.city.yokohama.lg.jp/)."
+},
+{
+"family": "KXVANCOUVERMAYOR | ^vancouver-mayoral-election-winner",
+"status": "approved",
+"kalshi_q": "Vancouver mayoral election winner? — Ken Sim",
+"poly_q": "Will Ken Sim win the 2026 Vancouver mayoral election?",
+"kalshi_rules": "Will Ken Sim win the 2026 Vancouver mayoral election? If Ken Sim wins the 2026 Vancouver mayoral election, then the market resolves to Yes. This market may resolve early once a consensus of designated media sources has declared a winner. See full rules for details.",
+"poly_rules": "Will Ken Sim win the 2026 Vancouver mayoral election? The 2026 Vancouver mayoral election is currently scheduled to be held on October 17, 2026.\n\nThis market will resolve according to the candidate who becomes the next mayor of Vancouver as a result of this election.\n\nTemporary, interim, or placeholder mayors appointed before the election will not be considered.\n\nIf the result of this election isn't known by June 30, 2027, 11:59 PM ET, the market will resolve to \"Other\".\n\nThe primary resolution source for this market will be a consensus of credible reporting; however, if there is any ambiguity in the results, this market will resolve according to official information from Vancouver."
 }
 ]

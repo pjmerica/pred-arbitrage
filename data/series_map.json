@@ -861,6 +861,1141 @@
    "status": "rejected",
    "rules_read": "2026-10-13",
    "note": "Kalshi pays on reaching a stage (quarterfinalists / finalists); Polymarket on winning Worlds. Different questions (143% fake returns)."
+  },
+  {
+   "kalshi_series": "KXNFLOPOTY",
+   "polymarket_event_slug_regex": "^pro-football-2026-27-ap-offensive-player-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL Offensive Player of the Year for the 2026-27 season. Polymarket ties: official NFL winner, then first last name alphabetically.",
+   "caveat": "Polymarket resolves Other if the season is cancelled / postponed after Feb 28, 2027 or no winner by then; Kalshi stays open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLDPOTY",
+   "polymarket_event_slug_regex": "^pro-football-2026-27-ap-defensive-player-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL Defensive Player of the Year for the 2026-27 season.",
+   "caveat": "Polymarket Other after Feb 28, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLMVP",
+   "polymarket_event_slug_regex": "^pro-football-2026-mvp-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL MVP for the 2026-27 season (Kalshi 'AP Regular Season MVP'; Polymarket '2026 NFL Most Valuable Player award for the 2026-27 NFL season').",
+   "caveat": "Polymarket Other after Feb 28, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLPRES",
+   "polymarket_event_slug_regex": "^nhl-presidents-trophy-winner-2026-27",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL Presidents' Trophy (best regular-season points). Ties: Kalshi lists the official NHL tiebreakers; Polymarket the official tiebreaker, then wins, then goals - the official award settles both.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLHART",
+   "polymarket_event_slug_regex": "^nhl-hart-memorial-trophy-winner-2026-27",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL Hart Memorial Trophy winner.",
+   "caveat": "Polymarket Other if postponed after Jun 30, 2027 (Kalshi closes Jun 30).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLEAST",
+   "polymarket_event_slug_regex": "^nhl-2027-eastern-conference-champion",
+   "status": "approved",
+   "note": "Both: winner of the 2027 NHL Eastern Conference Finals.",
+   "caveat": "Polymarket Other if postponed after Jun 30, 2027; Kalshi closes Jul 15.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLWEST",
+   "polymarket_event_slug_regex": "^nhl-2027-western-conference-champion",
+   "status": "approved",
+   "note": "Both: winner of the 2027 NHL Western Conference Finals (same templates as KXNHLEAST).",
+   "caveat": "Polymarket Other if postponed after Jun 30, 2027; Kalshi closes Jul 15.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCONCACAFNL",
+   "polymarket_event_slug_regex": "^concacaf-nations-league-2026-27-winner",
+   "status": "approved",
+   "note": "Both: champion of the 2026-27 CONCACAF Nations League (League A is the title tier).",
+   "caveat": "Polymarket Other if postponed after Apr 14, 2027; Kalshi closes Apr 15.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARMAH",
+   "polymarket_event_slug_regex": "^oscars-2027-best-makeup-and-hairstyling-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Makeup and Hairstyling at the 99th Academy Awards. Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARNOMPIC",
+   "polymarket_event_slug_regex": "^oscars-2026-best-picture-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Picture at the 99th Academy Awards (nominations Jan 2027).",
+   "caveat": "Polymarket resolves No if no nominations by Mar 14, 2027; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXFRENCHPRES",
+   "polymarket_event_slug_regex": "^next-french-presidential-election$",
+   "status": "approved",
+   "note": "Both: winner of the next French presidential election (incl. runoff, early election counts on both).",
+   "caveat": "Polymarket Other if results unknown by Dec 31, 2027; Kalshi open to May 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHSINCHUCOUNTYMAG",
+   "polymarket_event_slug_regex": "^hsinchu-county-magistrate-election-winner",
+   "status": "approved",
+   "note": "Both: the 2026 Hsinchu County magistrate election (Nov 28). Kalshi: wins the election; Polymarket: becomes magistrate as a result of it - same person barring death / disqualification.",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXISRDEFMIN",
+   "polymarket_event_slug_regex": "^next-israeli-minister-of-defense",
+   "status": "rejected",
+   "note": "Kalshi: Times of Israel reports X as first defense minister of the first government after the next Knesset election, any time before Oct 28, 2030. Polymarket: X takes office (Knesset approval) by Feb 28, 2027, otherwise No/Other. A government formed after Feb 2027 pays only Kalshi.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNBAROY",
+   "polymarket_event_slug_regex": "^nba-2026-27-rookie-of-the-year",
+   "status": "approved",
+   "note": "Both: the 2026-27 NBA Rookie of the Year award.",
+   "caveat": "Polymarket Other if the season is cancelled / no winner by Apr 30, 2027 (the award is announced in May); Kalshi open to Jul 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLCOTY",
+   "polymarket_event_slug_regex": "^pro-football-2026-27-ap-coach-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL Coach of the Year for the 2026-27 season.",
+   "caveat": "Polymarket Other after Feb 28, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLCPOTY",
+   "polymarket_event_slug_regex": "^pro-football-2026-27-ap-comeback-player-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL Comeback Player of the Year for the 2026-27 season.",
+   "caveat": "Polymarket Other after Feb 28, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLDROTY",
+   "polymarket_event_slug_regex": "^pro-football-2026-27-ap-defensive-rookie-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL Defensive Rookie of the Year for the 2026-27 season.",
+   "caveat": "Polymarket Other after Feb 28, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARACTO",
+   "polymarket_event_slug_regex": "^oscars-2027-best-actor-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Actor at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first name alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARASPLAY",
+   "polymarket_event_slug_regex": "^oscars-2027-best-adapted-screenplay-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Adapted Screenplay at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first name alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARSUPACTO",
+   "polymarket_event_slug_regex": "^oscars-2027-best-supporting-actor-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Supporting Actor at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first name alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARSUPACTR",
+   "polymarket_event_slug_regex": "^oscars-2027-best-supporting-actress-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Supporting Actress at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first name alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARDIR",
+   "polymarket_event_slug_regex": "^oscars-2027-best-director-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Director (Polymarket: a jointly listed pair wins if either director wins) at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first name alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARDOCU",
+   "polymarket_event_slug_regex": "^oscars-2027-best-documentary-feature-film-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Documentary Feature Film at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first name alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGREEKPM",
+   "polymarket_event_slug_regex": "^next-prime-minister-of-greece",
+   "status": "approved",
+   "note": "Both: first PM formally appointed / sworn in after the next Greek general election (caretakers excluded; an early election counts).",
+   "caveat": "Polymarket Other if nobody takes office by Dec 31, 2027; Kalshi runs to Jul 25, 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNUEVOLEONGOV",
+   "polymarket_event_slug_regex": "^nuevo-leon-governor-election-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2027 Nuevo Leon gubernatorial election (Jun 6, 2027).",
+   "caveat": "Polymarket Other if results not definitive by Dec 31, 2027; Kalshi open to Jun 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCLARENCEMAYOR",
+   "polymarket_event_slug_regex": "^clarence-mayoral-election-winner",
+   "status": "approved",
+   "note": "Both: the 2026 Clarence (Tasmania) mayoral election, Oct 27, 2026 (Kalshi: wins; Polymarket: becomes mayor as a result - mayors are directly elected).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXKAMLOOPSMAYOR",
+   "polymarket_event_slug_regex": "^kamloops-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Kamloops (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTAINANMAYOR",
+   "polymarket_event_slug_regex": "^tainan-mayor-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Tainan (Nov 28) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXWINNIPEGMAYOR",
+   "polymarket_event_slug_regex": "^winnipeg-mayoral-election-2026",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Winnipeg (Oct 28) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMOTOGP",
+   "polymarket_event_slug_regex": "^motogp-world-champion-2026",
+   "status": "approved",
+   "note": "Both: the 2026 MotoGP World Champion (FIM).",
+   "caveat": "Polymarket Other if postponed after Dec 13, 2026; Kalshi closes Dec 14.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSTRMRSOTY",
+   "polymarket_event_slug_regex": "^esports-awards-streamer-of-the-year",
+   "status": "rejected",
+   "note": "Kalshi: Streamer of the Year at The Streamer Awards 2026; Polymarket: Streamer of the Year at the 2026 Esports Awards (Miami). Different award shows.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARNOMACTO",
+   "polymarket_event_slug_regex": "^oscars-2026-best-actor-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Actor at the 99th Academy Awards.",
+   "caveat": "Polymarket No if no nominations by Mar 14, 2027; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNBACUP",
+   "polymarket_event_slug_regex": "^nba-2026-nba-cup-winner",
+   "status": "approved",
+   "note": "Both: the 2026 NBA (Emirates) Cup champion, 2026-27 season. Polymarket ties: first name alphabetically; if no champion by Dec 31, 2026 it follows official NBA declarations.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNBAEAST",
+   "polymarket_event_slug_regex": "^nba-2027-eastern-conference-champion",
+   "status": "approved",
+   "note": "Both: winner of the 2027 NBA Eastern Conference Finals.",
+   "caveat": "Polymarket Other if postponed after Jun 30, 2027; Kalshi open to Jun 2029.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNBAWEST",
+   "polymarket_event_slug_regex": "^nba-2027-western-conference-champion",
+   "status": "approved",
+   "note": "Both: winner of the 2027 NBA Western Conference Finals.",
+   "caveat": "Polymarket Other if postponed after Jun 30, 2027; Kalshi open to Jun 2029.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPPARDON",
+   "polymarket_event_slug_regex": "^who-will-trump-pardon-before-2027",
+   "status": "approved",
+   "note": "Both: a presidential pardon, commutation or reprieve from Trump before Jan 1, 2027. Kalshi counts the whole second term, Polymarket from Dec 16, 2025: anyone pardoned before that is settled on Kalshi only (caught by settled_one_side); from now on the windows are identical.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLAFCCHAMP",
+   "polymarket_event_slug_regex": "^pro-football-2027-afc-champion",
+   "status": "approved",
+   "note": "Both: winner of the AFC Championship game (Jan 2027).",
+   "caveat": "Polymarket Other if postponed after Mar 31, 2027; Kalshi closes Feb 22 - negligible.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLNFCCHAMP",
+   "polymarket_event_slug_regex": "^pro-football-2027-nfc-champion",
+   "status": "approved",
+   "note": "Both: winner of the NFC Championship game (Jan 2027).",
+   "caveat": "Polymarket Other if postponed after Mar 31, 2027; Kalshi closes Feb 22 - negligible.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHEISMAN",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-heisman-award-winner",
+   "status": "approved",
+   "note": "Both: the 2026 Heisman Trophy winner (ceremony Dec 12). Polymarket co-winners: first name alphabetically.",
+   "caveat": "Polymarket Other if postponed after Dec 26, 2026; Kalshi closes Jan 1.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLSEAST",
+   "polymarket_event_slug_regex": "^mls-eastern-conference-champion-2026",
+   "status": "approved",
+   "note": "Both: the 2026 MLS Eastern Conference champion (wins the Eastern Conference Final, playoffs).",
+   "caveat": "Polymarket Other if postponed after Dec 31, 2026; Kalshi closes Jan 8.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLSWEST",
+   "polymarket_event_slug_regex": "^mls-western-conference-champion-2026",
+   "status": "approved",
+   "note": "Both: the 2026 MLS Western Conference champion (same templates as KXMLSEAST).",
+   "caveat": "Polymarket Other if postponed after Dec 31, 2026; Kalshi closes Jan 8. Kalshi's rules text also says 'refers to the Eastern Conference champion' (copy-paste slip); the primary clause names the Western Conference champion.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLBWSMVP",
+   "polymarket_event_slug_regex": "^mlb-postseason-world-series-mvp",
+   "status": "approved",
+   "note": "Both: the 2026 World Series (Willie Mays) MVP.",
+   "caveat": "Co-winners: Kalshi pays 1/N, Polymarket resolves every co-winner No (YES Polymarket + NO Kalshi loses). Polymarket No if no winner by Nov 15, 2026.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDSBGD",
+   "polymarket_event_slug_regex": "^the-game-awards-best-game-direction",
+   "status": "approved",
+   "note": "Both: winner of Best Game Direction at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNALSIABY",
+   "polymarket_event_slug_regex": "^northern-nalsia-district-by-election-winner",
+   "status": "approved",
+   "note": "Both: winner of the Nov 8, 2026 Northern Nalsia (No. 52) Seimas by-election, after any runoff (Lithuanian CEC).",
+   "caveat": "Polymarket Other if unknown by May 31, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNASCARAUTOPARTSSERIES",
+   "polymarket_event_slug_regex": "^nascar-oreilly-auto-parts-series-champion-2026",
+   "status": "approved",
+   "note": "Both: the 2026 NASCAR O'Reilly Auto Parts (Xfinity) Series champion.",
+   "caveat": "Polymarket Other if postponed after Nov 21, 2026; Kalshi closes Nov 9 (Kalshi window is the shorter one; negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNASCARCUPSERIES",
+   "polymarket_event_slug_regex": "^nascar-cup-series-2026-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NASCAR Cup Series champion (Polymarket: 1st in the final driver standings, NASCAR tiebreak).",
+   "caveat": "Polymarket Other if the season isn't completed by Nov 22, 2026; Kalshi closes Nov 15 (negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSHAWAMAYOR",
+   "polymarket_event_slug_regex": "^oshawa-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Oshawa (Ontario, Oct 26) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXLAUNCESTONMAYOR",
+   "polymarket_event_slug_regex": "^launceston-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Launceston (Tasmania, Oct 27) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXPRESOVMAYOR",
+   "polymarket_event_slug_regex": "^presov-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Presov (Slovakia, Oct 24) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXARGENTINAPRES",
+   "polymarket_event_slug_regex": "^argentina-presidential-election-winner$",
+   "status": "approved",
+   "note": "Both: winner of the next Argentine presidential election (Oct 24, 2027), incl. any runoff.",
+   "caveat": "Polymarket Other if not known by Oct 31, 2028; Kalshi closes Oct 30, 2028.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARINTLFILM",
+   "polymarket_event_slug_regex": "^oscars-2027-best-international-feature-film-winner",
+   "status": "approved",
+   "note": "Both: winner of Best International Feature Film at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARANIMATED",
+   "polymarket_event_slug_regex": "^oscars-2027-best-animated-feature-film-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Animated Feature Film at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARPIC",
+   "polymarket_event_slug_regex": "^oscars-2027-best-picture-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Picture at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARSPLAY",
+   "polymarket_event_slug_regex": "^oscars-2027-best-original-screenplay-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Original Screenplay at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARACTR",
+   "polymarket_event_slug_regex": "^oscars-2027-best-actress-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Actress at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARCINE",
+   "polymarket_event_slug_regex": "^oscars-2027-best-cinematography-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Cinematography at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOSCARSCORE",
+   "polymarket_event_slug_regex": "^oscars-2027-best-original-score-winner",
+   "status": "approved",
+   "note": "Both: winner of Best Original Score (Kalshi 'Best Music (Original Score)') at the 99th Academy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 (ceremony Mar 14) and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-entertainer-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Entertainer of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-music-video-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Music Video of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-musical-event-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Musical Event of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-musician-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Musician of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-album-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Album of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-male-vocalist-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Male Vocalist of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-new-artist-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of New Artist of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-single-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Single of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-female-vocalist-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Female Vocalist of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-song-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Song of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-vocal-duo-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Vocal Duo of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCMA",
+   "polymarket_event_slug_regex": "^cma-vocal-group-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: winner of Vocal Group of the Year at the 60th CMA Awards (Nov 18, 2026). Polymarket ties: first name alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDS",
+   "polymarket_event_slug_regex": "^the-game-awards-best-independent-game",
+   "status": "approved",
+   "note": "Both: winner of Best Independent Game at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDS",
+   "polymarket_event_slug_regex": "^the-game-awards-best-multiplayer",
+   "status": "approved",
+   "note": "Both: winner of Best Multiplayer at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDS",
+   "polymarket_event_slug_regex": "^the-game-awards-best-audio-design",
+   "status": "approved",
+   "note": "Both: winner of Best Audio Design at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDS",
+   "polymarket_event_slug_regex": "^the-game-awards-best-mobile-game",
+   "status": "approved",
+   "note": "Both: winner of Best Mobile Game at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDS",
+   "polymarket_event_slug_regex": "^the-game-awards-best-narrative",
+   "status": "approved",
+   "note": "Both: winner of Best Narrative at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGAMEAWARDS",
+   "polymarket_event_slug_regex": "^the-game-awards-game-of-the-year",
+   "status": "approved",
+   "note": "Both: winner of Game Of The Year at the 2026 Game Awards (Dec 10). Polymarket ties: first title alphabetically.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 31.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXVICTORIAPREMIER",
+   "polymarket_event_slug_regex": "^next-premier-of-victoria",
+   "status": "approved",
+   "note": "Both: the Premier formally in office after the Nov 28, 2026 Victorian election (caretakers excluded; Kalshi: serving when the caretaker period ends).",
+   "caveat": "Kalshi requires it before Jan 1, 2027; Polymarket allows until Jun 30, 2027 - a slow formation pays only Polymarket, so YES must be on Polymarket.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXWARATAHWYNYARD",
+   "polymarket_event_slug_regex": "^waratah-wynyard-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Waratah-Wynyard (Tasmania, Oct 27) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXBRATISLAVAMAYOR",
+   "polymarket_event_slug_regex": "^bratislava-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Bratislava (Oct 24) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNORTHMIDLANDSMAYOR",
+   "polymarket_event_slug_regex": "^northern-midlands-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Northern Midlands (Tasmania, Oct 27) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOTTAWAMAYOR",
+   "polymarket_event_slug_regex": "^ottawa-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Ottawa (Oct 26) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXYOKOHAMAMAYOR",
+   "polymarket_event_slug_regex": "^yokohama-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Yokohama (Oct 18) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCOQUITLAMMAYOR",
+   "polymarket_event_slug_regex": "^coquitlam-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Coquitlam (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHSINCHUCITYMAYOR",
+   "polymarket_event_slug_regex": "^hsinchu-city-mayor-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Hsinchu City (Nov 28) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCHICAGOMAYOR",
+   "polymarket_event_slug_regex": "^2027-chicago-mayoral-election$",
+   "status": "approved",
+   "note": "Both: winner of the 2027 Chicago mayoral election (Feb 23, 2027; runoff Apr 6). Polymarket states no deadline.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMAYORCHI",
+   "polymarket_event_slug_regex": "^2027-chicago-mayoral-election$",
+   "status": "approved",
+   "note": "Both: winner of the 2027 Chicago mayoral election (Feb 23, 2027; runoff Apr 6). Polymarket states no deadline.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGOVAK",
+   "polymarket_event_slug_regex": "^alaska-governor-election-winner$",
+   "status": "approved",
+   "note": "Both: the person elected governor of Alaska in the Nov 3, 2026 election (ranked-choice final round). Polymarket: AP, Fox and NBC calls, else certification.",
+   "caveat": "Polymarket Other if not confirmed by Jul 31, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXONTLIBLEAD",
+   "polymarket_event_slug_regex": "^ontario-liberal-party-leadership-election-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Ontario Liberal Party leadership election (concludes Nov 21, 2026).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTHEGAMBIAPRES",
+   "polymarket_event_slug_regex": "^gambia-presidential-election-winner",
+   "status": "approved",
+   "note": "Both: winner of the Dec 5, 2026 Gambian presidential election.",
+   "caveat": "Polymarket Other if not known by Dec 31, 2027; Kalshi closes Dec 31, 2027.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHUONMAYOR",
+   "polymarket_event_slug_regex": "^huon-valley-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Huon Valley (Tasmania, Oct 27) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Mar 31, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXLJUBLJANAMAYOR",
+   "polymarket_event_slug_regex": "^ljubljana-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Ljubljana (Nov 15, runoff Nov 29) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by May 31, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNOTLMAYOR",
+   "polymarket_event_slug_regex": "^niagara-on-the-lake-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Niagara-on-the-Lake (Oct 26) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXPRINCEGEORGEMAYOR",
+   "polymarket_event_slug_regex": "^prince-george-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Prince George (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXREVELSTOKEMAYOR",
+   "polymarket_event_slug_regex": "^revelstoke-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Revelstoke (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSAANICHMAYOR",
+   "polymarket_event_slug_regex": "^saanich-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Saanich (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXVANCOUVERMAYOR",
+   "polymarket_event_slug_regex": "^vancouver-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Vancouver (Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLBNLCPOTY",
+   "polymarket_event_slug_regex": "^mlb-nl-comeback-player-of-the-year",
+   "status": "approved",
+   "note": "Both: the 2026 NL Comeback Player of the Year.",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 8 (Kalshi window is shorter; negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLOROTY",
+   "polymarket_event_slug_regex": "^pro-football-2026-27-ap-offensive-rookie-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: the AP NFL Offensive Rookie of the Year for the 2026-27 season.",
+   "caveat": "Polymarket Other after Feb 28, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTLAXGOV",
+   "polymarket_event_slug_regex": "^tlaxcala-governor-election-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2027 Tlaxcala gubernatorial election (Jun 6, 2027).",
+   "caveat": "Polymarket Other if results not definitive by Dec 31, 2027; Kalshi open to Jun 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXAKSENATE",
+   "polymarket_event_slug_regex": "^alaska-senate-election-winner$",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Alaska US Senate election (ranked-choice final round). Polymarket: AP, Fox and NBC calls, else certification.",
+   "caveat": "Polymarket Other if not confirmed by Jul 31, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXBEXARCOUNTYJUDGE",
+   "polymarket_event_slug_regex": "^2026-bexar-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 Bexar County Judge general election (Polymarket: becomes County Judge as a result).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCA11PERSON",
+   "polymarket_event_slug_regex": "^ca-11-house-election-winner-individual",
+   "status": "approved",
+   "note": "Both: winner of the CA-11 US House seat in the Nov 3, 2026 election (top-two general).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXCAELECTION",
+   "polymarket_event_slug_regex": "^ca-\\d\\d-house-election-winner-(?:by-)?individual",
+   "status": "approved",
+   "note": "Both: the individual winning that California district's US House seat on Nov 3, 2026 (top-two general). One Kalshi series covers many districts; the subject matcher pairs each district's event with the Polymarket event of the same number.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXDENTONCOUNTYJUDGE",
+   "polymarket_event_slug_regex": "^2026-denton-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 Denton County Judge general election (Polymarket: becomes County Judge as a result; caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXELPASOCOUNTYJUDGE",
+   "polymarket_event_slug_regex": "^2026-el-paso-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 El Paso County Judge general election (Polymarket: becomes County Judge as a result; caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXFORTBENDCOUNTYJUDGE",
+   "polymarket_event_slug_regex": "^2026-fort-bend-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 Fort Bend County Judge general election (Polymarket: becomes County Judge as a result; caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHARRISCOUNTYJUDGE",
+   "polymarket_event_slug_regex": "^2026-harris-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 Harris County Judge general election (Polymarket: becomes County Judge as a result; caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTARRANTCOUNTYJUDGE",
+   "polymarket_event_slug_regex": "^2026-tarrant-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 Tarrant County Judge general election (Polymarket: becomes County Judge as a result; caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXWILCOJUDGE",
+   "polymarket_event_slug_regex": "^2026-williamson-county-judge-election-winner",
+   "status": "approved",
+   "note": "Both: the Nov 3, 2026 Williamson County Judge general election (Polymarket: becomes County Judge as a result; caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHOUSERACE",
+   "polymarket_event_slug_regex": "^[a-z]{2}-(?:al|\\d\\d)-house-election-winner$",
+   "status": "approved",
+   "note": "Party wins a US House seat. Kalshi: party of the member SWORN IN for the 2027 term; Polymarket: party of the candidate who WINS the Nov 3, 2026 election. Same before election day; can diverge after it (party switch, vacancy).",
+   "review_by": "2026-11-02",
+   "on_lapse": "reject",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXKAOHSIUNGMAYOR",
+   "polymarket_event_slug_regex": "^kaohsiung-mayor-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Kaohsiung (Nov 28) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXKELOWNAMAYOR",
+   "polymarket_event_slug_regex": "^kelowna-mayoral-election-2026",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Kelowna (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNANAIMOMAYOR",
+   "polymarket_event_slug_regex": "^nanaimo-mayoral-election-2026",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Nanaimo (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNEWTAIPEIMAYOR",
+   "polymarket_event_slug_regex": "^new-taipei-mayor-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 New Taipei (Nov 28) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSURREYMAYOR",
+   "polymarket_event_slug_regex": "^surrey-mayoral-election",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Surrey (BC, Oct 17) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTORONTOMAYOR",
+   "polymarket_event_slug_regex": "^toronto-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Toronto (Oct 26) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMISSISSAUGAMAYOR",
+   "polymarket_event_slug_regex": "^mississauga-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Mississauga (Oct 26) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXLEXMAYOR",
+   "polymarket_event_slug_regex": "^2026-lexington-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Lexington, KY (Nov 3) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXLOUISVILLEMAYOR",
+   "polymarket_event_slug_regex": "^2026-louisville-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Louisville, KY (Nov 3) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXRENOMAYOR",
+   "polymarket_event_slug_regex": "^2026-reno-mayoral-election-winner",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Reno, NV (Nov 3) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Apr 30, 2027; Kalshi open about a year after the election.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXOAKLANDMAYOR",
+   "polymarket_event_slug_regex": "^oakland-mayoral-election",
+   "status": "approved",
+   "note": "Both: winner of the Nov 3, 2026 Oakland mayoral election (Polymarket states no deadline).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLBALMOTY",
+   "polymarket_event_slug_regex": "^mlb-al-manager-of-the-year",
+   "status": "approved",
+   "note": "Both: the 2026 AL Manager of the Year (BBWAA).",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 8 (shorter; negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLBALROTY",
+   "polymarket_event_slug_regex": "^mlb-al-rookie-of-the-year",
+   "status": "approved",
+   "note": "Both: the 2026 AL Rookie of the Year (BBWAA).",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 8 (shorter; negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLBNLMOTY",
+   "polymarket_event_slug_regex": "^mlb-nl-manager-of-the-year",
+   "status": "approved",
+   "note": "Both: the 2026 NL Manager of the Year (BBWAA).",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 8 (shorter; negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLBNLROTY",
+   "polymarket_event_slug_regex": "^mlb-nl-rookie-of-the-year",
+   "status": "approved",
+   "note": "Both: the 2026 NL Rookie of the Year (BBWAA).",
+   "caveat": "Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Dec 8 (shorter; negligible).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLCALDER",
+   "polymarket_event_slug_regex": "^nhl-2026-27-calder-trophy",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL Calder Memorial Trophy winner.",
+   "caveat": "Ties: Kalshi pays 1/N, Polymarket the first last name alphabetically. Polymarket Other if postponed after Jun 30, 2027; Kalshi closes Jul 7.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLNORRIS",
+   "polymarket_event_slug_regex": "^nhl-james-norris-memorial-trophy-winner-2026-27",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL James Norris Memorial Trophy winner.",
+   "caveat": "Ties: Kalshi pays 1/N, Polymarket the first last name alphabetically. Polymarket Other if postponed after Jun 30, 2027; Kalshi closes Jul 7.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLVEZINA",
+   "polymarket_event_slug_regex": "^nhl-vezina-trophy-winner-2026-27",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL Vezina Trophy winner.",
+   "caveat": "Ties: Kalshi pays 1/N, Polymarket the first last name alphabetically. Polymarket Other if postponed after Jun 30, 2027; Kalshi closes Jul 7.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNZPM",
+   "polymarket_event_slug_regex": "^next-prime-minister-of-new-zealand",
+   "status": "approved",
+   "note": "Both: first PM appointed after the Nov 7, 2026 New Zealand general election (caretakers excluded).",
+   "caveat": "Kalshi runs to Nov 7, 2027; Polymarket requires the Governor-General's appointment (its own deadline is earlier).",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXPRESNIGERIA",
+   "polymarket_event_slug_regex": "^nigerian-presidential-election-winner",
+   "status": "approved",
+   "note": "Both: winner of the Jan 16, 2027 Nigerian presidential election, incl. any runoff.",
+   "caveat": "Polymarket Other if not known by Oct 31, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSONGRELEASE",
+   "polymarket_event_slug_regex": "^which-artists-will-release-a-new-song-in-2026",
+   "status": "rejected",
+   "note": "Kalshi: a new original song in the artist's official Spotify discography in 2026; Polymarket: officially released for download/streaming, excluding songs where the artist only features. Same class as the rejected album family (KXALBUMRELEASE).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXMLSLEADER",
+   "polymarket_event_slug_regex": "^mls-2026-golden-boot-winner",
+   "status": "approved",
+   "note": "Both: the 2026 MLS regular-season goals leader / Golden Boot (official league statistics and tiebreakers).",
+   "caveat": "A tie the league doesn't break: Kalshi pays each tied player an equal share, Polymarket the first last name alphabetically. Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Nov 15.",
+   "rules_read": "2026-10-13"
   }
  ]
 }

@@ -1084,6 +1084,7 @@ def run():
     _tref_names = {r["family"] for r in _trefs}
     _new_refs = []
     result["template_of"] = None
+    result["safe_yes"] = None
     from scripts import scrutiny as _tscr
     _tcache = _tscr._load_cache()
     # Batch-prefetch rules texts for the Kalshi-Polymarket title pairs the
@@ -1140,6 +1141,11 @@ def run():
                                       "kalshi_rules": _kt, "poly_rules": _pt})
                     _tref_names.add(_fam_key)
         result.at[idx, "series_status"] = st
+        # Reviewed safe direction (2026-10-13): a family whose deadlines
+        # differ (Polymarket "Other" after a date, Kalshi open longer) records
+        # which platform's YES leg is the hedge; the window check enforces it.
+        if st == "approved" and _e is not None and _e.get("safe_yes"):
+            result.at[idx, "safe_yes"] = _e["safe_yes"]
         if st == "unreviewed":
             # A new market kind inside an approved family is queued with its
             # kind so the reviewer knows what to read (2026-09-26).
@@ -1214,8 +1220,12 @@ def run():
             _k_close = {}
 
         def _close_fallback(row, side):
+            # Template-matched families had no human read either (2026-10-13:
+            # Polymarket 'Will Spain win the 2026-27 UEFA Nations League?' is
+            # 'Other' if the final is postponed past Jun 13; Kalshi closes Jun 28).
             if row.get("match_type") not in ("primary-nominee",) and \
-                    not str(row.get("match_type", "")).startswith("tournament"):
+                    not str(row.get("match_type", "")).startswith("tournament") and \
+                    row.get("series_status") != "template":
                 return None
             if row.get(f"platform_{side}") != "kalshi":
                 return None
@@ -1233,6 +1243,8 @@ def run():
             ok, why = yes_window_contains_no(y_txt, n_txt,
                                              yes_end_fallback=_close_fallback(row, ys),
                                              no_end_fallback=_close_fallback(row, ns))
+            if ok and row.get("safe_yes") and row[f"platform_{ys}"] != row.get("safe_yes"):
+                ok, why = False, f"family review: only YES on {row.get('safe_yes')} is hedged"
             if not ok:
                 window_bad.at[idx] = True
                 print(f"  window mismatch: {str(row.get('question_a'))[:60]!r} — {why}")
@@ -1250,7 +1262,12 @@ def run():
     _today = datetime.now(timezone.utc).date().isoformat()
     election_window = pd.Series(False, index=result.index)
     if ELECTION_SETTLING[0] <= _today <= ELECTION_SETTLING[1]:
-        election_window = (result["arb_type"] == "guaranteed") & result["match_type"].isin(["general", "political"])
+        # 2026-10-13: also title pairs in Kalshi's Elections category (county
+        # judges, House seats, mayors paired by candidate name).
+        election_window = (result["arb_type"] == "guaranteed") & (
+            result["match_type"].isin(["general", "political"])
+            | ((result["match_type"] == "fuzzy") & (result["category"].astype(str) == "Elections")
+               & (result["settle_date"].astype(str).str[:10] <= ELECTION_SETTLING[1])))
         if election_window.any():
             result.loc[election_window, "suspicion_reasons"] = result.loc[election_window, "suspicion_reasons"].apply(
                 lambda rs: list(rs) + ["election_settling"])

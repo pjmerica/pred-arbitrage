@@ -1991,6 +1991,236 @@ def _match_game_lines(k, p, linked):
     return out
 
 
+
+# ── subject-list events (2026-10-13) ──────────────────────────────────────
+# Kalshi lists a futures / awards / election event as one market per
+# subject ("Champions League Winner — Arsenal", "Winnipeg mayoral election
+# winner? — Scott Gillingham"); Polymarket as "Will Arsenal win the 2026-27
+# UEFA Champions League?". Title similarity can't pair them (the subject is
+# a few words of a long sentence), so ~800 such events were unpaired. This
+# pairs EVENTS first, by their shared subjects, then markets by subject:
+#   - a Polymarket event is a candidate when >= 2 Kalshi subjects each
+#     appear as a whole phrase in exactly one of its questions;
+#   - the event wording must agree: content words of Kalshi's title prefix
+#     vs the Polymarket question minus the subject (synonyms folded, years
+#     and ceremony ordinals dropped, every other number kept, so LA-05 is
+#     not LA-06) need Jaccard >= 0.8, and the best Polymarket event must
+#     beat the runner-up;
+#   - every subject pair must pass the outcome gate (incompatibility).
+# Pairs are emitted as 'fuzzy': the series map still decides (approved ->
+# may be guaranteed, template -> rules checked automatically, otherwise
+# the family goes to the review queue), and the scan-time gate re-runs.
+# For an APPROVED family the wording test is skipped (the review already
+# established the two events ask the same question), so a reviewed family
+# pairs every subject both platforms list.
+_SUBJ_SYN = [
+    (r"\bpro basketball\b", "nba"), (r"\bpro football\b", "nfl"), (r"\bpro baseball\b", "mlb"),
+    (r"\bucl\b", "champions league"), (r"\buel\b", "europa league"), (r"\buefa\b", ""),
+    (r"\b(?:english )?premier league\b", "epl"),
+    (r"\bchampionship\b", "champion"), (r"\bchampions\b(?! league)", "champion"),
+    (r"\bwinner\b", "champion"), (r"\bwins?\b", "champion"), (r"\bwon\b", "champion"),
+    (r"\bawards?\b", "award"), (r"\bmayor(?:al)?\b", "mayor"), (r"\belections?\b", "election"),
+    (r"\bpresidential\b", "president"), (r"\bnominees\b|\bnominations?\b", "nominated"),
+    (r"\boscars?\b|\bacademy awards?\b", "academy"), (r"\bgrammys?\b", "grammy"),
+    (r"\bprime minister\b", "pm"), (r"\bfirst\b", "1st"), (r"\bsecond\b", "2nd"), (r"\bthird\b", "3rd"),
+]
+_SUBJ_STOP = set(
+    "will the be a an of in on at to for who what which is are by after before next new this year season "
+    "named end its their his her from with as than and or does do did there get become becomes officially "
+    "final finals game games title election".split())
+
+
+def _subj_norm(s):
+    from utils.proposition import fold
+    s = fold(s)
+    s = re.sub(r"[^a-z0-9&+# ]+", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _subj_words(text, subject=""):
+    t = " " + _subj_norm(text) + " "
+    if subject:
+        t = t.replace(" " + subject + " ", " ")
+    for a, b in _SUBJ_SYN:
+        t = re.sub(a, b, t)
+    t = re.sub(r"\b20\d\d(?: \d\d)?\b", " ", t)                 # years, "2026 27" seasons
+    t = re.sub(r"\b(?:[2-9]\d|1\d\d)(?:st|nd|rd|th)\b", " ", t)  # "99th" ceremony ordinals
+    return {w for w in t.split() if w not in _SUBJ_STOP}
+
+
+_SUBJ_NEUTRAL = {"champion", "award", "election", "seat", "us", "fc", "cf", "sc", "nfl", "nba", "nhl", "mlb",
+                 "wnba", "ncaa", "ap", "district", "trophy", "memorial", "world", "league", "race", "person"}
+
+
+def _kalshi_event_date(event_ticker):
+    """Date in a Kalshi event code ('KXTRUMPPARDONS-29JAN21' -> 2029-01-21)."""
+    from datetime import date as _date
+    m = re.search(r"-(\d\d)(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(\d\d)$", str(event_ticker))
+    if not m:
+        return None
+    mon = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"].index(m.group(2)) + 1
+    try:
+        return _date(2000 + int(m.group(1)), mon, int(m.group(3)))
+    except ValueError:
+        return None
+
+
+def match_subject_events(dfs: dict, claimed=None) -> pd.DataFrame:
+    from collections import defaultdict
+    from utils.proposition import incompatibility
+    from utils import series_map as _sm
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']; p = dfs['polymarket']
+    if k.empty or p.empty or "event_slug" not in p.columns:
+        return pd.DataFrame()
+    claimed = claimed or {}
+    ck = claimed.get("kalshi", set()); cp = claimed.get("polymarket", set())
+    try:
+        fams = _sm.load()
+    except Exception:
+        fams = []
+    p = p[(p["outcomes_binary"].astype(str) == "True")
+          & ~p["event_slug"].astype(str).str.contains(r"-\d{4}-\d{2}-\d{2}")
+          & ~p["market_id"].astype(str).isin(cp)]
+    kev = {}
+    for r in k[~k["market_id"].astype(str).isin(ck)].itertuples():
+        t = str(r.question)
+        if " — " not in t:
+            continue
+        prefix, subj = t.rsplit(" — ", 1)
+        ys = getattr(r, "yes_sub_title", None)
+        sub = _subj_norm(ys if isinstance(ys, str) and ys.strip() else subj)
+        if len(sub) < 3:
+            continue
+        d = kev.setdefault(str(r.event_ticker), {"prefix": prefix, "series": str(r.series_ticker), "rows": {}})
+        d["rows"].setdefault(sub, []).append(r)
+    pev = defaultdict(list)
+    for r in p.itertuples():
+        pev[str(r.event_slug)].append((" " + _subj_norm(r.question) + " ", r))
+    word_ev = defaultdict(set)
+    for slug, qs in pev.items():
+        for q, _ in qs:
+            for w in set(q.split()):
+                word_ev[w].add(slug)
+
+    pairs = []
+    chosen = []
+    n_events = 0
+    for ev, d in kev.items():
+        subs = {s: rs[0] for s, rs in d["rows"].items() if len(rs) == 1}
+        if len(subs) < 2:
+            continue
+        cand = defaultdict(int)
+        for s in subs:
+            toks = s.split()
+            for e in set.intersection(*(word_ev.get(t, set()) for t in toks)):
+                cand[e] += 1
+        kw = _subj_words(d["prefix"])
+        scored = []
+        for e, c in cand.items():
+            if c < 2:
+                continue
+            hits = {}
+            for s in subs:
+                qh = [r for q, r in pev[e] if f" {s} " in q]
+                if len(qh) == 1:
+                    hits[s] = qh[0]
+            # A Polymarket market claimed by two subjects ("Gen.G" in "Gen.G
+            # Global Academy") is ambiguous: drop both.
+            used = defaultdict(int)
+            for r in hits.values():
+                used[r.market_id] += 1
+            hits = {s: r for s, r in hits.items() if used[r.market_id] == 1}
+            if len(hits) < 2:
+                continue
+            st = _sm.status(fams, d["series"], e)[0] if fams else "unreviewed"
+            if st == "rejected":
+                continue
+            if st != "approved":
+                # Kalshi event code with a date ("-29JAN21") vs the Polymarket end date.
+                kd = _kalshi_event_date(ev)
+                pe = str(getattr(next(iter(hits.values())), "end_date", "") or "")[:10]
+                try:
+                    from datetime import date as _date
+                    if kd and pe and abs((_date.fromisoformat(pe) - kd).days) > 45:
+                        continue
+                except ValueError:
+                    pass
+            # Event wording: words common to the Polymarket questions with
+            # each subject removed (team-name residue like "hawks" varies by
+            # subject and drops out) vs the Kalshi title prefix. Only neutral
+            # words may differ (approved or not), and the wording ranks the
+            # candidates, so one approved family covering several events
+            # (KXCMA: every CMA category) can't pair "Male Vocalist — Luke
+            # Combs" with "Entertainer — Luke Combs".
+            pw = None
+            for s_, r_ in list(hits.items())[:4]:
+                w_ = _subj_words(r_.question, s_)
+                pw = w_ if pw is None else pw & w_
+            pw = pw or set()
+            diff = (kw ^ pw) - _SUBJ_NEUTRAL
+            shared = kw & pw
+            # The wording rule binds approved families too: an approval
+            # names a Kalshi series, which can span many events (KXHOUSERACE:
+            # every district) - LA-05 must never pair with LA-06.
+            if diff or len(shared) < (1 if st == "approved" else 2):
+                continue
+            score = len(shared) - len(diff) + (1000 if st == "approved" else 0)
+            scored.append((score, st, e, hits))
+        if not scored:
+            continue
+        scored.sort(key=lambda x: x[0], reverse=True)
+        best = scored[0]
+        if len(scored) > 1 and scored[1][0] >= best[0]:
+            continue    # two Polymarket events fit equally well
+        _, st, e, hits = best
+        ok = [(subs[s], hits[s]) for s in hits if incompatibility(subs[s].question, hits[s].question) is None]
+        if st != "approved" and len(ok) != len(hits):
+            continue    # one subject pair fails the gate: the events differ somewhere
+        chosen.append((st, ok))
+
+    # A Polymarket market claimed by two Kalshi events ("Who will Trump
+    # pardon?" and "... in 2026?") pairs with neither, unless the claiming
+    # family is approved (two approved Kalshi series for the same election,
+    # e.g. KXCHICAGOMAYOR and KXMAYORCHI, both pair).
+    use = defaultdict(list)
+    for i, (st, ok) in enumerate(chosen):
+        for _, p_row in ok:
+            use[p_row.market_id].append((i, st))
+    for i, (st, ok) in enumerate(chosen):
+        keep = []
+        for k_row, p_row in ok:
+            users = use[p_row.market_id]
+            if len(users) == 1 or st == "approved":
+                keep.append((k_row, p_row))
+        if not keep:
+            continue
+        ok = keep
+        n_events += 1
+        for k_row, p_row in ok:
+            pairs.append({
+                "match_type": "fuzzy",
+                "race_id": None,
+                "platform_a": "kalshi",
+                "platform_b": "polymarket",
+                "question_a": k_row.question,
+                "question_b": p_row.question,
+                "market_id_a": k_row.market_id,
+                "market_id_b": p_row.market_id,
+                "implied_prob_a": k_row.implied_prob,
+                "implied_prob_b": p_row.implied_prob,
+                "settle_date": p_row.settle_date or k_row.settle_date or "",
+                "category": k_row.category,
+                "url_a": k_row.url,
+                "url_b": p_row.url,
+                "volume_a": k_row.volume,
+                "volume_b": p_row.volume,
+                "fuzzy_score": 100,
+            })
+    print(f"  subject events: {n_events} event pairs, {len(pairs)} market pairs")
+    return pd.DataFrame(pairs)
+
 # ── soccer fixtures (2026-10-12) ──────────────────────────────────────────
 # Soccer prop markets are fully determined by fixture date + the two teams +
 # the market kind, so they don't need fuzzy titles. Recall check on a fresh
@@ -2164,6 +2394,11 @@ def run():
         for _, r in prior.iterrows():
             claimed_by_platform.setdefault(r['platform_a'], set()).add(str(r['market_id_a']))
             claimed_by_platform.setdefault(r['platform_b'], set()).add(str(r['market_id_b']))
+        print("\nMatching subject-list events (futures, awards, elections)...")
+        subject = match_subject_events(dfs, claimed_by_platform)
+        for _, r in subject.iterrows():
+            claimed_by_platform.setdefault(r['platform_a'], set()).add(str(r['market_id_a']))
+            claimed_by_platform.setdefault(r['platform_b'], set()).add(str(r['market_id_b']))
         dfs_for_fuzzy = {}
         for plat, df in dfs.items():
             claimed = claimed_by_platform.get(plat, set())
@@ -2173,12 +2408,13 @@ def run():
                 dfs_for_fuzzy[plat] = df
     else:
         dfs_for_fuzzy = dfs
+        subject = pd.DataFrame()
 
     print("\nFuzzy-matching non-political markets...")
     fuzzy = match_fuzzy(dfs_for_fuzzy)
     print(f"  Fuzzy pairs: {len(fuzzy)}")
 
-    all_pairs = pd.concat([political, threshold, tournament, nominee, fixtures, games, fuzzy], ignore_index=True)
+    all_pairs = pd.concat([political, threshold, tournament, nominee, fixtures, games, subject, fuzzy], ignore_index=True)
     # Remove duplicates (same market pair, different direction)
     all_pairs = all_pairs.drop_duplicates(subset=["platform_a", "platform_b", "market_id_a", "market_id_b"])
 

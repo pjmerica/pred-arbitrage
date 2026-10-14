@@ -901,3 +901,69 @@ def test_game_lines_pair_team_and_line():
     out = match_games(_game_frames(k, p))
     assert dict(zip(out["market_id_b"], out["market_id_a"])) == {
         "ml": ev + "-DAL", "sp": "KXNFLSPREAD-26OCT18DALGB-GB17", "tot": "KXNFLTOTAL-26OCT18DALGB-32"}
+
+
+def _subject_frames(k_rows, p_rows):
+    k = pd.DataFrame(k_rows); p = pd.DataFrame(p_rows)
+    for c in ("implied_prob", "settle_date", "url", "category", "volume"):
+        k[c] = ""; p[c] = ""
+    k["series_ticker"] = k["event_ticker"].str.split("-").str[0]
+    k["yes_sub_title"] = k["question"].str.rsplit(" — ", n=1).str[1]
+    k["market_id"] = k["event_ticker"] + "-" + k.index.astype(str)
+    p["outcomes_binary"] = True
+    p["market_id"] = "p" + p.index.astype(str)
+    if "end_date" not in p.columns:
+        p["end_date"] = "2026-12-31"
+    return {"kalshi": k, "polymarket": p}
+
+
+def _kal(event, prefix, names):
+    return [{"event_ticker": event, "question": f"{prefix} — {n}"} for n in names]
+
+
+def _pol(slug, template, names, end="2026-12-31"):
+    return [{"event_slug": slug, "question": template.format(n), "end_date": end} for n in names]
+
+
+def test_subject_events_pair_by_shared_names():
+    """Kalshi '<event> — <name>' vs Polymarket 'Will <name> win <event>?'
+    (wording differs only in neutral words) pairs name by name."""
+    from scripts.matcher import match_subject_events
+    names = ["Luke Combs", "Chris Stapleton", "Morgan Wallen"]
+    dfs = _subject_frames(_kal("KXCMA-EOTY26", "CMA Awards: Entertainer of the Year", names),
+                          _pol("cma-entertainer-of-the-year-2026",
+                               "Will {} win Entertainer of the Year at the 2026 CMA Awards?", names))
+    out = match_subject_events(dfs)
+    assert len(out) == 3
+    assert all(a.split(" — ")[1] in b for a, b in zip(out["question_a"], out["question_b"]))
+
+
+@pytest.mark.parametrize("k_event, prefix, slug, template", [
+    # Supporting Actor nominees vs Best Actor nominations (one word apart).
+    ("KXOSCARNOMSUPACTO-27", "Oscar nominees: Best Supporting Actor", "oscars-2026-best-actor-nominations",
+     "Will {} be nominated for Best Actor at the 99th Academy Awards?"),
+    # Basketball regular-season title vs the football conference championship.
+    ("KXNCAAMBACCREG-27", "ACC Regular Season Champion", "ncaa-football-2026-acc-conference-winner",
+     "Will {} Win the 2026 ACC Championship?"),
+    # LA-05 is not LA-06: numbers other than years are kept.
+    ("KXHOUSERACE-LA05-26", "LA-05 House winner?", "la-06-house-election-winner",
+     "Will {} win the LA-06 House seat?"),
+    # Kalshi event dated Jan 2029 vs a Polymarket event ending Dec 2026.
+    ("KXTRUMPPARDONS-29JAN21", "Who will Trump pardon?", "who-will-trump-pardon-before-2027",
+     "Will Trump pardon {} before 2027?"),
+])
+def test_subject_events_reject(k_event, prefix, slug, template):
+    from scripts.matcher import match_subject_events
+    names = ["Alpha Person", "Bravo Person", "Charlie Person"]
+    dfs = _subject_frames(_kal(k_event, prefix, names), _pol(slug, template, names))
+    assert match_subject_events(dfs).empty
+
+
+def test_subject_events_shared_polymarket_market_pairs_once():
+    """Two Kalshi events claiming the same Polymarket markets pair with neither."""
+    from scripts.matcher import match_subject_events
+    names = ["Alpha Person", "Bravo Person"]
+    k = _kal("KXTESTPARDONA-26DEC31", "Who will Trump pardon in 2026?", names) + \
+        _kal("KXTESTPARDONB-26DEC31", "Who will Trump pardon in 2026?", names)
+    dfs = _subject_frames(k, _pol("who-will-trump-pardon-before-2027", "Will Trump pardon {} before 2027?", names))
+    assert match_subject_events(dfs).empty
