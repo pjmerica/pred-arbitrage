@@ -2005,6 +2005,392 @@
    "note": "Both: the official winner of the named 2026 LPGA Tour event (playoffs / LPGA rules decide ties). KXLPGATOUR spans tournaments; the subject matcher's wording rule keeps each tournament with its own Polymarket event. Kalshi: a withdrawal before teeing off resolves the winner market No.",
    "caveat": "Polymarket Other if no winner by its stated date (Shanghai: Oct 25, 2026) or if an unlisted player wins; multiple official winners -> first last name alphabetically.",
    "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXEPLTOP",
+   "polymarket_event_slug_regex": "^(?:premier-league|epl-2026-27)-top-\\d-finishers",
+   "status": "approved",
+   "note": "Both: the club finishes in the top N of the 2026-27 EPL final standings (official Premier League standings / tiebreaks). One Kalshi series covers top 2 / 4 / 6; the subject matcher's wording rule (numbers kept) keeps N aligned.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXEPLLAST",
+   "polymarket_event_slug_regex": "^premier-league-last-place-finisher-2026-27",
+   "status": "approved",
+   "note": "Both: the club finishes 20th in the 2026-27 EPL.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSERIEATOP",
+   "polymarket_event_slug_regex": "^serie-a-top-4-finishers-2026-27",
+   "status": "approved",
+   "note": "Both: the club finishes in the top 4 of the 2026-27 Serie A final standings.",
+   "caveat": "Polymarket Other if postponed after Jun 13, 2027; Kalshi closes a day later.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXLIGUE1TOP",
+   "polymarket_event_slug_regex": "^ligue-1-top-4-finishers-2026-27",
+   "status": "approved",
+   "note": "Both: the club finishes in the top 4 of the 2026-27 Ligue 1 final standings.",
+   "caveat": "Polymarket Other if postponed after Jun 12, 2027; Kalshi closes a day later.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXBUNDESLIGATOP",
+   "polymarket_event_slug_regex": "^bundesliga-top-4-finishers-2026-27",
+   "status": "approved",
+   "note": "Both: the club finishes in the top 4 of the 2026-27 Bundesliga final standings.",
+   "caveat": "Polymarket Other if postponed after Jun 5, 2027; Kalshi closes a day later.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPCOUNTRIES",
+   "polymarket_event_slug_regex": "^which-countries-will-donald-trump-visit-in-2026",
+   "status": "approved",
+   "note": "Both: Trump physically visits the country in 2026.",
+   "caveat": "Kalshi is stricter (must exit the aircraft / vessel; embassy-only stays and staying aboard don't count; counts from issuance); Polymarket counts entering terrestrial or maritime territory from Jan 1. A Kalshi YES implies a Polymarket YES, so only YES Polymarket + NO Kalshi is hedged.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPSTATES",
+   "polymarket_event_slug_regex": "^which-states-will-donald-trump-visit-in-2026",
+   "status": "approved",
+   "note": "Both: Trump physically visits the US state in 2026.",
+   "caveat": "Same definitions as KXTRUMPCOUNTRIES: Kalshi stricter, so YES must be on Polymarket.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPMEETING",
+   "polymarket_event_slug_regex": "^who-will-trump-meet-with-in-2026",
+   "status": "approved",
+   "note": "Both: Trump and the person meet in person and interact in 2026.",
+   "caveat": "Kalshi counts from issuance and needs Source Agency confirmation; Polymarket from Jan 1 on credible reporting: YES must be on Polymarket.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSVOTECLARITY",
+   "polymarket_event_slug_regex": "^which-senators-will-vote-for-the-clarity-act",
+   "status": "approved",
+   "note": "Both: the Senator votes Yea on the first full-Senate vote on final passage of crypto market-structure legislation before Jan 1, 2027 (not cloture / motion to proceed; later vote changes ignored).",
+   "caveat": "Each platform defines the bill by reference to its own market (Kalshi KXCRYPTOSTRUCTURE; Polymarket 'Crypto Market Structure legislation becomes law in 2026?').",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPADMINLEAVE",
+   "polymarket_event_slug_regex": "^who-will-leave-trump-administration-before-2027",
+   "status": "rejected",
+   "note": "Kalshi: actually vacates the named role (e.g. FBI Director) before 2027; Polymarket: announced to leave the administration (an announcement resolves Yes regardless of effective date). Different questions.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPMENTION",
+   "polymarket_event_slug_regex": "^what-will-trump-say-during",
+   "status": "rejected",
+   "note": "Mention markets. Some Polymarket markets require 'X 3+ times' while Kalshi pays on one mention (the gate now rejects count mismatches); even at equal counts, Kalshi's counting rules (plural / possessive forms count, inflections don't) can't be compared with Polymarket's, which live in a separate PDF. Rejected until both rule sets can be read side by side.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXF1ACTION",
+   "polymarket_event_slug_regex": "^f1-action-of-the-year",
+   "status": "approved",
+   "note": "Both: the FIA F1 Action of the Year award for the 2026 season.",
+   "caveat": "Polymarket Other after Dec 31, 2026; Kalshi closes Jan 14.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXARGENTINAPRES1R",
+   "polymarket_event_slug_regex": "^argentina-presidential-election-first-round-winner",
+   "status": "approved",
+   "note": "Both: the candidate with the most valid votes in the first round of the Oct 24, 2027 Argentine presidential election.",
+   "caveat": "Polymarket ties alphabetical; Polymarket Other if unknown by Jun 30, 2028; Kalshi open to Oct 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFSEC",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-sec-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 SEC football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFB10",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-big-ten-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Big Ten football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFMAC",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-mac-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 MAC football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFB12",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-big-12-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Big 12 football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFACC",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-acc-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 ACC football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFCUSA",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-american-cusa-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Conference USA football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFMWC",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-mountain-west-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Mountain West football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNCAAFSBELT",
+   "polymarket_event_slug_regex": "^ncaa-football-2026-sun-belt-conference-winner",
+   "status": "approved",
+   "note": "Both: winner of the 2026 Sun Belt football championship game (Dec 4-5, 2026).",
+   "caveat": "Polymarket Other if postponed after Dec 18-19, 2026; Kalshi closes Jan 2-3.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLAFCNORTH",
+   "polymarket_event_slug_regex": "^pro-football-afc-north-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL AFC NORTH division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLAFCSOUTH",
+   "polymarket_event_slug_regex": "^pro-football-afc-south-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL AFC SOUTH division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLAFCEAST",
+   "polymarket_event_slug_regex": "^pro-football-afc-east-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL AFC EAST division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLAFCWEST",
+   "polymarket_event_slug_regex": "^pro-football-afc-west-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL AFC WEST division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLNFCNORTH",
+   "polymarket_event_slug_regex": "^pro-football-nfc-north-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL NFC NORTH division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLNFCSOUTH",
+   "polymarket_event_slug_regex": "^pro-football-nfc-south-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL NFC SOUTH division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLNFCEAST",
+   "polymarket_event_slug_regex": "^pro-football-nfc-east-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL NFC EAST division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNFLNFCWEST",
+   "polymarket_event_slug_regex": "^pro-football-nfc-west-champion",
+   "status": "approved",
+   "note": "Both: the 2026 NFL NFC WEST division champion (NFL tiebreakers).",
+   "caveat": "Polymarket Other if postponed after Jan 17, 2027; Kalshi closes Jan 25.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXVENEZUELALEADER",
+   "polymarket_event_slug_regex": "^venezuela-leader-end-of-2026",
+   "status": "approved",
+   "note": "Both: who officially holds the office of head of state of Venezuela on Dec 31, 2026 (Kalshi 10:00 AM ET, Polymarket 12 PM ET; Polymarket falls back to the UN protocol list).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGRAMAOTY",
+   "polymarket_event_slug_regex": "^grammys-2027-album-of-the-year-winner",
+   "status": "approved",
+   "note": "Both: Album of the Year at the 69th Annual Grammy Awards (Feb 7, 2027).",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027 and pays the first title alphabetically on a tie; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXGRAMBNA",
+   "polymarket_event_slug_regex": "^grammys-2027-best-new-artist-winner",
+   "status": "approved",
+   "note": "Both: Best New Artist at the 69th Annual Grammy Awards.",
+   "caveat": "Polymarket Other if no winner by Jun 30, 2027; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSENMAJ",
+   "polymarket_event_slug_regex": "^next-senate-majority-leader",
+   "status": "approved",
+   "note": "Both: the Senate Majority Leader chosen for the 120th Congress (after the Nov 3, 2026 election).",
+   "caveat": "Polymarket Other if no leader by Jun 30, 2027; Kalshi open to Jan 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXSENMIN",
+   "polymarket_event_slug_regex": "^next-us-senate-minority-leader",
+   "status": "approved",
+   "note": "Both: the first Senate Minority Leader of the 120th Congress.",
+   "caveat": "Polymarket Other if none by Jun 30, 2027; Kalshi open to Jan 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXJOHANNESBURGMAYOR",
+   "polymarket_event_slug_regex": "^next-mayor-of-johannesburg",
+   "status": "approved",
+   "note": "Both: the executive mayor the Johannesburg council elects after the Nov 4, 2026 municipal elections.",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Dec 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTOPSONGSPOTIFYRUNNERUP",
+   "polymarket_event_slug_regex": "^2-spotify-song-2026",
+   "status": "approved",
+   "note": "Both: the #2 song on Spotify's 2026 Wrapped global top songs.",
+   "caveat": "Polymarket Other if not released by its January date; Kalshi closes Dec 31 (Wrapped is early December).",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTOPARTIST",
+   "polymarket_event_slug_regex": "^top-spotify-artist-2026",
+   "status": "approved",
+   "note": "Both: Spotify's most-streamed artist of 2026 (Wrapped).",
+   "caveat": "Polymarket Other if not released by Jan 31, 2027; Kalshi closes Jan 1.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXHEISMANSPECIAL",
+   "polymarket_event_slug_regex": "^ncaa-football-class-of-heisman-winner",
+   "status": "approved",
+   "note": "Both: the 2026 Heisman winner's school class designation (redshirt status ignored).",
+   "caveat": "Polymarket counts graduate / fifth-year players as Senior; Kalshi uses the school designation.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNIGERIASENATE",
+   "polymarket_event_slug_regex": "^nigerian-senate-election-winner",
+   "status": "approved",
+   "note": "Both: the party winning the most Senate seats in the Jan 16, 2027 Nigerian election.",
+   "caveat": "Seat ties: Kalshi the party entering government, Polymarket the abbreviation first alphabetically. Polymarket Other if unknown by Oct 31, 2027; Kalshi open to Feb 2028.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXISRAELKNESSET",
+   "polymarket_event_slug_regex": "^israeli-legislative-election-winner",
+   "status": "approved",
+   "note": "Both: the party / list winning the most Knesset seats in the Oct 27, 2026 election.",
+   "caveat": "Seat ties: Kalshi the party entering government (then vote share), Polymarket vote share then alphabetical. Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXISRAELANYSEAT",
+   "polymarket_event_slug_regex": "^which-parties-will-win-a-seat-in-the-2026-knesset-elections",
+   "status": "approved",
+   "note": "Both: the list wins at least one Knesset seat in the Oct 27, 2026 election.",
+   "caveat": "Polymarket No if results unknown by Oct 31, 2027; Kalshi closes Oct 27, 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXBCPREMIER",
+   "polymarket_event_slug_regex": "^next-premier-of-british-columbia",
+   "status": "approved",
+   "note": "Both: the Premier formally sworn in after the Oct 24, 2026 BC general election (caretakers excluded).",
+   "caveat": "Polymarket Other if none by Jun 30, 2027; Kalshi open to Oct 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXAKSENGOVCOMBO",
+   "polymarket_event_slug_regex": "^alaska-senate-and-governor-combo",
+   "status": "approved",
+   "note": "Both: Democrats win both the Alaska Governor and US Senate races on Nov 3, 2026 (an independent winner is No / Other on both).",
+   "caveat": "Each Kalshi leg follows its own Kalshi rules; Polymarket Other if unknown by Mar 31, 2027.",
+   "review_by": "2026-11-02",
+   "on_lapse": "reject",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXUECLFTTS",
+   "polymarket_event_slug_regex": "^col-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "note": "Both: first goal credited to the team. Kalshi counts the whole game incl. extra time, Polymarket 90 min + stoppage; Conference League league-phase matches have no extra time.",
+   "caveat": "Knockout ties from Feb 2027 can go to extra time.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home",
+    "first-to-score-neither"
+   ],
+   "review_by": "2026-12-20",
+   "on_lapse": "reject",
+   "rules_read": "2026-10-13"
   }
  ]
 }

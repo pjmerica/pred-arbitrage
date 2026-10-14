@@ -1495,9 +1495,9 @@ def match_tournament_winner(dfs: dict) -> pd.DataFrame:
             })
     print(f"  Tournament pairs matched: {len(pairs)}")
     league = match_league_futures(dfs)
-    if len(league):
-        return pd.concat([pd.DataFrame(pairs), league], ignore_index=True)
-    return pd.DataFrame(pairs)
+    season = match_season_totals(dfs)
+    parts = [x for x in (pd.DataFrame(pairs), league, season) if len(x)]
+    return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
 
 # ── US league championship futures (2026-10-13) ───────────────────────────
@@ -2023,11 +2023,18 @@ _SUBJ_SYN = [
     (r"\bpresidential\b", "president"), (r"\bnominees\b|\bnominations?\b", "nominated"),
     (r"\boscars?\b|\bacademy awards?\b", "academy"), (r"\bgrammys?\b", "grammy"),
     (r"\bprime minister\b", "pm"), (r"\bfirst\b", "1st"), (r"\bsecond\b", "2nd"), (r"\bthird\b", "3rd"),
+    # 2026-10-14, from the near-miss list (events sharing >= 2 names whose
+    # wording differed only in these):
+    (r"\bfinishers?\b", "finish"), (r"\beuros\b", "euro"), (r"\blead\b", "leader"),
+    (r"\bliga portugal\b", "primeira liga"), (r"\bbrasileiro\b", "brazil"), (r"\bncaa\b", "college"),
+    # Kalshi election rules: the winner is the party / candidate with the
+    # most seats / votes.
+    (r"\bmost (?:seats|votes)\b", "champion"),
 ]
 _SUBJ_STOP = set(
     "will the be a an of in on at to for who what which is are by after before next new this year season "
     "named end its their his her from with as than and or does do did there get become becomes officially "
-    "final finals game games title election".split())
+    "final finals game games title election s where".split())
 
 
 def _subj_norm(s):
@@ -2048,7 +2055,13 @@ def _subj_words(text, subject=""):
     return {w for w in t.split() if w not in _SUBJ_STOP}
 
 
-_SUBJ_NEUTRAL = {"champion", "award", "election", "seat", "us", "fc", "cf", "sc", "nfl", "nba", "nhl", "mlb",
+# Words that may differ without changing the question. Place qualifiers
+# (bc, ontario, tx) are only safe because >= 2 candidate names must match too.
+_SUBJ_NEUTRAL = {"division", "lord", "annual", "series", "music", "congress", "following", "general", "federal",
+                 "municipal", "role", "yea", "affairs", "confirmed", "midterm", "midterms", "donald", "dp",
+                 "craftsman", "fide", "countries", "states", "companies", "bills", "senators", "lists", "parties",
+                 "bc", "ontario", "tx", "ky", "nv",
+                 "champion", "award", "election", "seat", "us", "fc", "cf", "sc", "nfl", "nba", "nhl", "mlb",
                  "wnba", "ncaa", "ap", "district", "trophy", "memorial", "world", "league", "race", "person"}
 
 
@@ -2159,7 +2172,10 @@ def match_subject_events(dfs: dict, claimed=None) -> pd.DataFrame:
                 w_ = _subj_words(r_.question, s_)
                 pw = w_ if pw is None else pw & w_
             pw = pw or set()
-            diff = (kw ^ pw) - _SUBJ_NEUTRAL
+            # A Kalshi word the Polymarket event slug also carries agrees
+            # ("College Football SEC Championship" vs ncaa-football-...-sec-...).
+            sw = _subj_words(e.replace("-", " "))
+            diff = ((kw - pw - sw) | (pw - kw)) - _SUBJ_NEUTRAL
             shared = kw & pw
             # The wording rule binds approved families too: an approval
             # names a Kalshi series, which can span many events (KXHOUSERACE:
@@ -2219,6 +2235,121 @@ def match_subject_events(dfs: dict, claimed=None) -> pd.DataFrame:
                 "fuzzy_score": 100,
             })
     print(f"  subject events: {n_events} event pairs, {len(pairs)} market pairs")
+    return pd.DataFrame(pairs)
+
+
+# ── season win totals / NHL points (2026-10-14) ───────────────────────────
+# Kalshi "Pro Football: Washington Total Wins — 9+ wins" (KXNFLWINS-27WAS-9)
+# = Polymarket "Will the Washington Commanders have more than 8.5 wins
+# during the 2026 NFL season?"; Kalshi "College Football: Alabama Regular
+# Season Wins — 9+" = "Will Alabama have more than 8.5 wins during the 2026
+# CFB season?"; Kalshi "NHL: ANA Ducks Total Points — 80+" = "Will the
+# Anaheim Ducks record 80+ points?" (event nhl-teams-80-plus-points-2026-27).
+# Rules read 2026-10-14: Kalshi "at least N" = Polymarket "more than N-0.5";
+# regular season only (CFB: no conference title / bowl / playoff games, ties
+# aren't wins, on both); NHL standings points on both. Deadline caveats:
+# Polymarket NHL resolves No if the season runs past Apr 30, 2027, and NFL
+# 50-50 if the season is cancelled / partial / runs past Jan 15, 2027;
+# Kalshi states no date. Emitted as 'tournament-season' so the Kalshi close
+# date stands in for Kalshi's window end and the window check keeps YES on
+# the leg whose window contains the other's.
+_K_SEASON = re.compile(r"^(KXNFLWINS|KXNCAAFWINS|KXNHLSEASONPTS)-(\d\d)([A-Z]+)-(\d+)$")
+_P_NFL_WINS = re.compile(r"^Will (?:the )?(.+?) have more than (\d+)\.5 wins during the (20\d\d) NFL season\?$", re.I)
+_P_CFB_WINS = re.compile(r"^Will (?:the )?(.+?) have more than (\d+)\.5 wins during the (20\d\d) CFB season\?$", re.I)
+_P_NHL_PTS = re.compile(r"^Will (?:the )?(.+?) record (\d+)\+ points\?$", re.I)
+
+
+def _kalshi_season_key(row):
+    m = _K_SEASON.match(str(row.get("market_id") or ""))
+    if not m:
+        return None
+    series, yy, code, n = m.group(1), m.group(2), m.group(3), int(m.group(4))
+    title = str(row.get("question") or "")
+    if series == "KXNFLWINS":
+        lm = re.match(r"^Pro Football: (.+?) Total Wins\s*[—-]", title)
+        full = _LEAGUE_TEAMS["nfl"].get(code)
+        if not lm or not full or not _kalshi_label_fits(lm.group(1), full):
+            return None
+        return ("nfl", yy, full, n)
+    if series == "KXNHLSEASONPTS":
+        lm = re.match(r"^NHL: [A-Z]{2,3} (.+?) Total Points\s*[—-]", title)
+        full = _LEAGUE_TEAMS["nhl"].get(code)
+        if not lm or not full or not _team_norm(full).endswith(" " + _team_norm(lm.group(1))):
+            return None
+        return ("nhl", yy, full, n)
+    lm = re.match(r"^College Football: (.+?) Regular Season Wins\s*[—-]", title)
+    if not lm:
+        return None
+    return ("cfb", yy, _person_key(lm.group(1)), n)
+
+
+def _poly_season_key(row):
+    q = str(row.get("question") or "").strip()
+    m = _P_NFL_WINS.match(q)
+    if m:
+        full = _league_team("nfl", m.group(1))
+        # 2026 NFL regular season = Kalshi's 2026-27 season ("27").
+        return ("nfl", f"{(int(m.group(3)) + 1) % 100:02d}", full, int(m.group(2)) + 1) if full else None
+    m = _P_CFB_WINS.match(q)
+    if m:
+        return ("cfb", m.group(3)[-2:], _person_key(m.group(1)), int(m.group(2)) + 1)
+    m = _P_NHL_PTS.match(q)
+    if m:
+        sm = re.search(r"-20\d\d-(\d\d)$", re.sub(r"-\d{6,}$", "", str(row.get("event_slug") or "")))
+        full = _league_team("nhl", m.group(1))
+        if not sm or not full or "points" not in str(row.get("event_slug")):
+            return None
+        return ("nhl", sm.group(1), full, int(m.group(2)))
+    return None
+
+
+def match_season_totals(dfs: dict) -> pd.DataFrame:
+    if 'kalshi' not in dfs or 'polymarket' not in dfs:
+        return pd.DataFrame()
+    k = dfs['kalshi']; p = dfs['polymarket']
+    if k.empty or p.empty:
+        return pd.DataFrame()
+    k_idx, p_idx = {}, {}
+    for _, r in k[k["market_id"].astype(str).str.match(r"^KX(?:NFLWINS|NCAAFWINS|NHLSEASONPTS)-")].iterrows():
+        key = _kalshi_season_key(r)
+        if key and key[2]:
+            k_idx.setdefault(key, []).append(r)
+    pm = p[p["question"].astype(str).str.contains(r"more than \d+\.5 (?:games|wins)|record \d+\+ points", regex=True)]
+    # Yes/No markets only. Polymarket also lists one two-outcome Over/Under
+    # market per NFL team ("win more than 11.5 games"); it repeats a line of
+    # the Yes/No ladder ("have more than 11.5 wins during the 2026 NFL
+    # season?"), so it is left out rather than making the key ambiguous.
+    if "outcomes_binary" in pm.columns:
+        pm = pm[pm["outcomes_binary"].astype(str) == "True"]
+    for _, r in pm.iterrows():
+        key = _poly_season_key(r)
+        if key and key[2]:
+            p_idx.setdefault(key, []).append(r)
+    pairs = []
+    for key in sorted(set(k_idx) & set(p_idx), key=str):
+        if len(k_idx[key]) != 1 or len(p_idx[key]) != 1:
+            continue
+        k_row = k_idx[key][0]; p_row = p_idx[key][0]
+        pairs.append({
+            "match_type": "tournament-season",
+            "race_id": None,
+            "platform_a": "kalshi",
+            "platform_b": "polymarket",
+            "question_a": k_row.get("question", ""),
+            "question_b": p_row.get("question", ""),
+            "market_id_a": k_row.get("market_id", ""),
+            "market_id_b": p_row.get("market_id", ""),
+            "implied_prob_a": k_row.get("implied_prob"),
+            "implied_prob_b": p_row.get("implied_prob"),
+            "settle_date": p_row.get("settle_date") or k_row.get("settle_date") or "",
+            "category": k_row.get("category", ""),
+            "url_a": k_row.get("url", ""),
+            "url_b": p_row.get("url", ""),
+            "volume_a": k_row.get("volume"),
+            "volume_b": p_row.get("volume"),
+            "fuzzy_score": 100,
+        })
+    print(f"  season totals: kalshi={len(k_idx)}, polymarket={len(p_idx)}, pairs={len(pairs)}")
     return pd.DataFrame(pairs)
 
 # ── soccer fixtures (2026-10-12) ──────────────────────────────────────────

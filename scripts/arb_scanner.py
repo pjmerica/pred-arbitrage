@@ -68,6 +68,7 @@ VERIFIED_MATCH_TYPES = {
     "tournament-tennis",
     "tournament-worldcup",
     "tournament-league",   # NBA/NHL/MLB/NFL/WNBA/CFP champion futures
+    "tournament-season",   # NFL / college football win totals, NHL points
     "game",                # NFL/NBA/MLB/NHL games, ATP/WTA matches, UFC fights
     "primary-nominee",
     "general",   # elections.py party-win legs (allowlisted titles)
@@ -576,7 +577,7 @@ def run():
         if len(_bad):
             print(f"Dropped {len(_bad)} fuzzy pairs that fail the current outcome gate:")
             for i, why in _bad.items():
-                print(f"  - {why}: {str(result.at[i, 'question_a'])[:55]!r} <-> {str(result.at[i, 'question_b'])[:55]!r}")
+                print(f"  - {why}: {str(result.at[i, 'question_a'])[:55]!a} <-> {str(result.at[i, 'question_b'])[:55]!a}")
             result = result.drop(index=_bad.index).reset_index(drop=True)
 
     # ── Append 2026 US-election rows produced by scripts/elections.py ──
@@ -1172,7 +1173,7 @@ def run():
     if _rej.any():
         print(f"Dropped {int(_rej.sum())} pairs from REJECTED series families (data/series_map.json):")
         for _, d in result[_rej].iterrows():
-            print(f"  - {str(d.get('question_a'))[:60]!r} <-> {str(d.get('question_b'))[:60]!r}")
+            print(f"  - {str(d.get('question_a'))[:60]!a} <-> {str(d.get('question_b'))[:60]!a}")
         result = result[~_rej].copy()
     if _review:
         rv = pd.DataFrame(_review)
@@ -1247,7 +1248,7 @@ def run():
                 ok, why = False, f"family review: only YES on {row.get('safe_yes')} is hedged"
             if not ok:
                 window_bad.at[idx] = True
-                print(f"  window mismatch: {str(row.get('question_a'))[:60]!r} — {why}")
+                print(f"  window mismatch: {str(row.get('question_a'))[:60]!a} - {why}")
         _scr._save_cache(_cache)
         result.loc[window_bad, "suspicion_reasons"] = result.loc[window_bad, "suspicion_reasons"].apply(
             lambda rs: list(rs) + ["window_mismatch"])

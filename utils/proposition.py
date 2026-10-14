@@ -295,6 +295,12 @@ def single_subject_mismatch(a, b) -> bool:
     return False
 
 
+def _times(title) -> int:
+    """'3+ times' / '5 or more times' -> 3 / 5; 1 when no count is stated."""
+    m = re.search(r"\b(\d+)\s*(?:\+|or more)\s*times\b", fold(title))
+    return int(m.group(1)) if m else 1
+
+
 def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
     """First outcome field on which titles `a` and `b` disagree, else None."""
     # pandas hands missing dates over as NaN, which is truthy.
@@ -321,6 +327,11 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
     ba, bb = _bound(a), _bound(b)
     if ba and bb and ba != bb and ca != "5":
         return f"bound {ba} vs {bb}"
+    # Mention counts: Kalshi "What will Trump say? — ICE" (once) vs
+    # Polymarket "Will Trump say 'ICE' 3+ times?" (2026-10-14). A missing
+    # count means once.
+    if _times(a) != _times(b):
+        return f"count {_times(a)} vs {_times(b)} times"
     sa, sb = score(a), score(b)
     if (sa is None) != (sb is None):
         return "score vs non-score"

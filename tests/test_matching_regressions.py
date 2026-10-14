@@ -154,6 +154,7 @@ from utils.proposition import incompatibility, kalshi_game_date, slug_game_date
     ("2028 UEFA Euros Qualifiers — Northern Ireland", "Will Northern Ireland win the UEFA EURO 2028?"),
     ("Dancing with the Stars Season 35 — Finalists — Maura Higgins", "Will Maura Higgins win Dancing With the Stars: Season 35?"),
     ("Worlds 2026 Quarterfinalists — Hanwha Life Esports", "Will Hanwha Life Esports win Worlds 2026?"),
+    ("What will Trump say during his rally in Arizona? — ICE", "Will Trump say \"ICE\" 3+ times during his Midterm Rally in Arizona?"),
     ("Will the Arizona Cardinals make the 2027 NFL Playoffs?", "Will the Arizona Cardinals win the 2027 NFL league championship?"),
     ("2026 FIFA World Cup Winner — Argentina", "Will Argentina reach the 2026 FIFA World Cup final?"),
     ("How high will XRP get in September? — Above $1.70", "Will the price of XRP be above $1.70 on September 25?"),
@@ -967,3 +968,31 @@ def test_subject_events_shared_polymarket_market_pairs_once():
         _kal("KXTESTPARDONB-26DEC31", "Who will Trump pardon in 2026?", names)
     dfs = _subject_frames(k, _pol("who-will-trump-pardon-before-2027", "Will Trump pardon {} before 2027?", names))
     assert match_subject_events(dfs).empty
+
+
+def test_season_totals_pair_line_and_team():
+    """Kalshi 'N+ wins' = Polymarket 'more than N-0.5 wins'; NHL 'N+ points'
+    on both. A different line or the wrong season doesn't pair."""
+    from scripts.matcher import match_season_totals
+    k = pd.DataFrame([
+        {"market_id": "KXNFLWINS-27BAL-12", "question": "Pro Football: Baltimore Total Wins — 12+ wins"},
+        {"market_id": "KXNFLWINS-27BAL-11", "question": "Pro Football: Baltimore Total Wins — 11+ wins"},
+        {"market_id": "KXNCAAFWINS-26ASU-5", "question": "College Football: Arizona St. Regular Season Wins — 5+ wins"},
+        {"market_id": "KXNHLSEASONPTS-27ANA-80", "question": "NHL: ANA Ducks Total Points — 80+ points"},
+        {"market_id": "KXNHLSEASONPTS-27ANA-90", "question": "NHL: ANA Ducks Total Points — 90+ points"},
+    ])
+    p = pd.DataFrame([
+        {"market_id": "p1", "question": "Will the Baltimore Ravens have more than 11.5 wins during the 2026 NFL season?", "event_slug": "x"},
+        {"market_id": "p2", "question": "Will Arizona State have more than 4.5 wins during the 2026 CFB season?", "event_slug": "x"},
+        {"market_id": "p3", "question": "Will the Anaheim Ducks record 80+ points?", "event_slug": "nhl-teams-80-plus-points-2026-27"},
+        {"market_id": "p4", "question": "Will the Anaheim Ducks record 90+ points?", "event_slug": "nhl-teams-90-plus-points-2025-26"},
+        {"market_id": "p5", "question": "Will Arizona have more than 4.5 wins during the 2026 CFB season?", "event_slug": "x"},
+    ])
+    for df in (k, p):
+        for c in ("implied_prob", "settle_date", "url", "category", "volume"):
+            df[c] = ""
+    p["outcomes_binary"] = True
+    out = match_season_totals({"kalshi": k, "polymarket": p})
+    assert dict(zip(out["market_id_a"], out["market_id_b"])) == {
+        "KXNFLWINS-27BAL-12": "p1", "KXNCAAFWINS-26ASU-5": "p2", "KXNHLSEASONPTS-27ANA-80": "p3"}
+    assert set(out["match_type"]) == {"tournament-season"}
