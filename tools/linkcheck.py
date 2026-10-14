@@ -44,12 +44,12 @@ H = {"User-Agent": "Mozilla/5.0"}
 K = "https://api.elections.kalshi.com/trade-api/v2"
 
 
-def fetch(url, tries=6):
+def fetch(url, tries=6, timeout=30):
     """Body text, retrying 429/5xx with growing backoff (Kalshi rate-limits
     both its API and its website); None if it never succeeds."""
     for i in range(tries):
         try:
-            return urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=30).read().decode("utf8", "ignore")
+            return urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=timeout).read().decode("utf8", "ignore")
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 return None
@@ -76,17 +76,34 @@ def gj(url, tries=6):
             return None
 
 
+def pmap(fn, items, workers=4):
+    """fn over items with a few threads: the chunked API reads were ~240
+    sequential requests (2.5 min cold) once the board passed 6,000 pairs."""
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        return list(ex.map(fn, items))
+
+
 def chunks(xs, n):
     xs = list(xs)
     for i in range(0, len(xs), n):
         yield xs[i:i + n]
 
 
-def kalshi_expected(tickers):
-    """{ticker: expected url} (None when the API doesn't know the ticker)."""
+def kalshi_expected(tickers, verify=()):
+    """{ticker: expected url} (None when the API doesn't know the ticker).
+
+    The series is the event ticker's prefix (KXNBAGAME-26OCT20OKCSAS ->
+    KXNBAGAME): true for all 1,977 events cached by 2026-10-14. Asking
+    Kalshi for every new event one request at a time took ~7 min once the
+    game / line / season matchers added hundreds of events a day, and the
+    4-minute step cap killed the run before the cache was saved. Now only
+    events of tickers in `verify` (basket rows) are confirmed through the
+    API, and the cache is saved as it grows."""
     ev_of = {}
-    for ch in chunks(sorted(tickers), 50):
-        d = gj(f"{K}/markets?" + urllib.parse.urlencode({"tickers": ",".join(ch), "limit": 1000})) or {}
+    pages = pmap(lambda ch: gj(f"{K}/markets?" + urllib.parse.urlencode({"tickers": ",".join(ch), "limit": 1000})) or {},
+                 list(chunks(sorted(tickers), 50)))
+    for d in pages:
         for m in d.get("markets", []):
             ev_of[m["ticker"]] = m.get("event_ticker")
     # event -> series never changes: keep it across runs (CI restores this
@@ -98,21 +115,26 @@ def kalshi_expected(tickers):
         series_of = json.loads(cache_p.read_text(encoding="utf8"))
     except (OSError, ValueError):
         series_of = {}
-    for ev in sorted({e for e in ev_of.values() if e} - set(series_of)):
+    def _save():
+        try:
+            cache_p.parent.mkdir(parents=True, exist_ok=True)
+            cache_p.write_text(json.dumps(series_of), encoding="utf8")
+        except OSError:
+            pass
+    check = {ev_of.get(t) for t in verify} - {None} - set(series_of)
+    for i, ev in enumerate(sorted(check)):
         d = gj(f"{K}/events/{ev}") or {}
         ser = (d.get("event") or {}).get("series_ticker")
         if ser:
             series_of[ev] = ser
+        if i % 25 == 24:
+            _save()
         time.sleep(0.12)   # stay well under Kalshi's ~20 req/s
-    try:
-        cache_p.parent.mkdir(parents=True, exist_ok=True)
-        cache_p.write_text(json.dumps(series_of), encoding="utf8")
-    except OSError:
-        pass
+    _save()
     out = {}
     for t in tickers:
         ev = ev_of.get(t)
-        ser = series_of.get(ev)
+        ser = series_of.get(ev) or (ev.split("-")[0] if ev else None)
         out[t] = f"https://kalshi.com/markets/{ser.lower()}/{ev.lower()}" if ev and ser else None
     return out
 
@@ -120,9 +142,9 @@ def kalshi_expected(tickers):
 def polymarket_expected(tokens):
     """{token: (expected url, question)}."""
     out = {}
-    for ch in chunks(sorted(tokens), 50):
-        d = gj("https://gamma-api.polymarket.com/markets?" + urllib.parse.urlencode(
-            [("clob_token_ids", t) for t in ch] + [("limit", 500)])) or []
+    pages = pmap(lambda ch: gj("https://gamma-api.polymarket.com/markets?" + urllib.parse.urlencode(
+        [("clob_token_ids", t) for t in ch] + [("limit", 500)])) or [], list(chunks(sorted(tokens), 50)))
+    for d in pages:
         for m in d:
             try:
                 toks = json.loads(m.get("clobTokenIds") or "[]")
@@ -161,10 +183,21 @@ def norm(u):
     return (u or "").strip().rstrip("/").lower()
 
 
+_PM_PAGE_FAILS = 0
+
+
 def page_title_ok(url, question):
-    t = fetch(url, tries=3)
+    # Circuit breaker like Kalshi's: three failures in a row (blocked or
+    # down) and the rest are left unchecked instead of each waiting out
+    # retries and timeouts (2026-10-14: 114 failures took ~2.5 min).
+    global _PM_PAGE_FAILS
+    if _PM_PAGE_FAILS >= 3:
+        return None, "unchecked (polymarket.com unreachable this run)"
+    t = fetch(url, tries=2, timeout=10)
     if t is None:
+        _PM_PAGE_FAILS += 1
         return None, "unchecked (fetch failed)"
+    _PM_PAGE_FAILS = 0
     m = re.search(r'og:title" content="([^"]*)"', t)
     og = html.unescape(m.group(1)).strip() if m else ""
     q = (question or "").strip()
@@ -186,7 +219,7 @@ def kalshi_page_ok(url):
     if _KALSHI_PAGES_BLOCKED:
         return None, "unchecked (kalshi.com rate-limited this run)"
     time.sleep(1.0)        # kalshi.com rate-limits page loads hard (429)
-    t = fetch(url, tries=2)
+    t = fetch(url, tries=2, timeout=10)
     if t is None:
         # Circuit breaker (2026-10-11): kalshi.com 429s GitHub runners too;
         # retrying every page with backoff ran the step 12 min and the job
@@ -217,7 +250,9 @@ def main():
             p, mid = r.get(f"platform_{s}"), r.get(f"market_id_{s}")
             if p in ids and mid:
                 ids[p].add(str(mid))
-    exp_k = kalshi_expected(ids["kalshi"])
+    basket_k = {str(r.get(f"market_id_{s}")) for r in rows for s in "ab"
+                if r.get(f"platform_{s}") == "kalshi" and r.get("arb_type") in ("guaranteed", "unverified")}
+    exp_k = kalshi_expected(ids["kalshi"], verify=basket_k)
     exp_p = polymarket_expected(ids["polymarket"])
     exp_i = predictit_expected(ids["predictit"])
 
@@ -245,6 +280,12 @@ def main():
                     r[f"url_{s}"] = want; fixed += 1
     page_bad, unchecked = [], 0
     if pages:
+        # Polymarket pages in parallel (2026-10-14: 114 basket legs at ~2 s
+        # each was most of the step's 4-minute budget).
+        pm_legs = [(str(r.get(f"market_id_{s}")), r.get(f"url_{s}")) for r in rows
+                   if r.get("arb_type") in ("guaranteed", "unverified") for s in "ab"
+                   if r.get(f"platform_{s}") == "polymarket"]
+        pm_res = dict(zip(pm_legs, pmap(lambda x: page_title_ok(x[1], (exp_p.get(x[0]) or (None, None))[1]), pm_legs)))
         for r in rows:
             if r.get("arb_type") not in ("guaranteed", "unverified"):
                 continue
@@ -260,7 +301,7 @@ def main():
                     continue
                 tok = str(r.get(f"market_id_{s}"))
                 url, q = r.get(f"url_{s}"), (exp_p.get(tok) or (None, None))[1]
-                ok, og = page_title_ok(url, q)
+                ok, og = pm_res.get((tok, url)) or page_title_ok(url, q)
                 if ok is None:
                     unchecked += 1
                 elif not ok:
