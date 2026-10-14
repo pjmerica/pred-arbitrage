@@ -565,12 +565,13 @@
    "polymarket_event_slug_regex": "^mls-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. MLS regular season.",
+   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. MLS regular season. 2026-10-13: 'No Goal' (Kalshi) = 'Neither' (Polymarket) added; same period caveat and lapse.",
    "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. MLS Cup playoffs (from late Oct) have extra time.",
    "review_by": "2026-10-18",
    "polymarket_market_kinds": [
     "first-to-score-away",
-    "first-to-score-home"
+    "first-to-score-home",
+    "first-to-score-neither"
    ],
    "on_lapse": "reject"
   },
@@ -1995,6 +1996,14 @@
    "status": "approved",
    "note": "Both: the 2026 MLS regular-season goals leader / Golden Boot (official league statistics and tiebreakers).",
    "caveat": "A tie the league doesn't break: Kalshi pays each tied player an equal share, Polymarket the first last name alphabetically. Polymarket Other if no winner by Dec 31, 2026; Kalshi closes Nov 15.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXLPGATOUR",
+   "polymarket_event_slug_regex": "^lpga-2026-.+-winner",
+   "status": "approved",
+   "note": "Both: the official winner of the named 2026 LPGA Tour event (playoffs / LPGA rules decide ties). KXLPGATOUR spans tournaments; the subject matcher's wording rule keeps each tournament with its own Polymarket event. Kalshi: a withdrawal before teeing off resolves the winner market No.",
+   "caveat": "Polymarket Other if no winner by its stated date (Shanghai: Oct 25, 2026) or if an unlisted player wins; multiple official winners -> first last name alphabetically.",
    "rules_read": "2026-10-13"
   }
  ]

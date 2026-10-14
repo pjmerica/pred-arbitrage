@@ -126,12 +126,14 @@ def collect():
             act.append(f"**{lc['unknown']} links couldn't be resolved through the platform APIs** "
                        "(rate limiting, or an API change).")
 
-    # A basket held back only by a decided rule (YES on the narrower
-    # window; the post-election settling period) needs no human: the
-    # futures pairs keep a YES-Polymarket window_mismatch basket for months.
+    # Held back by a decided rule, so nothing for a human to do: YES on the
+    # narrower window (window_mismatch - never a hedge, whatever else is
+    # flagged), or only the post-election settling period. The futures
+    # pairs keep a YES-Polymarket window_mismatch basket for months.
     decided = {"window_mismatch", "election_settling"}
     held = [r for r in rows if r.get("arb_type") == "unverified" and (r.get("guaranteed_return_pct") or 0) > 0
-            and not (r.get("suspicion_reasons") and set(r["suspicion_reasons"]) <= decided)]
+            and not (r.get("suspicion_reasons") and (set(r["suspicion_reasons"]) <= decided
+                                                     or "window_mismatch" in r["suspicion_reasons"]))]
     if held:
         act.append(f"**{len(held)} profitable baskets held back as unverified:**\n" + "\n".join(
             f"  - {r.get('guaranteed_return_pct')}% — {str(r.get('question_a'))[:60]!r} vs "
