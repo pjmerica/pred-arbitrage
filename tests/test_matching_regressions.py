@@ -776,7 +776,7 @@ def _game_frames(k_rows, p_rows):
     k = pd.DataFrame(k_rows); p = pd.DataFrame(p_rows)
     for c in ("implied_prob", "settle_date", "url", "category", "volume"):
         k[c] = ""; p[c] = ""
-    k["series_ticker"] = k["market_id"].str.extract(r"^(KX[A-Z]+)")[0]
+    k["series_ticker"] = k["market_id"].str.split("-").str[0]
     k["event_ticker"] = k["market_id"].str.rsplit("-", n=1).str[0]
     if "market_slug" not in p.columns:
         p["market_slug"] = p["event_slug"]
@@ -996,3 +996,67 @@ def test_season_totals_pair_line_and_team():
     assert dict(zip(out["market_id_a"], out["market_id_b"])) == {
         "KXNFLWINS-27BAL-12": "p1", "KXNCAAFWINS-26ASU-5": "p2", "KXNHLSEASONPTS-27ANA-80": "p3"}
     assert set(out["match_type"]) == {"tournament-season"}
+
+
+def test_exact_score_event_borrows_fixture_teams():
+    """Polymarket exact scores sit in their own event ('...-exact-score') whose
+    questions have no 'A vs. B'; the teams come from the base fixture event.
+    'New England wins 1-0' pairs with 'Cincinnati 0 - 1 New England'."""
+    from scripts.matcher import match_soccer_fixtures
+    k = pd.DataFrame([
+        {"series_ticker": "KXMLSBTTS", "market_id": "KXMLSBTTS-26OCT14CINNE-BTTS",
+         "question": "Cincinnati vs New England: BTTS — Both Teams To Score", "game_date": "2026-10-14"},
+        {"series_ticker": "KXMLSSCORE", "market_id": "KXMLSSCORE-26OCT14CINNE-CIN0NE1",
+         "question": "FC Cincinnati vs New England Revolution: Correct Score — New England Revolution wins 1-0", "game_date": "2026-10-14"},
+    ])
+    base = "mls-fcc-ner-2026-10-14"
+    p = pd.DataFrame([
+        {"market_id": "btts", "question": "FC Cincinnati vs. New England Revolution: Both Teams to Score",
+         "event_slug": base, "market_slug": base + "-btts", "game_date": "2026-10-14"},
+        {"market_id": "s10", "question": "Exact Score: FC Cincinnati 1 - 0 New England Revolution?",
+         "event_slug": base + "-exact-score", "market_slug": base + "-exact-score-1-0", "game_date": "2026-10-14"},
+        {"market_id": "s01", "question": "Exact Score: FC Cincinnati 0 - 1 New England Revolution?",
+         "event_slug": base + "-exact-score", "market_slug": base + "-exact-score-0-1", "game_date": "2026-10-14"},
+    ])
+    for df in (k, p):
+        for c in ("implied_prob", "settle_date", "url", "category", "volume"):
+            df[c] = ""
+    out = match_soccer_fixtures({"kalshi": k, "polymarket": p})
+    assert dict(zip(out["market_id_a"], out["market_id_b"]))["KXMLSSCORE-26OCT14CINNE-CIN0NE1"] == "s01"
+
+
+def test_game_lines_periods_and_team_totals():
+    """1st-half lines pair only with Polymarket 1H lines, 2nd half with 2H,
+    team totals by team; a full-game total never pairs with a 1H total."""
+    from scripts.matcher import match_games
+    ev = "KXNFLGAME-26OCT18DALGB"
+    k = [
+        {"market_id": ev + "-GB", "question": "Dallas vs Green Bay — Green Bay", "yes_sub_title": "Green Bay", "game_date": "2026-10-18"},
+        {"market_id": ev + "-DAL", "question": "Dallas vs Green Bay — Dallas", "yes_sub_title": "Dallas", "game_date": "2026-10-18"},
+        {"market_id": "KXNFL1HSPREAD-26OCT18DALGB-GB4", "question": "Dallas vs Green Bay: 1st Half Spread — Green Bay wins by over 3.5 points",
+         "yes_sub_title": "Green Bay wins by over 3.5 points", "game_date": "2026-10-18"},
+        {"market_id": "KXNFL2HTOTAL-26OCT18DALGB-21", "question": "Dallas vs Green Bay: 2nd Half Total — Over 20.5 points",
+         "yes_sub_title": "Over 20.5 points", "game_date": "2026-10-18"},
+        {"market_id": "KXNFLTEAMTOTAL-26OCT18DALGB-GB24", "question": "Dallas vs Green Bay: Team Total — Green Bay over 23.5 points",
+         "yes_sub_title": "Green Bay over 23.5 points", "game_date": "2026-10-18"},
+        {"market_id": "KXNFL1HTOTAL-26OCT18DALGB-45", "question": "Dallas vs Green Bay: 1st Half Total — Over 44.5 points",
+         "yes_sub_title": "Over 44.5 points", "game_date": "2026-10-18"},
+    ]
+    slug = "nfl-dal-gb-2026-10-18"
+    p = [
+        {"market_id": "ml", "question": "Cowboys vs. Packers", "market_slug": slug, "yes_outcome": "Cowboys"},
+        {"market_id": "h1", "question": "1H Spread: Packers (-3.5)", "market_slug": slug + "-1h-spread-home-3pt5", "yes_outcome": "Packers"},
+        {"market_id": "h1_full", "question": "Spread: Packers (-3.5)", "market_slug": slug + "-spread-home-3pt5", "yes_outcome": "Packers"},
+        {"market_id": "h2t", "question": "Cowboys vs. Packers: 2H O/U 20.5", "market_slug": slug + "-2h-total-20pt5", "yes_outcome": "Over"},
+        {"market_id": "tt", "question": "Packers Team Total: O/U 23.5", "market_slug": slug + "-team-total-gb-23pt5", "yes_outcome": "Over"},
+        {"market_id": "full45", "question": "Cowboys vs. Packers: O/U 44.5", "market_slug": slug + "-total-44pt5", "yes_outcome": "Over"},
+        {"market_id": "q1", "question": "1Q Spread: Packers (-3.5)", "market_slug": slug + "-1q-spread-home-3pt5", "yes_outcome": "Packers"},
+    ]
+    for r in p:
+        r["event_slug"] = slug; r["game_date"] = "2026-10-18"
+    out = match_games(_game_frames(k, p))
+    got = dict(zip(out["market_id_a"], out["market_id_b"]))
+    assert got["KXNFL1HSPREAD-26OCT18DALGB-GB4"] == "h1"
+    assert got["KXNFL2HTOTAL-26OCT18DALGB-21"] == "h2t"
+    assert got["KXNFLTEAMTOTAL-26OCT18DALGB-GB24"] == "tt"
+    assert "KXNFL1HTOTAL-26OCT18DALGB-45" not in got

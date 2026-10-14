@@ -1904,15 +1904,106 @@ def _game_pair_row(k_row, p_row):
 # Kalshi and other slug kinds on Polymarket, and are not paired.
 _K_SPREAD_SUB = re.compile(r"^(.+?) wins by (?:over|more than) (\d+(?:\.\d+)?)(?: (?:points?|goals?|runs?))?$", re.I)
 _K_TOTAL_SUB = re.compile(r"^over (\d+(?:\.\d+)?)(?: (?:points?|goals?|runs?))?(?: scored)?$", re.I)
-_P_SPREAD_Q = re.compile(r"^Spread: (.+?) \(-(\d+(?:\.\d+)?)\)$", re.I)
-_P_TOTAL_Q = re.compile(r": O/U (\d+(?:\.\d+)?)$", re.I)
+_K_TEAM_TOTAL_SUB = re.compile(r"^(.+?) over (\d+(?:\.\d+)?)(?: (?:points?|goals?|runs?))?(?: scored)?$", re.I)
+_P_SPREAD_Q = re.compile(r"^(?:(1H|2H) )?Spread: (.+?) \(-(\d+(?:\.\d+)?)\)$", re.I)
+_P_TOTAL_Q = re.compile(r": (?:(1H|2H) )?O/U (\d+(?:\.\d+)?)$", re.I)
+_P_TEAM_TOTAL_Q = re.compile(r"^(.+?) Team Total: O/U (\d+(?:\.\d+)?)$", re.I)
+# Kalshi line series suffix -> (kind, period). 2026-10-14: halves and team
+# totals added. Rules read on both platforms (NFL / college football):
+# 1st half excludes overtime on both; 2nd half INCLUDES overtime on both;
+# team totals are full game. 1st-quarter lines are not paired.
+_K_LINE_SERIES = {"SPREAD": ("spread", ""), "TOTAL": ("total", ""),
+                  "1HSPREAD": ("spread", "1h"), "1HTOTAL": ("total", "1h"),
+                  "2HSPREAD": ("spread", "2h"), "2HTOTAL": ("total", "2h"),
+                  "TEAMTOTAL": ("teamtotal", "")}
 
 
 def _match_game_lines(k, p, linked):
-    from utils.series_map import market_kind
     out = []
     if not linked:
         return out
+    k_by_event = {}
+    for _, r in k[k["series_ticker"].astype(str).str.match(r"^KX[A-Z]+?(?:1H|2H|TEAM)?(?:SPREAD|TOTAL)$")].iterrows():
+        k_by_event.setdefault(str(r.get("event_ticker")), []).append(r)
+    slugs = {lk[4] for lk in linked}
+    pm = p[p["event_slug"].astype(str).isin(slugs)]
+    p_by_event = {}
+    for _, r in pm.iterrows():
+        p_by_event.setdefault(str(r["event_slug"]), []).append(r)
+
+    for series, k_event, sport, keyed, slug in linked:
+        if not series.endswith("GAME"):
+            continue
+        base = series[:-4]
+        code = k_event.split("-", 1)[1] if "-" in k_event else ""
+        league = sport if sport in _LEAGUE_TEAMS else None
+
+        def side_of(label, from_kalshi):
+            """Which of the game's two sides a team label names (index), or None."""
+            hits = []
+            for i, sd in enumerate(keyed):
+                if league:
+                    ok = _kalshi_label_fits(label, sd) if from_kalshi else _league_team(league, label) == sd
+                else:
+                    ok = _person_key(label) == sd
+                if ok:
+                    hits.append(i)
+            return hits[0] if len(hits) == 1 else None
+
+        k_lines = {}
+        for suffix, (kind, period) in _K_LINE_SERIES.items():
+            for r in k_by_event.get(f"{base}{suffix}-{code}", []):
+                sub = str(r.get("yes_sub_title") or "").strip()
+                key = None
+                if kind == "spread":
+                    m = _K_SPREAD_SUB.match(sub)
+                    i = side_of(m.group(1), True) if m else None
+                    key = (period, "spread", i, float(m.group(2))) if m and i is not None else None
+                elif kind == "total":
+                    m = _K_TOTAL_SUB.match(sub)
+                    key = (period, "total", None, float(m.group(1))) if m else None
+                else:
+                    m = _K_TEAM_TOTAL_SUB.match(sub)
+                    i = side_of(m.group(1), True) if m else None
+                    key = (period, "teamtotal", i, float(m.group(2))) if m and i is not None else None
+                if key:
+                    k_lines.setdefault(key, []).append(r)
+        if not k_lines:
+            continue
+        p_lines = {}
+        for r in p_by_event.get(slug, []):
+            ms = str(r.get("market_slug") or "")
+            q = str(r.get("question") or "").strip()
+            yo = r.get("yes_outcome")
+            yo = yo.strip() if isinstance(yo, str) and yo.strip() else None
+            mk = re.search(r"\d{4}-\d{2}-\d{2}-(?:(1h|2h)-)?(spread-(?:home|away)|total|team-total-[a-z0-9]+)-(\d+)pt(\d+)$", ms)
+            if not mk:
+                continue
+            period, what = mk.group(1) or "", mk.group(2)
+            line = float(f"{mk.group(3)}.{mk.group(4)}")
+            key = None
+            if what.startswith("spread"):
+                mq = _P_SPREAD_Q.match(q)
+                if mq and (mq.group(1) or "").lower() == period and float(mq.group(3)) == line \
+                        and not (yo and _person_key(yo) != _person_key(mq.group(2))):
+                    i = side_of(mq.group(2), False)
+                    key = (period, "spread", i, line) if i is not None else None
+            elif what == "total":
+                mq = _P_TOTAL_Q.search(q)
+                if mq and (mq.group(1) or "").lower() == period and float(mq.group(2)) == line \
+                        and not (yo and yo.lower() != "over"):
+                    key = (period, "total", None, line)
+            elif not period:
+                mq = _P_TEAM_TOTAL_Q.match(q)
+                if mq and float(mq.group(2)) == line and not (yo and yo.lower() != "over"):
+                    i = side_of(mq.group(1), False)
+                    key = ("", "teamtotal", i, line) if i is not None else None
+            if key:
+                p_lines.setdefault(key, []).append(r)
+        for key in set(k_lines) & set(p_lines):
+            if len(k_lines[key]) == 1 and len(p_lines[key]) == 1:
+                out.append(_game_pair_row(k_lines[key][0], p_lines[key][0]))
+    return out
     k_by_event = {}
     for _, r in k[k["series_ticker"].astype(str).str.match(r"^KX[A-Z]+(?:SPREAD|TOTAL)$")].iterrows():
         k_by_event.setdefault(str(r.get("event_ticker")), []).append(r)
@@ -2426,15 +2517,24 @@ def match_soccer_fixtures(dfs: dict) -> pd.DataFrame:
     # Fixture teams per event: spread questions ("Spread: Getafe CF (-1.5)")
     # don't name the opponent, so take the teams from a sibling market in the
     # same event ("Getafe CF vs. Rayo Vallecano de Madrid: O/U 2.5").
+    # Keyed by the BASE fixture slug (up to the date): exact scores live in
+    # their own event ("mls-fcc-ner-2026-10-14-exact-score") whose questions
+    # ("Exact Score: FC Cincinnati 0 - 1 New England Revolution?") have no
+    # "A vs. B" to parse, so they borrow the teams of the main fixture event
+    # (2026-10-14: 0 of ~1,000 Kalshi correct-score markets were paired).
+    def _base(ev):
+        mb = re.match(r"^(.*?-\d{4}-\d{2}-\d{2})", str(ev))
+        return mb.group(1) if mb else str(ev)
     ev_teams = {}
     for ev, q in zip(p["event_slug"], p["question"]):
-        if ev not in ev_teams:
+        b = _base(ev)
+        if b not in ev_teams:
             tmq = teams(q)
             if tmq:
-                ev_teams[ev] = tmq
+                ev_teams[b] = tmq
     by = {}
     for r in ps.itertuples(index=False):
-        tm = teams(r.question) or ev_teams.get(r.event_slug)
+        tm = teams(r.question) or ev_teams.get(_base(r.event_slug))
         if tm:
             by.setdefault((r.soccer_kind, r.game_date), []).append((r, tm))
     pairs, ambiguous = [], 0

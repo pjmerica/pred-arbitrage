@@ -1374,5 +1374,13 @@
 "poly_q": "Will the Ottawa Senators win the 2026-27 NHL Atlantic Division?",
 "kalshi_rules": "Will the Ottawa Senators win the Atlantic Division? If the Ottawa Senators win the 2026-27 NHL Atlantic Division, then the market resolves to Yes.",
 "poly_rules": "Will the Ottawa Senators win the 2026-27 NHL Atlantic Division? This market will resolve according to the team that wins the Atlantic Division in the 2026-27 NHL regular season, as determined by the final official NHL standings, including any official NHL tiebreakers.\n\nIf at any point it becomes impossible for a listed team to win the Atlantic Division (e.g. mathematical elimination before the end of the regular season), the associated market will resolve to \"No\".\n\nIf the 2026-27 NHL regular season is cancelled, or has not been completed by June 30, 2027, 11:59 PM ET, this market will resolve to \"Other\".\n\nThe resolution source for this market will be official information from the NHL; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXNPB | ^npb-japan-series-champion-2026",
+"status": "approved",
+"kalshi_q": "Japan NPB Champion — Hokkaido Nippon-Ham Fighters",
+"poly_q": "Will the Hokkaido Nippon-Ham Fighters win the 2026 Japan Series?",
+"kalshi_rules": "Will Hokkaido Nippon-Ham Fighters win the Japan NPB? If the Hokkaido Nippon-Ham Fighters are the 2026 Japan NPB champion, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will the Hokkaido Nippon-Ham Fighters win the 2026 Japan Series? This market will resolve according to the club that wins the 2026 Japan Series (the Nippon Professional Baseball championship series).\n\nIf at any point it becomes impossible for a listed club to win the 2026 Japan Series (e.g., they are eliminated), the corresponding market will resolve to \"No\".\n\nIf the 2026 NPB postseason is cancelled, postponed after November 30, 2026, 11:59 PM ET, or there is otherwise no Japan Series champion declared within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source will be official information from NPB (https://npb.jp); however, a consensus of credible reporting may also be used."
 }
 ]

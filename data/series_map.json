@@ -2414,6 +2414,36 @@
    "status": "rejected",
    "note": "Same as KXTRUMPMENTION: mention-count markets whose counting rules can't be compared (Polymarket's are in a separate PDF).",
    "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNPB",
+   "polymarket_event_slug_regex": "^npb-japan-series-champion-2026",
+   "status": "approved",
+   "note": "Both: the 2026 Japan Series (NPB) champion.",
+   "caveat": "Polymarket Other if the postseason runs past Nov 30, 2026.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXUELFTTS",
+   "polymarket_event_slug_regex": "^uel-.+-\\d{4}-\\d{2}-\\d{2}",
+   "status": "approved",
+   "note": "Both: first goal credited to the team. Kalshi counts the whole game incl. extra time, Polymarket 90 min + stoppage; Europa League league-phase matches have no extra time.",
+   "caveat": "Knockout ties from Feb 2027 can go to extra time.",
+   "polymarket_market_kinds": [
+    "first-to-score-away",
+    "first-to-score-home",
+    "first-to-score-neither"
+   ],
+   "review_by": "2027-01-28",
+   "on_lapse": "reject",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXEARNINGSMENTIONGM",
+   "polymarket_event_slug_regex": "^what-will-general-motors-say",
+   "status": "rejected",
+   "note": "Mention market: Kalshi's counting rules (plural / possessive forms) vs Polymarket's separate PDF can't be compared. Showed a 132% 'return'.",
+   "rules_read": "2026-10-13"
   }
  ]
 }

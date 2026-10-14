@@ -1107,6 +1107,13 @@ def run():
         _mm = re.search(r"polymarket\.com/event/[^/?#]+/([^/?#]+)", str(result.at[idx, "url_b"] or ""))
         _mslug = _mm.group(1) if _mm else None
         st, _e = _map_status(_fams, ser, slug, pm_market_slug=_mslug)
+        # Mention markets ("What will X say?") are rejected by rule until both
+        # rule sets can be read side by side: Kalshi counts plural / possessive
+        # forms, Polymarket's counting rules live in a separate PDF, and the
+        # thresholds differ ("ICE" vs "ICE 3+ times"; GM "Tariff" showed a
+        # 132% 'return'). New companies / events appear every week.
+        if st == "unreviewed" and ser and "MENTION" in str(ser):
+            st = "rejected"
         # Rules-text template (2026-10-10): an unreviewed soccer BTTS /
         # correct-score pair whose two rules texts state the same standard
         # period clause counts as checked ('template'); see
@@ -1381,13 +1388,16 @@ def run():
     # Order-book detail the page never reads (2026-10-13: game spreads /
     # totals took the board to ~4,900 rows / 9.7 MB, a third of it these).
     # The page uses only depth_*_max_at_3pp ("Tradeable"); the full depth
-    # stays in data/raw/orderbook_depth.csv.
+    # stays in data/raw/orderbook_depth.csv. The "Buy Yes on X at ..." action
+    # text (nothing reads it) is kept on basket rows only (2026-10-14:
+    # 7,400 rows, 0.5 MB).
     def _board_field(k):
         if k.startswith("depth_"):
             return k.endswith("_max_at_3pp")
         return k not in ("fillable_bid_a", "fillable_bid_b", "fillable_no_bid_a", "fillable_no_bid_b",
                          "fee_model", "arb_uses_live_book")
-    records = [{k: sv for k, v in row.items() if _board_field(k) and (sv := _slim(v)) is not None}
+    records = [{k: sv for k, v in row.items() if _board_field(k) and (sv := _slim(v)) is not None
+                and (k != "action" or row.get("arb_type") in ("guaranteed", "unverified"))}
                for row in result.to_dict(orient="records")]
     _write_job_summary(result)
     for f in _lapsing_approvals():
