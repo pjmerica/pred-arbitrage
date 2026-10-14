@@ -2260,7 +2260,9 @@
    "polymarket_event_slug_regex": "^venezuela-leader-end-of-2026",
    "status": "approved",
    "note": "Both: who officially holds the office of head of state of Venezuela on Dec 31, 2026 (Kalshi 10:00 AM ET, Polymarket 12 PM ET; Polymarket falls back to the UN protocol list).",
-   "rules_read": "2026-10-13"
+   "rules_read": "2026-10-14",
+   "safe_yes": "kalshi",
+   "caveat": "Definitions can split (re-read 2026-10-14 after an 11pp book gap): Kalshi's published clarification counts Maduro (sworn in, still listed by state institutions) and excludes Delcy Rodriguez as only acting president; Polymarket counts whoever official government information confirms as head of state and does not exclude an acting president. If Polymarket picks Rodriguez while Kalshi picks Maduro, YES Polymarket + NO Kalshi (Maduro) loses both legs; YES Kalshi + NO Polymarket is hedged."
   },
   {
    "kalshi_series": "KXGRAMAOTY",

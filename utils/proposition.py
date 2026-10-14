@@ -170,6 +170,25 @@ def _same_team(x, y) -> bool:
     return bool(x[1] & y[1])
 
 
+def _initial_conflict(a, b) -> bool:
+    """Kalshi disambiguates same-city clubs with a trailing capital initial
+    ("Tokyo V" = Tokyo Verdy, "New York I" = Islanders). Name matching drops
+    one-letter tokens, so "Tokyo V wins by more than 2.5" paired with
+    "Spread: FC Tokyo (-2.5)" (2026-10-14). Only that trailing form counts
+    (one-letter words inside names - "Deportivo A Coruna", "D.C. United",
+    "Defensa y Justicia" - are left alone): its letter must start a word the
+    other name adds."""
+    for x, y in ((a, b), (b, a)):
+        m = re.search(r"(?:^|\s)([A-Z])\s*$", str(x or "").strip())
+        if not m:
+            continue
+        tx = re.findall(r"[a-z0-9]+", fold(x)); ty = re.findall(r"[a-z0-9]+", fold(y))
+        extra = [w for w in ty if w not in tx]
+        if not any(w.startswith(m.group(1).lower()) for w in extra):
+            return True
+    return False
+
+
 def _teams_compatible(ta, tb) -> bool:
     (a1, a2), (b1, b2) = ta, tb
     return bool((_same_team(a1, b1) and _same_team(a2, b2)) or (_same_team(a1, b2) and _same_team(a2, b1)))
@@ -361,14 +380,14 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
         if oa[0] == "winner":
             if (oa[1] == "draw") != (ob[1] == "draw"):
                 return "winner: draw vs a team"
-            if oa[1] != "draw" and _club_sim(oa[1], ob[1]) < (70, 0):
+            if oa[1] != "draw" and (_club_sim(oa[1], ob[1]) < (70, 0) or _initial_conflict(oa[1], ob[1])):
                 return "winner: different team"
         elif oa[0] == "total" and oa[1] != ob[1]:
             return f"total line {oa[1]} vs {ob[1]}"
         elif oa[0] == "spread":
             if oa[2] != ob[2]:
                 return f"spread line {oa[2]} vs {ob[2]}"
-            if _club_sim(oa[1], ob[1]) < (70, 0):
+            if _club_sim(oa[1], ob[1]) < (70, 0) or _initial_conflict(oa[1], ob[1]):
                 return "spread: different team"
     fa, fb = first_scorer(a), first_scorer(b)
     if (fa is None) != (fb is None):

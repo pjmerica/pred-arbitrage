@@ -2601,8 +2601,16 @@ def match_soccer_fixtures(dfs: dict) -> pd.DataFrame:
             "url_a": r.url, "url_b": c.url, "volume_a": getattr(r, "volume", None),
             "volume_b": getattr(c, "volume", None), "fuzzy_score": 100.0,
         })
-    if ambiguous:
-        print(f"    ({ambiguous} soccer markets skipped: more than one Polymarket candidate)")
+    # One Polymarket market claimed by two Kalshi markets ("Tokyo V wins by
+    # more than 2.5" and "Tokyo wins by more than 2.5" both -> "Spread: FC
+    # Tokyo (-2.5)", 2026-10-14) means one of them is wrong: pair neither.
+    from collections import Counter as _Counter
+    _uses = _Counter(pp["market_id_b"] for pp in pairs)
+    clashes = sum(1 for pp in pairs if _uses[pp["market_id_b"]] > 1)
+    pairs = [pp for pp in pairs if _uses[pp["market_id_b"]] == 1]
+    if ambiguous or clashes:
+        print(f"    ({ambiguous} soccer markets skipped: more than one Polymarket candidate; "
+              f"{clashes} dropped: two Kalshi markets claimed one Polymarket market)")
     return pd.DataFrame(pairs)
 
 

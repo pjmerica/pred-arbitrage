@@ -154,6 +154,7 @@ from utils.proposition import incompatibility, kalshi_game_date, slug_game_date
     ("2028 UEFA Euros Qualifiers — Northern Ireland", "Will Northern Ireland win the UEFA EURO 2028?"),
     ("Dancing with the Stars Season 35 — Finalists — Maura Higgins", "Will Maura Higgins win Dancing With the Stars: Season 35?"),
     ("Worlds 2026 Quarterfinalists — Hanwha Life Esports", "Will Hanwha Life Esports win Worlds 2026?"),
+    ("Tokyo V vs Tokyo: Spread — Tokyo V wins by more than 2.5 goals", "Spread: FC Tōkyō (-2.5)"),
     ("What will Trump say during his rally in Arizona? — ICE", "Will Trump say \"ICE\" 3+ times during his Midterm Rally in Arizona?"),
     ("Will the Arizona Cardinals make the 2027 NFL Playoffs?", "Will the Arizona Cardinals win the 2027 NFL league championship?"),
     ("2026 FIFA World Cup Winner — Argentina", "Will Argentina reach the 2026 FIFA World Cup final?"),
