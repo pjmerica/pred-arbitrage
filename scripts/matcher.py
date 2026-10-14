@@ -2156,6 +2156,15 @@ _SUBJ_NEUTRAL = {"division", "lord", "annual", "series", "music", "congress", "f
                  "wnba", "ncaa", "ap", "district", "trophy", "memorial", "world", "league", "race", "person"}
 
 
+def _kalshi_event_year(event_ticker):
+    """Year in a Kalshi event code: 'KXCONMEBOLLIB-26' -> 2026,
+    'KXMLSSCORE-26OCT14...' -> 2026, 'KXUFCTITLE-LHW27' -> None (not a
+    leading year)."""
+    m = re.search(r"-(\d\d)(?:[A-Z]{3}\d\d)?(?:-|$)", str(event_ticker) + "-")
+    # Codes from 2040 on are Kalshi's "no deadline" placeholders (-45JAN01).
+    return 2000 + int(m.group(1)) if m and int(m.group(1)) < 40 else None
+
+
 def _kalshi_event_date(event_ticker):
     """Date in a Kalshi event code ('KXTRUMPPARDONS-29JAN21' -> 2029-01-21)."""
     from datetime import date as _date
@@ -2241,6 +2250,18 @@ def match_subject_events(dfs: dict, claimed=None) -> pd.DataFrame:
             st = _sm.status(fams, d["series"], e)[0] if fams else "unreviewed"
             if st == "rejected":
                 continue
+            # Edition year (2026-10-14): Kalshi KXCONMEBOLLIB-26 (2026 Copa
+            # Libertadores) paired with Polymarket "Will Flamengo win the 2027
+            # Copa Libertadores?" once the 2026 event dropped those clubs - the
+            # wording rule ignores years. The Polymarket years (question +
+            # slug) must include Kalshi's year or the one before (a season can
+            # be named by its first year: Kalshi KXHEISMAN-27 = "2026 Heisman").
+            ky = _kalshi_event_year(ev)
+            if ky:
+                pys = {int(y) for y in re.findall(r"\b(20\d\d)\b", " ".join(
+                    [str(r_.question) for r_ in hits.values()] + [re.sub(r"-\d{6,}$", "", e).replace("-", " ")]))}
+                if pys and not pys & {ky, ky - 1}:
+                    continue
             if st != "approved":
                 # Kalshi event code with a date ("-29JAN21") vs the Polymarket end date.
                 kd = _kalshi_event_date(ev)

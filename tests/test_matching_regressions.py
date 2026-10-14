@@ -1060,3 +1060,18 @@ def test_game_lines_periods_and_team_totals():
     assert got["KXNFL2HTOTAL-26OCT18DALGB-21"] == "h2t"
     assert got["KXNFLTEAMTOTAL-26OCT18DALGB-GB24"] == "tt"
     assert "KXNFL1HTOTAL-26OCT18DALGB-45" not in got
+
+
+def test_subject_events_edition_year():
+    """Kalshi KXCONMEBOLLIB-26 (2026 Copa Libertadores) must not pair with
+    Polymarket's 2027 edition; Kalshi KXHEISMAN-27 (2026-27 season) still pairs
+    with Polymarket's '2026 Heisman Trophy'."""
+    from scripts.matcher import match_subject_events
+    names = ["Flamengo", "Palmeiras", "Fluminense"]
+    dfs = _subject_frames(_kal("KXTESTCOPA-26", "Copa Libertadores Champion", names),
+                          _pol("copa-libertadores-2027-winner", "Will {} win the 2027 Copa Libertadores?", names))
+    assert match_subject_events(dfs).empty
+    names = ["Jeremiah Smith", "Arch Manning", "Julian Sayin"]
+    dfs = _subject_frames(_kal("KXTESTHEISMAN-27", "Heisman Trophy Winner", names),
+                          _pol("ncaa-football-2026-heisman-award-winner", "Will {} win the 2026 Heisman Trophy?", names))
+    assert len(match_subject_events(dfs)) == 3
