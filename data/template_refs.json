@@ -1438,5 +1438,13 @@
 "poly_q": "Will the Arizona Cardinals make the 2027 NFL Playoffs?",
 "kalshi_rules": "Will Arizona be one of the 2026-27 Pro Football playoff qualifiers? If Arizona is one of the Pro Football playoff qualifiers, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
 "poly_rules": "Will the Arizona Cardinals make the 2027 NFL Playoffs? This market will resolve to \"Yes\" if the listed team clinches a spot in the 2026-27 NFL Playoffs per the rules of the NFL. Otherwise, the associated market will resolve to \"No\".\n\nIf at any point it becomes impossible for the listed team to advance to the 2026-27 NFL Playoffs (e.g. they are mathematically eliminated), the associated market will resolve to \"No\". Any tiebreaker will not be considered part of the NFL Playoffs.\n\nIf the 2026-27 NFL Playoffs are cancelled, postponed to begin after January 24, 2027, 11:59 PM ET, or the full 14-team playoff field has not been officially confirmed by the NFL within that timeframe, this market will resolve to \"No\".\n\nThe resolution source for this market will be official information from the NFL and/or the clinching team; however, a consensus of credible reporting may also be used."
+},
+{
+"family": "KXUEFANLGROUPWIN | ^uefa-nations-league-2026-27-group-[a-d]\\d-winner",
+"status": "approved",
+"kalshi_q": "UEFA Nations League: Group A3 Winner — Spain",
+"poly_q": "Will Spain win 2026-27 Nations League Group A3?",
+"kalshi_rules": "Will Spain finish first in UEFA Nations League Group A3? If Spain finish first in Group A3 in the 2026-27 UEFA Nations League, then the market resolves to Yes. Kalshi is not affiliated, associated, authorized, endorsed by, or in any way officially connected with the Governing League. All trademarks, logos, and brand names are the property of their respective owners.",
+"poly_rules": "Will Spain win 2026-27 Nations League Group A3? This market will resolve according to the team that wins Group A3 at the 2026-27 UEFA Nations League.\n\nIf multiple teams tie as group winners, this market will resolve according to the official tiebreak procedure of the 2026-27 UEFA Nations League.\n\nIf the 2026-27 UEFA Nations League is cancelled, postponed after December 1, 2026, 11:59 PM ET, or there is otherwise no winner declared for this group within that timeframe, this market will resolve to \"Other\".\n\nThe primary resolution source for this market will be official information from UEFA; however, a consensus of credible reporting may also be used."
 }
 ]
