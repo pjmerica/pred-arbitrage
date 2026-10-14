@@ -2391,6 +2391,29 @@
    "review_by": "2026-12-20",
    "on_lapse": "reject",
    "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLMETROPOLITAN",
+   "polymarket_event_slug_regex": "^nhl-2026-27-metropolitan-division-winner",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL Metropolitan Division winner (final official standings, NHL tiebreakers).",
+   "caveat": "Polymarket Other if the regular season is cancelled or unfinished by Jun 30, 2027.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNHLATLANTIC",
+   "polymarket_event_slug_regex": "^nhl-2026-27-atlantic-division-winner",
+   "status": "approved",
+   "note": "Both: the 2026-27 NHL Atlantic Division winner (final official standings, NHL tiebreakers).",
+   "caveat": "Polymarket Other if the regular season is cancelled or unfinished by Jun 30, 2027.",
+   "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXTRUMPMENTIONB",
+   "polymarket_event_slug_regex": "^what-will-trump-say-during",
+   "status": "rejected",
+   "note": "Same as KXTRUMPMENTION: mention-count markets whose counting rules can't be compared (Polymarket's are in a separate PDF).",
+   "rules_read": "2026-10-13"
   }
  ]
 }

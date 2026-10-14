@@ -127,13 +127,14 @@ def collect():
                        "(rate limiting, or an API change).")
 
     # Held back by a decided rule, so nothing for a human to do: YES on the
-    # narrower window (window_mismatch - never a hedge, whatever else is
-    # flagged), or only the post-election settling period. The futures
+    # narrower window (window_mismatch) or on the crypto leg that can lose
+    # both (basis_risk_direction) - never a hedge, whatever else is flagged -
+    # or only the post-election settling period. The futures
     # pairs keep a YES-Polymarket window_mismatch basket for months.
-    decided = {"window_mismatch", "election_settling"}
+    decided = {"window_mismatch", "election_settling", "basis_risk_direction"}
     held = [r for r in rows if r.get("arb_type") == "unverified" and (r.get("guaranteed_return_pct") or 0) > 0
             and not (r.get("suspicion_reasons") and (set(r["suspicion_reasons"]) <= decided
-                                                     or "window_mismatch" in r["suspicion_reasons"]))]
+                                                     or {"window_mismatch", "basis_risk_direction"} & set(r["suspicion_reasons"])))]
     if held:
         act.append(f"**{len(held)} profitable baskets held back as unverified:**\n" + "\n".join(
             f"  - {r.get('guaranteed_return_pct')}% — {str(r.get('question_a'))[:60]!r} vs "
