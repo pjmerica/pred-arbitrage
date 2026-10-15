@@ -132,7 +132,15 @@ def compute_arb(prob_a, prob_b, fee_a, fee_b,
     the Somaliland and Espaillat incidents that drove this design.
     """
     prob_a, prob_b = float(prob_a), float(prob_b)
-    raw_gap = abs(prob_a - prob_b)
+    # A display price outside the live book is no longer current: Kalshi's
+    # last trade can be days old on a thin market (Liverpool spread: last
+    # 2c, book 41-43c, a fake 40pp gap). The dashboard shows asks, not
+    # display prices, so this only affects the gap columns (2026-10-15).
+    def _current(p, bid, ask):
+        if bid is not None and ask is not None and 0 < bid <= ask < 1 and not (bid <= p <= ask):
+            return (bid + ask) / 2
+        return p
+    raw_gap = abs(_current(prob_a, bid_a, ask_a) - _current(prob_b, bid_b, ask_b))
     net_gap = raw_gap - fee_a - fee_b
 
     # Track which sides have REAL fetched bid/ask vs inferred fallback.

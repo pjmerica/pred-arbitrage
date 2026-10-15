@@ -199,6 +199,10 @@ own generated files, but master's `series_map.json` (the human edit).
   - Kalshi: last price;
   - Polymarket: bid/ask midpoint, never `last_trade_price` (the Espaillat incident);
   - PredictIt: midpoint.
+
+  The dashboard no longer shows these (its price cells are live asks); they only feed the
+  gap columns. Where a display price sits outside the live bid/ask (Kalshi's last trade can be
+  days old), `compute_arb` uses the book midpoint for the gap instead.
 - `fillable_ask_*` / `fillable_no_ask_*` are the **live order book** prices, and the basket
   math uses only these (the Somaliland incident: midpoint math overstated a basket by 3 pp).
 - Polymarket NO is its own token with its own book: fetch it, don't infer `1 − YES bid`.

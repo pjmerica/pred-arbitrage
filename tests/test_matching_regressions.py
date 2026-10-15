@@ -1110,3 +1110,16 @@ def test_stat_leader_category_gate():
     assert incompatibility("Pro Basketball Assists Per Game (APG) Leader — Anthony Edwards", p) is not None
     assert incompatibility("Champions League Golden Boot — Harry Kane",
                            "Will Harry Kane be the top goalscorer in the 2026-27 Champions League?") is None
+
+
+def test_gap_ignores_display_price_outside_the_book():
+    """Kalshi's last trade can be days old: Liverpool -1.5 showed last 2c
+    against a 41-43c book, a fake 40pp gap vs Polymarket's 42c (2026-10-15).
+    A display price inside the book is still used as is."""
+    from scripts.arb_scanner import compute_arb
+    stale = compute_arb(0.02, 0.42, 0.02, 0.02, bid_a=0.41, ask_a=0.43, bid_b=0.41, ask_b=0.43)
+    assert stale["raw_gap_pp"] == 0.0
+    inside = compute_arb(0.425, 0.42, 0.02, 0.02, bid_a=0.41, ask_a=0.43, bid_b=0.41, ask_b=0.43)
+    assert inside["raw_gap_pp"] == 0.5
+    no_book = compute_arb(0.02, 0.42, 0.02, 0.02)
+    assert no_book["raw_gap_pp"] == 40.0
