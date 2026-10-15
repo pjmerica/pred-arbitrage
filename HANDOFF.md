@@ -244,8 +244,9 @@ grades them REAL / MARGINAL / THIN / GONE / WRONG_PAIR at 0/1/3 pp slippage.
 
 ## 6. Open items
 
-- **Cron reliability:** see §1. A real fix needs a trigger outside GitHub's scheduler (owner's
-  call).
+- **Cron reliability:** see §1. Owner decided 2026-10-15 not to add an outside trigger
+  (external cron service, local scheduled task or a sleeping runner); the board updates when
+  GitHub's cron fires, about 4 times a day. Don't propose it again.
 - **Repo history is ~800 MB** (old committed scrapes). Shrinking it needs a history rewrite
   and force-push (owner's call).
 - **Lapsing approvals** (the health issue lists each 14 days ahead):
