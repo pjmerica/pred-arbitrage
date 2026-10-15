@@ -1,3 +1,5 @@
+> **Historical snapshot** - the June 2026 reviewer notes. Kept for context; it is not maintained and parts are out of date. Current state: [../HANDOFF.md](../HANDOFF.md).
+
 # Notes for the Reviewer — pred-arbitrage
 
 **Audience**: senior engineer doing a code-correctness + onboarding +
@@ -10,7 +12,7 @@ excluded).
 cron at 12:07 and 00:07 UTC (re-price hourly at :17). Most recent manual run as of writing:
 [GitHub Actions](https://github.com/pjmerica/pred-arbitrage/actions).
 
-> **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:
+> **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW_2026-09.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:
 > - the matching overhaul (structured-only `guaranteed`, `unverified` tier, `utils/proposition.py` outcome signature, `utils/election_shapes.py` allowlist);
 > - the stake-split fix (dollars ∝ price);
 > - deep links;

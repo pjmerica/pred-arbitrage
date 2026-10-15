@@ -1,3 +1,5 @@
+> **Historical snapshot** - the 2026-09-23 diagnosis of the fake-arb board and the plan that the September overhaul carried out. Kept for context; it is not maintained and parts are out of date. Current state: [../HANDOFF.md](../HANDOFF.md).
+
 # Matching Review — why the board shows fake arbs and wrong links
 
 **Date:** 2026-09-23 · **Data reviewed:** live `docs/arb_data.js` from CI refresh `2026-09-23T17:34Z`
@@ -85,12 +87,12 @@
 
 | # | Failure class | Example (A ↔ B) | Where it comes from |
 |---|---|---|---|
-| 16 | Placement vs winner | Kalshi "Big Brother S28 — **2nd place** — Taylor Brown" ↔ PM "Will Taylor Brown **win** Big Brother S28?" | Fuzzy matcher. `rank_token()` only knows `#N`/top/first, not "2nd place", "3rd place" or "Top 3 finishers" ([matcher.py:605](scripts/matcher.py#L605)) |
+| 16 | Placement vs winner | Kalshi "Big Brother S28 — **2nd place** — Taylor Brown" ↔ PM "Will Taylor Brown **win** Big Brother S28?" | Fuzzy matcher. `rank_token()` only knows `#N`/top/first, not "2nd place", "3rd place" or "Top 3 finishers" ([matcher.py:605](../scripts/matcher.py#L605)) |
 | 13 | Threshold strike mismatch | Kalshi "XRP above **$3.00**" ↔ PM "XRP reach **$3.20**" | Threshold matcher `max(2.0, …)` tolerance. **Fixed in the uncommitted working tree; not deployed** |
-| 8 | Margin-of-victory vs party-win (political path) | PM "Republican wins TN Senate **by 45% or more**" ↔ PI "Which party wins TN Senate — Republican" | `political_contract_type()` sees "republican party" → `party_winner` ([matcher.py:150](scripts/matcher.py#L150)); `best_prob` then picks the highest-liquidity market for the race_id, which is now a margin market |
-| 7 | Margin-of-victory vs party-win (elections path) | Kalshi "Dem wins AZ-02" ↔ PM "Dem candidate wins AZ-02 **by 0%–3%**" | `_load_polymarket_general` treats *any* question containing "democratic" as the Dem-win market and keeps the highest-liquidity one ([elections.py:391](scripts/elections.py#L391)) |
-| 5 | "Closest race" / "within 5%" vs candidate-win | Kalshi "Kansas Senate winner — Adam Hamilton" ↔ PM "Will the Kansas Senate race be **within 5%**?" | `match_political` only rejects when types *differ*. Both classify as `other`, and `other == other` passes ([matcher.py:282](scripts/matcher.py#L282)) |
-| 3 | Full-match vs 2nd-half prop | "Barcelona vs Paris FC: BTTS" ↔ "…Both Teams to Score **in Second Half**" | Fuzzy. `sub_bet_type()` knows "first half" but not "second half" ([matcher.py:665](scripts/matcher.py#L665)) |
+| 8 | Margin-of-victory vs party-win (political path) | PM "Republican wins TN Senate **by 45% or more**" ↔ PI "Which party wins TN Senate — Republican" | `political_contract_type()` sees "republican party" → `party_winner` ([matcher.py:150](../scripts/matcher.py#L150)); `best_prob` then picks the highest-liquidity market for the race_id, which is now a margin market |
+| 7 | Margin-of-victory vs party-win (elections path) | Kalshi "Dem wins AZ-02" ↔ PM "Dem candidate wins AZ-02 **by 0%–3%**" | `_load_polymarket_general` treats *any* question containing "democratic" as the Dem-win market and keeps the highest-liquidity one ([elections.py:391](../scripts/elections.py#L391)) |
+| 5 | "Closest race" / "within 5%" vs candidate-win | Kalshi "Kansas Senate winner — Adam Hamilton" ↔ PM "Will the Kansas Senate race be **within 5%**?" | `match_political` only rejects when types *differ*. Both classify as `other`, and `other == other` passes ([matcher.py:282](../scripts/matcher.py#L282)) |
+| 3 | Full-match vs 2nd-half prop | "Barcelona vs Paris FC: BTTS" ↔ "…Both Teams to Score **in Second Half**" | Fuzzy. `sub_bet_type()` knows "first half" but not "second half" ([matcher.py:665](../scripts/matcher.py#L665)) |
 | 3 | Monthly max (touch) vs price on a date (level) | "How high will XRP get in **September** — above $1.70" ↔ "XRP **above $1.70 on September 25**" | Fuzzy path. The touch-vs-level guard exists only in the threshold matcher |
 | 2 | Different tournament | Chess Olympiad **Women's** ↔ **Open** | Fuzzy. No gender/division guard |
 | 1 | Opposite outcome | "League Phase **Top** Finisher — Real Madrid" ↔ "Real Madrid finish **last**" | Fuzzy |
@@ -105,8 +107,8 @@
 
 | Platform | What we link to | Problem |
 |---|---|---|
-| Polymarket | `polymarket.com/event/{event_slug}` ([polymarket.py:709](scrapers/polymarket.py), [elections.py:92](scripts/elections.py#L92)) | Multi-market events (XRP price ladder, DWTS winner, margin-of-victory buckets) land on a page with many options. The user can't tell which one we priced. `market_slug` is already scraped but not used in the URL. |
-| Kalshi | `kalshi.com/markets/{series}/{event}` ([kalshi.py:264](scrapers/kalshi.py)) | Correct event, but an event is a ladder or candidate list. The dashboard doesn't show the exact strike or candidate label (`yes_sub_title`) next to the link. |
+| Polymarket | `polymarket.com/event/{event_slug}` ([polymarket.py:709](../scrapers/polymarket.py), [elections.py:92](../scripts/elections.py#L92)) | Multi-market events (XRP price ladder, DWTS winner, margin-of-victory buckets) land on a page with many options. The user can't tell which one we priced. `market_slug` is already scraped but not used in the URL. |
+| Kalshi | `kalshi.com/markets/{series}/{event}` ([kalshi.py:264](../scrapers/kalshi.py)) | Correct event, but an event is a ladder or candidate list. The dashboard doesn't show the exact strike or candidate label (`yes_sub_title`) next to the link. |
 | PredictIt | `predictit.org/markets/detail/{market_id}` | OK. It's a market with several contracts, so the contract name must be displayed. |
 | Election rows | Built in `elections.py`, not the scrapers | Can point at a genuinely **different** market (margin buckets, see §2), not just the right event. |
 
@@ -114,7 +116,7 @@
 
 ## 4. History of code changes
 
-Full per-commit detail from 2026-06-20 onward is in [CHANGELOG.md](CHANGELOG.md). This section condenses all 221 commits into phases and records the lesson each phase taught.
+Full per-commit detail from 2026-06-20 onward is in [CHANGELOG.md](../CHANGELOG.md). This section condenses all 221 commits into phases and records the lesson each phase taught.
 
 ### Phase 1 — Build-out (Apr 13–14)
 - `7bbf10f` Initial scanner: Kalshi/Polymarket/PredictIt scrapers → race_id + fuzzy (`token_sort_ratio`) matcher → arb math → static dashboard.
@@ -223,7 +225,7 @@ P0 items 1–5 (a few hours) → golden test set (#13) so each later step is mea
 ---
 
 ## Appendix — minor findings
-- PredictIt candidate rows from `elections.py` have `market_id = None`, so real PI quotes can't be joined and those pairs are always `one-sided` ([elections.py:666](scripts/elections.py#L666)).
-- `_load_polymarket_general` requires Dem + Rep on the same platform, but the leg it keeps is still chosen by *event* liquidity (`liquidity` is event-level in the scraper, [polymarket.py:724](scrapers/polymarket.py)). Every market in a margin-bucket event ties, so the choice among them is arbitrary.
+- PredictIt candidate rows from `elections.py` have `market_id = None`, so real PI quotes can't be joined and those pairs are always `one-sided` ([elections.py:666](../scripts/elections.py#L666)).
+- `_load_polymarket_general` requires Dem + Rep on the same platform, but the leg it keeps is still chosen by *event* liquidity (`liquidity` is event-level in the scraper, [polymarket.py:724](../scrapers/polymarket.py)). Every market in a margin-bucket event ties, so the choice among them is arbitrary.
 - `scrutiny.py` only drops below a 50% rules-text similarity. SequenceMatcher on boilerplate-heavy rules text rarely scores that low, even for different questions.
 - Local `data/processed/matched_pairs.csv` and `depth_targets.csv` date from Jul 5. They're gitignored, so CI regenerates them, but local debugging against them is misleading.

@@ -181,8 +181,8 @@ def fetch_all_events():
        SCRAPE_PASSES (oldest / newest / most-active / deepest /
        ending-soonest) and dedup by event id. ~5x the request count
        (~100 requests, still ~1 min) for coverage of every window that
-       matters. The clob.polymarket.com/markets full-universe rewrite in
-       AUDIT.md remains the eventual proper fix.
+       matters. (Superseded 2026-09-25: /events/keyset with after_cursor
+       is the primary path; these passes are the fallback.)
 
     Defensive: skip persistently-failing pages but stop a pass on 3
     consecutive skips or at the 2000-offset cap.

@@ -34,7 +34,7 @@ concat. Each row is tagged category="Elections".
 
 Why it lives in pred-arb rather than being imported from polling-agg:
 keeping the repos independent avoids a runtime dependency. The cost is
-that the two implementations can drift; see AUDIT.md cross-repo to-do.
+that the two implementations can drift (shared files: HANDOFF.md section 4).
 """
 
 import re

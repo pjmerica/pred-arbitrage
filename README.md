@@ -107,8 +107,13 @@ Open `docs/index.html` directly to view the dashboard.
 
 ## Documentation
 
-- [`HANDOFF.md`](./HANDOFF.md) — full architecture, matcher guards,
-  scrutiny pipeline, file map, gotchas, failure semantics.
+- [`HANDOFF.md`](./HANDOFF.md): current state; start here. Covers operating
+  the pipeline, the rules, the pipeline itself and the matchers.
+- [`CHANGELOG.md`](./CHANGELOG.md): every change and why.
+- [`SCRAPER_NOTES.md`](./SCRAPER_NOTES.md): platform API quirks.
+- [`tools/README.md`](./tools/README.md): the CI checks.
+- [`history/`](./history/): earlier handoffs, audits and incident reviews
+  (not maintained).
 
 ## License
 

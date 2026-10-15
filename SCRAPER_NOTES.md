@@ -10,7 +10,7 @@ of being forgotten between sessions and re-discovered weeks later. The
 goal: a new person reading the codebase shouldn't need to re-probe any
 of these.
 
-> **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:
+> **2026-09-23/24 update — read [HANDOFF.md](HANDOFF.md) (and, for the history, [history/MATCHING_REVIEW_2026-09.md](history/MATCHING_REVIEW_2026-09.md)) before anything below.** Parts of this file predate these changes:
 > - the matching overhaul (structured-only `guaranteed`, `unverified` tier, `utils/proposition.py` outcome signature, `utils/election_shapes.py` allowlist);
 > - the stake-split fix (dollars ∝ price);
 > - deep links;
@@ -189,8 +189,8 @@ at scrape time (~7,700 rows out of 44k on 2026-06-21).
   `fetch_depth.py`.
 - **clob.polymarket.com/markets** (not currently used) — paginated
   metadata feed for the full ~55k market universe. Real `next_cursor`
-  that advances. This is the long-term fix for the offset cap below;
-  rewrite tracked in `AUDIT.md` to-do #1.
+  that advances. Was the planned fix for the offset cap below; not
+  needed since `/events/keyset` turned out to work (2026-09-25).
 
 ### Gamma pagination — offset capped at 2000
 
@@ -360,11 +360,12 @@ fetch. `fetch_depth.py` skips PredictIt entirely; `tools/deep_check.py`
 categorizes PredictIt-leg pairs as `PREDICTIT_LEG` (can't verify
 deeper).
 
-### 12% effective fees
+### Fees: 10% of profit + 5% withdrawal
 
-5% on profits + ~7% effective withdrawal fee (no withdrawal under
-$10; 5% withdrawal fee). Any PredictIt-leg arb needs a much bigger
-gap to clear fees than Kalshi/Polymarket (both 2%).
+`utils/fees.py` charges a PredictIt leg 10% of its profit (1 − p per
+contract) plus a 5% withdrawal on the $1 payout. That's far more than
+Kalshi (0.07 × multiplier × P(1−P)) or Polymarket (rate × p(1−p)), so a
+PredictIt-leg arb needs a much bigger gap to clear fees.
 
 ---
 

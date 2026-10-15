@@ -534,7 +534,7 @@ def match_fuzzy(dfs: dict) -> pd.DataFrame:
                         # division, fixture teams/date, day-vs-window,
                         # storm category or the named person — see
                         # utils/proposition.py. This single check covers
-                        # every fake-pair class in MATCHING_REVIEW.md that
+                        # every fake-pair class in history/MATCHING_REVIEW_2026-09.md that
                         # the per-incident guards below missed.
                         if incompatibility(str(row_a.get("question", "")),
                                            str(row_b.get("question", "")),

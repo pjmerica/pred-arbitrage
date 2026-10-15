@@ -1,0 +1,850 @@
+> **Historical snapshot** - the handoff as it stood until 2026-10-14. Kept for context; it is not maintained and parts are out of date. Current state: [../HANDOFF.md](../HANDOFF.md).
+
+# Handoff — Pred Arbitrage
+
+**Last updated:** 2026-09-24
+**Status:** Live dashboard at https://pjmerica.github.io/pred-arbitrage/.
+GitHub Actions runs the full pipeline twice daily (12:07 + 00:07 UTC) and
+pushes refreshed `docs/arb_data.js` back to master.
+
+This repo is the generalized sibling of `polling-agg-2026`. Where
+polling-agg focuses on US elections only and pulls polling alongside
+markets, pred-arbitrage scrapes **every active market** on Kalshi /
+Polymarket / PredictIt and runs cross-platform arb matching across the
+whole universe — sports, entertainment, crypto, politics, weather, etc.
+
+If you're picking this up cold, read this top-to-bottom once. Most of
+the architectural decisions here mirror polling-agg; the "Gotchas"
+section captures the differences and what's specific to this side.
+
+> ## Read first: 2026-09-23/24 matching overhaul
+>
+> The board had drifted for 2.5 months: about 59 of 69 "guaranteed" arbs paired two different questions, and links opened the wrong prop. **[MATCHING_REVIEW.md](MATCHING_REVIEW_2026-09.md)** has the diagnosis, the history, and the long-term plan. [CHANGELOG.md](../CHANGELOG.md) (2026-09-23/24) has every fix. The model you need:
+>
+> - **Only structured match types can be `guaranteed`** (`VERIFIED_MATCH_TYPES` in `scripts/arb_scanner.py`: threshold, tournament-*, primary-nominee, general). Fuzzy and political baskets show as `unverified`: the math is visible, but they are never labelled locked profit.
+> - **Fuzzy pairs must pass `utils/proposition.py incompatibility()`.** Both sides must agree on placement (win / 2nd / top-N / finalist / qualify / last), period, division, fixture teams and date, day-vs-window, storm category, "or above" vs "exactly", exact score and full person name. **When a new fake class appears, add a field there, not another one-off guard in `match_fuzzy`.**
+> - **Election party legs go through `utils/election_shapes.py`** (identical copy in polling-agg). It is an allowlist, not a substring match, which keeps out margin buckets, "within 5%", "closest race" and combos.
+> - **The scanner downgrades guaranteed → unverified** when:
+>   - one leg is effectively settled (`settled_one_side`);
+>   - the rules text looks different (scrutiny now warns and never drops);
+>   - a crypto basket buys YES on Kalshi (`basis_risk_direction`: Kalshi trimmed mean vs Polymarket's Binance wick);
+>   - the return is above 15% (`implausible_return`).
+> - **Stakes are proportional to price** (equal contracts on both legs). The old inverse-odds split was backwards. Return and profit are per $ staked.
+> - **Links:** Polymarket uses `/event/{event}/{market}` (`utils/links.py`). Kalshi uses `/markets/{series}/{event}`, from the API's `event_ticker`.
+> - **Fees are real per leg** (`utils/fees.py`, 2026-09-24): Kalshi 0.07·multiplier·P(1−P) (multiplier per series from `/series`), Polymarket rate·p(1−p) (rate per market from `feeSchedule`), PredictIt 10% of profit + 5% withdrawal, plus a 0.5¢ per-basket margin. Unknown parameters fall back to the flat 2% / 12%. `FEES` in `arb_scanner.py` now only feeds the display-level Net gap.
+> - **Window containment** (`utils/rules_window.py`): the basket must buy YES on the leg whose resolution window contains the other's (`window_mismatch`).
+> - **Series map** (`data/series_map.json`): hand-reviewed Kalshi series ↔ Polymarket event families. Approved families may be guaranteed, rejected ones are dropped, and unreviewed ones go to `data/processed/series_review.csv`. **To add a family, read both rules texts in full** and record the note and any caveat (ties, deadlines, extra time). Use `review_by` for approvals that should lapse.
+> - **Two cadences** (2026-09-25): the full refresh (`refresh.yml`, 00:07/12:07 UTC since 2026-10-11) scrapes everything and rebuilds pairs, then commits `matched_pairs.csv`. The **re-price** (`reprice.yml`, hourly at :17 since 2026-10-11, `run_all.py --reprice`) re-fetches only the matched markets' order books plus PredictIt (~1,200 requests, ~6 min). Both share the `pred-arb-data` concurrency group. The dashboard shows both clocks.
+> - **`tools/dash_smoke.js`** runs the dashboard JS against the fresh data (every tab/filter/sort, via `tools/dash_exercise.js`) after the pipeline and BEFORE the commit step; a runtime exception fails the run so the live page is never broken by data.
+> - **`tests/test_matching_regressions.py`** (115 cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
+>
+> **Added 2026-09-25 .. 10-10** (details in CHANGELOG):
+> - **Polymarket is scraped with `/events/keyset`** (`after_cursor`; ~19k events). The old offset passes saw 28%. Both scrapers abort below a sanity floor rather than publish a partial universe.
+> - **The full Kalshi/Polymarket CSVs are NOT committed.** The full run writes `data/reprice/*.csv` (only the matched rows, ~500 KB; `scripts/trim_reprice_inputs.py`), and `run_all.py --reprice` restores them into `data/raw/` on a fresh checkout.
+> - **The scanner re-runs `incompatibility()` on every fuzzy pair each pass**, so a gate fix applies at the next re-price, not the next full refresh.
+> - **Soccer BTTS / correct-score pairs can be guaranteed without a family entry** when both rules texts carry the same standard period clause (`utils/rules_template.py`, status `template`, badge "✓ rules checked"). First-to-score stays hand-reviewed (Kalshi counts extra time).
+> - **Series-map approvals can list `polymarket_market_kinds`**; an unreviewed kind inside an approved event returns to the queue. Slug ids are stripped in both formats (`-20260708173711844`, `-20261006t230000000z`). Approvals within 14 days of `review_by` are listed in the job summary.
+> - **Single-word subjects** ("— USA" vs "Will Peru…") and **first-to-score subjects / "neither"** are part of the gate; team names use a distinctive + fallback token set ("Atletico" = "Club Atlético de Madrid", "Sporting CP" ≠ "Defensor Sporting").
+> - **Window check:** a later YES start only matters while it's ahead; Kalshi close dates stand in for a missing end date on primary-nominee/tournament pairs.
+> - **Vermont (and any state where the legislature picks the governor when nobody wins a majority):** Kalshi pays on who is inaugurated, Polymarket on the vote count / election winner. Safe direction is YES Kalshi + NO Polymarket while the legislature's majority is the same party (Democratic in VT); the opposite basket loses both legs if the legislature overturns a Democratic plurality. Checked 2026-10-11.
+> - **Election baskets are downgraded to unverified from 2026-11-03 to 2027-01-31** (`ELECTION_SETTLING`; same in polling-agg).
+> - **Template match** (`utils/rules_template.template_match`, 2026-10-12): an unreviewed family whose two rules texts (names/dates/numbers masked) match both texts of a human-approved family is treated as reviewed (`template`, `template_of`). Never for first-to-score (extra time) or rejected-only phrases. References: `tests/data/reviewed_families.json` + auto-grown `data/template_refs.json`. Keep the leave-one-out test at 0 rejected matches.
+> - **Model review of new families** (`tools/llm_review.py`, 2026-10-12; owner prefers NOT to add an API key — rules first): off until an `ANTHROPIC_API_KEY` secret exists. Advise mode puts drafts in the health issue; auto mode (`LLM_REVIEW_MODE=auto`) writes `reviewed_by: model` entries, but only after the `Validate model reviewer` workflow shows zero rejected families approved on `tests/data/reviewed_families.json`. When you hand-review a family, add it to that file too (it's the reviewer's test set).
+> - **Board health issue** (`tools/health.py`, last CI step): one GitHub issue 'Board health: needs attention' lists what needs a human (unreviewed families, lapsing approvals, repaired links, stale data, held-back baskets). It opens/closes itself; **work from that issue**. Re-price runs hourly at :17. Series-map `on_lapse: "reject"` retires a family on its `review_by` date.
+> - **Links are verified and repaired in CI** (`tools/linkcheck.py --fix --pages`): every URL is re-derived from the platform API by the priced ID. URL formats live only in `utils/links.py`.
+> - **Structured matchers besides fuzzy** (`scripts/matcher.py`): soccer fixtures (`match_soccer_fixtures`: date + teams + kind, emitted as fuzzy so the family/template checks apply) and **US-league champion futures** (`match_league_futures`, 2026-10-13, `tournament-league`: NBA/NHL/MLB/NFL/WNBA/CFP keyed on league + season + team via `_LEAGUE_TEAMS`, cross-checked against Kalshi's team label). Polymarket futures resolve "Other" if the final is postponed past a date and Kalshi has no cutoff, so `rules_window` reads "postponed after <date>" and only YES-on-Kalshi futures baskets are guaranteed. A new Kalshi team code (e.g. a new CFP program) is unpaired until added to `_LEAGUE_TEAMS`. **Games** (`match_games`, `game`): NFL/NBA/MLB/NHL/ATP/WTA/UFC/college football, date + both sides (college: exact school names); the Polymarket two-outcome game pairs with the Kalshi market of its first-listed side (first token = that side, checked via `yes_outcome`). Each paired game also pairs its full-game spreads / totals (`_match_game_lines`: same team + exact line; first token = named team / Over). Cancellation tail (Kalshi "fair price" vs Polymarket 50-50) is in the dashboard note. The board carries only the fields the page reads (`_board_field`). **Subject-list events** (`match_subject_events`, 2026-10-13): Kalshi '<event> — <name>' vs Polymarket 'Will <name> ...' paired event-first by shared names + strict wording (see CHANGELOG); pairs are fuzzy, so new families land in the health issue for review. Series-map `safe_yes: kalshi|polymarket` records the hedged direction for families whose deadlines differ; the window check enforces it. One Kalshi series can span many events (KXCMA, KXGAMEAWARDS, KXCAELECTION, KXHOUSERACE): give each category its own slug regex where you can. **Season totals** (`match_season_totals`, `tournament-season`, 2026-10-14): Kalshi 'at least N wins / N+ points' vs Polymarket 'more than N-0.5 wins' (NFL, college football) and 'N+ points' (NHL). **Near misses:** to find the next wording rule, list Kalshi events that share >= 2 names with a Polymarket event but fail the wording rule, and look at the differing words (CHANGELOG 2026-10-14).
+> - **CI:** `reprice.yml` dispatches `refresh.yml` if the last full scrape is >14h old (GitHub cron runs late or not at all). Both workflows run `tools/livecheck.py`, an independent live re-check of every guaranteed basket (incl. PredictIt), into the job summary.
+
+---
+
+## What this project does
+
+Pulls every active market on three prediction-market platforms, matches
+similar markets across platforms by fuzzy text similarity, computes
+cross-platform price gaps (potential arbs), and ranks them. The
+dashboard has four tabs (added 2026-06-21):
+
+| Tab | What it shows |
+|---|---|
+| **All** | Every matched arb pair across all categories. Default tab. Standard filters (type, platform pair, gap range, volume, profitable-only, settle-window, search, suspicious-hide). |
+| **🗳 Elections** | US 2026 federal races (Senate / Governor / House). Includes the fuzzy matcher's Politics output AND the ported polling-agg election scanner output (`scripts/elections.py`). |
+| **⚽ Sports** | Every sports pair, unfiltered. Designed for browsing the cross-listed sports universe regardless of whether there's a real arb. |
+| **Other** | Everything else (entertainment, crypto, weather, etc). |
+
+Tab filtering uses `row.category_bucket` set in `scripts/arb_scanner.py`.
+
+---
+
+## Architecture
+
+### Pipeline (top to bottom — `run_all.py`)
+
+```
+scrapers/kalshi.py        → data/raw/kalshi_markets.csv
+scrapers/polymarket.py    → data/raw/polymarket_markets.csv
+scripts/freshen_polymarket.py
+                          → overwrites polymarket_markets.csv with live
+                             CLOB bid/ask/midpoint (added 2026-06-21)
+scrapers/predictit.py     → data/raw/predictit_markets.csv
+scripts/matcher.py        → data/processed/matched_pairs.csv
+scripts/elections.py      → data/processed/election_pairs.csv  (added 2026-06-21)
+scripts/arb_scanner.py    → docs/arb_data.js + data/processed/depth_targets.csv
+                            (joins matched_pairs + election_pairs;
+                             also runs scrutiny.py for >30pp pairs;
+                             tags every row with category_bucket)
+scripts/fetch_depth.py    → data/raw/orderbook_depth.csv
+scripts/arb_scanner.py    → docs/arb_data.js (re-run, joins depth)
+```
+
+The double-run of `arb_scanner.py` around `fetch_depth.py` is
+intentional. See polling-agg's HANDOFF for why.
+
+### Matching
+
+The matcher (`scripts/matcher.py`) has five parallel paths:
+
+**`match_political`** — race_id-based, like polling-agg's general-election
+path. Picks the highest-OI market per race+platform and crosses them.
+Includes the cross-flip safety check for 3-way races (the
+`safe_rep`-style logic) but implemented inside the matcher rather than
+the scanner.
+
+**`match_threshold_pairs`** — Kalshi↔Polymarket only. Parses
+`(asset, direction, strike, month)` tuples from price-threshold titles
+(Kalshi "How high will BTC get in 2026? — Above $X" vs Polymarket
+"Will Bitcoin reach $X by December 31, 2026?") and pairs markets
+sharing `(asset, direction, month, day, touch|level)` within strike
+tolerance 0.1% (min 1¢) for every asset — just enough for Kalshi's
+"$149,999.99" vs "$150,000". It was 2% / $1.50 until 2026-09-23, which
+paired adjacent ladder rungs (XRP $3.00 vs $3.20, ETH $3,250 vs $3,300). Closest-
+strike-only rule prevents one Polymarket strike spawning N near-strike
+Kalshi duplicates. Covers patterns fuzzy can't reach because the
+phrasing differs too much for `token_sort_ratio` to score:
+  - Kalshi: `how high`/`how low` + `or above`/`or below`
+  - Polymarket: `hit (HIGH/LOW)`, `reach`, `dip to`
+  - Month: full name, 3-letter abbrev, or year-end synonyms
+    (`in 2026`, `by December 31, 2026`, `this year`) bucketed to `dec`.
+Settled assets: BTC, ETH, SOL, XRP, BNB, HYPE, OIL/WTI, BRENT, GOLD,
+SILVER, COPPER, NATGAS. Bypass: add the asset slug to `_PRICE_ASSETS`.
+
+**`match_tournament_winner`** — Kalshi↔Polymarket only. Exact-key
+matcher for events where titles share a clean structure but token_sort
+can't bridge the styling difference. Currently covers:
+  - Tennis Grand Slams (Wimbledon, US Open, Australian Open, French
+    Open) — keys on `(tournament, gender, player)`.
+  - FIFA World Cup — keys on `(event, country)`.
+Add new tournaments by writing a `(_kalshi_X_key, _poly_X_key)`
+extractor pair and appending to `EXTRACTORS` list inside the function.
+
+**`match_primary_nominee`** — Kalshi↔Polymarket only. Exact-key
+matcher for US 2026 primary nominee questions. Polymarket says
+`Will <person> be the <party> nominee for <race>?`; Kalshi says
+`<state> <party> <office> nominee? — <person>` or
+`<XX-NN> <party> nominee? — <person>`. Both extracted to
+`(race_id, party_3char, person)` tuples. race_id is OFFICE-aware
+(SEN/GOV/district) so the same name in different races doesn't
+collide. Politics fuzzy threshold of 88 misses these (scores are
+87-90). 100+ pairs across August-September 2026 primaries.
+
+**`match_fuzzy`** — uses `rapidfuzz` text similarity within
+category groups. The category groups (`CATEGORY_GROUPS` dict in
+matcher.py) restrict matching to within sports / politics / crypto /
+finance / etc. so a "Lakers win NBA" market doesn't match a "Trump
+wins election" market just because their fuzzy scores are nonzero.
+
+Per-category fuzzy thresholds live in `PER_CATEGORY_THRESHOLD`:
+crypto 72, finance/science/companies 74, sports/culture 80, politics
+88 (default). Lower threshold = more matches in that group but more
+noise too; politics stays high because candidate-vs-party false
+positives are expensive.
+
+Both paths pass through a long chain of guards before emitting a
+pair. In order:
+
+1. Year range overlap (don't match a 2026 race to a 2028 race).
+2. Contract-type matching (party_winner ↔ party_winner; candidate ↔
+   candidate). No primary ↔ party_winner mismatches.
+3. Last-name match for primary/candidate questions (Tom Brady ≠ JD Vance
+   even when both classify as "2028 GOP primary").
+4. Numeric-bucket mismatch detection ("57° or below" vs "67° or below").
+5. Threshold-bucket detection (different `or below` / `above X`
+   numbers).
+6. Office-role mismatch (Presidential nominee vs Vice-Presidential
+   nominee).
+7. Demographic-vs-candidate check (don't pair "Will the nominee be a
+   woman?" with "Will Andrew Yang be the nominee?").
+8. Sports / event sub-bet type check (Tie vs Over/Under vs spread vs
+   player-prop are all different bets even with the same team names).
+9. Date / month-day anchor check (catches weekly buckets like "Raw 2026
+   - April 13" vs "Raw 2026 - April 20").
+10. Subject extraction — handles both "Will <Name>..." (Polymarket) and
+    trailing "— <Name>" (Kalshi) phrasings; different subjects skipped.
+
+Each of these guards came from a specific false-pair bug.
+
+### US-2026 elections (ported from polling-agg-2026)
+
+`scripts/elections.py` is a parallel pair builder targeting 2026 US
+federal races (Senate / Governor / House). Ported from
+[polling-agg-2026](https://github.com/pjmerica/polling-agg-2026)'s
+`scripts/arb_scanner.py` on 2026-06-21. **Runs alongside the fuzzy
+matcher, doesn't replace it.** The scanner concatenates election rows
+on top of fuzzy rows in `docs/arb_data.js`. Duplicates with the
+fuzzy Politics path are acceptable today (user decision); future work
+can deduplicate.
+
+Three match paths emit rows with distinct `match_type` tags:
+
+- **`general`** — party-level Dem-yes vs Rep-yes markets joined on
+  canonical race_id (e.g. `2026-SEN-OH`). Only path that produces
+  `arb_type: guaranteed` rows, because it's the only one where both
+  legs of the basket exist as separately tradeable contracts.
+- **`general_candidate`** — per-candidate general markets ("Will Dan
+  Sullivan win the 2026 Alaska Senate race?") cross-matched on
+  `(state, office, district, candidate_last, candidate_first)`. Always
+  `arb_type: one-sided` (no candidate-no contract exists in this
+  template to build a guaranteed basket from).
+- **`primary_candidate`** — per-candidate primary markets ("Will Zach
+  Wahls be the Democratic nominee for Senate in Iowa?"). Same join
+  shape as general_candidate but with party in the key (a Dem and Rep
+  primary for the same office can have candidates with the same
+  surname).
+
+The race registry (`utils/races.py`) and the house-incumbents scraper
+(`scrapers/house_incumbents.py`) were copied verbatim from polling-agg
+to feed canonical race metadata. Pred-arb's own scrapers don't tag
+markets with race_id, so `elections.py` derives them from titles using
+`_extract_state_office()` + `_race_id_from()`.
+
+**Do not** add a runtime import dependency on polling-agg. The two
+repos stay independent (separate crons, separate live URLs). The cost
+is drift — see AUDIT.md for cross-repo to-do.
+
+**Inferred-complement is NOT used.** Polling-agg ripped it out on
+2026-06-18 (a Dem price filled from `1 - Rep` isn't a tradeable yes
+ask); the port carries the inner-join behavior forward.
+
+### Categories and dashboard tabs
+
+`scripts/arb_scanner.py` tags every row with
+`category_bucket ∈ {Elections, Sports, Other}` based on the source row's
+`category` field. The dashboard has four tabs filtering by this field:
+
+- **All** — every row, default tab.
+- **🗳 Elections** — `category_bucket == 'Elections'`. Includes both
+  the fuzzy matcher's Politics output AND the ported election rows.
+- **⚽ Sports** — `category_bucket == 'Sports'`. Browse mode — ignores
+  filter bar so every sports pair is visible regardless of arb size.
+- **Other** — everything else.
+
+Bucket assignment lives in one helper: `_bucket()` in
+`scripts/arb_scanner.py` and `bucketOf()` in `docs/index.html` (the
+latter is a backwards-compat fallback for snapshots without the
+`category_bucket` field). Keep them in sync.
+
+### Suspicion + scrutiny pipeline
+
+Same as polling-agg's. See that HANDOFF for full detail. Quick recap:
+
+1. Scraper-time filters drop wide-spread / low-liquidity markets at the
+   source.
+   - Polymarket: per-MARKET liquidity (`liquidityNum`) < $200 OR spread
+     > 20pp gets dropped at scrape time. Until 2026-09-24 `liquidity` was the
+     EVENT total copied to every market, so this filter rarely fired.
+     The earlier 8pp-spread-drop was reverted on
+     2026-06-21 — once `freshen_polymarket.py` rewrites every
+     gamma snapshot with a live CLOB midpoint right after the scrape,
+     the 8pp filter became unnecessary defensive code that was
+     cutting too much.
+   - Polymarket: end_date < today gets dropped (Polymarket leaves
+     resolved markets flagged active=true; see "Active-flag lies").
+   - Kalshi: markets with `yes_bid` missing or 0 are dropped entirely
+     ("only buyers, no sellers" = can't exit a position).
+   - Kalshi: close_date < today gets dropped (same active-flag-lies
+     story).
+2. Cross-flip safety on 3-way races.
+3. **Depth-time price override** (2026-06-21). When `fetch_depth` has a
+   fresh live-CLOB midpoint for a market, the scanner overrides the
+   scrape-time `implied_prob_a/b` with that midpoint and recomputes the
+   arb math. Catches gamma-stale prices that escaped the scraper-time
+   wide-spread filter (e.g. spread was tight at scrape time but the
+   "tight" price was itself stale). Logged as
+   `Overrode N prices with live depth midpoints`.
+4. Depth-derived spread filter after fetch_depth (drops pairs with >25pp
+   spread on either side at depth-fetch time).
+5. **One-sided orderbook drop** (2026-06-21). Drops any pair where
+   either side's live orderbook has an ask but no bid (or bid ≤ 0).
+   Same logic as the Kalshi scrape-time filter, but rechecked at depth
+   time — a market can go one-sided in the minutes between scrape and
+   depth-fetch. User-requested as "only live props" (you can't exit a
+   position you can't sell into).
+6. **Past-settle-date drop** (2026-06-21). Drops any pair whose
+   `settle_date` is before today. Kalshi event-of-the-week and
+   Polymarket weekly charts sometimes stay in the "active" feed for a
+   few days after they resolve.
+7. Rules-text scrutiny for >30pp pairs (`scripts/scrutiny.py`), with
+   `data/processed/excluded_pairs.json` for hand-curated criteria
+   mismatches. The Iran nuclear deal is the only entry today.
+8. Per-pair `suspicion_reasons` array surfaces WHY a pair is flagged.
+   Codes: `wide_gap`, `wide_spread_a/b`, `thin_depth_a/b`,
+   `criteria_warn`. `one_sided_a/b` was removed as a suspicion code in
+   2026-06-21 because those pairs are now dropped at filter step 5
+   instead of just being flagged.
+
+### Polymarket pagination — current state and gotchas
+
+**TL;DR (updated 2026-07-04)**: we run FIVE differently-ordered passes of
+`gamma-api.polymarket.com/events?offset=N` (each ordered query gets its
+own 2000-offset window): default/oldest, `order=id&ascending=false`
+(newest listings), `order=volume24hr` desc, `order=liquidity` desc, and
+`order=endDate` asc (soonest-settling). Deduped by event id. First run:
+6,942 events / 19,259 markets saved vs 2,000 / 6,122 under the old single
+window. The "real" fix is still `clob.polymarket.com/markets` (paginates
+properly to ~55k markets) but needs a parser rewrite — tracked in AUDIT.md.
+
+History (chronological, painful — keep this so the next person doesn't
+re-tread it):
+
+1. **`/events?offset=N`** — what we used originally. Polymarket added a
+   hard cap at offset=2000 in mid-June 2026; anything past returns HTTP
+   422 with body
+   `"offset too large, use /events/keyset for deeper pagination"`.
+
+2. **`/events/keyset?cursor=...`** — what the 422 message tells you to
+   use. **Don't.** Probed 2026-06-21 evening: the `next_cursor`
+   returned does NOT advance the pagination. Pass it back with any
+   parameter name (`cursor`, `next_cursor`, `page_token`, `after`,
+   `pagination_cursor`) and you get the EXACT SAME 100 events forever.
+   A run with this endpoint paginated 100,000 "events" that were
+   actually 1,000 duplicates of the first page, yielded only 46
+   matched pairs / 1 guaranteed arb. Likely a Polymarket-side bug or
+   undocumented parameter we haven't found.
+
+3. **2026-06-21 → 2026-07-04**: reverted to `/events?offset=N` capped at
+   2000. What we didn't realize until the 2026-07-03 polling-agg audit:
+   the DEFAULT sort is id ascending = OLDEST first, so the single capped
+   window only ever contained the ~2000 oldest active events. **Every
+   market listed after mid-June was invisible to the scraper** — and new
+   listings are where fresh mispricings live.
+
+4. **Current (2026-07-04)**: the `order` param IS honored and each
+   ordered query gets its own 2000-offset window. `SCRAPE_PASSES` in
+   `scrapers/polymarket.py` runs five ordered passes (oldest / newest /
+   most-active-24h / deepest-liquidity / ending-soonest) and dedups by
+   event id. ~100 requests, ~1 min. If a pass's "new events" count drops
+   to ~0 while total active events keeps growing, the universe outgrew
+   the five windows — time for the clob rewrite below.
+
+5. **The eventual proper fix (tracked in AUDIT.md as next-handoff work)**:
+   `clob.polymarket.com/markets` returns 1000 markets per page with a
+   working `next_cursor` (base64-encoded offset that actually advances).
+   Probed it: walked 60 pages = 55,343 unique markets. Has a
+   `tokens` array containing both YES and NO `token_id` directly (no
+   separate lookup needed), plus a real `accepting_orders` boolean
+   instead of gamma's lies. Field names are completely different —
+   needs `parse_market()` rewritten.
+
+### NO-token orderbook for Polymarket
+
+For matched pairs, `scripts/fetch_depth.py` pulls BOTH the YES and NO
+orderbooks. Polymarket exposes YES and NO as separately tradeable
+tokens with their own bid/ask, so the arb math should use the real NO
+ask for the buy-NO leg rather than inferring `1 - YES_bid`.
+
+How it flows:
+1. `arb_scanner.py` (pass 1) looks up `no_token_id` from
+   `polymarket_markets.csv` for every Polymarket leg of every matched
+   pair, writes it into `depth_targets.csv` as `no_market_id`.
+2. `fetch_depth.py` sees `no_market_id` on a target row, fetches the
+   NO orderbook in addition to the YES one. Writes the NO row to
+   `orderbook_depth.csv` with `side="no"` and `yes_market_id=<the
+   original YES token>` so the scanner can join them back together.
+3. `arb_scanner.py` (pass 2) splits `orderbook_depth.csv` into yes and
+   no subsets, joins both onto each pair. New columns:
+   `depth_no_a_best_bid`, `depth_no_a_best_ask`, etc.
+4. `compute_arb()` uses the real NO ask for the buy-NO leg when
+   available; falls back to `1 - YES_bid` only when NO data isn't
+   present (Kalshi has no separate NO token; Polymarket markets that
+   404'd on the NO fetch).
+
+Kalshi doesn't expose a separate NO token, so `no_market_id` stays
+empty for those rows and the math always falls back to the inferred
+form (which is fine — Kalshi's YES book is tight enough that the
+inference is exact).
+
+### arb_type taxonomy (4 buckets, set by compute_arb)
+
+Every row in `docs/arb_data.js` has exactly one of these `arb_type`
+values. Classification is based on the Yes+No basket math AND the
+quality of the underlying price data:
+
+| arb_type | Meaning | Production count (typical) |
+|---|---|---|
+| `guaranteed` | Yes+No basket costs < $1 AFTER fees → locked profit. Real bid/ask on the winning direction required. | ~5 |
+| `pre-fee` | Yes+No basket costs < $1 pre-fee but ≥ $1 after fees. Real data; fees eat the gap. | ~30 |
+| `price-gap` | Yes+No basket costs ≥ $1 even pre-fee. Markets disagree but no risk-free basket exists. Real data on at least one direction. | ~250 |
+| `one-sided` | Real bid/ask wasn't available on either direction (typically PredictIt-leg pairs — no public orderbook). Prices are inferred; classification is uncertain. | ~300 |
+
+The check is in `compute_arb` in `scripts/arb_scanner.py`. Each
+direction (YES on A + NO on B, and YES on B + NO on A) is evaluated
+for both cost-under-$1 and real-data status; the row is classified
+based on the best direction.
+
+Display badges in the dashboard: green ★ for guaranteed, yellow for
+pre-fee, grey for price-gap, italic grey for one-sided. The filter
+dropdown lets users restrict to one type.
+
+### Price semantics — READ THIS BEFORE CHANGING ANY PRICE FIELD
+
+There are FOUR distinct numbers floating around for each market.
+They are NOT interchangeable. Mixing them up has produced two real
+incidents already (Somaliland 2026-06-21 morning, Espaillat
+2026-06-21 evening) — both shipped wrong numbers to the dashboard.
+
+| Number | What it means | Range relationship |
+|---|---|---|
+| **Best bid** | What someone is willing to PAY you for YES right now | bid ≤ midpoint ≤ ask |
+| **Best ask** | What someone is willing to SELL YES to you for right now | bid ≤ midpoint ≤ ask |
+| **Midpoint** | `(bid + ask) / 2` | always between |
+| **Last trade price** | What the most recent trade actually cleared at | can be ANYWHERE — even outside [bid, ask] if the book moved since the last trade |
+
+A market that displays "62%" on a platform website is showing ONE of
+those four numbers. **Which one depends on the platform**:
+
+- **Kalshi** shows `last_price` as the headline. Their UI surfaces
+  what someone last paid. On illiquid markets this can be hours or
+  days stale and well outside the current bid/ask spread.
+- **Polymarket** shows a number that tracks the **live order book** —
+  effectively the bid/ask midpoint. Their UI updates near-realtime as
+  the book moves. `last_trade_price` on Polymarket is NOT what
+  polymarket.com shows on the headline; it's separate data.
+- **PredictIt** shows a single price per contract; we treat it as
+  the midpoint of `bestBuyYesCost` and `bestSellYesCost`.
+
+### The dashboard uses TWO prices per market: display vs fillable
+
+For each row in `docs/arb_data.js`:
+
+- **`implied_prob_a` / `implied_prob_b`** — the DISPLAY price, picked
+  to match what the platform's own UI shows. Per-platform:
+  - Kalshi: `last_price` (from `scrapers/kalshi.py`)
+  - Polymarket: bid/ask midpoint (from `scripts/freshen_polymarket.py`)
+  - PredictIt: midpoint of bestBuy/bestSell (from `scrapers/predictit.py`)
+- **`fillable_ask_a/b`, `fillable_bid_a/b`, `fillable_no_ask_a/b`,
+  `fillable_no_bid_a/b`** — the actual live orderbook prices from
+  `fetch_depth.py`. These are what you'd actually pay or receive.
+
+**The dashboard SHOWS the display price.** Users want to see "the
+platform shows 62¢" not "you'd pay 64¢ to buy because that's the
+ask." When they click through to verify, the number matches.
+
+**The arb math RUNS on fillable prices.** `compute_arb()` reads from
+`fillable_ask_*` and `fillable_no_ask_*`, never from `implied_prob_*`.
+Whether something is flagged a guaranteed arb depends on what you
+can actually buy at — midpoint math overstates by 1-5pp typically.
+
+### The Somaliland incident (2026-06-21 morning)
+
+The "Will Trump recognize Somaliland?" pair shipped as a 6.65%
+guaranteed arb on the dashboard. Symptom: pair looked great on paper.
+Root cause: arb math was subtracting midpoints + fees. Real fillable
+basket (Buy YES Polymarket 7.6¢ ask + Buy NO Kalshi at 1 - 0.15 bid =
+85¢) = 92.6¢, giving ~3.4% net after fees — still real, just smaller.
+The midpoint version overstated by ~3pp.
+
+Fix: rewrote `compute_arb` to take real `ask_a`/`ask_b`/`no_ask_a`/
+`no_ask_b` kwargs and use them. `implied_prob_*` no longer affects
+arb math.
+
+### The Espaillat incident (2026-06-21 evening)
+
+The "NY-13 Espaillat" Polymarket pair shipped on the dashboard at
+43%, but polymarket.com was showing 62% for the same market.
+Symptom: dashboard number completely disagreed with what the user
+saw on the platform.
+
+Diagnosis:
+- Live Polymarket CLOB book: bid 0.61 / ask 0.62 / midpoint 0.615 →
+  62% on polymarket.com
+- `last_trade_price` on the CLOB: 0.43 (a stale trade from hours
+  earlier on a thinly-traded contract)
+- Our `freshen_polymarket.py` was preferring `last_trade_price` over
+  midpoint when populating `implied_prob`. We'd defaulted to the
+  Kalshi rule ("UIs show last price") without checking that the
+  rule held for Polymarket. It does not.
+
+Fix: per-platform display rule. Kalshi keeps `last_price`; Polymarket
+goes back to midpoint. **Don't unify these without verifying the UI
+on each platform** — they really do display different things, and
+the dashboard's job is to match each one.
+
+### Anti-pattern checklist (don't do these)
+
+- ❌ Use Polymarket's `last_trade_price` as the display number.
+  Polymarket's UI doesn't.
+- ❌ Use Kalshi's bid/ask midpoint as the display number. Kalshi's
+  UI doesn't.
+- ❌ Use the display price (`implied_prob_*`) in the arb math. It's
+  not fillable; you can't trade at the midpoint or at last-trade.
+- ❌ Infer Polymarket's NO ask as `1 - YES_bid`. Polymarket has a
+  separate NO token with its own bid/ask; fetch it directly (we now
+  do, via `no_market_id` in `depth_targets.csv`).
+- ❌ Trust a market's `active=true&closed=false` flag. Both Polymarket
+  and Kalshi leave dead markets flagged active for weeks. Filter on
+  the date itself.
+- ❌ Trust the `next_cursor` Polymarket's `/events/keyset` returns.
+  It doesn't actually advance pagination — see "Polymarket
+  pagination" section.
+
+### Active-flag lies
+
+Both Polymarket and Kalshi leave already-resolved markets flagged
+`active=true` / status=open in their public feeds. Probed Polymarket
+2026-06-21: ~22% of "active" events had `endDate` in the past. Kalshi
+sample: 17,863 of 44,269 markets had `close_date` in the past.
+
+Don't trust the status flags. Filter on the date itself:
+
+- `scrapers/kalshi.py` skips rows where `close_date < today` before
+  emitting.
+- `scrapers/polymarket.py` drops rows where `end_date < today` in the
+  post-scrape cleaning step.
+
+There's also a downstream `settle_date < today` filter in
+`scripts/arb_scanner.py` for defense in depth (catches any market
+that resolves between scrape and dashboard render).
+
+### Polymarket freshness: gamma scrape + live-CLOB freshen
+
+Polymarket has two endpoints we care about:
+
+- `gamma-api.polymarket.com/events` — bulk metadata + cached snapshot
+  prices. Fast (~3 min for ~25k events) but `bestBid`/`bestAsk` can
+  lag the live CLOB by minutes-to-hours on low-volume markets.
+- `clob.polymarket.com/book?token_id=...` — live orderbook. One request
+  per market, no observed rate limit (measured ~6 req/sec single-
+  threaded in a 50-request probe).
+
+The pipeline does both: gamma scrape fills in metadata + token_ids
+fast, then `scripts/freshen_polymarket.py` immediately re-fetches the
+live book for every market in parallel (16 worker threads, ~4-6 min
+total). The freshened bid/ask/midpoint overwrites the gamma values
+before the matcher runs, so the matcher works on actually-live prices.
+
+Earlier we tried bandaid fixes (drop scraper rows with wide gamma
+spread, override matched-pair prices in the scanner after fetch_depth).
+Those covered some cases but missed others — markets the matcher
+never paired because the gamma price looked wrong never got a chance
+to be re-priced. Pre-matching freshen is the cleaner fix; the bandaids
+were ripped out on 2026-06-21.
+
+Kalshi is different: its `/markets` summary already returns
+near-realtime bid/ask in the same payload as market metadata, so a
+separate live-fetch buys little.
+
+PredictIt: there is no public orderbook endpoint. The single
+`marketdata/all` summary is everything they expose. Whatever it
+returns IS the freshest data available.
+
+### Freshness guard
+
+`scripts/arb_scanner.py:_assert_scrape_freshness()` runs at the top of
+`run()` and refuses to overwrite `docs/arb_data.js` unless EVERY raw
+CSV's `fetched_at` is within the last 12 hours. Catches the
+silent-staleness failure mode where a scraper succeeds structurally
+(no exit code) but the CSV it produced is from a previous run because
+it didn't actually write new data. We had a real incident on
+2026-06-21 where Polymarket's CSV was 44 days old while every daily
+refresh reported success. The guard fails the scanner step, the
+workflow's commit step is skipped, and the dashboard keeps the last
+good snapshot.
+
+### Fees (round-trip)
+
+`scripts/arb_scanner.py` top:
+
+| Platform | Fee |
+|---|---|
+| Kalshi | 2% |
+| Polymarket | 2% |
+| PredictIt | 12% |
+
+Bumped from 3%/3%/12% in the 2026-06-20 audit to match polling-agg.
+Real fills include slippage. The `FEES` dict is the single source of
+truth; `scripts/elections.py` imports from there too — do not duplicate.
+
+### Failure semantics
+
+Each scraper raises `SystemExit` on empty API response (no usable rows).
+That kills `run_all.py` → workflow's commit step is skipped → live
+dashboard keeps the last good data.
+
+HTTP layer retries 4 times on 403/408/429/5xx + network errors with
+2/4/8s exponential backoff before raising. Transient blips don't fail
+the run.
+
+### GitHub Actions
+
+`.github/workflows/refresh.yml`. Schedule: `30 12 * * *` and `30 0 * * *`
+(offset 30 minutes from polling-agg so we don't hammer Polymarket /
+Kalshi simultaneously). Same checkout → install → run_all.py →
+commit-and-push-with-rebase-retry shape as polling-agg.
+
+---
+
+## File map
+
+```
+.github/workflows/refresh.yml  Daily refresh workflow.
+
+run_all.py                     One-shot entrypoint. Calls each step in order.
+requirements.txt               pandas, numpy, rapidfuzz.
+
+scrapers/
+  kalshi.py            Kalshi v2 trade-api. DO NOT REVERT to v1.
+  polymarket.py        gamma-api.polymarket.com. Captures yes_token_id / no_token_id.
+  predictit.py         predictit.org/api/marketdata/all/.
+  house_incumbents.py  Ballotpedia + congress-legislators YAML, produces
+                       data/processed/house_incumbents.json. Read by
+                       utils/races.py at import. Ported from polling-agg
+                       2026-06-21 for the elections path.
+
+scripts/
+  matcher.py           Reads all 3 markets CSVs, produces matched_pairs.csv.
+                       Two paths: race_id-based political, fuzzy text for everything else.
+                       Long chain of guards prevents false positives (see Matching above).
+  freshen_polymarket.py
+                       Refetches clob.polymarket.com/book for EVERY
+                       Polymarket market in parallel (16 workers, ~4-6 min)
+                       and overwrites bid/ask/midpoint with live values.
+                       Replaces gamma's cached snapshot, which lags the
+                       live CLOB by minutes-to-hours. Added 2026-06-21.
+                       Sort bug discovered: CLOB doesn't return bids/asks
+                       sorted best-first; sort explicitly with
+                       max(bids) / min(asks).
+  elections.py         2026 US-election arb builder ported from
+                       polling-agg-2026. Three match paths (general,
+                       general_candidate, primary_candidate). Writes
+                       data/processed/election_pairs.csv. Added 2026-06-21.
+  arb_scanner.py       Reads matched_pairs.csv + election_pairs.csv,
+                       computes raw_gap_pp / net_gap_pp / arb_type /
+                       suspicion_reasons / scrutiny.py results. Tags
+                       every row with category_bucket for the dashboard
+                       tabs. Produces docs/arb_data.js. Run twice
+                       around fetch_depth.py.
+                       _assert_scrape_freshness() at top of run() refuses
+                       to overwrite arb_data.js if any raw CSV is
+                       >12h stale.
+                       compute_arb() uses real ASK / NO-ASK for the arb
+                       math (see "Arb math" section above), not midpoints.
+  fetch_depth.py       Reads depth_targets.csv, fetches Kalshi/Polymarket
+                       orderbook ladders, writes orderbook_depth.csv.
+                       For Polymarket rows with a no_market_id, fetches
+                       BOTH the YES and NO books (added 2026-06-21).
+  scrutiny.py          Fetches resolution rules + similarity scoring. Caches in
+                       data/processed/scrutiny_cache.json (gitignored).
+
+utils/
+  http_headers.py      Shared real-browser HTTP headers / WAF-XHR set.
+                       Imported by every scraper + fetch_depth + scrutiny.
+                       Single source of truth — see AUDIT.md.
+  races.py             Canonical 2026 US race registry (35 Senate, 36 Gov,
+                       435 House). Exports RACE_BY_ID. Ported from
+                       polling-agg-2026 for the elections path.
+
+data/
+  raw/                 Scraper outputs. .gitignore tracks these specifically:
+    kalshi_markets.csv     Output of scrapers/kalshi.py.
+    polymarket_markets.csv Output of scrapers/polymarket.py + freshen.
+    predictit_markets.csv  Output of scrapers/predictit.py.
+    orderbook_depth.csv    Output of scripts/fetch_depth.py (YES + NO rows).
+                       Changed 2026-06-21: previously the entire data/raw
+                       was gitignored, which meant production refreshes
+                       wrote CSVs only to the runner's ephemeral disk —
+                       a fresh checkout had nothing to work with. Now
+                       the workflow's "git add data/" actually commits
+                       them back.
+  processed/           Mostly gitignored. Tracked:
+    excluded_pairs.json    Manual scrutiny excludes.
+    house_incumbents.json  Output of scrapers/house_incumbents.py.
+    election_pairs.csv     Output of scripts/elections.py.
+
+docs/                  GitHub Pages site. Tracked.
+  index.html           Four-tab dashboard (All, Elections, Sports, Other).
+                       Tab filtering uses row.category_bucket from the
+                       scanner (with a SPORTS_CATS fallback for legacy
+                       snapshots).
+  arb_data.js          Arb pairs feed. Includes top-level `total`,
+                       `guaranteed_count`, `fees`, `updated_at`.
+```
+
+---
+
+## Common gotchas
+
+Most of these are documented in polling-agg's HANDOFF; this section
+flags the pred-arb-specific ones.
+
+**Universe size**
+- Polymarket alone has ~25k active markets. The full pipeline takes
+  ~10–15 min per cron because Polymarket pagination is slow and
+  fetch_depth pulls orderbooks for ~1k matched pairs.
+- The matcher's fuzzy pass uses `rapidfuzz.process.cdist` for vectorized
+  scoring. Doing pairwise comparisons naively would be too slow.
+
+**Category filtering**
+- The matcher only crosses markets within the same category group
+  (`CATEGORY_GROUPS`). This is necessary or you'd get e.g. "Lakers vs
+  Celtics" fuzzy-matching "Will Lake County declare bankruptcy" purely
+  on text similarity.
+- Pred-arb categorizes most matched pairs as "Sports" / "Elections" /
+  "Politics" / "Entertainment" / etc. The Sports tab on the dashboard
+  filters to sports categories.
+
+**Subject extraction**
+- The matcher's `extract_subject` handles two phrasings:
+  1. Polymarket: "Will <Name> win the 2026 NL Manager of the Year?"
+  2. Kalshi: "2026 NL Manager of the Year Winner? — <Name>"
+- Different subjects with the same template are skipped. This catches
+  e.g. "Will Brian Montgomery be the GOP nominee for GA-01?" vs
+  "Will James Kingston be the GOP nominee for GA-01?" — same race,
+  different candidates.
+
+**Polymarket gamma's outcomes/outcomePrices fields are JSON-encoded
+strings.** Always `json.loads` them.
+
+**Polymarket cross-cycle Kalshi tickers.** `SENATEOH-28` (2028 cycle)
+and `SENATEOHS-26` (2026 OH special) both got tagged with the same
+race_id at one point. Fixed by extracting year from `event_ticker`.
+
+**The 3-way race partition bug.** Same as polling-agg — cross-flipping
+"Will Reps win" to compare against "Will Dems win" only works in a true
+2-way race. Mitigated by `safe_rep` logic in the matcher.
+
+**Resolution-criteria divergence.** Same as polling-agg.
+`scripts/scrutiny.py` fetches rules text + scores similarity for any
+>30pp pair. Iran is the only manual excluded pair.
+
+**Volume filter is OR not AND.** The dashboard's min-volume filter
+hides a pair only if BOTH sides are below the threshold. Was AND
+originally, which hid all PredictIt-leg pairs because PredictIt has no
+public volume field and the counterparty was often below $500.
+
+---
+
+## Do not
+
+- **Add Claude as co-author on commits.** Plain commits only.
+  (Note: the 2026-09-23/24 session commits carried a Co-Authored-By line
+  by mistake — don't copy that.)
+- **Match fuzzy pairs on title similarity alone.** Every new market type
+  (margin buckets, 2nd-place, 2nd-half props, finalists) scored 80+ while
+  asking a different question. Gate through `utils/proposition.py`.
+- **Pick an election leg because the title mentions a party.** Use
+  `utils/election_shapes.party_win_side`.
+- **Size stakes by inverse price** — dollars ∝ price (equal contracts).
+- **Let scrutiny DROP on low rules-text similarity.** Cross-venue
+  boilerplate makes identical questions score 5-13; it warns now.
+- **Label a crypto threshold basket guaranteed when it buys YES on
+  Kalshi.** Kalshi = CF trimmed mean, Polymarket = any Binance wick.
+- **Approve a series family without reading BOTH rules texts in full.**
+  Titles matched on every rejected family (album, hurricane, OPEC,
+  Somaliland, Nobel...); only the fine print differed.
+- **Hard-code a flat fee back into the basket math.** Pass `leg_fees`
+  to `compute_arb` (utils/fees.py); flat fees stay for Net gap only.
+- **Revert Kalshi to v1.**
+- **Loosen the matcher guards** without verifying with the deep audit
+  scripts (see "When something looks fishy" below). Each guard exists
+  because of a specific historical false-pair.
+- **Pair markets across category groups.** Even if the text matches.
+- **Remove the flipped-pair quote swap in arb_scanner** (search
+  `[flipped]` in scripts/arb_scanner.py). The political matcher flips
+  side B's DISPLAY prob for opposite-party pairs, but B's tradeable
+  quotes still belong to the underlying market — without the swap, the
+  basket buys the SAME outcome on both platforms and labels a
+  double-bet "guaranteed" (the fake 85% Wyoming Senate arb,
+  2026-07-04).
+- **Feed non-Yes/No Polymarket markets into the fuzzy matcher.** Team
+  moneylines (outcomes = two team names) have yes/no tokens that are
+  just tokens[0]/[1]; YES+NO baskets against them are double bets. The
+  `outcomes_binary` column + `_binary_only()` filter enforce this
+  (2026-07-04; fake 10-15% KBO/MLB/T20 arbs).
+- **Trust a subject-flipped fuzzy pair.** "First to Score — Morocco" vs
+  "Canada to score first" scores high on token_sort_ratio because both
+  titles carry both team names. The subject-flip guard in match_fuzzy
+  drops these; if a new template family leaks through, extend the
+  guard's verb list before anything else.
+
+---
+
+## When something looks fishy
+
+The repo's primary diagnostic tool is `tools/deep_check.py` (see
+`tools/README.md`). It walks the top 50 arb candidates, refetches live
+orderbooks for both sides, and categorizes each as REAL / MARGINAL /
+THIN / GONE / WRONG_PAIR / PREDICTIT_LEG / ONE_PLATFORM at multiple
+slippage budgets.
+
+```bash
+python tools/deep_check.py
+```
+
+Two additional lighter-weight diagnostic scripts live in the
+maintainer's local checkout outside this repo:
+`audit_arbs.py` (top-K live verification across both repos) and
+`verify_arbs.py` (newer shape with the scrutiny-style criteria check).
+Not committed because they target both repos via local absolute paths.
+
+---
+
+## Recent work (post-2026-05-15)
+
+In rough order:
+- **Scraper resilience pass**: same as polling-agg — `_safe_read_csv`
+  in matcher, fail-fast on empty, 4-attempt retry with backoff on
+  403/408/429/5xx.
+- **Matcher guards added incrementally**: candidate-name match,
+  sub-bet type, date/month/day-anchor, office role,
+  demographic-vs-candidate, threshold-bucket.
+- **Polymarket / PredictIt broken-book filters** at scrape time.
+- **Cross-flip safety** for 3-way races.
+- **`scripts/scrutiny.py`** for resolution-criteria divergence on big
+  gaps.
+- **Sports tab** added — bypasses all the filters since users want to
+  browse sports markets regardless of arb size.
+- **Suspicion + verify badge UX** with multiple reason codes
+  surfaced as hover tooltips.
+
+---
+
+## Open work / known issues
+
+- **See MATCHING_REVIEW.md §6** for the long-term matching plan. Still open:
+  - a curated series map / review queue;
+  - a rules-text window-start parser;
+  - docs consolidation (this file, AUDIT, NOTES_FOR_REVIEWER and SCRAPER_NOTES overlap heavily).
+
+- **Node 20 deprecation** in GitHub Actions — bumping
+  `actions/checkout` and `actions/setup-python` to their Node-24-
+  compatible versions before June 2026 is the fix.
+- **Sports markets are 11k+ on Polymarket alone**, only ~40 land in
+  matched pairs. The matcher's category-group guards are conservative
+  (correctly). Loosening would add false positives faster than real
+  pairs.
+- **PredictIt's API is sometimes 5 minutes stale.** Their "best ask"
+  can lag the live market.
+
+---
+
+## When something breaks at 3am
+
+1. Check **Actions** tab:
+   https://github.com/pjmerica/pred-arbitrage/actions
+2. Click the failing run, expand the failing step.
+3. **HTTP 403 / network error**: usually transient. Re-trigger via
+   "Run workflow."
+4. **`pandas.errors.EmptyDataError`** or `KeyError: 'implied_prob'`:
+   one of the CSVs is empty. Check which scraper. Most likely a real
+   upstream outage — wait for the next cron.
+5. **Merge-conflict markers in `docs/arb_data.js`**: pull master, re-run
+   `scripts/arb_scanner.py` locally, push.

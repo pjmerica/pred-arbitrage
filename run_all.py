@@ -2,11 +2,11 @@
 
 Modes:
   py run_all.py            full refresh: scrape every market, re-match,
-                           price (~32,700 API requests, ~15 min). CI: 2x/day.
+                           price (~32,700 API requests, ~15 min). CI: refresh.yml 00:07/12:07 UTC.
   py run_all.py --reprice  fast re-price (2026-09-25): keep the last full
                            run's matched pairs, re-fetch ONLY their order
                            books and PredictIt's quotes, recompute the board
-                           (~1,200 requests, ~6 min). CI: every 2h (reprice.yml). Catches
+                           (~1,200 requests, ~6 min). CI: reprice.yml hourly at :17. Catches
                            arbs that open/close between full scrapes without
                            re-pricing all ~31k Polymarket markets.
 """

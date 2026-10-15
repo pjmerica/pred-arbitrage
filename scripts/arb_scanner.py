@@ -1009,7 +1009,7 @@ def run():
     # mismatch the bigger the fake return, so they topped the board.
     # Fuzzy / political pairs keep their math but show as 'unverified'
     # until a structured matcher or curated series map vouches for them
-    # (MATCHING_REVIEW.md §6).
+    # (history/MATCHING_REVIEW_2026-09.md §6).
     # Settled-on-one-side check, applied to EVERY match type: if one leg's
     # live book says the outcome is effectively decided (mid ≥93¢ or ≤7¢)
     # while the other is still uncertain, the platforms' rules almost
