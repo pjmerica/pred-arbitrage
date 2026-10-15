@@ -2525,6 +2525,15 @@
    "note": "Both: the team finishing first in the named 2026-27 UEFA Nations League group (official UEFA tiebreaks). One Kalshi series spans all groups; the subject matcher's wording rule keeps the group code aligned.",
    "caveat": "Polymarket Other if the league phase runs past Dec 1, 2026.",
    "rules_read": "2026-10-13"
+  },
+  {
+   "kalshi_series": "KXNBASTATLEADER",
+   "polymarket_event_slug_regex": "^nba-2026-27-ppg-leader",
+   "status": "approved",
+   "note": "Both: the 2026-27 NBA regular-season points-per-game leader among players meeting the league's qualification minimum (NBA.com/stats); NBA Cup games except the final count, play-in / playoffs / All-Star excluded, stats from all teams combined. The Kalshi series lists every per-game stat; the gate's stat field keeps PPG paired with PPG.",
+   "caveat": "Polymarket resolves every player No if the season is postponed after Apr 25, 2027 (Kalshi has no cutoff), so only YES Kalshi + NO Polymarket is hedged. An exact PPG tie: Kalshi splits $1/N, Polymarket breaks it on total points.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-15"
   }
  ]
 }

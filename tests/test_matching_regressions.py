@@ -1099,3 +1099,14 @@ def test_playoff_qualifiers_gate():
                            "Will the Arizona Cardinals make the 2027 NFL Playoffs?") is None
     assert incompatibility("Eastern Conference Play-In Tournament Qualifiers — Boston",
                            "Will the Boston Celtics make the 2027 NBA Playoffs?") is not None
+
+
+def test_stat_leader_category_gate():
+    """KXNBASTATLEADER lists every per-game leader under one series: a
+    rebounds leader is not the points-per-game leader (2026-10-15)."""
+    p = "Will Anthony Edwards lead the NBA in points per game in 2026-27?"
+    assert incompatibility("Pro Basketball Points Per Game (PPG) Leader — Anthony Edwards", p) is None
+    assert incompatibility("Pro Basketball Rebounds Per Game (RPG) Leader — Anthony Edwards", p) is not None
+    assert incompatibility("Pro Basketball Assists Per Game (APG) Leader — Anthony Edwards", p) is not None
+    assert incompatibility("Champions League Golden Boot — Harry Kane",
+                           "Will Harry Kane be the top goalscorer in the 2026-27 Champions League?") is None

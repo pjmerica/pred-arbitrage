@@ -98,6 +98,38 @@ def division(title) -> str | None:
     return None
 
 
+# Stat-leader category (2026-10-15): Kalshi KXNBASTATLEADER lists every
+# per-game leader under one series, and "Rebounds Per Game Leader - Anthony
+# Edwards" passed the gate against Polymarket "Will Anthony Edwards lead the
+# NBA in points per game?". Compared only when both titles name a stat.
+_STAT_KINDS = [
+    ("ppg", r"\bpoints per game\b|\bppg\b|\bscoring (?:title|leader|champion)\b"),
+    ("rpg", r"\brebounds per game\b|\brpg\b|\brebounding (?:title|leader)\b"),
+    ("apg", r"\bassists per game\b|\bapg\b"),
+    ("spg", r"\bsteals per game\b|\bspg\b"),
+    ("bpg", r"\bblocks per game\b|\bbpg\b"),
+    ("3pm", r"\b(?:three|3)[ -]?pointers?\b|\bthrees made\b"),
+    ("hr", r"\bhome runs?\b"),
+    ("rbi", r"\brbis?\b|\bruns batted in\b"),
+    ("avg", r"\bbatting average\b|\bbatting title\b"),
+    ("so", r"\bstrikeouts?\b"),
+    ("passyd", r"\bpassing yards?\b"),
+    ("rushyd", r"\brushing yards?\b"),
+    ("recyd", r"\breceiving yards?\b"),
+    ("sacks", r"\bsacks?\b"),
+    ("assists", r"\bmost assists\b|\bassists? leader\b"),
+    ("goals", r"\bmost goals\b|\btop (?:goal ?)?scorer\b|\bgolden boot\b"),
+]
+
+
+def stat_kind(title) -> str | None:
+    t = fold(title)
+    for kind, rx in _STAT_KINDS:
+        if re.search(rx, t):
+            return kind
+    return None
+
+
 def _bound(title) -> str | None:
     t = fold(title)
     if re.search(r"\bor (?:above|higher|more|greater|stronger)\b|\bat least\b", t):
@@ -340,6 +372,9 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
         return f"division {da} vs {db}"
     if (da is None) != (db is None) and "women" in (da, db):
         return f"division {da} vs {db}"
+    ka, kb = stat_kind(a), stat_kind(b)
+    if ka and kb and ka != kb:
+        return f"stat {ka} vs {kb}"
     # Storm category ("any Category 5 hurricane in the US" vs "a hurricane
     # in Hawaii") — one-sided counts as a mismatch.
     ca, cb = _category(a), _category(b)
