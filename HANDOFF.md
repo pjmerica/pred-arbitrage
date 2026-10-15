@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-09-24
 **Status:** Live dashboard at https://pjmerica.github.io/pred-arbitrage/.
-GitHub Actions runs the full pipeline twice daily (12:30 + 00:30 UTC) and
+GitHub Actions runs the full pipeline twice daily (12:07 + 00:07 UTC) and
 pushes refreshed `docs/arb_data.js` back to master.
 
 This repo is the generalized sibling of `polling-agg-2026`. Where
@@ -32,7 +32,7 @@ section captures the differences and what's specific to this side.
 > - **Fees are real per leg** (`utils/fees.py`, 2026-09-24): Kalshi 0.07·multiplier·P(1−P) (multiplier per series from `/series`), Polymarket rate·p(1−p) (rate per market from `feeSchedule`), PredictIt 10% of profit + 5% withdrawal, plus a 0.5¢ per-basket margin. Unknown parameters fall back to the flat 2% / 12%. `FEES` in `arb_scanner.py` now only feeds the display-level Net gap.
 > - **Window containment** (`utils/rules_window.py`): the basket must buy YES on the leg whose resolution window contains the other's (`window_mismatch`).
 > - **Series map** (`data/series_map.json`): hand-reviewed Kalshi series ↔ Polymarket event families. Approved families may be guaranteed, rejected ones are dropped, and unreviewed ones go to `data/processed/series_review.csv`. **To add a family, read both rules texts in full** and record the note and any caveat (ties, deadlines, extra time). Use `review_by` for approvals that should lapse.
-> - **Two cadences** (2026-09-25): the full refresh (`refresh.yml`, 00:30/12:30 UTC) scrapes everything and rebuilds pairs, then commits `matched_pairs.csv`. The **re-price** (`reprice.yml`, :50 on odd hours, `run_all.py --reprice`) re-fetches only the matched markets' order books plus PredictIt (~1,200 requests, ~6 min). Both share the `pred-arb-data` concurrency group. The dashboard shows both clocks.
+> - **Two cadences** (2026-09-25): the full refresh (`refresh.yml`, 00:07/12:07 UTC since 2026-10-11) scrapes everything and rebuilds pairs, then commits `matched_pairs.csv`. The **re-price** (`reprice.yml`, hourly at :17 since 2026-10-11, `run_all.py --reprice`) re-fetches only the matched markets' order books plus PredictIt (~1,200 requests, ~6 min). Both share the `pred-arb-data` concurrency group. The dashboard shows both clocks.
 > - **`tools/dash_smoke.js`** runs the dashboard JS against the fresh data (every tab/filter/sort, via `tools/dash_exercise.js`) after the pipeline and BEFORE the commit step; a runtime exception fails the run so the live page is never broken by data.
 > - **`tests/test_matching_regressions.py`** (115 cases, one per incident) runs in CI before the pipeline. Add a case for every new fake class. The job summary on each Actions run lists what was published.
 >

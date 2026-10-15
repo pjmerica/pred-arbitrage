@@ -1,8 +1,16 @@
 # tools/
 
-Diagnostic scripts for investigating suspect arb pairs. Not part of the
-daily pipeline — these are for the human to run when something on the
-dashboard looks fishy.
+Checks around the pipeline. The tools in the table run in CI on every full
+refresh and re-price (`.github/workflows/refresh.yml`, `reprice.yml`);
+`deep_check.py` is a manual diagnostic.
+
+| Tool | CI step | What it does |
+|------|---------|--------------|
+| `linkcheck.py --fix --pages` | Verify and repair market links | Rebuilds each leg's URL from the platform API by the ID that was priced and repairs any that differ (Kalshi `/markets/{series}/{event}`, Polymarket `/event/{event}/{market}`). Results go to `data/processed/linkcheck.json`. |
+| `dash_smoke.js` + `dash_exercise.js` | Dashboard smoke test | Runs `docs/index.html`'s JS against the fresh data in a DOM stub, through every tab, filter and sort. A runtime exception fails the run before the commit, so the live page keeps its last good data. |
+| `livecheck.py` | Live re-check of guaranteed baskets | Re-fetches both books and fee parameters for every guaranteed basket and recomputes the return. Report only (LIVE OK / CLOSED in the job summary). |
+| `health.py --issue` | Board health issue | Opens, updates or closes the "Board health: needs attention" GitHub issue: unreviewed families, approvals lapsing within 14 days, repaired links, stale data, held-back baskets. |
+| `llm_review.py` | Model review of new market families | No-op without an `ANTHROPIC_API_KEY` secret. With one, drafts verdicts for new families into the health issue; `LLM_REVIEW_MODE=auto` writes them to `data/series_map.json` only after a clean `--validate` run (`llm-validate.yml`). |
 
 ## `deep_check.py`
 
@@ -18,7 +26,9 @@ Categorizes each pair as:
 - **MARGINAL** — net > 0 at 10-49 contracts
 - **THIN** — net > 0 only at zero slippage or < 10 contracts
 - **GONE** — live prices closed the gap (apparent arb was stale)
-- **WRONG_PAIR** — questions describe different outcomes
+- **WRONG_PAIR** — `utils/proposition.incompatibility` finds the titles
+  describe different outcomes (title-similarity pairs only; structured
+  match types are checked by the matcher)
 - **PREDICTIT_LEG** — one side is PredictIt (no public orderbook to verify)
 - **ONE_PLATFORM** — could only fetch one side
 

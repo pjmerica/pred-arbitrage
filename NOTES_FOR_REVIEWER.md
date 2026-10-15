@@ -7,7 +7,7 @@ running log of every hand-written commit (data-refresh commits
 excluded).
 
 **Status**: live at https://pjmerica.github.io/pred-arbitrage/. Daily
-cron at 12:30 and 00:30 UTC. Most recent manual run as of writing:
+cron at 12:07 and 00:07 UTC (re-price hourly at :17). Most recent manual run as of writing:
 [GitHub Actions](https://github.com/pjmerica/pred-arbitrage/actions).
 
 > **2026-09-23/24 update — read [MATCHING_REVIEW.md](MATCHING_REVIEW.md) and the HANDOFF "Read first" block before anything below.** Parts of this file predate these changes:

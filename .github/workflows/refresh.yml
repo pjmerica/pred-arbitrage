@@ -136,7 +136,13 @@ jobs:
                 # else is left unresolved, abort and fail loudly.
                 CONFLICTED=$(git diff --name-only --diff-filter=U)
                 echo "Rebase conflict on: $CONFLICTED — keeping this full refresh's versions"
-                echo "$CONFLICTED" | xargs -r git checkout --theirs --
+                # Except series_map.json: it is hand-edited config (only
+                # llm_review --apply writes it here), so master's copy - the
+                # human edit - wins and model additions return next run.
+                echo "$CONFLICTED" | grep -vx 'data/series_map.json' | xargs -r git checkout --theirs --
+                if echo "$CONFLICTED" | grep -qx 'data/series_map.json'; then
+                  git checkout --ours -- data/series_map.json
+                fi
                 echo "$CONFLICTED" | xargs -r git add --
                 if ! GIT_EDITOR=true git rebase --continue; then
                   git rebase --abort

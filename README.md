@@ -38,12 +38,13 @@ Only pairs matched on structured keys (same crypto strike and window, same tourn
 
 ## How it works
 
-Between full runs, a lightweight re-price workflow (`reprice.yml`) re-checks the order books of already-matched pairs every 2 hours (~1,200 requests), so the board catches arbs that open and close within a few hours.
+Between full runs, a lightweight re-price workflow (`reprice.yml`) re-checks the order books of already-matched pairs hourly at :17 (~1,200 requests), so the board catches arbs that open and close within a few hours.
 
-A GitHub Actions workflow runs twice daily (**12:30 + 00:30 UTC** —
-08:30 and 20:30 ET; offset 30 min from
-[polling-agg-2026](https://github.com/pjmerica/polling-agg-2026) so the
-two repos don't hit the same APIs simultaneously). Each run:
+A GitHub Actions workflow runs twice daily (**12:07 + 00:07 UTC** —
+about 08:07 and 20:07 ET; off the minutes
+[polling-agg-2026](https://github.com/pjmerica/polling-agg-2026) uses so the
+two repos don't hit the same APIs simultaneously). GitHub's cron is
+best-effort and often starts runs late. Each run:
 
 0. Runs `tests/` (regression cases for every past fake-arb incident);
    a failure stops the refresh before anything is published.

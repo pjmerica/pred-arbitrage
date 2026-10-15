@@ -412,7 +412,7 @@ function esc(s) {
 
 function platHtml(name, url) {
   const cls = name || '';
-  const link = url ? `<a href="${url}" target="_blank" rel="noopener" class="link-btn ${cls}">↗</a>` : '';
+  const link = url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="link-btn ${cls}">↗</a>` : '';
   return `<span class="plat ${cls}">${(name||'').charAt(0).toUpperCase()+(name||'').slice(1)}</span>${link}`;
 }
 
@@ -554,7 +554,7 @@ function render() {
         <div class="leg">${platHtml(r.platform_a, r.url_a)} <span class="leg-q">${esc(r.question_a)}</span></div>
         <div class="leg">${platHtml(r.platform_b, r.url_b)} <span class="leg-q">${esc(r.question_b)}</span></div>
       </td>
-      <td style="color:#64748b;font-size:0.76rem">${r.category||''}</td>
+      <td style="color:#64748b;font-size:0.76rem">${esc(r.category)}</td>
       <td>${settleStr}</td>
       <td style="text-align:right">${kYes}</td>
       <td style="text-align:right">${kNo}</td>
