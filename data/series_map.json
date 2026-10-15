@@ -2534,6 +2534,33 @@
    "caveat": "Polymarket resolves every player No if the season is postponed after Apr 25, 2027 (Kalshi has no cutoff), so only YES Kalshi + NO Polymarket is hedged. An exact PPG tie: Kalshi splits $1/N, Polymarket breaks it on total points.",
    "safe_yes": "kalshi",
    "rules_read": "2026-10-15"
+  },
+  {
+   "kalshi_series": "KXNBASTATLEADER",
+   "polymarket_event_slug_regex": "^nba-2026-27-apg-leader",
+   "status": "approved",
+   "note": "Both: the 2026-27 NBA regular-season assists-per-game leader among players meeting the league's qualification minimum (NBA.com/stats); same game set as the PPG family. The gate's stat field keeps APG paired with APG.",
+   "caveat": "Polymarket resolves every player No if the season is postponed after Apr 25, 2027 (Kalshi has no cutoff), so only YES Kalshi + NO Polymarket is hedged. An exact tie: Kalshi splits $1/N, Polymarket breaks it on total assists.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-15"
+  },
+  {
+   "kalshi_series": "KXNBASIXTH",
+   "polymarket_event_slug_regex": "^nba-2026-27-sixth-man-of-the-year",
+   "status": "approved",
+   "note": "Both: the winner of the NBA's 2026-27 Sixth Man of the Year award.",
+   "caveat": "Polymarket resolves every player No for co-winners or if no winner is announced by Jun 30, 2027; Kalshi's text has neither clause. Only YES Kalshi + NO Polymarket is hedged.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-15"
+  },
+  {
+   "kalshi_series": "KXNBACOY",
+   "polymarket_event_slug_regex": "^nba-2026-27-coach-of-the-year",
+   "status": "approved",
+   "note": "Both: the winner of the NBA's 2026-27 Coach of the Year award.",
+   "caveat": "Co-winners: Kalshi pays $1/N, Polymarket resolves every coach No. Polymarket also resolves No if no winner is announced by Jun 30, 2027 (Kalshi has no deadline). Only YES Kalshi + NO Polymarket is hedged.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-15"
   }
  ]
 }
