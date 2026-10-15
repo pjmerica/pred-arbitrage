@@ -34,7 +34,8 @@ HEADERS   = {"User-Agent": "Mozilla/5.0 (deep-audit)", "Accept": "application/js
 # moved to 2% in June), which graded every 2-3% arb as GONE.
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).parent.parent))
-from scripts.arb_scanner import FEES
+from scripts.arb_scanner import FEES, VERIFIED_MATCH_TYPES
+from utils.proposition import incompatibility
 from utils.fees import leg_fee, kalshi_spec, polymarket_spec, predictit_spec, FEE_SAFETY_MARGIN
 
 # Real per-leg fee formulas (utils/fees.py) at the WORST rate each platform
@@ -187,7 +188,6 @@ def main():
         pa, pb = r["platform_a"], r["platform_b"]
         qa, qb = r.get("question_a") or "(no q)", r.get("question_b") or "(no q)"
         mid_a, mid_b = r.get("market_id_a"), r.get("market_id_b")
-        snap_a, snap_b = r.get("implied_prob_a"), r.get("implied_prob_b")
 
         print(f"\n[{i+1:2d}] {pa}/{pb}  scanner says raw={r.get('raw_gap_pp')}pp net={r.get('net_gap_pp')}pp guar={r.get('guaranteed_return_pct')}%")
         print(f"     A: {qa[:95]}")
@@ -195,7 +195,7 @@ def main():
 
         # Skip if either side is predictit (can't fetch)
         if pa == "predictit" or pb == "predictit":
-            print(f"     SKIP — predictit leg, no public orderbook")
+            print("     SKIP — predictit leg, no public orderbook")
             summary["PREDICTIT_LEG"] += 1
             continue
 
@@ -208,19 +208,17 @@ def main():
         no_combined  = [(p, s, pa) for p, s in a_no]  + [(p, s, pb) for p, s in b_no]
 
         if not (a_yes or a_no) or not (b_yes or b_no):
-            print(f"     ONE_PLATFORM — could not fetch one side")
+            print("     ONE_PLATFORM — could not fetch one side")
             summary["ONE_PLATFORM"] += 1
             continue
 
-        # Spot-check: do the questions describe the same thing?
-        # Quick heuristic: candidate name or month must overlap
-        flag = ""
-        # Simple "two named candidates that differ" check
-        def cap_words(q):
-            return set(re.findall(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2}\b", q or ""))
-        # not perfect but flags obvious mismatches
-        names_a = cap_words(qa)
-        names_b = cap_words(qb)
+        # Spot-check: do the questions describe the same thing? Same outcome
+        # gate the matcher applies to title-similarity (non-structured) pairs.
+        why = None if r.get("match_type") in VERIFIED_MATCH_TYPES else incompatibility(qa, qb)
+        if why:
+            print(f"     WRONG_PAIR - {why}")
+            summary["WRONG_PAIR"] += 1
+            continue
 
         for slip in (0, 1, 3):
             best = basket_at_slippage(yes_combined, no_combined, slip, FEES)

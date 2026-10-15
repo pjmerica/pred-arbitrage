@@ -83,7 +83,7 @@ def fetch_book(token_id: str):
     try:
         with urllib.request.urlopen(req, timeout=PER_REQUEST_TIMEOUT_S) as r:
             data = json.loads(r.read())
-    except urllib.error.HTTPError as e:
+    except urllib.error.HTTPError:
         # 404 = market not on CLOB (expired / closed since scrape)
         # 429 / 5xx = transient — we don't retry here; the freshen pass
         # will rerun tomorrow and the gamma fallback is good enough for

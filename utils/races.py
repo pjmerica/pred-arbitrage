@@ -21,7 +21,7 @@ TODO: Add cook_rating, sabato_rating, cpvi fields once ratings are published.
 TODO: House incumbent_name/party populated via scrapers/ballotpedia.py — run it.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 

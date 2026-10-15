@@ -24,7 +24,6 @@ import urllib.request
 import re
 import json
 import csv
-import time
 from pathlib import Path
 from datetime import datetime, timezone
 

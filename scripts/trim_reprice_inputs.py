@@ -11,7 +11,6 @@ when the full CSVs are absent (a fresh CI checkout).
 
 Run as the last step of a full refresh, after arb_scanner pass 2.
 """
-import sys
 from pathlib import Path
 
 import pandas as pd

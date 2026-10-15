@@ -40,7 +40,6 @@ that the two implementations can drift; see AUDIT.md cross-repo to-do.
 import re
 import sys
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -1116,7 +1115,7 @@ def run():
                                  meta, with_party=True)
 
     all_rows = general + gen_cand + prim_cand
-    print(f"\nElection pair counts:")
+    print("\nElection pair counts:")
     print(f"  general (party-level):   {len(general)}")
     print(f"  general_candidate:       {len(gen_cand)}")
     print(f"  primary_candidate:       {len(prim_cand)}")

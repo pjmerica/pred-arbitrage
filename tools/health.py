@@ -22,7 +22,7 @@ closed with a comment when everything clears. Always exits 0. Added
 import json
 import subprocess
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
