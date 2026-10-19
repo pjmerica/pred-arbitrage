@@ -139,19 +139,34 @@ def kalshi_expected(tickers, verify=()):
     return out
 
 
+_PM_CLOSED = set()   # tokens found only as closed markets (settled since the scrape)
+
+
+def _toks(m):
+    try:
+        return json.loads(m.get("clobTokenIds") or "[]")
+    except ValueError:
+        return []
+
+
 def polymarket_expected(tokens):
-    """{token: (expected url, question)}."""
+    """{token: (expected url, question)}. Gamma's /markets leaves closed
+    markets out unless asked (2026-10-19: 303 legs of games played that
+    evening showed as unresolved), so missing tokens get a closed=true pass."""
     out = {}
-    pages = pmap(lambda ch: gj("https://gamma-api.polymarket.com/markets?" + urllib.parse.urlencode(
-        [("clob_token_ids", t) for t in ch] + [("limit", 500)])) or [], list(chunks(sorted(tokens), 50)))
+    def lookup(toks, extra):
+        return pmap(lambda ch: gj("https://gamma-api.polymarket.com/markets?" + urllib.parse.urlencode(
+            [("clob_token_ids", t) for t in ch] + extra + [("limit", 500)])) or [], list(chunks(sorted(toks), 50)))
+    pages = lookup(tokens, [])
+    missing = set(tokens) - {t for d in pages for m in d for t in _toks(m)}
+    if missing:
+        closed = lookup(missing, [("closed", "true")])
+        _PM_CLOSED.update(t for d in closed for m in d for t in _toks(m) if t in missing)
+        pages = pages + closed
     for d in pages:
         for m in d:
-            try:
-                toks = json.loads(m.get("clobTokenIds") or "[]")
-            except ValueError:
-                toks = []
             ev = ((m.get("events") or [{}])[0] or {}).get("slug")
-            for t in toks:
+            for t in _toks(m):
                 if t in tokens:
                     out[t] = (polymarket_url(ev, m.get("slug")), m.get("question"))
     return out
@@ -306,14 +321,16 @@ def main():
                     unchecked += 1
                 elif not ok:
                     page_bad.append(f"| {url} | expected {q!r} | page {og!r} |")
+    closed_legs = sum(1 for r in rows for s in "ab"
+                      if r.get(f"platform_{s}") == "polymarket" and str(r.get(f"market_id_{s}")) in _PM_CLOSED)
     head = (f"Link check: {checked} links, {wrong} wrong{' (fixed)' if fix and wrong else ''}, "
-            f"{unknown} no longer in the API" + (f", {len(page_bad)} page mismatches (Polymarket title / Kalshi series), {unchecked} pages unchecked" if pages else ""))
+            f"{unknown} no longer in the API, {closed_legs} closed since the scrape (links checked)" + (f", {len(page_bad)} page mismatches (Polymarket title / Kalshi series), {unchecked} pages unchecked" if pages else ""))
     print(head)
     # Machine-readable result for tools/health.py (not committed).
     try:
         (ROOT / "data" / "processed").mkdir(parents=True, exist_ok=True)
         (ROOT / "data" / "processed" / "linkcheck.json").write_text(json.dumps(
-            {"checked": checked, "wrong": wrong, "fixed": fixed, "unknown": unknown,
+            {"checked": checked, "wrong": wrong, "fixed": fixed, "unknown": unknown, "closed": closed_legs,
              "page_mismatches": len(page_bad), "unchecked_pages": unchecked if pages else None,
              "wrong_rows": lines, "page_rows": page_bad}), encoding="utf8")
     except OSError:
