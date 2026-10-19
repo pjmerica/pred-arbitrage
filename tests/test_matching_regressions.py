@@ -1123,3 +1123,21 @@ def test_gap_ignores_display_price_outside_the_book():
     assert inside["raw_gap_pp"] == 0.5
     no_book = compute_arb(0.02, 0.42, 0.02, 0.02)
     assert no_book["raw_gap_pp"] == 40.0
+
+
+def test_comparable_sales_strike_and_company():
+    """Polymarket 'Target Q3 comparable sales above 5%?' paired with other
+    companies and other strikes, including negative ones (2026-10-19)."""
+    p = "Will Target Q3 comparable sales growth be above 5%?"
+    assert incompatibility("Target comparable sales growth in Q3 — Above 5%", p) is None
+    assert incompatibility("Target comparable sales growth in Q3 — Above 4.5%", p) is not None
+    assert incompatibility("Target comparable sales growth in Q3 — Above 5.5%", p) is not None
+    assert incompatibility("Lowe's comparable sales growth in Q3 — Above -2%", p) is not None
+    assert incompatibility("Ulta comparable sales in Q3 — Above 5%", p) is not None
+    assert incompatibility("Victoria's Secret comparable sales growth in Q3 — Above 5%", p) is not None
+    # Same strike written differently still pairs; direction matters.
+    assert incompatibility("Bitcoin above $150,000 on Dec 31?", "Will Bitcoin be above $150k on December 31?") is None
+    assert incompatibility("Tesla deliveries above 400k in Q4?", "Will Tesla deliveries be below 400k in Q4?") is not None
+    # A range bracket is not a tail.
+    assert incompatibility("Target comparable sales growth in Q3 — Above 3%",
+                           "Will Target Q3 comparable sales growth be between 3% and 5%?") is not None

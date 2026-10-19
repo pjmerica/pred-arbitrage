@@ -2561,6 +2561,24 @@
    "caveat": "Co-winners: Kalshi pays $1/N, Polymarket resolves every coach No. Polymarket also resolves No if no winner is announced by Jun 30, 2027 (Kalshi has no deadline). Only YES Kalshi + NO Polymarket is hedged.",
    "safe_yes": "kalshi",
    "rules_read": "2026-10-15"
+  },
+  {
+   "kalshi_series": "KXTGT",
+   "polymarket_event_slug_regex": "^target-q3-comparable-sales-growth",
+   "status": "approved",
+   "note": "Both: Target's comparable sales growth for fiscal Q3 2026 as first reported in its earnings materials. Polymarket's event is a bracket ladder (below 1%, 1-3%, 3-5%, 5% or more); the gate's strike field pairs only a Kalshi 'Above X%' with the matching tail and never with a range bracket.",
+   "caveat": "A value exactly on a bracket edge goes to Polymarket's higher bracket ('5% or more'), while Kalshi's 'Above 5.0%' needs strictly more, so only YES Polymarket + NO Kalshi is hedged. Polymarket resolves to the lowest bracket if the metric isn't reported or earnings aren't out by Dec 31, 2026.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-10-19"
+  },
+  {
+   "kalshi_series": "KXLOLAWARD",
+   "polymarket_event_slug_regex": "^worlds-2026-finals-mvp",
+   "status": "approved",
+   "note": "Both: the player named Finals MVP of the 2026 League of Legends World Championship grand final (Riot / LoL Esports).",
+   "caveat": "Polymarket resolves every player to Other if the tournament is postponed after Nov 28, 2026 or no Finals MVP is declared by then (Kalshi has no cutoff), so only YES Kalshi + NO Polymarket is hedged. Shared MVP: Kalshi pays $1/N, Polymarket the alphabetically first name.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-19"
   }
  ]
 }

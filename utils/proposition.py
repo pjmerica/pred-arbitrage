@@ -130,6 +130,74 @@ def stat_kind(title) -> str | None:
     return None
 
 
+# Strike (2026-10-19): Kalshi "Lowe's comparable sales growth in Q3 - Above
+# -2%" paired with Polymarket "Will Target Q3 comparable sales growth be
+# above 5%?" - the matcher's threshold guard missed negative numbers and
+# allowed a 0.5 difference (4.5% vs 5%). Direction + signed value + unit;
+# compared only when both titles state one.
+_STRIKE_RE = re.compile(
+    r"\b(above|over|more than|greater than|at least|below|under|less than|at most)\s+"
+    r"\$?\s*(-?\d[\d,]*\.?\d*)\s*(%|k|m|bn?|million|billion|thousand)?", re.IGNORECASE)
+_STRIKE_DIR = {"above": "gt", "over": "gt", "more than": "gt", "greater than": "gt", "at least": "gt",
+               "below": "lt", "under": "lt", "less than": "lt", "at most": "lt"}
+_STRIKE_UNIT = {"k": 1e3, "thousand": 1e3, "m": 1e6, "million": 1e6, "b": 1e9, "bn": 1e9, "billion": 1e9}
+
+
+_RANGE_RE = re.compile(r"\bbetween\s+\$?\s*(-?\d[\d,]*\.?\d*)\s*%?\s*(?:and|to|-)\s+\$?\s*(-?\d[\d,]*\.?\d*)",
+                       re.IGNORECASE)
+
+
+def strike(title):
+    """(direction, value) of the first 'above/below X' phrase, ('range',
+    (lo, hi)) for 'between X and Y' brackets, else None."""
+    r = _RANGE_RE.search(str(title or ""))
+    if r:
+        try:
+            return "range", (float(r.group(1).replace(",", "")), float(r.group(2).replace(",", "")))
+        except ValueError:
+            return None
+    m = _STRIKE_RE.search(str(title or ""))
+    if not m:
+        return None
+    try:
+        v = float(m.group(2).replace(",", ""))
+    except ValueError:
+        return None
+    u = (m.group(3) or "").lower()
+    v *= _STRIKE_UNIT.get(u, 1)
+    return _STRIKE_DIR[m.group(1).lower()], v
+
+
+def _strikes_differ(a, b) -> bool:
+    sa, sb = strike(a), strike(b)
+    if not sa or not sb:
+        return False
+    if sa[0] != sb[0]:
+        return True
+    if sa[0] == "range":
+        return sa[1] != sb[1]
+    return abs(sa[1] - sb[1]) > max(1e-3 * max(abs(sa[1]), abs(sb[1])), 1e-9)
+
+
+# Company metric subject (2026-10-19): the same Polymarket "Target Q3
+# comparable sales" market paired with Lowe's, Ulta, Canadian Tire and
+# Victoria's Secret. The subject is the name before the metric phrase.
+_METRIC_RE = re.compile(
+    r"^(?:will\s+)?(?:the\s+)?(.+?)\s*(?:'s\s+)?(?:\(\w+\)\s*)?(?:q[1-4]\s+|fy\s*\d{2,4}\s+|20\d\d\s+)*"
+    r"(?:comparable|same[- ]store|comp)\s+sales\b"
+    r"|^(?:will\s+)?(?:the\s+)?(.+?)\s*(?:'s\s+)?(?:q[1-4]\s+|fy\s*\d{2,4}\s+|20\d\d\s+)*"
+    r"(?:quarterly\s+)?(?:revenue|eps|earnings per share|deliveries|net income)\b", re.IGNORECASE)
+
+
+def metric_subject(title) -> set | None:
+    m = _METRIC_RE.search(fold(title).strip())
+    if not m:
+        return None
+    subj = m.group(1) or m.group(2) or ""
+    words = {w for w in re.findall(r"[a-z0-9]+", subj) if w not in {"s", "q1", "q2", "q3", "q4", "inc", "corp", "the"}}
+    return words or None
+
+
 def _bound(title) -> str | None:
     t = fold(title)
     if re.search(r"\bor (?:above|higher|more|greater|stronger)\b|\bat least\b", t):
@@ -375,6 +443,11 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
     ka, kb = stat_kind(a), stat_kind(b)
     if ka and kb and ka != kb:
         return f"stat {ka} vs {kb}"
+    if _strikes_differ(a, b):
+        return f"strike {strike(a)} vs {strike(b)}"
+    ma, mb = metric_subject(a), metric_subject(b)
+    if ma and mb and not (ma & mb):
+        return f"metric subject {' '.join(sorted(ma))} vs {' '.join(sorted(mb))}"
     # Storm category ("any Category 5 hurricane in the US" vs "a hurricane
     # in Hawaii") — one-sided counts as a mismatch.
     ca, cb = _category(a), _category(b)
