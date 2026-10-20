@@ -17,7 +17,7 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 ## 2026-10-20
 
-- `[pending]` health issue #13: MVP scope in the gate; Streamer of the Year approved. (1) Kalshi 'Pro Basketball Finals MVP Winner - LeBron James' (KXNBAFINMVP) had paired with Polymarket 'Will LeBron James win the 2026-27 NBA MVP?' (the regular-season award). New `mvp_scope()` field: season / postseason (Finals, World Series, Super Bowl, Kalshi's 'Championship Series', Conn Smythe) / league championship series / conference finals / All-Star. Of the 48 current MVP pairs it rejects only that one. (2) KXSTRMRSOTY / `^the-streamer-awards-streamer-of-the-year-2026` approved, `safe_yes: kalshi` (Polymarket Other if no winner by Dec 31, 2026; alphabetical tie-break). Tests 174.
+- `[7085b2b]` health issue #13: MVP scope in the gate; Streamer of the Year approved. (1) Kalshi 'Pro Basketball Finals MVP Winner - LeBron James' (KXNBAFINMVP) had paired with Polymarket 'Will LeBron James win the 2026-27 NBA MVP?' (the regular-season award). New `mvp_scope()` field: season / postseason (Finals, World Series, Super Bowl, Kalshi's 'Championship Series', Conn Smythe) / league championship series / conference finals / All-Star. Of the 48 current MVP pairs it rejects only that one. (2) KXSTRMRSOTY / `^the-streamer-awards-streamer-of-the-year-2026` approved, `safe_yes: kalshi` (Polymarket Other if no winner by Dec 31, 2026; alphabetical tie-break). Tests 174.
 
 ## 2026-10-19
 
