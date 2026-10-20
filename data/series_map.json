@@ -2579,6 +2579,13 @@
    "caveat": "Polymarket resolves every player to Other if the tournament is postponed after Nov 28, 2026 or no Finals MVP is declared by then (Kalshi has no cutoff), so only YES Kalshi + NO Polymarket is hedged. Shared MVP: Kalshi pays $1/N, Polymarket the alphabetically first name.",
    "safe_yes": "kalshi",
    "rules_read": "2026-10-19"
+  },
+  {
+   "kalshi_series": "KXMMAFIGHTNEXT",
+   "polymarket_event_slug_regex": "fight-next|next-fight",
+   "status": "rejected",
+   "note": "Different events. Kalshi: the fighter's next sanctioned MMA bout that actually takes place (any promotion, before Jan 1, 2028). Polymarket: the next UFC opponent officially announced with a date, whether or not the fight happens (deadline mid-2027). A cancelled or replaced bout splits them and either basket direction can lose both legs.",
+   "rules_read": "2026-10-19"
   }
  ]
 }
