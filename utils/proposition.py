@@ -519,7 +519,8 @@ _FTS_RE = re.compile(r"first team to score|to score first|score first", re.IGNOR
 _NO_SCORER_RE = re.compile(r"\bneither\b|\bno goals?\b|\bno team\b", re.IGNORECASE)
 # Suffix/filler words only. "city"/"united" stay: they are what tells
 # Manchester City from Manchester United, NYCFC from the Red Bulls.
-_CLUB_WORDS = {"fc", "sc", "cf", "afc", "cd", "ac", "club", "de", "la", "the", "fk", "sk"}
+_CLUB_WORDS = {"fc", "sc", "cf", "afc", "cd", "ac", "club", "de", "la", "the", "fk", "sk", "bc"}
+_CLUB_PREFIXES = {"hapoel", "maccabi", "beitar", "bnei", "ironi"}
 
 
 def first_scorer(title):
@@ -547,7 +548,10 @@ def _club_norm(name):
     s = unicodedata.normalize("NFKD", str(name or "")).encode("ascii", "ignore").decode().lower()
     s = s.replace(".", "")
     toks = [w for w in re.findall(r"[a-z0-9]+", s) if w not in _CLUB_WORDS]
-    return " ".join(toks) or s
+    # Israeli club prefixes (2026-10-19): "Hapoel Acre" vs "Hapoel Holon BC"
+    # scored 70.6 on the shared prefix alone. Dropped unless that's all.
+    core = [w for w in toks if w not in _CLUB_PREFIXES]
+    return " ".join(core or toks) or s
 
 
 def _club_sim(x, y):

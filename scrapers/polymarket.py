@@ -390,6 +390,9 @@ def parse_market(event, market):
         "yes_outcome": (str(outcomes[0]) if outcomes and not outcomes_binary else None),
         "category": category,
         "end_date": str(market.get("endDate", event.get("endDate", "")))[:10],
+        # Kickoff of a game market (2026-10-19), "2026-10-19 18:45:00+00";
+        # the scanner holds back baskets once the game has started.
+        "game_start": (str(market.get("gameStartTime") or "").replace(" ", "T").replace("+00", "Z")[:20] or None),
         "implied_prob": round(implied_prob, 4) if implied_prob is not None else None,
         "best_bid": market.get("bestBid"),
         "best_ask": market.get("bestAsk"),

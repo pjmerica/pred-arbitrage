@@ -24,7 +24,7 @@ import json
 import os as _os
 import re
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 ROOT = Path(__file__).parent.parent
 PROCESSED = ROOT / "data" / "processed"
@@ -52,7 +52,21 @@ FEES = {
 # mismatched pair (margin bucket vs winner, 2nd place vs win, crossed
 # strikes); the verified real ones were 0-5%. Above the cap a row is shown
 # as 'unverified' — math kept, but never labelled locked profit.
-MAX_PLAUSIBLE_RETURN_PCT = 15.0
+# Raised 15 -> 25 (2026-10-19, owner's call): of the 33 pairs the 15% cap
+# ever held back, 19 are now rejected by the gate, 9 carried other flags and
+# the other 5 were match-day soccer games, now caught by `in_play`.
+MAX_PLAUSIBLE_RETURN_PCT = 25.0
+
+
+def in_game_window(game_start, now):
+    """True during the 8 hours after a game's kickoff. Only those hours:
+    some season-long futures carry a gameStartTime months back (Venezuela
+    leader 2026-04-17, league winners in February)."""
+    try:
+        t = datetime.fromisoformat(str(game_start).replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return timedelta(0) <= now - t <= timedelta(hours=8)
 # Nov 3 2026 general election -> Jan 2027 swearing-in (see election_window).
 ELECTION_SETTLING = ("2026-11-03", "2027-01-31")
 
@@ -1288,6 +1302,35 @@ def run():
             result.loc[election_window, "suspicion_reasons"] = result.loc[election_window, "suspicion_reasons"].apply(
                 lambda rs: list(rs) + ["election_settling"])
 
+    # In play (2026-10-19). Once a game has kicked off its books move every
+    # few seconds, and the two legs are fetched minutes apart: Athletic vs
+    # Valencia showed BOTH "Athletic wins" (20.8%) and "Valencia wins"
+    # (16.3%) as locked baskets mid-game. Every basket the old 15% cap held
+    # back with no other warning was a match-day soccer game.
+    in_play = pd.Series(False, index=result.index)
+    try:
+        _pg = pd.read_csv(ROOT / "data" / "raw" / "polymarket_markets.csv", dtype=str)
+        _pm_start = dict(zip(_pg["yes_token_id"], _pg["game_start"])) if "game_start" in _pg.columns else {}
+    except Exception as e:
+        print(f"  WARN: game start times unavailable ({e})")
+        _pm_start = {}
+    if _pm_start:
+        _now = datetime.now(timezone.utc)
+        def _started(row):
+            for s in "ab":
+                if row.get(f"platform_{s}") != "polymarket":
+                    continue
+                gs = _pm_start.get(str(row.get(f"market_id_{s}")))
+                if isinstance(gs, str) and gs:
+                    if in_game_window(gs, _now):
+                        return True
+            return False
+        in_play = (result["arb_type"] == "guaranteed") & result.apply(_started, axis=1).astype(bool)
+        if in_play.any():
+            result.loc[in_play, "suspicion_reasons"] = result.loc[in_play, "suspicion_reasons"].apply(
+                lambda rs: list(rs) + ["in_play"])
+            print(f"In play: {int(in_play.sum())} game baskets held back (kicked off)")
+
     implausible = (result["arb_type"] == "guaranteed") & (
         pd.to_numeric(result["guaranteed_return_pct"], errors="coerce") > MAX_PLAUSIBLE_RETURN_PCT)
     if implausible.any():
@@ -1298,6 +1341,7 @@ def run():
                    & ~result["match_type"].isin(VERIFIED_MATCH_TYPES)
                    & ~result["series_status"].isin(["approved", "template"]))
                   | implausible
+                  | in_play
                   | election_window
                   | ((result["arb_type"] == "guaranteed") & window_bad)
                   | ((result["arb_type"] == "guaranteed") & one_sided_settle)
@@ -1319,10 +1363,12 @@ def run():
                 return "ONE SIDE SETTLED — one market is effectively decided and the other isn't; the rules probably differ. "
             if any(str(x).startswith("criteria_warn") for x in rs):
                 return "RULES TEXT DIFFERS — read both markets' rules before trading. "
+            if "in_play" in rs:
+                return "IN PLAY — the game has started; quotes move faster than both legs can be bought. "
             if "election_settling" in rs:
                 return "ELECTION SETTLING — between election day and swearing-in Kalshi pays on who takes office, Polymarket on the certified result; recounts or disputes can split them. "
             if "implausible_return" in rs:
-                return "CHECK BY HAND — return above 15%; past cases this large were different questions. "
+                return f"CHECK BY HAND — return above {MAX_PLAUSIBLE_RETURN_PCT:.0f}%; past cases this large were different questions or live games. "
             return "UNVERIFIED MATCH — confirm both legs resolve on the same event. "
         result.loc[unverified, "action"] = (
             result.loc[unverified, "suspicion_reasons"].apply(_why)

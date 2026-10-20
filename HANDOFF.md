@@ -95,7 +95,8 @@ CHANGELOG entry: write `[pending]`, commit, then fill in the hash in a follow-up
   - the rules texts look different (`criteria_warn`);
   - the resolution windows don't nest (`window_mismatch`);
   - a crypto basket buys YES on Kalshi (`basis_risk_direction`: CF trimmed mean vs Binance wick);
-  - the return is above 15%;
+  - the return is above 25% (15% until 2026-10-19);
+  - a game leg kicked off in the last 8 h (`in_play`, from Polymarket's `gameStartTime`);
   - it is an election basket settling 2026-11-03 .. 2027-01-31 (`ELECTION_SETTLING`).
 
   The action text names the reason.

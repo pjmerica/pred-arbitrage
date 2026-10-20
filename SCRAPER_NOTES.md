@@ -15,7 +15,7 @@ of these.
 > - the stake-split fix (dollars ∝ price);
 > - deep links;
 > - scrutiny warning instead of dropping;
-> - the 15% implausible-return cap;
+> - the implausible-return cap (15%, 25% since 2026-10-19);
 > - `tests/` in CI.
 >
 > Where they conflict, CHANGELOG 2026-09-23/24 wins.

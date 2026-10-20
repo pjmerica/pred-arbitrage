@@ -1141,3 +1141,24 @@ def test_comparable_sales_strike_and_company():
     # A range bracket is not a tail.
     assert incompatibility("Target comparable sales growth in Q3 — Above 3%",
                            "Will Target Q3 comparable sales growth be between 3% and 5%?") is not None
+
+
+def test_in_game_window():
+    """Baskets on a game are held back once it kicks off (Athletic vs
+    Valencia showed both sides as locked mid-game); old gameStartTime values
+    on season-long futures don't count (2026-10-19)."""
+    from datetime import datetime, timezone
+    from scripts.arb_scanner import in_game_window
+    now = datetime(2026, 10, 19, 20, 0, tzinfo=timezone.utc)
+    assert in_game_window("2026-10-19T18:45:00Z", now)
+    assert not in_game_window("2026-10-19T21:00:00Z", now)        # not started
+    assert not in_game_window("2026-04-17T23:00:00Z", now)        # futures market
+    assert not in_game_window("", now)
+
+
+def test_israeli_club_prefix():
+    """'Hapoel Acre' (soccer) paired with 'Hapoel Holon BC' (basketball) on
+    the shared prefix (2026-10-19)."""
+    a = "Hapoel Kfar Shelem vs Hapoel Acre: Spread — Hapoel Acre wins by more than 2.5 goals"
+    assert incompatibility(a, "Spread: Hapoel Holon BC (-2.5)") is not None
+    assert incompatibility(a, "Spread: Hapoel Acre FC (-2.5)") is None

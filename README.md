@@ -34,7 +34,7 @@ Each pair includes:
 - the Yes/No basket, with a hedged $100 split and the max stake at the quoted prices;
 - a `⚠ verify` badge listing every warning.
 
-Only pairs matched on structured keys (same crypto strike and window, same tournament and player, same race and party) can be **Guaranteed**. Pairs matched on similar titles show as **Unverified**, as does any basket above a 15% return.
+Only pairs matched on structured keys (same crypto strike and window, same tournament and player, same race and party) can be **Guaranteed**. Pairs matched on similar titles show as **Unverified** unless their market family has been hand-reviewed (or matches a reviewed family's rules text), as does any basket above a 25% return or on a game already in play.
 
 ## How it works
 
