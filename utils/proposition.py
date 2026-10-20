@@ -122,6 +122,28 @@ _STAT_KINDS = [
 ]
 
 
+# MVP scope (2026-10-20): Kalshi "Pro Basketball Finals MVP Winner - LeBron
+# James" paired with Polymarket "Will LeBron James win the 2026-27 NBA MVP?"
+# (the regular-season award). Kalshi calls the World Series MVP "Pro
+# Baseball Championship Series MVP", so that phrase is the postseason award.
+_MVP_SCOPES = [
+    ("lcs", r"\b(?:league championship series|alcs|nlcs)\b"),
+    ("conference", r"\bconference finals?\b"),
+    ("allstar", r"\ball[- ]star\b"),
+    ("postseason", r"\bfinals\b|\bworld series\b|\bsuper bowl\b|\bchampionship series\b|\bconn smythe\b|\bstanley cup\b"),
+]
+
+
+def mvp_scope(title) -> str | None:
+    t = fold(title)
+    if not re.search(r"\bmvp\b|\bmost valuable player\b|\bconn smythe\b", t):
+        return None
+    for kind, rx in _MVP_SCOPES:
+        if re.search(rx, t):
+            return kind
+    return "season"
+
+
 def stat_kind(title) -> str | None:
     t = fold(title)
     for kind, rx in _STAT_KINDS:
@@ -443,6 +465,9 @@ def incompatibility(a, b, game_date_a=None, game_date_b=None) -> str | None:
     ka, kb = stat_kind(a), stat_kind(b)
     if ka and kb and ka != kb:
         return f"stat {ka} vs {kb}"
+    va, vb = mvp_scope(a), mvp_scope(b)
+    if va and vb and va != vb:
+        return f"MVP {va} vs {vb}"
     if _strikes_differ(a, b):
         return f"strike {strike(a)} vs {strike(b)}"
     ma, mb = metric_subject(a), metric_subject(b)

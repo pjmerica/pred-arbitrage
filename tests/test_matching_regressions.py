@@ -1162,3 +1162,15 @@ def test_israeli_club_prefix():
     a = "Hapoel Kfar Shelem vs Hapoel Acre: Spread — Hapoel Acre wins by more than 2.5 goals"
     assert incompatibility(a, "Spread: Hapoel Holon BC (-2.5)") is not None
     assert incompatibility(a, "Spread: Hapoel Acre FC (-2.5)") is None
+
+
+def test_mvp_scope():
+    """Finals MVP is not the regular-season MVP (KXNBAFINMVP paired with
+    'Will LeBron James win the 2026-27 NBA MVP?', 2026-10-20); Kalshi's
+    'Championship Series MVP' is the World Series MVP."""
+    assert incompatibility("Pro Basketball Finals MVP Winner — LeBron James",
+                           "Will LeBron James win the 2026-27 NBA MVP?") is not None
+    assert incompatibility("Pro Basketball Finals MVP Winner — LeBron James",
+                           "Will LeBron James win the 2027 NBA Finals MVP?") is None
+    assert incompatibility("Pro Baseball Championship Series MVP Winner — Blake Snell",
+                           "Will Blake Snell win the 2026 World Series MVP?") is None

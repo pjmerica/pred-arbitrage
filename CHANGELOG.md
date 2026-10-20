@@ -15,6 +15,10 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 ## Unreleased
 
+## 2026-10-20
+
+- `[pending]` health issue #13: MVP scope in the gate; Streamer of the Year approved. (1) Kalshi 'Pro Basketball Finals MVP Winner - LeBron James' (KXNBAFINMVP) had paired with Polymarket 'Will LeBron James win the 2026-27 NBA MVP?' (the regular-season award). New `mvp_scope()` field: season / postseason (Finals, World Series, Super Bowl, Kalshi's 'Championship Series', Conn Smythe) / league championship series / conference finals / All-Star. Of the 48 current MVP pairs it rejects only that one. (2) KXSTRMRSOTY / `^the-streamer-awards-streamer-of-the-year-2026` approved, `safe_yes: kalshi` (Polymarket Other if no winner by Dec 31, 2026; alphabetical tie-break). Tests 174.
+
 ## 2026-10-19
 
 - `[5a2f382]` template matches inherit the reference family's `safe_yes`. A family approved by rules-text template match never got the safe direction its reference was reviewed with: NBA DPOY was matched to Sixth Man of the Year (Polymarket co-winner / Jun 30 clauses, `safe_yes: kalshi`), and 13 Oscar-nomination categories to the Best Picture / Best Actor families (Polymarket No if no nominations by Mar 14, 2027). The masked texts match, so the same clauses are there; the scanner now applies the reference's `safe_yes` to template rows (197 rows on the current board). No basket changes today: the 15 YES-Polymarket Oscar baskets were already held back by the window check, which reads the deadline from the rules text - this covers references whose deadline wording the parser misses. Also audited: all 299 pairs that went guaranteed since 10-15 by family; the 29 template-approved families (leagues off the Women's World Cup family, Oscars, NBA awards, Spotify, Google search) are like-for-like.

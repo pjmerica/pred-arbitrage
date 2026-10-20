@@ -2586,6 +2586,15 @@
    "status": "rejected",
    "note": "Different events. Kalshi: the fighter's next sanctioned MMA bout that actually takes place (any promotion, before Jan 1, 2028). Polymarket: the next UFC opponent officially announced with a date, whether or not the fight happens (deadline mid-2027). A cancelled or replaced bout splits them and either basket direction can lose both legs.",
    "rules_read": "2026-10-19"
+  },
+  {
+   "kalshi_series": "KXSTRMRSOTY",
+   "polymarket_event_slug_regex": "^the-streamer-awards-streamer-of-the-year-2026",
+   "status": "approved",
+   "note": "Both: the streamer who wins Streamer of the Year at the 2026 Streamer Awards (Nov 12, 2026).",
+   "caveat": "Polymarket resolves to Other if no winner is declared by Dec 31, 2026 (Kalshi has no deadline), so only YES Kalshi + NO Polymarket is hedged. A tie goes to the alphabetically first name on Polymarket; Kalshi's text doesn't say.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-10-20"
   }
  ]
 }
