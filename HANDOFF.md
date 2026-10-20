@@ -266,4 +266,7 @@ grades them REAL / MARGINAL / THIN / GONE / WRONG_PAIR at 0/1/3 pp slippage.
     - KXPRESPERSON 2028-11-06.
   - **Return to the review queue** 11-30: KXUEFANLBTTS, KXUEFANL1HBTTS, KXUEFANLSCORE and
     KXCONCACAFNLBTTS.
+- **Unplayed games** (accepted by the owner 2026-10-19): a tennis walkover or cancelled game pays 50-50 on
+  Polymarket but a Kalshi-determined "fair price" on Kalshi, so a game basket can return less than its cost
+  (~1-2% of tennis matches). No warning or hold-back; don't re-propose.
 - **PredictIt** has no public order book, and its API can be ~5 min stale.
