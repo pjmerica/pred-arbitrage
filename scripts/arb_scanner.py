@@ -1129,6 +1129,7 @@ def run():
         _mm = re.search(r"polymarket\.com/event/[^/?#]+/([^/?#]+)", str(result.at[idx, "url_b"] or ""))
         _mslug = _mm.group(1) if _mm else None
         st, _e = _map_status(_fams, ser, slug, pm_market_slug=_mslug)
+        _tf = None
         # Mention markets ("What will X say?") are rejected by rule until both
         # rule sets can be read side by side: Kalshi counts plural / possessive
         # forms, Polymarket's counting rules live in a separate PDF, and the
@@ -1176,6 +1177,14 @@ def run():
         # which platform's YES leg is the hedge; the window check enforces it.
         if st == "approved" and _e is not None and _e.get("safe_yes"):
             result.at[idx, "safe_yes"] = _e["safe_yes"]
+        # A template match inherits its reference family's safe direction
+        # (2026-10-19): NBA DPOY was approved off Sixth Man of the Year, whose
+        # Polymarket co-winner / Jun 30 clauses make only YES Kalshi a hedge -
+        # the masked texts match, so the same clauses are there.
+        if st == "template" and _tf:
+            _ref = next((f for f in _fams if f"{f.get('kalshi_series')} | {f.get('polymarket_event_slug_regex')}" == _tf), None)
+            if _ref is not None and _ref.get("safe_yes"):
+                result.at[idx, "safe_yes"] = _ref["safe_yes"]
         if st == "unreviewed":
             # A new market kind inside an approved family is queued with its
             # kind so the reviewer knows what to read (2026-09-26).
