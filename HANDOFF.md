@@ -249,12 +249,9 @@ grades them REAL / MARGINAL / THIN / GONE / WRONG_PAIR at 0/1/3 pp slippage.
 
 ## 6. Open items
 
-- **Cron reliability:** see §1. Owner decided 2026-10-15 against an outside trigger (external cron
-  service, local scheduled task, sleeping runner). Since 2026-10-20 the other repos' schedules help
-  instead: polling-agg's market refresh and EZ Dubs' pred-arbs pull each end with a step that starts
-  `reprice.yml` here (skipped if one started in the last 40 min). It needs the secret
-  `PRED_ARB_DISPATCH_TOKEN` in both of those repos (a fine-grained token for pjmerica/pred-arbitrage
-  only, Actions read and write); without it the step does nothing.
+- **Cron reliability:** see §1. Owner decided 2026-10-15 not to add an outside trigger
+  (external cron service, local scheduled task or a sleeping runner); the board updates when
+  GitHub's cron fires, about 4 times a day. Don't propose it again.
 - **Repo history is ~800 MB** (old committed scrapes). Shrinking it needs a history rewrite
   and force-push (owner's call).
 - **Lapsing approvals** (the health issue lists each 14 days ahead):
