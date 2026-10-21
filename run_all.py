@@ -75,6 +75,15 @@ for name, cmd in steps:
     print(f"\n{'='*60}\n{name}\n{'='*60}", flush=True)
     result = subprocess.run(cmd, cwd=str(ROOT))
     if result.returncode != 0:
+        # PredictIt is a minor venue: its outage must not stop the Kalshi / Polymarket board
+        # (2026-10-21: a read timeout failed the daily refresh). The arb scanner skips its legs.
+        if name == "PredictIt scraper":
+            stale = ROOT / "data" / "raw" / "predictit_markets.csv"
+            if stale.exists():
+                stale.unlink()   # never price PredictIt legs off an older scrape
+            print(f"WARN: {name} failed with exit code {result.returncode} "
+                  f"(non-fatal: this run has no PredictIt legs)", flush=True)
+            continue
         print(f"ERROR: {name} failed with exit code {result.returncode}", flush=True)
         sys.exit(result.returncode)
 

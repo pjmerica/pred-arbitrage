@@ -34,8 +34,17 @@ def fetch(max_retries=4):
     for attempt in range(max_retries):
         req = urllib.request.Request(URL, headers=HEADERS)
         try:
-            with urllib.request.urlopen(req, timeout=20) as r:
+            with urllib.request.urlopen(req, timeout=30) as r:
                 return json.loads(r.read()).get("markets", [])
+        except (TimeoutError, ConnectionError) as e:
+            # a READ timeout is TimeoutError, not URLError - it skipped every retry and failed
+            # the 2026-10-21 daily refresh (PredictIt answered in 0.5s an hour later)
+            if attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                print(f"  PredictIt {type(e).__name__}: {e}, retry {attempt+1}/{max_retries-1} in {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
         except urllib.error.HTTPError as e:
             if e.code in RETRY_CODES and attempt < max_retries - 1:
                 wait = 2 ** (attempt + 1)

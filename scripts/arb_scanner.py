@@ -429,6 +429,11 @@ def _assert_scrape_freshness():
     for name in ("kalshi_markets.csv", "polymarket_markets.csv", "predictit_markets.csv"):
         path = raw / name
         if not path.exists():
+            # PredictIt down (2026-10-21): no PredictIt legs this run, not a reason to stop
+            # publishing Kalshi / Polymarket. A STALE PredictIt file still blocks (old quotes).
+            if name == "predictit_markets.csv":
+                print(f"  {name}: missing - PredictIt legs skipped this run")
+                continue
             issues.append(f"{name}: missing")
             continue
         try:
