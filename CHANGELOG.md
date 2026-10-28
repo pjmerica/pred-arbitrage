@@ -15,6 +15,8 @@ Format: `[hash] commit subject — one-sentence summary of WHY.`
 
 ## Unreleased
 
+- `[HASH]` health issue #14: six market families reviewed (2026-10-27) - both rules texts read in full (Kalshi rules plus its AWARDS / RANKLIST / EVENTLOCATION / LAW rulebooks, Polymarket event and market descriptions). Approved: 2027 Nobel Peace Prize (`safe_yes` polymarket; this year's Polymarket text pays every joint recipient, unlike the rejected 2026 event), Streamer Awards Gamer of the Year (`safe_yes` kalshi: a postponement leaves Kalshi open and Polymarket at Other), Google's #1 searched person 2026 and Merriam-Webster Word of the Year (`safe_yes` polymarket: Kalshi needs the 2026 publication / the exact word, Polymarket waits to Mar 2027 / any word containing the string), NYC $30 minimum wage (same question, symmetric). Rejected: Trump-Putin meeting location (the two define the meeting differently; a summit handshake at APEC 2026 in Shenzhen can be one venue's meeting and not the other's).
+
 - `[8a0d253]` PredictIt: retry read timeouts; its outage no longer stops the daily refresh (2026-10-21) - the 2026-10-21 daily refresh (and polling-agg's) died on one PredictIt read timeout: the retry loop caught only HTTPError/URLError, and a read timeout is TimeoutError, so it never retried, and run_all treated the venue as fatal. Now timeouts retry (30s, 4 tries); if PredictIt still fails the run continues without PredictIt legs (any older PredictIt file is deleted, the freshness check accepts a missing - not a stale - PredictIt file).
 
 ## 2026-10-20

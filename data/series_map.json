@@ -2595,6 +2595,57 @@
    "caveat": "Polymarket resolves to Other if no winner is declared by Dec 31, 2026 (Kalshi has no deadline), so only YES Kalshi + NO Polymarket is hedged. A tie goes to the alphabetically first name on Polymarket; Kalshi's text doesn't say.",
    "safe_yes": "kalshi",
    "rules_read": "2026-10-20"
+  },
+  {
+   "kalshi_series": "KXNOBELPEACE",
+   "polymarket_event_slug_regex": "^nobel-peace-prize-winner-2027$",
+   "status": "approved",
+   "rules_read": "2026-10-27",
+   "note": "Both: the 2027 Nobel Peace Prize (Norwegian Nobel Committee). Unlike the rejected 2026 event, Polymarket's 2027 text pays YES to EVERY joint recipient and has no per-person clauses (all 17 markets carry the event text, checked 2026-10-27). Kalshi pays each listed joint laureate 1/N (unlisted laureates not counted).",
+   "caveat": "Joint prize: YES Kalshi + NO Polymarket gets 1/N + 0 and loses; YES Polymarket + NO Kalshi gets 1 + (1 - 1/N). No prize: both No. Polymarket waits for the announcement to Mar 31, 2028; Kalshi closes Dec 31, 2027.",
+   "safe_yes": "polymarket"
+  },
+  {
+   "kalshi_series": "KXPUTINDJTLOCATION",
+   "polymarket_event_slug_regex": "^where-will-trump-and-putin-meet-next",
+   "status": "rejected",
+   "rules_read": "2026-10-27",
+   "note": "Kalshi: location of Trump and Putin's first meeting after the Aug 15, 2025 Alaska meeting, before Jan 1, 2029 (EVENTLOCATION rulebook; 'meeting' as defined by the exchange). Polymarket: the next in-person interaction (a handshake or exchange of words counts) by Dec 31, 2026. Different definitions of the meeting: a summit handshake (APEC 2026 is in Shenzhen, the live China pair) can be Polymarket's 'next meeting' and not Kalshi's, which loses both legs."
+  },
+  {
+   "kalshi_series": "KXSTREAMERAWARDS",
+   "polymarket_event_slug_regex": "^the-streamer-awards-gamer-of-the-year-2026$",
+   "status": "approved",
+   "rules_read": "2026-10-27",
+   "note": "Both: winner of Gamer of the Year at the 2026 Streamer Awards (Nov 12). Kalshi's series lists every category; the live pairs are all KXSTREAMERAWARDS-GAMER26-* (the category is in both titles).",
+   "caveat": "Postponed: Kalshi stays open to the rescheduled show or a year (AWARDS rulebook); Polymarket resolves Other after Dec 31, 2026, so YES Polymarket + NO Kalshi can lose both legs. Cancelled: Kalshi pays its last fair price. Tie: Kalshi pays its separate 'Tie' strike and all names No; Polymarket pays the alphabetically first tied name, so YES Kalshi loses on that tie only.",
+   "safe_yes": "kalshi"
+  },
+  {
+   "kalshi_series": "KXRANKLISTGOOGLESEARCH",
+   "polymarket_event_slug_regex": "^1-searched-person-on-google-this-year-20260717214320563$",
+   "status": "approved",
+   "rules_read": "2026-10-27",
+   "note": "Both: #1 in the People section of Google's Year in Search 2026, Global list (Polymarket: Global -> Trending -> People). The family's 2025 event (same slug without the suffix) is a different year.",
+   "caveat": "Kalshi needs the 2026 list published in 2026 (RANKLIST: 'published outside <time period>' is No; market closes Dec 31, 2026); Polymarket waits to Mar 31, 2027, then Other. Kalshi splits ties 1/N.",
+   "safe_yes": "polymarket"
+  },
+  {
+   "kalshi_series": "KXNYCMINWAGE",
+   "polymarket_event_slug_regex": "^will-mamdani-raise-the-minimum-wage-to-30-before-2027$",
+   "status": "approved",
+   "rules_read": "2026-10-27",
+   "note": "Both: a law enacted before Jan 1, 2027 setting New York City's minimum wage at $30+ by 2030 (Polymarket: effective by Dec 31, 2030; a phased schedule reaching $30 counts; local or state law or mayoral order; Mamdani won 2025). Kalshi LAW rulebook: enactment regardless of court challenges.",
+   "caveat": "Polymarket says carve-outs (e.g. restaurant workers) still count; Kalshi's text is silent on them."
+  },
+  {
+   "kalshi_series": "KXWORDOFTHEYEAR",
+   "polymarket_event_slug_regex": "^merriam-webster-word-of-the-year-2026-contains",
+   "status": "approved",
+   "rules_read": "2026-10-27",
+   "note": "Kalshi: the word IS the Merriam-Webster 2026 Word of the Year (RANKLIST; several named split 1/N). Polymarket: the Word of the Year CONTAINS the string ('vibe coding' contains 'vibe'). Kalshi's YES is inside Polymarket's.",
+   "caveat": "YES Kalshi + NO Polymarket loses both legs when the word only contains the string; YES Polymarket + NO Kalshi pays at least $1 in every case. No word by Dec 31: both No.",
+   "safe_yes": "polymarket"
   }
  ]
 }
