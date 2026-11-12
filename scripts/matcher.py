@@ -1066,7 +1066,15 @@ def _extract_threshold_key(text: str, src: str):
         elif 'reach' in t: direction = 'above'
         elif 'dip to' in t: direction = 'below'
         else: return None
-    asset = next((v for k, v in _PRICE_ASSETS.items() if k in t), None)
+    # Whole words, longest name first (2026-11-12). The old substring test
+    # read "Brent crude oil" as WTI ('oil' came first), "Golden Knights" as
+    # gold, "whether" as ETH and "resolve" as SOL; none had paired yet, but a
+    # threshold pair is 'verified' and would have been labelled guaranteed.
+    # Forks that share a name are other assets.
+    if re.search(r'\b(?:bitcoin cash|ethereum classic|bitcoin sv|wrapped)\b', t):
+        return None
+    asset = next((v for k, v in sorted(_PRICE_ASSETS.items(), key=lambda kv: (kv[1] != 'BRENT', -len(kv[0])))
+                  if re.search(r'(?<![a-z])' + re.escape(k) + r'(?![a-z])', t)), None)
     if not asset:
         return None
     # Strike: prefer $-prefixed, else any number after the em-dash
@@ -1089,6 +1097,16 @@ def _extract_threshold_key(text: str, src: str):
     # test counted "market" as March and "decline" as December.
     if re.search(r'\b(?:dec(?:ember)?\.?\s+31|end of dec(?:ember)?|this year|(?:in|by|before) 20\d\d)\b', t):
         month = 'year'
+        # Which year (2026-11-12): from December both platforms list next
+        # year's markets beside this year's, and "in 2026" shared a bucket
+        # with "by December 31, 2027" at the same strike. "before 2027" is
+        # the 2026 window. A title with no year keeps the bare bucket.
+        m_bef = re.search(r'\bbefore (20\d\d)\b', t)
+        m_yr = re.search(r'\b(20\d\d)\b', t)
+        if m_bef:
+            month = f'year{int(m_bef.group(1)) - 1}'
+        elif m_yr:
+            month = f'year{m_yr.group(1)}'
     else:
         m_mo = re.search(r'\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|'
                          r'aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b\.?', t)
@@ -1106,7 +1124,7 @@ def _extract_threshold_key(text: str, src: str):
     m_day = re.search(r'\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\b', t)
     if m_day:
         day = int(m_day.group(2))
-        if month == 'year':
+        if month.startswith('year'):
             day = None   # "December 31, 2026" is the year-end, not a daily market
     # Touch vs level semantics (2026-07-04): Kalshi "BTC price on Jul 4
     # at 5pm — $63,750 or above" settles on the price AT a timestamp;
@@ -1116,6 +1134,22 @@ def _extract_threshold_key(text: str, src: str):
     # reach/dip/hit are all touch; "price on/at <time>" is level.
     kind = 'level' if re.search(r'\bprice (?:on|at)\b', t) else 'touch'
     return (asset, direction, strike, month, day, kind)
+
+
+def _with_year(key, row):
+    """A year-window key whose title names no year ("by end of December", "this
+    year") takes the year from the market's settle date, so it still pairs with
+    "in 2026" (2026-11-12). A window that settles in the first days of January
+    is the year before."""
+    if not key or key[3] != 'year':
+        return key
+    try:
+        d = pd.Timestamp(str(row.get('settle_date') or '')[:10]) - pd.Timedelta(days=7)
+    except (ValueError, TypeError):
+        return key
+    if pd.isna(d):
+        return key
+    return key[:3] + (f'year{d.year}',) + key[4:]
 
 
 def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
@@ -1135,11 +1169,11 @@ def match_threshold_pairs(dfs: dict) -> pd.DataFrame:
     k_idx = defaultdict(list)
     p_idx = defaultdict(list)
     for _, r in k.iterrows():
-        key = _extract_threshold_key(r.get('question', ''), 'kalshi')
+        key = _with_year(_extract_threshold_key(r.get('question', ''), 'kalshi'), r)
         if key:
             k_idx[(key[0], key[1], key[3], key[4], key[5])].append((key[2], r))
     for _, r in p.iterrows():
-        key = _extract_threshold_key(r.get('question', ''), 'polymarket')
+        key = _with_year(_extract_threshold_key(r.get('question', ''), 'polymarket'), r)
         if key:
             p_idx[(key[0], key[1], key[3], key[4], key[5])].append((key[2], r))
 

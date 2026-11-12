@@ -250,6 +250,12 @@ def _fee_rate(market):
         return 0.0
     sched = market.get("feeSchedule")
     if isinstance(sched, dict) and sched.get("rate") is not None:
+        # utils/fees.py charges rate x p(1-p), which is the schedule's formula
+        # only at exponent 1 (every market read 2026-11-12). Any other
+        # exponent -> unknown, so the leg pays the flat fallback fee, which is
+        # higher than any published schedule.
+        if sched.get("exponent") not in (None, 1, 1.0):
+            return None
         try:
             return float(sched["rate"])
         except (TypeError, ValueError):

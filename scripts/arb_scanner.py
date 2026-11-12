@@ -58,15 +58,57 @@ FEES = {
 MAX_PLAUSIBLE_RETURN_PCT = 25.0
 
 
-def in_game_window(game_start, now):
+def in_game_window(game_start, now, cap_hours=8):
     """True during the 8 hours after a game's kickoff. Only those hours:
     some season-long futures carry a gameStartTime months back (Venezuela
-    leader 2026-04-17, league winners in February)."""
+    leader 2026-04-17, league winners in February).
+
+    cap_hours=None (2026-11-12) is for single-game markets (match_type
+    'game'): once the game has started the basket stays held back until the
+    market is gone. The start time is the SCHEDULED one, so a rain-delayed or
+    suspended tennis match, a late UFC main event (the card's start time is
+    6-7 hours before it) or a game postponed and played later was in play
+    after the 8 hours had run out."""
     try:
         t = datetime.fromisoformat(str(game_start).replace("Z", "+00:00"))
     except ValueError:
         return False
-    return timedelta(0) <= now - t <= timedelta(hours=8)
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    if cap_hours is None:
+        return now >= t
+    return timedelta(0) <= now - t <= timedelta(hours=cap_hours)
+
+
+# Polymarket's minimum order (gamma `orderMinSize`; 5 shares on every market
+# read 2026-11-12). Fewer contracts than this at the quoted prices cannot be
+# bought there, and below it Kalshi's round-up of the fee to the next cent
+# (up to 1c an order) is no longer covered by FEE_SAFETY_MARGIN.
+MIN_BASKET_CONTRACTS = 5
+
+
+def below_min_size(basket_size, minimum=MIN_BASKET_CONTRACTS):
+    """True when the size fillable at the quoted prices on both legs is known
+    and smaller than the smallest order worth placing."""
+    try:
+        s = float(basket_size)
+    except (TypeError, ValueError):
+        return False
+    return s == s and s < minimum
+
+
+def annualized_return_pct(return_pct, days):
+    """Simple yearly rate of a locked return, None when it can't be stated
+    (no settle date, or settles within a day). A basket ties up its whole
+    cost until the later leg settles: 0.3% locked for 8 months is 0.45% a
+    year (2026-11-12)."""
+    try:
+        r, d = float(return_pct), float(days)
+    except (TypeError, ValueError):
+        return None
+    if r != r or d != d or d < 1:
+        return None
+    return round(r * 365.0 / d, 2)
 # Nov 3 2026 general election -> Jan 2027 swearing-in (see election_window).
 ELECTION_SETTLING = ("2026-11-03", "2027-01-31")
 
@@ -1336,7 +1378,7 @@ def run():
                     continue
                 gs = _pm_start.get(str(row.get(f"market_id_{s}")))
                 if isinstance(gs, str) and gs:
-                    if in_game_window(gs, _now):
+                    if in_game_window(gs, _now, cap_hours=None if row.get("match_type") == "game" else 8):
                         return True
             return False
         in_play = (result["arb_type"] == "guaranteed") & result.apply(_started, axis=1).astype(bool)
@@ -1344,6 +1386,16 @@ def run():
             result.loc[in_play, "suspicion_reasons"] = result.loc[in_play, "suspicion_reasons"].apply(
                 lambda rs: list(rs) + ["in_play"])
             print(f"In play: {int(in_play.sum())} game baskets held back (kicked off)")
+
+    # Too small to place (2026-11-12): 7 of 48 guaranteed rows offered 0.5 to
+    # 2.7 contracts at the quoted prices.
+    too_small = pd.Series(False, index=result.index)
+    if "basket_size" in result.columns:
+        too_small = (result["arb_type"] == "guaranteed") & result["basket_size"].apply(below_min_size).astype(bool)
+        if too_small.any():
+            result.loc[too_small, "suspicion_reasons"] = result.loc[too_small, "suspicion_reasons"].apply(
+                lambda rs: list(rs) + ["below_min_size"])
+            print(f"Too small: {int(too_small.sum())} baskets under {MIN_BASKET_CONTRACTS} contracts held back")
 
     implausible = (result["arb_type"] == "guaranteed") & (
         pd.to_numeric(result["guaranteed_return_pct"], errors="coerce") > MAX_PLAUSIBLE_RETURN_PCT)
@@ -1356,6 +1408,7 @@ def run():
                    & ~result["series_status"].isin(["approved", "template"]))
                   | implausible
                   | in_play
+                  | too_small
                   | election_window
                   | ((result["arb_type"] == "guaranteed") & window_bad)
                   | ((result["arb_type"] == "guaranteed") & one_sided_settle)
@@ -1381,6 +1434,8 @@ def run():
                 return "IN PLAY — the game has started; quotes move faster than both legs can be bought. "
             if "election_settling" in rs:
                 return "ELECTION SETTLING — between election day and swearing-in Kalshi pays on who takes office, Polymarket on the certified result; recounts or disputes can split them. "
+            if "below_min_size" in rs:
+                return f"TOO SMALL - fewer than {MIN_BASKET_CONTRACTS} contracts at these prices (Polymarket's minimum order; Kalshi rounds its fee up to the cent). "
             if "implausible_return" in rs:
                 return f"CHECK BY HAND — return above {MAX_PLAUSIBLE_RETURN_PCT:.0f}%; past cases this large were different questions or live games. "
             return "UNVERIFIED MATCH — confirm both legs resolve on the same event. "
@@ -1405,6 +1460,18 @@ def run():
     dropped_past = before - len(result)
     if dropped_past:
         print(f"Dropped {dropped_past} pairs with settle_date in the past (today is {today_iso})")
+
+    # Yearly rate of each basket's locked return (annualized_return_pct).
+    _t0 = datetime.now(timezone.utc).date()
+    def _days(s):
+        try:
+            return (datetime.fromisoformat(str(s)[:10]).date() - _t0).days
+        except ValueError:
+            return None
+    _is_basket = result["arb_type"].isin(["guaranteed", "unverified"])
+    result["annualized_return_pct"] = [
+        annualized_return_pct(r, _days(s)) if b else None
+        for r, s, b in zip(result["guaranteed_return_pct"], result["settle_date"], _is_basket)]
 
     # 'suspicious' (hidden by default on the dashboard) = the two legs may
     # not be the same question. Liquidity notes (thin depth, wide spread)

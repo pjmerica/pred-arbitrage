@@ -475,6 +475,7 @@ function render() {
       window_mismatch: 'the two markets cover different time windows and the basket buys YES on the narrower one — both legs can lose',
       implausible_return: 'locked return above 25% — past rows this large were two different questions or live games; check both legs',
       in_play: 'the game has started — quotes move faster than both legs can be bought',
+      below_min_size: 'fewer than 5 contracts are offered at these prices — below Polymarket\'s minimum order',
       basis_risk_direction: 'basket buys YES on Kalshi (trimmed-mean index) + NO on Polymarket (any Binance wick) — both legs lose if a wick crosses the strike but the index does not',
       settled_one_side: 'one market is effectively settled while the other is not — resolution rules probably differ (window, definition or source)',
     };
@@ -539,7 +540,7 @@ function render() {
 
     const showBasket = isGuaranteed || r.arb_type === 'unverified';
     const retCell = showBasket && r.guaranteed_return_pct != null
-      ? `<span class="ret-val"${isGuaranteed ? '' : ' style="color:#fb923c" title="Only real if both legs are the same question"'}>${r.guaranteed_return_pct.toFixed(1)}% <span style="color:#64748b;font-size:0.7rem">(+$${r.profit_dollars != null ? r.profit_dollars.toFixed(2) : '—'} / $100)</span></span>` : '—';
+      ? `<span class="ret-val"${isGuaranteed ? '' : ' style="color:#fb923c" title="Only real if both legs are the same question"'}>${r.guaranteed_return_pct.toFixed(1)}% <span style="color:#64748b;font-size:0.7rem">(+$${r.profit_dollars != null ? r.profit_dollars.toFixed(2) : '—'} / $100)</span>${r.annualized_return_pct != null ? `<br><span style="color:#64748b;font-size:0.66rem" title="The locked return as a simple yearly rate: return x 365 / days until the later leg settles. Money in a basket is tied up until then.">${r.annualized_return_pct >= 1000 ? '1000+' : r.annualized_return_pct.toFixed(1)}% a year</span>` : ''}</span>` : '—';
 
     const stakeCell = showBasket && r.stake_a_dollars != null
       ? `<span class="stake">${platHtml(r.platform_a, null)} <strong>$${r.stake_a_dollars.toFixed(2)}</strong><br>${platHtml(r.platform_b, null)} <strong>$${r.stake_b_dollars.toFixed(2)}</strong>${capHtml(r)}</span>` : '—';

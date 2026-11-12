@@ -394,18 +394,18 @@ from scripts.matcher import _extract_threshold_key
 ])
 def test_threshold_year_end_bucket(title):
     key = _extract_threshold_key(title, "polymarket")
-    assert key is not None and key[3] == "year" and key[4] is None
+    assert key is not None and key[3].startswith("year") and key[4] is None
 
 
 def test_threshold_kalshi_year_bucket():
     key = _extract_threshold_key("How high will Bitcoin get in 2026? - Above $200,000", "kalshi")
-    assert key is not None and key[3] == "year"
+    assert key is not None and key[3] == "year2026"
 
 
 def test_threshold_december_only_is_not_year():
     k_month = _extract_threshold_key("Will Bitcoin reach $200,000 in December?", "polymarket")
     k_year = _extract_threshold_key("How high will Bitcoin get in 2026? - Above $200,000", "kalshi")
-    assert k_month[3] == "dec" and k_year[3] == "year"
+    assert k_month[3] == "dec" and k_year[3] == "year2026"
     assert k_month[:4] != k_year[:4]
 
 
@@ -1174,3 +1174,91 @@ def test_mvp_scope():
                            "Will LeBron James win the 2027 NBA Finals MVP?") is None
     assert incompatibility("Pro Baseball Championship Series MVP Winner — Blake Snell",
                            "Will Blake Snell win the 2026 World Series MVP?") is None
+
+
+# 2026-11-12 review of the arbitrage logic.
+
+def test_threshold_year_is_part_of_the_window():
+    """From December both platforms list next year's markets beside this
+    year's: "in 2026" must not pair with "by December 31, 2027"."""
+    k26 = _extract_threshold_key("How high will Bitcoin get in 2026? - Above $200,000", "kalshi")
+    p26 = _extract_threshold_key("Will Bitcoin reach $200,000 by December 31, 2026?", "polymarket")
+    p27 = _extract_threshold_key("Will Bitcoin reach $200,000 by December 31, 2027?", "polymarket")
+    bef = _extract_threshold_key("Will Bitcoin reach $200,000 before 2027?", "polymarket")
+    assert k26[3] == p26[3] == bef[3] == "year2026"
+    assert p27[3] == "year2027"
+    k = pd.DataFrame([{"question": "How high will Bitcoin get in 2027? - Above $200,000", "market_id": "K27",
+                       "implied_prob": 0.2, "settle_date": "2028-01-01"}])
+    p = pd.DataFrame([{"question": "Will Bitcoin reach $200,000 by December 31, 2026?", "market_id": "P26",
+                       "implied_prob": 0.05, "settle_date": "2027-01-01"}])
+    assert match_threshold_pairs({"kalshi": k, "polymarket": p}).empty
+
+
+def test_threshold_yearless_title_takes_the_settle_year():
+    """"by end of December" names no year; the settle date supplies it, so it
+    still pairs with "in 2026" and not with next year's market."""
+    p = pd.DataFrame([{"question": "Will Gold (GC) hit (HIGH) $5,000 by end of December?", "market_id": "P",
+                       "implied_prob": 0.1, "settle_date": "2026-12-31"}])
+    k26 = pd.DataFrame([{"question": "How high will gold get in 2026? - Above $5,000", "market_id": "K26",
+                         "implied_prob": 0.1, "settle_date": "2027-01-01"}])
+    k27 = pd.DataFrame([{"question": "How high will gold get in 2027? - Above $5,000", "market_id": "K27",
+                         "implied_prob": 0.3, "settle_date": "2028-01-01"}])
+    assert len(match_threshold_pairs({"kalshi": k26, "polymarket": p})) == 1
+    assert match_threshold_pairs({"kalshi": k27, "polymarket": p}).empty
+
+
+@pytest.mark.parametrize("title,src,asset", [
+    ("How high will Brent crude oil get in 2026? - Above $90", "kalshi", "BRENT"),     # was read as WTI
+    ("Will WTI crude oil hit (HIGH) $90 by December 31, 2026?", "polymarket", "OIL"),
+    ("Will Ethereum reach $5,000 by December 31, 2026?", "polymarket", "ETH"),
+    ("Will natural gas hit (HIGH) $6 by December 31, 2026?", "polymarket", "NATGAS"),
+])
+def test_threshold_asset_whole_words(title, src, asset):
+    assert _extract_threshold_key(title, src)[0] == asset
+
+
+@pytest.mark.parametrize("title", [
+    "Will the Golden Knights reach $5 billion in value by December 31, 2026?",   # 'gold' inside Golden
+    "Will Bitcoin Cash reach $600 by December 31, 2026?",                         # a fork, not BTC
+    "Will Ethereum Classic reach $30 by December 31, 2026?",
+    "Will anyone resolve to reach $100 by December 31, 2026?",                    # 'sol' inside resolve
+])
+def test_threshold_asset_not_a_substring(title):
+    assert _extract_threshold_key(title, "polymarket") is None
+
+
+def test_single_game_stays_in_play_after_eight_hours():
+    """A single-game market is held back from kickoff until it is gone: the
+    start time is the scheduled one (a rain-delayed tennis match, a late UFC
+    main event). Futures keep the 8-hour window."""
+    from datetime import datetime, timezone
+    from scripts.arb_scanner import in_game_window
+    now = datetime(2026, 11, 15, 8, 0, tzinfo=timezone.utc)
+    assert not in_game_window("2026-11-14T22:00:00Z", now)                      # 10 h on, capped
+    assert in_game_window("2026-11-14T22:00:00Z", now, cap_hours=None)          # a game: still held
+    assert not in_game_window("2026-11-15T09:00:00Z", now, cap_hours=None)      # not started
+    assert in_game_window("2026-11-14 22:00:00+00", now, cap_hours=None)        # gamma's format
+
+
+def test_basket_below_minimum_order():
+    from scripts.arb_scanner import below_min_size
+    assert below_min_size(0.47) and below_min_size(4.99)
+    assert not below_min_size(5) and not below_min_size(1707.59)
+    assert not below_min_size(None) and not below_min_size(float("nan"))        # size unknown: no claim
+
+
+def test_annualized_return():
+    from scripts.arb_scanner import annualized_return_pct
+    assert annualized_return_pct(0.28, 231) == 0.44        # 0.28% locked to July 2027
+    assert annualized_return_pct(1.0, 365) == 1.0
+    assert annualized_return_pct(1.0, 0) is None and annualized_return_pct(1.0, None) is None
+    assert annualized_return_pct(None, 30) is None
+
+
+def test_polymarket_fee_exponent_guard():
+    """utils/fees.py's rate x p(1-p) is the schedule's formula only at
+    exponent 1; anything else must fall back to the flat fee."""
+    from scrapers.polymarket import _fee_rate
+    assert _fee_rate({"feesEnabled": True, "feeSchedule": {"exponent": 1, "rate": 0.07}}) == 0.07
+    assert _fee_rate({"feesEnabled": True, "feeSchedule": {"exponent": 2, "rate": 0.25}}) is None
+    assert _fee_rate({"feesEnabled": False}) == 0.0

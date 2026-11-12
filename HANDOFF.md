@@ -96,7 +96,10 @@ CHANGELOG entry: write `[pending]`, commit, then fill in the hash in a follow-up
   - the resolution windows don't nest (`window_mismatch`);
   - a crypto basket buys YES on Kalshi (`basis_risk_direction`: CF trimmed mean vs Binance wick);
   - the return is above 25% (15% until 2026-10-19);
-  - a game leg kicked off in the last 8 h (`in_play`, from Polymarket's `gameStartTime`);
+  - a game leg kicked off in the last 8 h (`in_play`, from Polymarket's `gameStartTime`); a single-game
+    market (`match_type` game) stays held back from kickoff on, with no 8 h limit (2026-11-12);
+  - fewer than 5 contracts are fillable at the quoted prices on both legs (`below_min_size`:
+    Polymarket's minimum order, and the size below which Kalshi's fee round-up beats the margin);
   - it is an election basket settling 2026-11-03 .. 2027-01-31 (`ELECTION_SETTLING`).
 
   The action text names the reason.
@@ -114,6 +117,9 @@ CHANGELOG entry: write `[pending]`, commit, then fill in the hash in a follow-up
   - Plus a 0.5¢ margin per basket.
 
   Guaranteed needs ≥ 0.25% return. The flat `FEES` dict only feeds the display "net gap".
+  A Polymarket fee schedule whose exponent is not 1 is treated as unknown (flat fee).
+- **`annualized_return_pct`** (2026-11-12): return x 365 / days to settle, shown under the return.
+  Most baskets settle months out: on 2026-11-12, 33 of 42 guaranteed baskets were under 4% a year.
 - **Links** are built only in `utils/links.py`:
   - Kalshi: `/markets/{series}/{event}`, lowercase, series = event-ticker prefix.
   - Polymarket: `/event/{event}/{market}`.
@@ -183,7 +189,7 @@ own generated files, but master's `series_map.json` (the human edit).
 
 | Function | match_type | Keys on |
 |---|---|---|
-| `match_threshold_pairs` | threshold | asset, direction, exact strike, month/day, touch vs level (crypto, commodities) |
+| `match_threshold_pairs` | threshold | asset (whole words), direction, exact strike, month/day or year window with its year, touch vs level (crypto, commodities) |
 | `match_tournament_winner` | tournament-tennis / -worldcup | tournament, gender, player / country |
 | `match_league_futures` | tournament-league | league, season, team (`_LEAGUE_TEAMS`), cross-checked with Kalshi's label |
 | `match_season_totals` | tournament-season | team, season, win-total / points line |
@@ -270,3 +276,13 @@ grades them REAL / MARGINAL / THIN / GONE / WRONG_PAIR at 0/1/3 pp slippage.
   Polymarket but a Kalshi-determined "fair price" on Kalshi, so a game basket can return less than its cost
   (~1-2% of tennis matches). No warning or hold-back; don't re-propose.
 - **PredictIt** has no public order book, and its API can be ~5 min stale.
+- **Residual risks the board does not price** (2026-11-12 review; none is a bug, all are the owner's call):
+  - **Crypto touch baskets (YES Polymarket + NO Kalshi).** Kalshi settles on the CF index in dollars, Polymarket
+    on Binance's USDT pair. If the index touches the strike and Binance stops short (USDT above $1, or a few
+    dollars of basis) and the price then turns, both legs lose. Small, not zero.
+  - **Legs are priced minutes apart** (all Kalshi books, then all Polymarket books). `tools/livecheck.py`
+    re-prices each basket back to back but only reports.
+  - **Who decides.** Polymarket outcomes are settled by UMA's vote, Kalshi's by Kalshi; the same rules text can
+    still be settled differently. Postponed games are the standing example (see Unplayed games).
+  - **Return is on the basket cost**, not cost plus fees (overstates by about 2% of itself), and money sits on
+    two platforms until the later leg settles.
