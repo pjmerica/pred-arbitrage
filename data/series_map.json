@@ -594,12 +594,13 @@
    "polymarket_event_slug_regex": "^unl-.+-\\d{4}-\\d{2}-\\d{2}",
    "status": "approved",
    "rules_read": "2026-09-25",
-   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. UEFA Nations League.",
+   "note": "Both: first goal credited to the team (own goals to the team awarded). Kalshi counts the whole game incl. extra time; Polymarket 90 min + stoppage, else 'Neither'. UEFA Nations League. 2026-11-12: 'No Goal' (Kalshi) = 'Neither' (Polymarket) added, as for MLS and the Champions League; same period caveat and lapse. Polymarket also resolves 'Neither' if the game is cancelled or has no result by two days after.",
    "caveat": "Extra time breaks it (YES Polymarket + NO Kalshi loses both legs if the first goal comes in extra time). League-phase matches only; re-read before knockouts. League phase ends mid-November.",
    "review_by": "2026-11-18",
    "polymarket_market_kinds": [
     "first-to-score-away",
-    "first-to-score-home"
+    "first-to-score-home",
+    "first-to-score-neither"
    ],
    "on_lapse": "reject"
   },
@@ -2646,6 +2647,156 @@
    "note": "Kalshi: the word IS the Merriam-Webster 2026 Word of the Year (RANKLIST; several named split 1/N). Polymarket: the Word of the Year CONTAINS the string ('vibe coding' contains 'vibe'). Kalshi's YES is inside Polymarket's.",
    "caveat": "YES Kalshi + NO Polymarket loses both legs when the word only contains the string; YES Polymarket + NO Kalshi pays at least $1 in every case. No word by Dec 31: both No.",
    "safe_yes": "polymarket"
+  },
+  {
+   "kalshi_series": "KXDPRESPRIMARY",
+   "polymarket_event_slug_regex": "^south-carolina-presidential-democratic-primary-winner",
+   "status": "approved",
+   "note": "Both: the candidate with the most votes in the 2028 South Carolina Democratic presidential primary (final round if it has rounds). Kalshi: the statewide contest that allocates the most convention delegates; Polymarket: the process by which the public directs the selection of delegates. 'Uncommitted' is not a candidate on Kalshi; Polymarket ranks the named candidates.",
+   "caveat": "Polymarket Other if there is no contest or the result is not known by Aug 1, 2028; Kalshi open to Nov 7, 2028. Ties: Polymarket pays the first last name alphabetically; Kalshi's text is silent.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXDPRESPRIMARY",
+   "polymarket_event_slug_regex": "^nevada-presidential-democratic-primary-winner",
+   "status": "approved",
+   "note": "Both: the candidate with the most votes in the 2028 Nevada Democratic presidential nominating contest (final round if it has rounds). Kalshi: the statewide primary or caucus that allocates the most convention delegates; Polymarket: the primary, caucus or other process by which the public directs the delegates. If a state-run primary and a party caucus are both held, both texts point at the one that binds delegates.",
+   "caveat": "Polymarket Other if not known by the earlier of Nov 7, 2028 and the first day of the convention; Kalshi No if not held before Nov 7, 2028. Ties: Polymarket alphabetical; Kalshi silent.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXJEFFRIESFIRST",
+   "polymarket_event_slug_regex": "^will-the-120th-congress-speaker-be-elected-on-the-first-ballot$",
+   "status": "approved",
+   "note": "Kalshi: Hakeem JEFFRIES is elected Speaker on the first roll-call ballot of the 120th Congress before Feb 1, 2027. Polymarket: ANY Speaker is elected on the first ballot by Jan 31, 2027. Same ballot definition (majority of votes cast for a person by name, Clerk's roll call). Kalshi's YES is inside Polymarket's.",
+   "caveat": "YES Kalshi + NO Polymarket loses both legs if someone other than Jeffries is elected on the first ballot; YES Polymarket + NO Kalshi pays at least $1 in every case.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOMNAOTY",
+   "polymarket_event_slug_regex": "^grammys-2027-bna-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best New Artist at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOMAOTY",
+   "polymarket_event_slug_regex": "^grammys-2027-aoty-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Album of the Year at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOMSOTY",
+   "polymarket_event_slug_regex": "^grammys-2027-soty-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Song of the Year at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOMROTY",
+   "polymarket_event_slug_regex": "^grammys-2027-roty-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Record of the Year at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOMBRA",
+   "polymarket_event_slug_regex": "^grammys-2027-rap-album-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Rap Album at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOM",
+   "polymarket_event_slug_regex": "^grammys-2027-pop-duo-group-performance-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Pop Duo/Group Performance at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOM",
+   "polymarket_event_slug_regex": "^grammys-2027-pop-solo-performance-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Pop Solo Performance at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOM",
+   "polymarket_event_slug_regex": "^grammys-2027-pop-vocal-album-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Pop Vocal Album at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXGRAMMYNOM",
+   "polymarket_event_slug_regex": "^grammys-2027-dance-pop-recording-nominations",
+   "status": "approved",
+   "note": "Both: nominated for Best Dance Pop Recording at the 69th Grammy Awards (nominations Nov 16, 2026).",
+   "caveat": "Polymarket resolves No at the announcement (Nov 16, 2026), or if there are no nominations by Feb 7, 2027; Kalshi ('has been nominated') stays open to Nov 2027, so a nominee added later pays on Kalshi only. Kalshi names the title without the artist.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXQUITOMAYOR",
+   "polymarket_event_slug_regex": "^quito-mayoral-election-winner-2026",
+   "status": "approved",
+   "note": "Kalshi: wins the 2026 Quito (Ecuador, Nov 29) mayoral election; Polymarket: becomes the next mayor as a result of it (caretakers excluded).",
+   "caveat": "Polymarket Other if unknown by Jun 30, 2027; Kalshi open to Nov 2027.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXBALLONDOR",
+   "polymarket_event_slug_regex": "^ballon-dor-winner-2027$",
+   "status": "approved",
+   "note": "Both: winner of the 2027 men's Ballon d'Or (France Football / UEFA).",
+   "caveat": "Kalshi: wins it IN 2027 (closes Dec 31, 2027); Polymarket allows a ceremony postponed to Mar 31, 2028, so a late ceremony pays on Polymarket only. Joint winners: Polymarket Other, Kalshi splits $1; that breaks the hedge. Has not happened.",
+   "safe_yes": "polymarket",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXNHLSEASONPPTS",
+   "polymarket_event_slug_regex": "^nhl-players-100-plus-points-2026-27",
+   "status": "approved",
+   "note": "Both: the player records 100 or more points (goals + assists) in the 2026-27 NHL regular season. Kalshi event KXNHLSEASONPPTS-27C100 is the 100+ line.",
+   "caveat": "Polymarket No if the season is cancelled or runs past Apr 30, 2027; Kalshi closes Apr 13. Only the 100+ line was read: another threshold under this series is a different question.",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXSWISSFEDCOUNCIL",
+   "polymarket_event_slug_regex": "^swiss-federal-council-by-election-winner",
+   "status": "approved",
+   "note": "Both: the person the Federal Assembly elects on Dec 9, 2026 to Guy Parmelin's seat on the Swiss Federal Council. Polymarket: the FIRST individual declared elected, whether or not they accept.",
+   "caveat": "Polymarket Other if nobody is elected by Jun 30, 2027; Kalshi open to Dec 2027. If the first person elected declines and a second vote elects someone else, Polymarket pays the first and Kalshi's text does not say.",
+   "safe_yes": "kalshi",
+   "rules_read": "2026-11-12"
+  },
+  {
+   "kalshi_series": "KXLOLMPC",
+   "polymarket_event_slug_regex": "^most-played-champion-at-worlds-2026",
+   "status": "rejected",
+   "note": "Kalshi: the most PICKED champion at Worlds 2026, a tie splitting $1 between the tied champions. Polymarket: the champion PLAYED in the most completed games (remakes and forfeits excluded), a tie broken by win rate, then bans, then name. Pick counts tie often, and then the two pay differently in both directions; picked and played can also differ.",
+   "rules_read": "2026-11-12"
   }
  ]
 }
