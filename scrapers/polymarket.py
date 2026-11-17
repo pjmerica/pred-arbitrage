@@ -16,6 +16,7 @@ CLOB orderbook lookups (clob.polymarket.com/book?token_id=...). These are
 or pandas will silently corrupt them to floats.
 """
 
+import gzip
 import urllib.request
 import sys
 import urllib.parse
@@ -48,15 +49,24 @@ PRIORITY_TAGS = [
 
 RETRY_CODES = {403, 408, 429, 500, 502, 503, 504}
 
+# Since ~2026-11-12 19:00 UTC gamma answers /events and /events/keyset pages with limit > 50
+# with HTTP 406 {"error":"gzip_required"} unless the request says it accepts gzip. Every
+# Daily refresh and Re-price failed from then until this header was added (2026-11-17).
+GZIP_HEADERS = {**HEADERS, "Accept-Encoding": "gzip"}
+
+
 def get(path, params=None, max_retries=4):
     url = f"{BASE}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
     for attempt in range(max_retries):
-        req = urllib.request.Request(url, headers=HEADERS)
+        req = urllib.request.Request(url, headers=GZIP_HEADERS)
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
-                return json.loads(r.read())
+                body = r.read()
+                if r.headers.get("Content-Encoding", "").lower() == "gzip":
+                    body = gzip.decompress(body)
+                return json.loads(body)
         except urllib.error.HTTPError as e:
             if e.code in RETRY_CODES and attempt < max_retries - 1:
                 wait = 2 ** (attempt + 1)
